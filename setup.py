@@ -29,14 +29,14 @@ setup(
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://github.com/pypa/sampleproject',
+    url='https://github.com/amymok/complaint-search',
 
     # Author details
     author='CFPB',
     author_email='tech@cfpb.gov',
 
     # Choose your license
-    # license='MIT',
+    license='CC0',
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
@@ -44,14 +44,14 @@ setup(
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 2 - Pre-Alpha',
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
 
         # Pick your license as you wish (should match "license" above)
-        # 'License :: OSI Approved :: MIT License',
+        'License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication',
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
@@ -74,7 +74,7 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    # install_requires=['peppercorn'],
+    install_requires=['elasticsearch>=2,<5', 'requests', 'urllib3'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
