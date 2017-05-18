@@ -17,7 +17,7 @@ brew install autoenv
 
 After installation, Homebrew will output instructions similar to:
 
-````
+```shell
 To finish the installation, source activate.sh in your shell:
   source /Users/[YOUR USERNAME]/homebrew/opt/autoenv/activate.sh
 ```
