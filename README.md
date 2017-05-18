@@ -17,14 +17,20 @@ brew install autoenv
 
 After installation, Homebrew will output instructions similar to:
 
+````
 To finish the installation, source activate.sh in your shell:
   source /Users/[YOUR USERNAME]/homebrew/opt/autoenv/activate.sh
+```
+
 Run that now for your initial setup. Any time you run the project you’ll need to run that last line, so if you’ll be working with the project consistently, we suggest adding it to your Bash profile by running:
-
+```
 echo 'source /Users/[YOUR USERNAME]/homebrew/opt/autoenv/activate.sh' >> ~/.bash_profile
-If you need to find this info again later, you can run:
+```
 
+If you need to find this info again later, you can run:
+```shell
 brew info autoenv
+```
 
 You can then copy the `.env_SAMPLE` file to `.env`, then update any environment variables accordingly.
 
