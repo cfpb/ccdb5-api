@@ -5,10 +5,13 @@ This repository assumes that you have an instance of elasticsearch running with 
 
 ## Installation
 
+### As a Standalone
+
+#### Environment Variables
 This project uses environment variables and uses autoenv to automatically define environement variables and launch the virtualenv upon cding to the project folder.
 
 You will need to install Autoenv if you haven't:
-```
+```shell
 brew install autoenv
 ```
 
@@ -25,13 +28,29 @@ brew info autoenv
 
 You can then copy the `.env_SAMPLE` file to `.env`, then update any environment variables accordingly.
 
+#### Dependencies
 Then you can install all dependencies in the `requirements.txt`
-```
+```shell
 pip install -r requirements.txt
 ```
 
-## Testing
+#### Testing
 Right now you can run `complaint_search.py` to make sure everything runs successfully
 ```
 python complaint_search.py
+```
+
+### As a Package
+If you are installing this project as a package, you can pip install the following:
+```shell
+pip install -e pip install -e git+https://github.com/amymok/complaint-search.git@master#egg=complaint-search
+```
+
+This also assume that you have all the environment variables in your system, if not, please incorporate the environement variables in `.env` in your own project to make `complaint_search` works for you.
+
+Once you pip installed this as a package you can use functions like so in your project:
+```python
+import complaint_search
+
+complaint_search.search()
 ```
