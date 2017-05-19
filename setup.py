@@ -7,6 +7,27 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
+def parse_requirements():
+    """Return abstract requirements (without version numbers)
+    from requirements.txt.
+    As an exception, requirements that are URLs are used as-is.
+    This is tested to be compatible with pip 9.0.1.
+    Background: https://stackoverflow.com/a/42033122/
+    """
+
+    path = os.path.join(os.path.dirname(__file__), 'requirements.txt')
+    requirements = pip.req.parse_requirements(
+        path, session=pip.download.PipSession()
+    )
+    requirements = [
+        req.name or req.link.url
+        for req in requirements
+        if 'git+' not in (req.name or req.link.url)
+    ]
+    return requirements
+
+install_requires = parse_requirements()
+
 setup(
     name='complaint-search',
     version='1.0.0',
@@ -27,5 +48,5 @@ setup(
     ],
     keywords='query elasticsearch module',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    install_requires=['elasticsearch>=2,<5', 'requests', 'urllib3'],
+    install_requires=install_requires,
 )
