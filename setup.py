@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 from codecs import open
-from os import path
+import os
 
-here = path.abspath(path.dirname(__file__))
+here = os.path.abspath(path.dirname(__file__))
 
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
+with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 def parse_requirements():
@@ -15,7 +15,7 @@ def parse_requirements():
     Background: https://stackoverflow.com/a/42033122/
     """
 
-    path = path.join(path.dirname(__file__), 'requirements.txt')
+    path = os.path.join(os.path.dirname(__file__), 'requirements.txt')
     requirements = pip.req.parse_requirements(
         path, session=pip.download.PipSession()
     )
