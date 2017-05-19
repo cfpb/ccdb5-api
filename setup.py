@@ -15,7 +15,7 @@ def parse_requirements():
     Background: https://stackoverflow.com/a/42033122/
     """
 
-    path = os.path.join(os.path.dirname(__file__), 'requirements.txt')
+    path = path.join(path.dirname(__file__), 'requirements.txt')
     requirements = pip.req.parse_requirements(
         path, session=pip.download.PipSession()
     )
