@@ -1,6 +1,8 @@
+import os
+import pip
+import sys
 from setuptools import setup, find_packages
 from codecs import open
-import os
 
 here = os.path.abspath(os.path.dirname(__file__))
 
