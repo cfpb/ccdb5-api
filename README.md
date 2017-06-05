@@ -1,4 +1,4 @@
-# complaint-search
+# ccdb5-api
 Experimenting building python modules that query elasticsearch
 
 This repository assumes that you have an instance of elasticsearch running with complaint data set up and running.
