@@ -8,7 +8,7 @@ This repository assumes that you have an instance of elasticsearch running with 
 ### As a Standalone
 
 #### Environment Variables
-This project uses environment variables and uses autoenv to automatically define environement variables and launch the virtualenv upon cding to the project folder.
+This project uses environment variables and uses autoenv to automatically define environment variables and launch the virtualenv upon cding to the project folder.
 
 You will need to install Autoenv if you haven't:
 ```shell
