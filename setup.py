@@ -31,7 +31,7 @@ def parse_requirements():
 install_requires = parse_requirements()
 
 setup(
-    name='complaint-search',
+    name='ccdb5-api',
     version='1.0.0',
 
     description='Experimenting building python modules that query elasticsearch',
