@@ -1,7 +1,7 @@
 ccdb5-api
 ================
 
-An API that provides an interface search complaint data.
+An API that provides an interface to search complaint data.
 
 ## Features
 
@@ -57,17 +57,17 @@ You can then copy the `.env_SAMPLE` file to `.env`, then update any environment 
 This project uses `requirements.txt` files for defining dependencies, so you
 can get up and running with `pip`:
 
-```bash
+```shell
 $ pip install -r requirements.txt       # modules required for execution
 ```
 
 With that, you just need a few additional commands to get up and running:
-```bash
+```shell
 $ python manage.py runserver
 ```
 
 ##  Running Tests
 
-```bash
+```shell
 $ python manage.py test
 ```
