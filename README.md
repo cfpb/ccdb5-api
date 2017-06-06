@@ -49,7 +49,7 @@ python complaint_search.py
 ### As a Package
 If you are installing this project as a package, you can pip install the following:
 ```shell
-pip install -e pip install -e git+https://github.com/amymok/complaint-search.git@master#egg=complaint-search
+pip install -e git+https://github.com/cfpb/ccdb5-api.git@master#egg=ccdb5-api
 ```
 
 This also assume that you have all the environment variables in your system, if not, please incorporate the environement variables in `.env` in your own project to make `complaint_search` works for you.

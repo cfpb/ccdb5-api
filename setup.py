@@ -31,12 +31,12 @@ def parse_requirements():
 install_requires = parse_requirements()
 
 setup(
-    name='complaint-search',
+    name='ccdb5-api',
     version='1.0.0',
 
     description='Experimenting building python modules that query elasticsearch',
     long_description=long_description,
-    url='https://github.com/amymok/complaint-search',
+    url='https://github.com/cfpb/ccdb5-api',
     author='CFPB',
     author_email='tech@cfpb.gov',
     license='CC0',
