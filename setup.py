@@ -34,7 +34,7 @@ setup(
     name='ccdb5-api',
     version='1.0.0',
 
-    description='Experimenting building python modules that query elasticsearch',
+    description='Complaint Search API',
     long_description=long_description,
     url='https://github.com/cfpb/ccdb5-api',
     author='CFPB',
@@ -43,12 +43,13 @@ setup(
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
-        'Topic :: Software Development :: Build Tools',
+        'Topic :: Internet :: WWW/HTTP :: Indexing/Search',
         'License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
+        'Framework :: Django :: 1.8',
     ],
-    keywords='query elasticsearch module',
+    keywords='complaint search api',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     install_requires=install_requires,
 )

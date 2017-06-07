@@ -1,13 +1,32 @@
-# ccdb5-api
-Experimenting building python modules that query elasticsearch
+ccdb5-api
+================
 
+An API that provides an interface to search complaint data.
+
+## Features
+
+* Search complaint data
+* Suggest complaint data based on input
+* Get complaint based on ID
+
+## Requirements
+
+Requirements are retrieved and/or build automatically via pip (see below).
+
+* django - Web framework
+* djangorestframework - Rest API framework
+* elasticsearch - low level client for Elasticsearch
+* requests - http requests to get different data format
+* urllib3 - http client library to help format http URL
+
+## API Docs
+
+TBD
+
+## Setup & Running
 This repository assumes that you have an instance of elasticsearch running with complaint data set up and running.
 
-## Installation
-
-### As a Standalone
-
-#### Environment Variables
+### Environment Variables
 This project uses environment variables and uses autoenv to automatically define environment variables and launch the virtualenv upon cding to the project folder.
 
 You will need to install Autoenv if you haven't:
@@ -34,29 +53,21 @@ brew info autoenv
 
 You can then copy the `.env_SAMPLE` file to `.env`, then update any environment variables accordingly.
 
-#### Dependencies
-Then you can install all dependencies in the `requirements.txt`
+### Dependencies
+This project uses `requirements.txt` files for defining dependencies, so you
+can get up and running with `pip`:
+
 ```shell
-pip install -r requirements.txt
+$ pip install -r requirements.txt       # modules required for execution
 ```
 
-#### Testing
-Right now you can run `complaint_search.py` to make sure everything runs successfully
-```
-python complaint_search.py
-```
-
-### As a Package
-If you are installing this project as a package, you can pip install the following:
+With that, you just need a few additional commands to get up and running:
 ```shell
-pip install -e git+https://github.com/cfpb/ccdb5-api.git@master#egg=ccdb5-api
+$ python manage.py runserver
 ```
 
-This also assume that you have all the environment variables in your system, if not, please incorporate the environement variables in `.env` in your own project to make `complaint_search` works for you.
+##  Running Tests
 
-Once you pip installed this as a package you can use functions like so in your project:
-```python
-import complaint_search
-
-complaint_search.search()
+```shell
+$ python manage.py test
 ```
