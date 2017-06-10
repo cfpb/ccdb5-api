@@ -37,19 +37,25 @@ class SearchInputSerializer(serializers.Serializer):
         (SORT_CREATED_DATE_DESC, 'Descending Created Date'),
         (SORT_CREATED_DATE_ASC, 'Ascending Created Date'),
     )
-    format = serializers.ChoiceField(FORMAT_CHOICES, required=False)
+    fmt = serializers.ChoiceField(FORMAT_CHOICES, required=False)
     field = serializers.ChoiceField(FIELD_CHOICE, required=False)
     size = serializers.IntegerField(min_value=1, max_value=100000, required=False)
-    from_index = serializers.IntegerField(min_value=0, max_value=100000, required=False)
+    frm = serializers.IntegerField(min_value=0, max_value=100000, required=False)
     sort = serializers.ChoiceField(SORT_CHOICES, required=False)
     search_term = serializers.CharField(max_length=200, required=False)
     min_date = serializers.DateField(required=False)
     max_date = serializers.DateField(required=False)
-    company = serializers.CharField(max_length=200, required=False)
-    product = serializers.CharField(max_length=200, required=False)
-    issue = serializers.CharField(max_length=200, required=False)
-    state = serializers.ChoiceField(STATE_CHOICES, required=False)
+    company = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    product = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    issue = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    state = serializers.ListField(
+        child=serializers.ChoiceField(STATE_CHOICES), required=False)
     # Right now the following two fields are CharField, but if there's a set 
     # of choices only for each, they will be converted to ChoicesField
-    consumer_disputed = serializers.CharField(max_length=200, required=False)
-    company_response = serializers.CharField(max_length=200, required=False)
+    consumer_disputed = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    company_response = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
