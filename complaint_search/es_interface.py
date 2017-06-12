@@ -21,10 +21,45 @@ def get_es():
             timeout=100)
     return _ES_INSTANCE
 
-def _create_and_append_to_filter_list(es_field_name, value_list, filter_list):
+def _create_and_append_bool_should_clauses(es_field_name, value_list, 
+    filter_list, with_subitems=False, es_subitem_field_name=None):
     if value_list:
-        term_list = [ {"terms": {es_field_name: [value]}} for value in value_list ]
-        filter_list.append({"bool": {"should": term_list}})
+        if not with_subitems:
+            term_list = [ {"terms": {es_field_name: [value]}} 
+                for value in value_list ]
+            filter_list.append({"bool": {"should": term_list}})
+        else:
+            item_dict = {}
+            for v in value_list:
+                v_pair = v.split("/")
+                print v_pair
+                # No subitem
+                if len(v_pair) == 1:
+                    # initialize list for item if not in item_dict yet
+                    if item_dict.get(v_pair[0]) is None:
+                        item_dict[v_pair[0]] = []
+
+                elif len(v_pair) == 2:
+                    # initialize list for product if not in product_dict yet
+                    if item_dict.get(v_pair[0]) is None:
+                        item_dict[v_pair[0]] = []
+                    # put subproduct into list
+                    item_dict[v_pair[0]].append(v_pair[1])
+
+            print "item_dict", item_dict
+            # Go through item_dict to create filters
+            f_list = []
+            for item, subitems in item_dict.iteritems():
+                item_term = {"terms": {es_field_name: [item]}}
+                # Item without any subitems
+                if not subitems:
+                    f_list.append(item_term)
+                else:
+                    subitem_term = {"terms": {es_subitem_field_name: subitems}}
+                    f_list.append({"and": {"filters": [item_term, subitem_term]}})
+
+            filter_list.append({"bool": {"should": f_list}})
+
 
 # def search(fmt="json"):
 def search(fmt="json", field="what_happened", size=10, frm=0, 
@@ -33,7 +68,18 @@ def search(fmt="json", field="what_happened", size=10, frm=0,
     state=None, consumer_disputed=None, company_response=None):
 
     res = None
-    body = {"from": frm, "size": size, "query": {"match_all": {}}}
+    body = {
+        "from": frm, 
+        "size": size, 
+        "query": {"match_all": {}},
+        "highlight": {
+            "fields": {
+                field: {}
+            },
+            "number_of_fragments": 1,
+            "fragment_size": 500
+        }
+    }
 
     # sort
     sort_order = "desc" if sort[0] == "-" else "asc"
@@ -57,70 +103,43 @@ def search(fmt="json", field="what_happened", size=10, frm=0,
     # post-filter
     body["post_filter"] = {"and": {"filters": []}}
 
-    if min_date:
-        body["post_filter"]["and"]["filters"][1]["range"]["created_time"]["from"] = min_date
+    ## date
+    if min_date or max_date:
+        body["post_filter"]["and"]["filters"].append({"range": {"created_time": {}}})
 
-    if max_date:
-        body["post_filter"]["and"]["filters"][1]["range"]["created_time"]["to"] = max_date
+        if min_date:
+            body["post_filter"]["and"]["filters"][1]["range"]["created_time"]["from"] = min_date
+        if max_date:
+            body["post_filter"]["and"]["filters"][1]["range"]["created_time"]["to"] = max_date
 
-    _create_and_append_to_filter_list("company_name", company, body["post_filter"]["and"]["filters"])
-    # if company:
-    #     term_list = [ {"terms": {"company_name": [c]}} for c in company ]
-    #     body["post_filter"]["and"]["filters"].append({"bool": {"should": term_list}})
+    ## company
+    _create_and_append_bool_should_clauses("company_name", company, 
+        body["post_filter"]["and"]["filters"])
 
+    ## consumer_disputed
     if consumer_disputed:
-        _create_and_append_to_filter_list("dispute_resolution", 
+        _create_and_append_bool_should_clauses("dispute_resolution", 
             [ 0 if cd.lower() == "no" else 1 for cd in consumer_disputed ],
             body["post_filter"]["and"]["filters"])
-    # if consumer_disputed:
-    #     disputed_mapped_list = [ 0 if cd.lower() == "no" else 1 for cd in consumer_disputed ]
-    #     disputed_list = [ {"terms": {"dispute_resolution": [d]}} for d in disputed_mapped_list ]
-    #     body["post_filter"]["and"]["filters"].append({"bool": {"should": disputed_list}})
 
-    if product:
-        print "inside product"
-        product_dict = {}
-        for p in product:
-            p_pair = p.split("/")
-            print p_pair
-            # No subproduct
-            if len(p_pair) == 1:
-                # initialize list for product if not in product_dict yet
-                if product_dict.get(p_pair[0]) is None:
-                    product_dict[p_pair[0]] = []
+    ## product
+    _create_and_append_bool_should_clauses("product_level_1.raw", product,
+        body["post_filter"]["and"]["filters"], with_subitems=True, 
+        es_subitem_field_name="product.raw")
 
-            elif len(p_pair) == 2:
-                # initialize list for product if not in product_dict yet
-                if product_dict.get(p_pair[0]) is None:
-                    product_dict[p_pair[0]] = []
-                # put subproduct into list
-                product_dict[p_pair[0]].append(p_pair[1])
+    ## issue
+    _create_and_append_bool_should_clauses("category_level_1.raw", issue,
+        body["post_filter"]["and"]["filters"], with_subitems=True, 
+        es_subitem_field_name="category.raw")
 
-        print "product_dict", product_dict
-        # Go through product_dict to create filters
-        filter_list = []
-        for product, subproducts in product_dict.iteritems():
-            product_term = {"terms": {"product_level_1.raw": [product]}}
-            # Product without any subproducts
-            if not subproducts:
-                filter_list.append(product_term)
-            else:
-                subproduct_term = {"terms": {"product.raw": subproducts}}
-                filter_list.append({"and": {"filters": [product_term, subproduct_term]}})
+    ## state
+    _create_and_append_bool_should_clauses("ccmail_state", state, 
+        body["post_filter"]["and"]["filters"])
 
-        body["post_filter"]["and"]["filters"].append({"bool": {"should": filter_list}})
+    ## company_response
+    _create_and_append_bool_should_clauses("comp_status_archive", company_response, 
+        body["post_filter"]["and"]["filters"])
 
-    if issue:
-        issue_list = [ {"and": {"filters": [{"terms": {"category_level_1.raw": [i]}}]}} for i in issue ]
-        body["post_filter"]["and"]["filters"].append({"bool": {"should": issue_list}})
-
-    if state:
-        state_list = [ {"terms": {"ccmail_state": [s]}} for s in state ]
-        body["post_filter"]["and"]["filters"].append({"bool": {"should": state_list}})
-
-    if company_response:
-        cresponse_list = [ {"terms": {"comp_status_archive": [r]}} for r in company_response ]
-        body["post_filter"]["and"]["filters"].append({"bool": {"should": cresponse_list}})
 
     print "body", body
     # format
