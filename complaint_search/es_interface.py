@@ -31,7 +31,8 @@ def _create_and_append_bool_should_clauses(es_field_name, value_list,
         else:
             item_dict = {}
             for v in value_list:
-                v_pair = v.split("/")
+                # -*- coding: utf-8 -*-
+                v_pair = v.split(u'\u2022')
                 print v_pair
                 # No subitem
                 if len(v_pair) == 1:
