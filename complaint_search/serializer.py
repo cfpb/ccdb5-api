@@ -60,6 +60,31 @@ class SearchInputSerializer(serializers.Serializer):
     company_response = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False)
 
+    def validate_product(self, value):
+        """
+        Valid Product format where if subproduct is presented, it should
+        be prefixed with the parent product and a bullet point u2022
+        """
+        if value:
+            for p in value:
+                # -*- coding: utf-8 -*-
+                if p.count(u'\u2022') > 1:
+                    raise serializers.ValidationError(u"Product is malformed, it needs to be \"product\" or \"product\u2022subproduct\"")
+
+        return value
+
+    def validate_issue(self, value):
+        """
+        Valid Issue format where if subissue is presented, it should
+        be prefixed with the parent product and a bullet point \u2022
+        """
+        if value:
+            for p in value:
+                # -*- coding: utf-8 -*-
+                if p.count(u'\u2022') > 1:
+                    raise serializers.ValidationError(u"Issue is malformed, it needs to be \"issue\" or \"issue\u2022subissue\"")
+
+        return value
 class SuggestInputSerializer(serializers.Serializer):
     text = serializers.CharField(max_length=200, required=False)
     size = serializers.IntegerField(min_value=1, max_value=100000, required=False)
