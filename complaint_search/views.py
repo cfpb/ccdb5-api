@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 import datetime
 import es_interface
-from complaint_search.search_input_serializer import SearchInputSerializer
+from complaint_search.serializer import SearchInputSerializer, SuggestInputSerializer
 
 @api_view(['GET'])
 def search(request):
@@ -50,8 +50,15 @@ def search(request):
 
 @api_view(['GET'])
 def suggest(request):
-    results = es_interface.suggest()
-    return Response(results)
+    QPARAMS_VARS = ("text", "size")
+    data = { k:v for k,v in request.query_params.iteritems() if k in QPARAMS_VARS }
+    serializer = SuggestInputSerializer(data=data)
+    if serializer.is_valid():
+        results = es_interface.suggest(**serializer.validated_data)
+        return Response(results)
+    else:
+        return Response(serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def document(request, id):

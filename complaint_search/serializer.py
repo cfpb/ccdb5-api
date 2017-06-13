@@ -26,10 +26,10 @@ class SearchInputSerializer(serializers.Serializer):
         (FIELD_ALL, 'all fields'),
     )
     ### Sort Choices
-    SORT_RELEVANCE_DESC = '-relevance'
-    SORT_RELEVANCE_ASC = '+relevance'
-    SORT_CREATED_DATE_DESC = '-created_date'
-    SORT_CREATED_DATE_ASC = '+created_date'
+    SORT_RELEVANCE_DESC = 'relevance_desc'
+    SORT_RELEVANCE_ASC = 'relevance_asc'
+    SORT_CREATED_DATE_DESC = 'created_date_desc'
+    SORT_CREATED_DATE_ASC = 'created_date_asc'
 
     SORT_CHOICES = (
         (SORT_RELEVANCE_DESC, 'Descending Relevance'),
@@ -59,3 +59,8 @@ class SearchInputSerializer(serializers.Serializer):
         child=serializers.CharField(max_length=200), required=False)
     company_response = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False)
+
+class SuggestInputSerializer(serializers.Serializer):
+    text = serializers.CharField(max_length=200, required=False)
+    size = serializers.IntegerField(min_value=1, max_value=100000, required=False)
+    

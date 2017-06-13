@@ -1,6 +1,7 @@
 import os
 import urllib
 import json
+from collections import defaultdict
 import requests
 from elasticsearch import Elasticsearch
 
@@ -29,21 +30,16 @@ def _create_and_append_bool_should_clauses(es_field_name, value_list,
                 for value in value_list ]
             filter_list.append({"bool": {"should": term_list}})
         else:
-            item_dict = {}
+            item_dict = defaultdict(list)
             for v in value_list:
                 # -*- coding: utf-8 -*-
                 v_pair = v.split(u'\u2022')
                 print v_pair
                 # No subitem
                 if len(v_pair) == 1:
-                    # initialize list for item if not in item_dict yet
-                    if item_dict.get(v_pair[0]) is None:
-                        item_dict[v_pair[0]] = []
-
+                    # This will initialize empty list for item if not in item_dict yet
+                    item_dict[v_pair[0]]
                 elif len(v_pair) == 2:
-                    # initialize list for product if not in product_dict yet
-                    if item_dict.get(v_pair[0]) is None:
-                        item_dict[v_pair[0]] = []
                     # put subproduct into list
                     item_dict[v_pair[0]].append(v_pair[1])
 
@@ -61,10 +57,8 @@ def _create_and_append_bool_should_clauses(es_field_name, value_list,
 
             filter_list.append({"bool": {"should": f_list}})
 
-
-# def search(fmt="json"):
 def search(fmt="json", field="what_happened", size=10, frm=0, 
-    sort="-relevance", search_term=None, min_date=None, max_date=None, 
+    sort=None, search_term=None, min_date=None, max_date=None, 
     company=None, product=None, subproduct=None, issue=None, subissue=None, 
     state=None, consumer_disputed=None, company_response=None):
 
@@ -83,9 +77,9 @@ def search(fmt="json", field="what_happened", size=10, frm=0,
     }
 
     # sort
-    sort_order = "desc" if sort[0] == "-" else "asc"
-    sort_field = "_score" if sort[1:] == "relevance" else sort[1:]
-    body["sort"] = [{sort_field: {"order": sort_order}}]
+    if sort:
+        sort_field, sort_order = sort.split("_")
+        body["sort"] = [{sort_field: {"order": sort_order}}]
 
     # query
     if search_term:
