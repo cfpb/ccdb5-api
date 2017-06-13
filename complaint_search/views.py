@@ -11,35 +11,32 @@ def search(request):
     print format
     fixed_qparam = request.query_params
     print fixed_qparam
+    QPARAMS_VARS = ('fmt', 'field', 'size', 'frm', 'sort', 
+        'search_term', 'min_date', 'max_date')
+
+    QPARAMS_LISTS = ('company', 'product', 'issue', 'state', 
+        'consumer_disputed', 'company_response')
+    # Only those that are different
+    QPARAM_SERIALIZER_MAP = {
+        'from': 'frm'
+    }
+    print request.query_params
+
+    print request.query_params.items()
+    print request.query_params.iteritems()
+
+    # data = { QPARAM_SERIALIZER_MAP.get(param, param): request.query_params.get(param) 
+    #     if param in QPARAMS_VARS else request.query_params.getlist(param)
+    #     for param in request.query_params if param in QPARAMS_VARS + QPARAMS_LISTS}
+
     data = {}
-    if request.query_params.get('fmt'):
-        data["fmt"] = request.query_params.get("fmt")
-    if request.query_params.get('field'):
-        data["field"] = request.query_params.get("field")
-    if request.query_params.get('size'):
-        data["size"] = request.query_params.get("size")
-    if request.query_params.get('from'):
-        data["frm"] = request.query_params.get("from")
-    if request.query_params.get('sort'):
-        data["sort"] = request.query_params.get("sort")
-    if request.query_params.get('search_term'):
-        data["search_term"] = request.query_params.get("search_term")
-    if request.query_params.get("min_date"):
-        data["min_date"] = request.query_params.get("min_date")
-    if request.query_params.get("max_date"):
-        data["max_date"] = request.query_params.get("max_date")
-    if request.query_params.getlist('company'):
-        data['company'] = request.query_params.getlist('company')
-    if request.query_params.getlist('product'):
-        data['product'] = request.query_params.getlist('product')
-    if request.query_params.getlist('issue'):
-        data['issue'] = request.query_params.getlist('issue')
-    if request.query_params.getlist('state'):
-        data['state'] = request.query_params.getlist('state')
-    if request.query_params.getlist('consumer_disputed'):
-        data['consumer_disputed'] = request.query_params.getlist('consumer_disputed')
-    if request.query_params.getlist('company_response'):
-        data['company_response'] = request.query_params.getlist('company_response')
+    for param in request.query_params:
+        if param in QPARAMS_VARS:
+            data[QPARAM_SERIALIZER_MAP.get(param, param)] = request.query_params.get(param) 
+        elif param in QPARAMS_LISTS:
+            data[QPARAM_SERIALIZER_MAP.get(param, param)] = request.query_params.getlist(param)
+          # TODO: else: Error if extra parameters? Or ignore?
+
     serializer = SearchInputSerializer(data=data)
 
     print "data", data
