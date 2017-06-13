@@ -25,6 +25,13 @@ class SearchInputSerializer(serializers.Serializer):
         (FIELD_RESPONSE, 'company_public_response field'),
         (FIELD_ALL, 'all fields'),
     )
+
+    FIELD_MAP = {
+        FIELD_NARRATIVE: 'what_happened',
+        FIELD_RESPONSE: 'comp_status_archive',
+        FIELD_ALL: '_all'
+    }
+
     ### Sort Choices
     SORT_RELEVANCE_DESC = 'relevance_desc'
     SORT_RELEVANCE_ASC = 'relevance_asc'
@@ -60,6 +67,12 @@ class SearchInputSerializer(serializers.Serializer):
     company_response = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False)
 
+    def to_internal_value(self, data):
+        ret = super(SearchInputSerializer, self).to_internal_value(data)
+        if ret.get('field'):
+            ret['field'] = SearchInputSerializer.FIELD_MAP.get(ret['field'], ret['field'])
+        return ret
+
     def validate_product(self, value):
         """
         Valid Product format where if subproduct is presented, it should
@@ -85,6 +98,7 @@ class SearchInputSerializer(serializers.Serializer):
                     raise serializers.ValidationError(u"Issue is malformed, it needs to be \"issue\" or \"issue\u2022subissue\"")
 
         return value
+
 class SuggestInputSerializer(serializers.Serializer):
     text = serializers.CharField(max_length=200, required=False)
     size = serializers.IntegerField(min_value=1, max_value=100000, required=False)
