@@ -57,19 +57,42 @@ def _create_and_append_bool_should_clauses(es_field_name, value_list,
 
             filter_list.append({"bool": {"should": f_list}})
 
-def search(fmt="json", field="what_happened", size=10, frm=0, 
-    sort="relevance_desc", search_term=None, min_date=None, max_date=None, 
-    company=None, product=None, subproduct=None, issue=None, subissue=None, 
-    state=None, consumer_disputed=None, company_response=None):
+# List of possible arguments:
+# - fmt: format to be returned: "json", "csv", "xls", or "xlsx"
+# - field: field you want to search in: "what_happened", "comp_status_archive", "_all"
+# - size: number of complaints to return
+# - frm: from which index to start returning
+# - sort: sort by: "relevance_desc", "relevance_asc", "created_date_desc", "created_date_asc"
+# - search_term: the term to be searched
+# - min_date: return only date including and later than this date i.e. 2017-03-02
+# - max_date: return only date before this date, i.e. 2017-04-12 
+# - company: a list of companies you want ["Bank 1", "Bank 2"]
+# - product: 
+# - issue:
+# - state:
+# - consumer_disputed:
+# - company_response:
+def search(**kwargs):
+
+    # base default parameters
+    params = {
+        "fmt": "json", 
+        "field": "what_happened", 
+        "size": 10, 
+        "frm": 0,
+        "sort": "relevance_desc"
+    }
+
+    params.update(**kwargs)
 
     res = None
     body = {
-        "from": frm, 
-        "size": size, 
+        "from": params.get("frm"), 
+        "size": params.get("size"), 
         "query": {"match_all": {}},
         "highlight": {
             "fields": {
-                field: {}
+                params.get("field"): {}
             },
             "number_of_fragments": 1,
             "fragment_size": 500
@@ -77,19 +100,19 @@ def search(fmt="json", field="what_happened", size=10, frm=0,
     }
 
     # sort
-    sort_field, sort_order = sort.split("_")
+    sort_field, sort_order = params.get("sort").split("_")
     sort_field = "_score" if sort_field == "relevance" else sort_field
     body["sort"] = [{sort_field: {"order": sort_order}}]
 
     # query
-    if search_term:
-        body["query"] = {"match": {field: {"query": search_term, "operator": "and"}}}
+    if params.get("search_term"):
+        body["query"] = {"match": {params.get("field"): {"query": params.get("search_term"), "operator": "and"}}}
     else:
         body["query"] = {
             "query_string": {
                 "query": "*",
                 "fields": [
-                    field
+                    params.get("field")
                 ],
                 "default_operator": "AND"
             }
@@ -99,55 +122,55 @@ def search(fmt="json", field="what_happened", size=10, frm=0,
     body["post_filter"] = {"and": {"filters": []}}
 
     ## date
-    if min_date or max_date:
+    if params.get("min_date") or params.get("max_date"):
         body["post_filter"]["and"]["filters"].append({"range": {"created_time": {}}})
 
-        if min_date:
-            body["post_filter"]["and"]["filters"][1]["range"]["created_time"]["from"] = min_date
-        if max_date:
-            body["post_filter"]["and"]["filters"][1]["range"]["created_time"]["to"] = max_date
+        if params.get("min_date"):
+            body["post_filter"]["and"]["filters"][1]["range"]["created_time"]["from"] = params.get("min_date")
+        if params.get("max_date"):
+            body["post_filter"]["and"]["filters"][1]["range"]["created_time"]["to"] = params.get("max_date")
 
     ## company
-    _create_and_append_bool_should_clauses("company_name", company, 
+    _create_and_append_bool_should_clauses("company_name", params.get("company"), 
         body["post_filter"]["and"]["filters"])
 
     ## consumer_disputed
-    if consumer_disputed:
+    if params.get("consumer_disputed"):
         _create_and_append_bool_should_clauses("dispute_resolution", 
-            [ 0 if cd.lower() == "no" else 1 for cd in consumer_disputed ],
+            [ 0 if cd.lower() == "no" else 1 for cd in params.get("consumer_disputed") ],
             body["post_filter"]["and"]["filters"])
 
     ## product
-    _create_and_append_bool_should_clauses("product_level_1.raw", product,
+    _create_and_append_bool_should_clauses("product_level_1.raw", params.get("product"),
         body["post_filter"]["and"]["filters"], with_subitems=True, 
         es_subitem_field_name="product.raw")
 
     ## issue
-    _create_and_append_bool_should_clauses("category_level_1.raw", issue,
+    _create_and_append_bool_should_clauses("category_level_1.raw", params.get("issue"),
         body["post_filter"]["and"]["filters"], with_subitems=True, 
         es_subitem_field_name="category.raw")
 
     ## state
-    _create_and_append_bool_should_clauses("ccmail_state", state, 
+    _create_and_append_bool_should_clauses("ccmail_state", params.get("state"), 
         body["post_filter"]["and"]["filters"])
 
     ## company_response
-    _create_and_append_bool_should_clauses("comp_status_archive", company_response, 
+    _create_and_append_bool_should_clauses("comp_status_archive", params.get("company_response"), 
         body["post_filter"]["and"]["filters"])
 
 
     print "body", body
     # format
-    if fmt == "json":
+    if params.get("fmt") == "json":
         print body
         print _COMPLAINT_ES_INDEX
         res = get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
-    elif format in ["csv", "xls", "xlsx"]:
-        params = {"format": format,
+    elif params.get("fmt") in ["csv", "xls", "xlsx"]:
+        p = {"format": params.get("fmt"),
                   "source": json.dumps(body)}
-        params = urllib.urlencode(params)
+        p = urllib.urlencode(p)
         url = "{}/{}/{}/_data?{}".format(_ES_URL, _COMPLAINT_ES_INDEX, 
-            _COMPLAINT_DOC_TYPE, params)
+            _COMPLAINT_DOC_TYPE, p)
         response = requests.get(url, auth=(_ES_USER, _ES_PASSWORD), verify=False, 
             timeout=30)
         if response.ok:
