@@ -58,7 +58,7 @@ def _create_and_append_bool_should_clauses(es_field_name, value_list,
             filter_list.append({"bool": {"should": f_list}})
 
 def search(fmt="json", field="what_happened", size=10, frm=0, 
-    sort=None, search_term=None, min_date=None, max_date=None, 
+    sort="relevance_desc", search_term=None, min_date=None, max_date=None, 
     company=None, product=None, subproduct=None, issue=None, subissue=None, 
     state=None, consumer_disputed=None, company_response=None):
 
@@ -77,9 +77,9 @@ def search(fmt="json", field="what_happened", size=10, frm=0,
     }
 
     # sort
-    if sort:
-        sort_field, sort_order = sort.split("_")
-        body["sort"] = [{sort_field: {"order": sort_order}}]
+    sort_field, sort_order = sort.split("_")
+    sort_field = "_score" if sort_field == "relevance" else sort_field
+    body["sort"] = [{sort_field: {"order": sort_order}}]
 
     # query
     if search_term:

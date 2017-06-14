@@ -84,9 +84,6 @@ DATABASES = {
     }
 }
 
-# REST_FRAMEWORK = {
-#     'URL_FORMAT_OVERRIDE': None,
-# }
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 

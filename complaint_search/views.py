@@ -25,6 +25,7 @@ def search(request):
     print request.query_params.items()
     print request.query_params.iteritems()
 
+    # This works too but it may be harder to read
     # data = { QPARAM_SERIALIZER_MAP.get(param, param): request.query_params.get(param) 
     #     if param in QPARAMS_VARS else request.query_params.getlist(param)
     #     for param in request.query_params if param in QPARAMS_VARS + QPARAMS_LISTS}
