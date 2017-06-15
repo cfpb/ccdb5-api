@@ -247,8 +247,6 @@ class SearchTests(APITestCase):
         # of the '-'
         url += "?product=Mortgage-FHA%20Mortgage&product=Payday%20Loan"
         mock_essearch.return_value = 'OK'
-        print "#######"
-        print url
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         mock_essearch.assert_called_once_with(
@@ -264,8 +262,6 @@ class SearchTests(APITestCase):
         url += "?issue=Communication%20tactics-Frequent%20or%20repeated%20calls" \
         "&issue=Loan%20servicing,%20payments,%20escrow%20account"
         mock_essearch.return_value = 'OK'
-        print "#######"
-        print url
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
@@ -274,3 +270,38 @@ class SearchTests(APITestCase):
             "Loan servicing, payments, escrow account"]})
         self.assertEqual('OK', response.data)
 
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_state__valid(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        url += "?state=CA&state=FL&state=VA"
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        # -*- coding: utf-8 -*-
+        mock_essearch.assert_called_once_with(
+            **{"state": ["CA", "FL", "VA"]})
+        self.assertEqual('OK', response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_consumer_disputed__valid(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        url += "?consumer_disputed=yes&consumer_disputed=no"
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        # -*- coding: utf-8 -*-
+        mock_essearch.assert_called_once_with(
+            **{"consumer_disputed": ["yes", "no"]})
+        self.assertEqual('OK', response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_company_response__valid(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        url += "?company_response=Closed&company_response=No%20response"
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        # -*- coding: utf-8 -*-
+        mock_essearch.assert_called_once_with(
+            **{"company_response": ["Closed", "No response"]})
+        self.assertEqual('OK', response.data)
