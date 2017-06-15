@@ -17,25 +17,25 @@ def search(request):
     QPARAMS_LISTS = ('company', 'product', 'issue', 'state', 
         'consumer_disputed', 'company_response')
     # Only those that are different
-    QPARAM_SERIALIZER_MAP = {
-        'from': 'frm'
-    }
+    # QPARAM_SERIALIZER_MAP = {
+    #     'from': 'frm'
+    # }
     print request.query_params
 
     print request.query_params.items()
     print request.query_params.iteritems()
 
     # This works too but it may be harder to read
-    # data = { QPARAM_SERIALIZER_MAP.get(param, param): request.query_params.get(param) 
+    # data = { param: request.query_params.get(param) 
     #     if param in QPARAMS_VARS else request.query_params.getlist(param)
     #     for param in request.query_params if param in QPARAMS_VARS + QPARAMS_LISTS}
 
     data = {}
     for param in request.query_params:
         if param in QPARAMS_VARS:
-            data[QPARAM_SERIALIZER_MAP.get(param, param)] = request.query_params.get(param) 
+            data[param] = request.query_params.get(param) 
         elif param in QPARAMS_LISTS:
-            data[QPARAM_SERIALIZER_MAP.get(param, param)] = request.query_params.getlist(param)
+            data[param] = request.query_params.getlist(param)
           # TODO: else: Error if extra parameters? Or ignore?
 
     serializer = SearchInputSerializer(data=data)
@@ -44,7 +44,16 @@ def search(request):
     if serializer.is_valid():
         print "validated data", serializer.validated_data
         results = es_interface.search(**serializer.validated_data)
-        return Response(results)
+
+        # FMT_CONTENT_TYPE_MAP = {
+        #     "json": "application/json",
+        #     "csv": "text/csv",
+        #     "xls": "application/vnd.ms-excel",
+        #     "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        # }
+
+        return Response(results)#, 
+            # content_type=FMT_CONTENT_TYPE_MAP.get(serializer.validated_data.get("fmt", 'json')))
     else:
         return Response(serializer.errors,
             status=status.HTTP_400_BAD_REQUEST)
