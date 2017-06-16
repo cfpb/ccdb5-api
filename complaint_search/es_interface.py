@@ -34,7 +34,6 @@ def _create_and_append_bool_should_clauses(es_field_name, value_list,
             for v in value_list:
                 # -*- coding: utf-8 -*-
                 v_pair = v.split(u'\u2022')
-                print v_pair
                 # No subitem
                 if len(v_pair) == 1:
                     # This will initialize empty list for item if not in item_dict yet
@@ -43,7 +42,6 @@ def _create_and_append_bool_should_clauses(es_field_name, value_list,
                     # put subproduct into list
                     item_dict[v_pair[0]].append(v_pair[1])
 
-            print "item_dict", item_dict
             # Go through item_dict to create filters
             f_list = []
             for item, subitems in item_dict.iteritems():
@@ -123,12 +121,13 @@ def search(**kwargs):
 
     ## date
     if params.get("min_date") or params.get("max_date"):
-        body["post_filter"]["and"]["filters"].append({"range": {"created_time": {}}})
-
+        date_clause = {"range": {"created_time": {}}}
         if params.get("min_date"):
-            body["post_filter"]["and"]["filters"][1]["range"]["created_time"]["from"] = params.get("min_date")
+            date_clause["range"]["created_time"]["from"] = params.get("min_date")
         if params.get("max_date"):
-            body["post_filter"]["and"]["filters"][1]["range"]["created_time"]["to"] = params.get("max_date")
+            date_clause["range"]["created_time"]["to"] = params.get("max_date")
+
+        body["post_filter"]["and"]["filters"].append(date_clause)
 
     ## company
     _create_and_append_bool_should_clauses("company_name", params.get("company"), 
@@ -158,12 +157,8 @@ def search(**kwargs):
     _create_and_append_bool_should_clauses("comp_status_archive", params.get("company_response"), 
         body["post_filter"]["and"]["filters"])
 
-
-    print "body", body
     # format
     if params.get("fmt") == "json":
-        print body
-        print _COMPLAINT_ES_INDEX
         res = get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
     elif params.get("fmt") in ["csv", "xls", "xlsx"]:
         p = {"format": params.get("fmt"),
@@ -180,20 +175,12 @@ def search(**kwargs):
 def suggest(text=None, size=6):
     if text is None:
         return {}
-    body = {"sgg": {"text": text, "completion": {"field":"suggest", "size": size}}}
+    body = {"sgg": {"text": text, "completion": {"field": "suggest", "size": size}}}
     res = get_es().suggest(index=_COMPLAINT_ES_INDEX, body=body)
     return res
 
 def document(complaint_id):
     doc_query = {"query": {"term": {"_id": complaint_id}}}
-    res = get_es().search(index=_COMPLAINT_ES_INDEX, doc_type='complaint', body=doc_query)
+    res = get_es().search(index=_COMPLAINT_ES_INDEX, 
+        doc_type=_COMPLAINT_DOC_TYPE, body=doc_query)
     return res
-
-if __name__ == '__main__':
-    print search()
-    print suggest()
-    print suggest("mortgage", 8)
-    print document(1707680)
-    print type(search(format='csv'))
-    print type(search(format='xls'))
-    print type(search(format='xlsx'))

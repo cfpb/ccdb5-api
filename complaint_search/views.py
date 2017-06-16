@@ -8,22 +8,12 @@ from complaint_search.serializer import SearchInputSerializer, SuggestInputSeria
 
 @api_view(['GET'])
 def search(request):
-    print format
     fixed_qparam = request.query_params
-    print fixed_qparam
     QPARAMS_VARS = ('fmt', 'field', 'size', 'frm', 'sort', 
         'search_term', 'min_date', 'max_date')
 
     QPARAMS_LISTS = ('company', 'product', 'issue', 'state', 
         'consumer_disputed', 'company_response')
-    # Only those that are different
-    # QPARAM_SERIALIZER_MAP = {
-    #     'from': 'frm'
-    # }
-    print request.query_params
-
-    print request.query_params.items()
-    print request.query_params.iteritems()
 
     # This works too but it may be harder to read
     # data = { param: request.query_params.get(param) 
@@ -40,9 +30,7 @@ def search(request):
 
     serializer = SearchInputSerializer(data=data)
 
-    print "data", data
     if serializer.is_valid():
-        print "validated data", serializer.validated_data
         results = es_interface.search(**serializer.validated_data)
 
         # FMT_CONTENT_TYPE_MAP = {

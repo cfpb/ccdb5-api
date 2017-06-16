@@ -258,4 +258,374 @@ class EsInterfaceTest(TestCase):
             index='INDEX')
         self.assertEqual('OK', res)
 
- 
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_search_with_min_date__valid(self, mock_search):
+        mock_search.return_value = 'OK'
+        body = {
+            "from": 0, 
+            "size": 10, 
+            "query": {
+                "query_string": {
+                    "query": "*",
+                    "fields": [
+                        "what_happened"
+                    ],
+                    "default_operator": "AND"
+                }
+            },
+            "highlight": {
+                "fields": {
+                    "what_happened": {}
+                },
+                "number_of_fragments": 1,
+                "fragment_size": 500
+            },
+            "sort": [{"_score": {"order": "desc"}}],
+            "post_filter": {"and": {"filters": [{"range": {"created_time": {"from": "2014-04-14"}}}]}}
+        }
+        res = search(min_date="2014-04-14")
+        mock_search.assert_called_once_with(body=body,
+            index="INDEX")
+        self.assertEqual('OK', res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_search_with_max_date__valid(self, mock_search):
+        mock_search.return_value = 'OK'
+        body = {
+            "from": 0, 
+            "size": 10, 
+            "query": {
+                "query_string": {
+                    "query": "*",
+                    "fields": [
+                        "what_happened"
+                    ],
+                    "default_operator": "AND"
+                }
+            },
+            "highlight": {
+                "fields": {
+                    "what_happened": {}
+                },
+                "number_of_fragments": 1,
+                "fragment_size": 500
+            },
+            "sort": [{"_score": {"order": "desc"}}],
+            "post_filter": {"and": {"filters": [{"range": {"created_time": {"to": "2017-04-14"}}}]}}
+        }
+        res = search(max_date="2017-04-14")
+        mock_search.assert_called_once_with(body=body,
+            index="INDEX")
+        self.assertEqual('OK', res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_search_with_company__valid(self, mock_search):
+        mock_search.return_value = 'OK'
+        body = {
+            "from": 0, 
+            "size": 10, 
+            "query": {
+                "query_string": {
+                    "query": "*",
+                    "fields": [
+                        "what_happened"
+                    ],
+                    "default_operator": "AND"
+                }
+            },
+            "highlight": {
+                "fields": {
+                    "what_happened": {}
+                },
+                "number_of_fragments": 1,
+                "fragment_size": 500
+            },
+            "sort": [{"_score": {"order": "desc"}}],
+            "post_filter": {
+                "and": {
+                    "filters": [{ 
+                        "bool": {
+                            "should": [
+                                {"terms": {"company_name": ["Bank 1"]}},
+                                {"terms": {"company_name": ["Second Bank"]}}
+                            ]
+                        }
+                    }]
+                }
+            }
+        }
+        res = search(company=["Bank 1", "Second Bank"])
+        mock_search.assert_called_once_with(body=body,
+            index="INDEX")
+        self.assertEqual('OK', res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_search_with_consumer_disputed__valid(self, mock_search):
+        mock_search.return_value = 'OK'
+        body = {
+            "from": 0, 
+            "size": 10, 
+            "query": {
+                "query_string": {
+                    "query": "*",
+                    "fields": [
+                        "what_happened"
+                    ],
+                    "default_operator": "AND"
+                }
+            },
+            "highlight": {
+                "fields": {
+                    "what_happened": {}
+                },
+                "number_of_fragments": 1,
+                "fragment_size": 500
+            },
+            "sort": [{"_score": {"order": "desc"}}],
+            "post_filter": {
+                "and": {
+                    "filters": [{ 
+                        "bool": {
+                            "should": [
+                                {"terms": {"dispute_resolution": [0]}},
+                                {"terms": {"dispute_resolution": [1]}}
+                            ]
+                        }
+                    }]
+                }
+            }
+        }
+        res = search(consumer_disputed=["No", "Yes"])
+        mock_search.assert_called_once_with(body=body,
+            index="INDEX")
+        self.assertEqual('OK', res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_search_with_product__valid(self, mock_search):
+        mock_search.return_value = 'OK'
+        body = {
+            "from": 0, 
+            "size": 10, 
+            "query": {
+                "query_string": {
+                    "query": "*",
+                    "fields": [
+                        "what_happened"
+                    ],
+                    "default_operator": "AND"
+                }
+            },
+            "highlight": {
+                "fields": {
+                    "what_happened": {}
+                },
+                "number_of_fragments": 1,
+                "fragment_size": 500
+            },
+            "sort": [{"_score": {"order": "desc"}}],
+            "post_filter": {
+                "and": {
+                    "filters": [{ 
+                        "bool": {
+                            "should": [
+
+                                {"terms": {"product_level_1.raw": ["Payday Loan"]}},
+                                {
+                                    "and": {
+                                        "filters": [
+                                            {"terms": {"product_level_1.raw": ["Mortgage"]}},
+                                            {"terms": {"product.raw": ["FHA Mortgage"]}}
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }]
+                }
+            }
+        }
+        res = search(product=["Payday Loan", u"Mortgage\u2022FHA Mortgage"])
+        mock_search.assert_called_once_with(body=body,
+            index="INDEX")
+        self.assertEqual('OK', res)  
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_search_with_issue__valid(self, mock_search):
+        mock_search.return_value = 'OK'
+        body = {
+            "from": 0, 
+            "size": 10, 
+            "query": {
+                "query_string": {
+                    "query": "*",
+                    "fields": [
+                        "what_happened"
+                    ],
+                    "default_operator": "AND"
+                }
+            },
+            "highlight": {
+                "fields": {
+                    "what_happened": {}
+                },
+                "number_of_fragments": 1,
+                "fragment_size": 500
+            },
+            "sort": [{"_score": {"order": "desc"}}],
+            "post_filter": {
+                "and": {
+                    "filters": [{ 
+                        "bool": {
+                            "should": [
+                                {
+                                    "and": {
+                                        "filters": [
+                                            {"terms": {"category_level_1.raw": ["Communication tactics"]}},
+                                            {"terms": {"category.raw": ["Frequent or repeated calls"]}}
+                                        ]
+                                    }
+                                },
+                                {"terms": {"category_level_1.raw": ["Loan servicing, payments, escrow account"]}}
+                            ]
+                        }
+                    }]
+                }
+            }
+        }
+        res = search(issue=[u"Communication tactics\u2022Frequent or repeated calls",
+        "Loan servicing, payments, escrow account"])
+        mock_search.assert_called_once_with(body=body,
+            index="INDEX")
+        self.assertEqual('OK', res)  
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_search_with_state__valid(self, mock_search):
+        mock_search.return_value = 'OK'
+        body = {
+            "from": 0, 
+            "size": 10, 
+            "query": {
+                "query_string": {
+                    "query": "*",
+                    "fields": [
+                        "what_happened"
+                    ],
+                    "default_operator": "AND"
+                }
+            },
+            "highlight": {
+                "fields": {
+                    "what_happened": {}
+                },
+                "number_of_fragments": 1,
+                "fragment_size": 500
+            },
+            "sort": [{"_score": {"order": "desc"}}],
+            "post_filter": {
+                "and": {
+                    "filters": [{ 
+                        "bool": {
+                            "should": [
+                                {"terms": {"ccmail_state": ["CA"]}},
+                                {"terms": {"ccmail_state": ["VA"]}},
+                                {"terms": {"ccmail_state": ["OR"]}}
+                            ]
+                        }
+                    }]
+                }
+            }
+        }
+        res = search(state=["CA", "VA", "OR"])
+        mock_search.assert_called_once_with(body=body,
+            index="INDEX")
+        self.assertEqual('OK', res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_search_with_company_response__valid(self, mock_search):
+        mock_search.return_value = 'OK'
+        body = {
+            "from": 0, 
+            "size": 10, 
+            "query": {
+                "query_string": {
+                    "query": "*",
+                    "fields": [
+                        "what_happened"
+                    ],
+                    "default_operator": "AND"
+                }
+            },
+            "highlight": {
+                "fields": {
+                    "what_happened": {}
+                },
+                "number_of_fragments": 1,
+                "fragment_size": 500
+            },
+            "sort": [{"_score": {"order": "desc"}}],
+            "post_filter": {
+                "and": {
+                    "filters": [{ 
+                        "bool": {
+                            "should": [
+                                {"terms": {"comp_status_archive": ["Closed"]}},
+                                {"terms": {"comp_status_archive": ["No response"]}}
+                            ]
+                        }
+                    }]
+                }
+            }
+        }
+        res = search(company_response=["Closed", "No response"])
+        mock_search.assert_called_once_with(body=body,
+            index="INDEX")
+        self.assertEqual('OK', res)
+
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'suggest')
+    def test_suggest_with_no_param__valid(self, mock_suggest):
+        mock_suggest.return_value = 'OK'
+        body = {}
+        res = suggest()
+        mock_suggest.assert_not_called()
+        self.assertEqual({}, res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'suggest')
+    def test_suggest_with_text__valid(self, mock_suggest):
+        mock_suggest.return_value = 'OK'
+        body = {"sgg": {"text": "Mortgage", "completion": {"field": "suggest", "size": 6}}}
+        res = suggest(text="Mortgage")
+        mock_suggest.assert_called_once_with(body=body,
+            index="INDEX")
+        self.assertEqual('OK', res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'suggest')
+    def test_suggest_with_size__valid(self, mock_suggest):
+        mock_suggest.return_value = 'OK'
+        body = {"sgg": {"text": "Loan", "completion": {"field": "suggest", "size": 10}}}
+        res = suggest(text="Loan", size=10)
+        mock_suggest.assert_called_once_with(body=body,
+            index="INDEX")
+        self.assertEqual('OK', res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE", "DOC_TYPE")
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_document__valid(self, mock_search):
+        mock_search.return_value = 'OK'
+        body = {"query": {"term": {"_id": 123456}}}
+        res = document(123456)
+        mock_search.assert_called_once_with(body=body, doc_type="DOC_TYPE",
+            index="INDEX")
+        self.assertEqual('OK', res) 
