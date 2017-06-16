@@ -100,7 +100,7 @@ def search(**kwargs):
     }
 
     # sort
-    sort_field, sort_order = params.get("sort").split("_")
+    sort_field, sort_order = params.get("sort").rsplit("_", 1)
     sort_field = "_score" if sort_field == "relevance" else sort_field
     body["sort"] = [{sort_field: {"order": sort_order}}]
 
