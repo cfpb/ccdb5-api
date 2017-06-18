@@ -549,6 +549,91 @@ class EsInterfaceTest(TestCase):
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'search')
+    def test_search_with_zip_code__valid(self, mock_search):
+        mock_search.return_value = 'OK'
+        body = {
+            "from": 0, 
+            "size": 10, 
+            "query": {
+                "query_string": {
+                    "query": "*",
+                    "fields": [
+                        "what_happened"
+                    ],
+                    "default_operator": "AND"
+                }
+            },
+            "highlight": {
+                "fields": {
+                    "what_happened": {}
+                },
+                "number_of_fragments": 1,
+                "fragment_size": 500
+            },
+            "sort": [{"_score": {"order": "desc"}}],
+            "post_filter": {
+                "and": {
+                    "filters": [{ 
+                        "bool": {
+                            "should": [
+                                {"terms": {"ccmail_zipcode": ["12345"]}},
+                                {"terms": {"ccmail_zipcode": ["23435"]}},
+                                {"terms": {"ccmail_zipcode": ["03433"]}}
+                            ]
+                        }
+                    }]
+                }
+            }
+        }
+        res = search(zip_code=["12345", "23435", "03433"])
+        mock_search.assert_called_once_with(body=body,
+            index="INDEX")
+        self.assertEqual('OK', res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_search_with_timely__valid(self, mock_search):
+        mock_search.return_value = 'OK'
+        body = {
+            "from": 0, 
+            "size": 10, 
+            "query": {
+                "query_string": {
+                    "query": "*",
+                    "fields": [
+                        "what_happened"
+                    ],
+                    "default_operator": "AND"
+                }
+            },
+            "highlight": {
+                "fields": {
+                    "what_happened": {}
+                },
+                "number_of_fragments": 1,
+                "fragment_size": 500
+            },
+            "sort": [{"_score": {"order": "desc"}}],
+            "post_filter": {
+                "and": {
+                    "filters": [{ 
+                        "bool": {
+                            "should": [
+                                {"terms": {"timely": ["Yes"]}},
+                                {"terms": {"timely": ["No"]}}
+                            ]
+                        }
+                    }]
+                }
+            }
+        }
+        res = search(timely=["Yes", "No"])
+        mock_search.assert_called_once_with(body=body,
+            index="INDEX")
+        self.assertEqual('OK', res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_company_response__valid(self, mock_search):
         mock_search.return_value = 'OK'
         body = {
@@ -585,6 +670,48 @@ class EsInterfaceTest(TestCase):
             }
         }
         res = search(company_response=["Closed", "No response"])
+        mock_search.assert_called_once_with(body=body,
+            index="INDEX")
+        self.assertEqual('OK', res)
+        
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_search_with_company_public_response__valid(self, mock_search):
+        mock_search.return_value = 'OK'
+        body = {
+            "from": 0, 
+            "size": 10, 
+            "query": {
+                "query_string": {
+                    "query": "*",
+                    "fields": [
+                        "what_happened"
+                    ],
+                    "default_operator": "AND"
+                }
+            },
+            "highlight": {
+                "fields": {
+                    "what_happened": {}
+                },
+                "number_of_fragments": 1,
+                "fragment_size": 500
+            },
+            "sort": [{"_score": {"order": "desc"}}],
+            "post_filter": {
+                "and": {
+                    "filters": [{ 
+                        "bool": {
+                            "should": [
+                                {"terms": {"company_public_response": ["Response 1"]}},
+                                {"terms": {"company_public_response": ["Response 2"]}}
+                            ]
+                        }
+                    }]
+                }
+            }
+        }
+        res = search(company_public_response=["Response 1", "Response 2"])
         mock_search.assert_called_once_with(body=body,
             index="INDEX")
         self.assertEqual('OK', res)

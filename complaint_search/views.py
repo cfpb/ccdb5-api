@@ -13,7 +13,8 @@ def search(request):
         'search_term', 'min_date', 'max_date')
 
     QPARAMS_LISTS = ('company', 'product', 'issue', 'state', 
-        'consumer_disputed', 'company_response')
+        'zip_code', 'timely', 'consumer_disputed', 'company_response',
+        'company_public_response')
 
     # This works too but it may be harder to read
     # data = { param: request.query_params.get(param) 

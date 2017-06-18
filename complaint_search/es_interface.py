@@ -68,8 +68,11 @@ def _create_and_append_bool_should_clauses(es_field_name, value_list,
 # - product: 
 # - issue:
 # - state:
+# - zip_code:
+# - timely:
 # - consumer_disputed:
 # - company_response:
+# - company_public_response:
 def search(**kwargs):
 
     # base default parameters
@@ -153,8 +156,20 @@ def search(**kwargs):
     _create_and_append_bool_should_clauses("ccmail_state", params.get("state"), 
         body["post_filter"]["and"]["filters"])
 
+    ## zip_code
+    _create_and_append_bool_should_clauses("ccmail_zipcode", params.get("zip_code"), 
+        body["post_filter"]["and"]["filters"])
+
+    ## timely
+    _create_and_append_bool_should_clauses("timely", params.get("timely"), 
+        body["post_filter"]["and"]["filters"])
+
     ## company_response
     _create_and_append_bool_should_clauses("comp_status_archive", params.get("company_response"), 
+        body["post_filter"]["and"]["filters"])
+
+    ## company_response
+    _create_and_append_bool_should_clauses("company_public_response", params.get("company_public_response"), 
         body["post_filter"]["and"]["filters"])
 
     # format

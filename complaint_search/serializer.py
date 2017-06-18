@@ -60,11 +60,17 @@ class SearchInputSerializer(serializers.Serializer):
         child=serializers.CharField(max_length=200), required=False)
     state = serializers.ListField(
         child=serializers.ChoiceField(STATE_CHOICES), required=False)
+    zipcode = serializers.ListField(
+        child=serializers.CharField(min_length=5, max_length=5), required=False)
+    timely = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
     # Right now the following two fields are CharField, but if there's a set 
     # of choices only for each, they will be converted to ChoicesField
     consumer_disputed = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False)
     company_response = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    company_public_response = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False)
 
     def to_internal_value(self, data):
