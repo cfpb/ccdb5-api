@@ -64,19 +64,19 @@ def _create_and_append_bool_should_clauses(es_field_name, value_list,
 # - search_term: the term to be searched
 # - min_date: return only date including and later than this date i.e. 2017-03-02
 # - max_date: return only date before this date, i.e. 2017-04-12 
-# - company: a list of companies you want ["Bank 1", "Bank 2"]
-# - product: 
-# - issue:
-# - state:
-# - zip_code:
-# - timely:
-# - consumer_disputed:
-# - company_response:
-# - company_public_response:
-# - consumer_consent_provided
-# - has_narratives
-# - submitted_via
-# - tag
+# - company: filters a list of companies you want ["Bank 1", "Bank 2"]
+# - product: filters a list of product you want if a subproduct is needed to filter, separated by a bullet (u'\u2022), i.e. [u"Mortgage\u2022FHA Mortgage", "Payday Loan"]
+# - issue: filters a list of issue you want if a subissue is needed to filter, separated by a bullet (u'\u2022), i.e. See Product above
+# - state: filters a list of states you want
+# - zip_code: filters a list of zipcodes you want
+# - timely: filters a list of whether the company responds in a timely matter or not
+# - consumer_disputed: filters a list of dispute resolution
+# - company_response: filters a list of response from the company to consumer
+# - company_public_response: filters a list of public response from the company
+# - consumer_consent_provided: filters a list of whether consumer consent was provided in the complaint
+# - has_narratives: filters a list of whether complaint has narratives or not
+# - submitted_via: filters a list of ways the complaint was submitted
+# - tag - filters a list of tags
 def search(**kwargs):
 
     # base default parameters
