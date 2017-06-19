@@ -47,8 +47,10 @@ class SearchTests(APITestCase):
             self.assertEqual(status.HTTP_200_OK, response.status_code)
             self.assertEqual('OK', response.data)
 
-        calls = [ mock.call(**{"field": SearchInputSerializer.FIELD_MAP[field_pair[0]]}) 
-            for field_pair in SearchInputSerializer.FIELD_CHOICES ]
+        calls = [ mock.call(
+            **{"field": SearchInputSerializer.FIELD_MAP.get(field_pair[0], 
+                field_pair[0])}) 
+                for field_pair in SearchInputSerializer.FIELD_CHOICES ]
         mock_essearch.assert_has_calls(calls)
 
     @mock.patch('complaint_search.es_interface.search')

@@ -14,7 +14,8 @@ def search(request):
 
     QPARAMS_LISTS = ('company', 'product', 'issue', 'state', 
         'zip_code', 'timely', 'consumer_disputed', 'company_response',
-        'company_public_response')
+        'company_public_response', 'consumer_consent_provided', 
+        'has_narratives', 'submitted_via', 'tag')
 
     # This works too but it may be harder to read
     # data = { param: request.query_params.get(param) 

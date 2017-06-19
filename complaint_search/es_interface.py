@@ -57,7 +57,7 @@ def _create_and_append_bool_should_clauses(es_field_name, value_list,
 
 # List of possible arguments:
 # - fmt: format to be returned: "json", "csv", "xls", or "xlsx"
-# - field: field you want to search in: "what_happened", "comp_status_archive", "_all"
+# - field: field you want to search in: "complaint_what_happened", "company_public_response", "_all"
 # - size: number of complaints to return
 # - frm: from which index to start returning
 # - sort: sort by: "relevance_desc", "relevance_asc", "created_date_desc", "created_date_asc"
@@ -73,16 +73,31 @@ def _create_and_append_bool_should_clauses(es_field_name, value_list,
 # - consumer_disputed:
 # - company_response:
 # - company_public_response:
+# - consumer_consent_provided
+# - has_narratives
+# - submitted_via
+# - tag
 def search(**kwargs):
 
     # base default parameters
     params = {
         "fmt": "json", 
-        "field": "what_happened", 
+        "field": "complaint_what_happened", 
         "size": 10, 
         "frm": 0,
         "sort": "relevance_desc"
     }
+
+    OPTIONAL_FILTERS = ("product", "issue", "company", "state", "zip_code", "timely", 
+        "company_response", "company_public_response", 
+        "consumer_consent_provided", "submitted_via", "tag")
+
+    OPTIONAL_FILTERS_CHILD_MAP = {
+        "product": "subproduct", 
+        "issue": "subissue"
+    }
+
+    OPTIONAL_FILTERS_STRING_TO_BOOL = ("consumer_disputed", "has_narratives")
 
     params.update(**kwargs)
 
@@ -132,45 +147,21 @@ def search(**kwargs):
 
         body["post_filter"]["and"]["filters"].append(date_clause)
 
-    ## company
-    _create_and_append_bool_should_clauses("company_name", params.get("company"), 
-        body["post_filter"]["and"]["filters"])
+    ## Create bool should clauses for fields in OPTIONAL_FILTERS
+    for field in OPTIONAL_FILTERS:
+        if field in OPTIONAL_FILTERS_CHILD_MAP: 
+            _create_and_append_bool_should_clauses(field, params.get(field),
+                body["post_filter"]["and"]["filters"], with_subitems=True, 
+                es_subitem_field_name=OPTIONAL_FILTERS_CHILD_MAP.get(field))
+        else:
+            _create_and_append_bool_should_clauses(field, params.get(field),
+                body["post_filter"]["and"]["filters"])
 
-    ## consumer_disputed
-    if params.get("consumer_disputed"):
-        _create_and_append_bool_should_clauses("dispute_resolution", 
-            [ 0 if cd.lower() == "no" else 1 for cd in params.get("consumer_disputed") ],
-            body["post_filter"]["and"]["filters"])
-
-    ## product
-    _create_and_append_bool_should_clauses("product_level_1.raw", params.get("product"),
-        body["post_filter"]["and"]["filters"], with_subitems=True, 
-        es_subitem_field_name="product.raw")
-
-    ## issue
-    _create_and_append_bool_should_clauses("category_level_1.raw", params.get("issue"),
-        body["post_filter"]["and"]["filters"], with_subitems=True, 
-        es_subitem_field_name="category.raw")
-
-    ## state
-    _create_and_append_bool_should_clauses("ccmail_state", params.get("state"), 
-        body["post_filter"]["and"]["filters"])
-
-    ## zip_code
-    _create_and_append_bool_should_clauses("ccmail_zipcode", params.get("zip_code"), 
-        body["post_filter"]["and"]["filters"])
-
-    ## timely
-    _create_and_append_bool_should_clauses("timely", params.get("timely"), 
-        body["post_filter"]["and"]["filters"])
-
-    ## company_response
-    _create_and_append_bool_should_clauses("comp_status_archive", params.get("company_response"), 
-        body["post_filter"]["and"]["filters"])
-
-    ## company_response
-    _create_and_append_bool_should_clauses("company_public_response", params.get("company_public_response"), 
-        body["post_filter"]["and"]["filters"])
+    for field in OPTIONAL_FILTERS_STRING_TO_BOOL:
+        if params.get(field):
+            _create_and_append_bool_should_clauses(field, 
+                [ 0 if cd.lower() == "no" else 1 for cd in params.get(field) ],
+                body["post_filter"]["and"]["filters"])
 
     # format
     if params.get("fmt") == "json":

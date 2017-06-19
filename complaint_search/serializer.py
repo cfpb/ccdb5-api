@@ -27,8 +27,8 @@ class SearchInputSerializer(serializers.Serializer):
     )
 
     FIELD_MAP = {
-        FIELD_NARRATIVE: 'what_happened',
-        FIELD_RESPONSE: 'comp_status_archive',
+        # FIELD_NARRATIVE: 'what_happened',
+        # FIELD_RESPONSE: 'comp_status_archive',
         FIELD_ALL: '_all'
     }
 
@@ -71,6 +71,14 @@ class SearchInputSerializer(serializers.Serializer):
     company_response = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False)
     company_public_response = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    consumer_consent_provided = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    has_narratives = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    submitted_via = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    tag = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False)
 
     def to_internal_value(self, data):

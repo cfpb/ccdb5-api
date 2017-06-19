@@ -23,14 +23,14 @@ class EsInterfaceTest(TestCase):
                 "query_string": {
                     "query": "*",
                     "fields": [
-                        "what_happened"
+                        "complaint_what_happened"
                     ],
                     "default_operator": "AND"
                 }
             },
             "highlight": {
                 "fields": {
-                    "what_happened": {}
+                    "complaint_what_happened": {}
                 },
                 "number_of_fragments": 1,
                 "fragment_size": 500
@@ -60,14 +60,14 @@ class EsInterfaceTest(TestCase):
                 "query_string": {
                     "query": "*",
                     "fields": [
-                        "what_happened"
+                        "complaint_what_happened"
                     ],
                     "default_operator": "AND"
                 }
             },
             "highlight": {
                 "fields": {
-                    "what_happened": {}
+                    "complaint_what_happened": {}
                 },
                 "number_of_fragments": 1,
                 "fragment_size": 500
@@ -136,14 +136,14 @@ class EsInterfaceTest(TestCase):
                 "query_string": {
                     "query": "*",
                     "fields": [
-                        "what_happened"
+                        "complaint_what_happened"
                     ],
                     "default_operator": "AND"
                 }
             },
             "highlight": {
                 "fields": {
-                    "what_happened": {}
+                    "complaint_what_happened": {}
                 },
                 "number_of_fragments": 1,
                 "fragment_size": 500
@@ -167,14 +167,14 @@ class EsInterfaceTest(TestCase):
                 "query_string": {
                     "query": "*",
                     "fields": [
-                        "what_happened"
+                        "complaint_what_happened"
                     ],
                     "default_operator": "AND"
                 }
             },
             "highlight": {
                 "fields": {
-                    "what_happened": {}
+                    "complaint_what_happened": {}
                 },
                 "number_of_fragments": 1,
                 "fragment_size": 500
@@ -199,14 +199,14 @@ class EsInterfaceTest(TestCase):
                 "query_string": {
                     "query": "*",
                     "fields": [
-                        "what_happened"
+                        "complaint_what_happened"
                     ],
                     "default_operator": "AND"
                 }
             },
             "highlight": {
                 "fields": {
-                    "what_happened": {}
+                    "complaint_what_happened": {}
                 },
                 "number_of_fragments": 1,
                 "fragment_size": 500
@@ -237,7 +237,7 @@ class EsInterfaceTest(TestCase):
             "size": 10, 
             "query": {
                 "match": {
-                    "what_happened": {
+                    "complaint_what_happened": {
                         "query": "test_term", 
                         "operator": "and"
                     }
@@ -245,7 +245,7 @@ class EsInterfaceTest(TestCase):
             },
             "highlight": {
                 "fields": {
-                    "what_happened": {}
+                    "complaint_what_happened": {}
                 },
                 "number_of_fragments": 1,
                 "fragment_size": 500
@@ -269,14 +269,14 @@ class EsInterfaceTest(TestCase):
                 "query_string": {
                     "query": "*",
                     "fields": [
-                        "what_happened"
+                        "complaint_what_happened"
                     ],
                     "default_operator": "AND"
                 }
             },
             "highlight": {
                 "fields": {
-                    "what_happened": {}
+                    "complaint_what_happened": {}
                 },
                 "number_of_fragments": 1,
                 "fragment_size": 500
@@ -300,14 +300,14 @@ class EsInterfaceTest(TestCase):
                 "query_string": {
                     "query": "*",
                     "fields": [
-                        "what_happened"
+                        "complaint_what_happened"
                     ],
                     "default_operator": "AND"
                 }
             },
             "highlight": {
                 "fields": {
-                    "what_happened": {}
+                    "complaint_what_happened": {}
                 },
                 "number_of_fragments": 1,
                 "fragment_size": 500
@@ -331,14 +331,14 @@ class EsInterfaceTest(TestCase):
                 "query_string": {
                     "query": "*",
                     "fields": [
-                        "what_happened"
+                        "complaint_what_happened"
                     ],
                     "default_operator": "AND"
                 }
             },
             "highlight": {
                 "fields": {
-                    "what_happened": {}
+                    "complaint_what_happened": {}
                 },
                 "number_of_fragments": 1,
                 "fragment_size": 500
@@ -349,8 +349,8 @@ class EsInterfaceTest(TestCase):
                     "filters": [{ 
                         "bool": {
                             "should": [
-                                {"terms": {"company_name": ["Bank 1"]}},
-                                {"terms": {"company_name": ["Second Bank"]}}
+                                {"terms": {"company": ["Bank 1"]}},
+                                {"terms": {"company": ["Second Bank"]}}
                             ]
                         }
                     }]
@@ -362,47 +362,6 @@ class EsInterfaceTest(TestCase):
             index="INDEX")
         self.assertEqual('OK', res)
 
-    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch.object(Elasticsearch, 'search')
-    def test_search_with_consumer_disputed__valid(self, mock_search):
-        mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {
-                "and": {
-                    "filters": [{ 
-                        "bool": {
-                            "should": [
-                                {"terms": {"dispute_resolution": [0]}},
-                                {"terms": {"dispute_resolution": [1]}}
-                            ]
-                        }
-                    }]
-                }
-            }
-        }
-        res = search(consumer_disputed=["No", "Yes"])
-        mock_search.assert_called_once_with(body=body,
-            index="INDEX")
-        self.assertEqual('OK', res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'search')
@@ -415,14 +374,14 @@ class EsInterfaceTest(TestCase):
                 "query_string": {
                     "query": "*",
                     "fields": [
-                        "what_happened"
+                        "complaint_what_happened"
                     ],
                     "default_operator": "AND"
                 }
             },
             "highlight": {
                 "fields": {
-                    "what_happened": {}
+                    "complaint_what_happened": {}
                 },
                 "number_of_fragments": 1,
                 "fragment_size": 500
@@ -434,12 +393,12 @@ class EsInterfaceTest(TestCase):
                         "bool": {
                             "should": [
 
-                                {"terms": {"product_level_1.raw": ["Payday Loan"]}},
+                                {"terms": {"product": ["Payday Loan"]}},
                                 {
                                     "and": {
                                         "filters": [
-                                            {"terms": {"product_level_1.raw": ["Mortgage"]}},
-                                            {"terms": {"product.raw": ["FHA Mortgage"]}}
+                                            {"terms": {"product": ["Mortgage"]}},
+                                            {"terms": {"subproduct": ["FHA Mortgage"]}}
                                         ]
                                     }
                                 }
@@ -465,14 +424,14 @@ class EsInterfaceTest(TestCase):
                 "query_string": {
                     "query": "*",
                     "fields": [
-                        "what_happened"
+                        "complaint_what_happened"
                     ],
                     "default_operator": "AND"
                 }
             },
             "highlight": {
                 "fields": {
-                    "what_happened": {}
+                    "complaint_what_happened": {}
                 },
                 "number_of_fragments": 1,
                 "fragment_size": 500
@@ -486,12 +445,12 @@ class EsInterfaceTest(TestCase):
                                 {
                                     "and": {
                                         "filters": [
-                                            {"terms": {"category_level_1.raw": ["Communication tactics"]}},
-                                            {"terms": {"category.raw": ["Frequent or repeated calls"]}}
+                                            {"terms": {"issue": ["Communication tactics"]}},
+                                            {"terms": {"subissue": ["Frequent or repeated calls"]}}
                                         ]
                                     }
                                 },
-                                {"terms": {"category_level_1.raw": ["Loan servicing, payments, escrow account"]}}
+                                {"terms": {"issue": ["Loan servicing, payments, escrow account"]}}
                             ]
                         }
                     }]
@@ -515,14 +474,14 @@ class EsInterfaceTest(TestCase):
                 "query_string": {
                     "query": "*",
                     "fields": [
-                        "what_happened"
+                        "complaint_what_happened"
                     ],
                     "default_operator": "AND"
                 }
             },
             "highlight": {
                 "fields": {
-                    "what_happened": {}
+                    "complaint_what_happened": {}
                 },
                 "number_of_fragments": 1,
                 "fragment_size": 500
@@ -533,9 +492,9 @@ class EsInterfaceTest(TestCase):
                     "filters": [{ 
                         "bool": {
                             "should": [
-                                {"terms": {"ccmail_state": ["CA"]}},
-                                {"terms": {"ccmail_state": ["VA"]}},
-                                {"terms": {"ccmail_state": ["OR"]}}
+                                {"terms": {"state": ["CA"]}},
+                                {"terms": {"state": ["VA"]}},
+                                {"terms": {"state": ["OR"]}}
                             ]
                         }
                     }]
@@ -558,14 +517,14 @@ class EsInterfaceTest(TestCase):
                 "query_string": {
                     "query": "*",
                     "fields": [
-                        "what_happened"
+                        "complaint_what_happened"
                     ],
                     "default_operator": "AND"
                 }
             },
             "highlight": {
                 "fields": {
-                    "what_happened": {}
+                    "complaint_what_happened": {}
                 },
                 "number_of_fragments": 1,
                 "fragment_size": 500
@@ -576,9 +535,9 @@ class EsInterfaceTest(TestCase):
                     "filters": [{ 
                         "bool": {
                             "should": [
-                                {"terms": {"ccmail_zipcode": ["12345"]}},
-                                {"terms": {"ccmail_zipcode": ["23435"]}},
-                                {"terms": {"ccmail_zipcode": ["03433"]}}
+                                {"terms": {"zip_code": ["12345"]}},
+                                {"terms": {"zip_code": ["23435"]}},
+                                {"terms": {"zip_code": ["03433"]}}
                             ]
                         }
                     }]
@@ -601,14 +560,14 @@ class EsInterfaceTest(TestCase):
                 "query_string": {
                     "query": "*",
                     "fields": [
-                        "what_happened"
+                        "complaint_what_happened"
                     ],
                     "default_operator": "AND"
                 }
             },
             "highlight": {
                 "fields": {
-                    "what_happened": {}
+                    "complaint_what_happened": {}
                 },
                 "number_of_fragments": 1,
                 "fragment_size": 500
@@ -643,14 +602,14 @@ class EsInterfaceTest(TestCase):
                 "query_string": {
                     "query": "*",
                     "fields": [
-                        "what_happened"
+                        "complaint_what_happened"
                     ],
                     "default_operator": "AND"
                 }
             },
             "highlight": {
                 "fields": {
-                    "what_happened": {}
+                    "complaint_what_happened": {}
                 },
                 "number_of_fragments": 1,
                 "fragment_size": 500
@@ -661,8 +620,8 @@ class EsInterfaceTest(TestCase):
                     "filters": [{ 
                         "bool": {
                             "should": [
-                                {"terms": {"comp_status_archive": ["Closed"]}},
-                                {"terms": {"comp_status_archive": ["No response"]}}
+                                {"terms": {"company_response": ["Closed"]}},
+                                {"terms": {"company_response": ["No response"]}}
                             ]
                         }
                     }]
@@ -685,14 +644,14 @@ class EsInterfaceTest(TestCase):
                 "query_string": {
                     "query": "*",
                     "fields": [
-                        "what_happened"
+                        "complaint_what_happened"
                     ],
                     "default_operator": "AND"
                 }
             },
             "highlight": {
                 "fields": {
-                    "what_happened": {}
+                    "complaint_what_happened": {}
                 },
                 "number_of_fragments": 1,
                 "fragment_size": 500
@@ -712,6 +671,216 @@ class EsInterfaceTest(TestCase):
             }
         }
         res = search(company_public_response=["Response 1", "Response 2"])
+        mock_search.assert_called_once_with(body=body,
+            index="INDEX")
+        self.assertEqual('OK', res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_search_with_consumer_consent_provided__valid(self, mock_search):
+        mock_search.return_value = 'OK'
+        body = {
+            "from": 0, 
+            "size": 10, 
+            "query": {
+                "query_string": {
+                    "query": "*",
+                    "fields": [
+                        "complaint_what_happened"
+                    ],
+                    "default_operator": "AND"
+                }
+            },
+            "highlight": {
+                "fields": {
+                    "complaint_what_happened": {}
+                },
+                "number_of_fragments": 1,
+                "fragment_size": 500
+            },
+            "sort": [{"_score": {"order": "desc"}}],
+            "post_filter": {
+                "and": {
+                    "filters": [{ 
+                        "bool": {
+                            "should": [
+                                {"terms": {"consumer_consent_provided": ["yes"]}},
+                                {"terms": {"consumer_consent_provided": ["no"]}}
+                            ]
+                        }
+                    }]
+                }
+            }
+        }
+        res = search(consumer_consent_provided=["yes", "no"])
+        mock_search.assert_called_once_with(body=body,
+            index="INDEX")
+        self.assertEqual('OK', res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_search_with_submitted_via__valid(self, mock_search):
+        mock_search.return_value = 'OK'
+        body = {
+            "from": 0, 
+            "size": 10, 
+            "query": {
+                "query_string": {
+                    "query": "*",
+                    "fields": [
+                        "complaint_what_happened"
+                    ],
+                    "default_operator": "AND"
+                }
+            },
+            "highlight": {
+                "fields": {
+                    "complaint_what_happened": {}
+                },
+                "number_of_fragments": 1,
+                "fragment_size": 500
+            },
+            "sort": [{"_score": {"order": "desc"}}],
+            "post_filter": {
+                "and": {
+                    "filters": [{ 
+                        "bool": {
+                            "should": [
+                                {"terms": {"submitted_via": ["mail"]}},
+                                {"terms": {"submitted_via": ["web"]}}
+                            ]
+                        }
+                    }]
+                }
+            }
+        }
+        res = search(submitted_via=["mail", "web"])
+        mock_search.assert_called_once_with(body=body,
+            index="INDEX")
+        self.assertEqual('OK', res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_search_with_tag__valid(self, mock_search):
+        mock_search.return_value = 'OK'
+        body = {
+            "from": 0, 
+            "size": 10, 
+            "query": {
+                "query_string": {
+                    "query": "*",
+                    "fields": [
+                        "complaint_what_happened"
+                    ],
+                    "default_operator": "AND"
+                }
+            },
+            "highlight": {
+                "fields": {
+                    "complaint_what_happened": {}
+                },
+                "number_of_fragments": 1,
+                "fragment_size": 500
+            },
+            "sort": [{"_score": {"order": "desc"}}],
+            "post_filter": {
+                "and": {
+                    "filters": [{ 
+                        "bool": {
+                            "should": [
+                                {"terms": {"tag": ["Older American"]}},
+                                {"terms": {"tag": ["Servicemember"]}}
+                            ]
+                        }
+                    }]
+                }
+            }
+        }
+        res = search(tag=["Older American", "Servicemember"])
+        mock_search.assert_called_once_with(body=body,
+            index="INDEX")
+        self.assertEqual('OK', res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_search_with_consumer_disputed__valid(self, mock_search):
+        mock_search.return_value = 'OK'
+        body = {
+            "from": 0, 
+            "size": 10, 
+            "query": {
+                "query_string": {
+                    "query": "*",
+                    "fields": [
+                        "complaint_what_happened"
+                    ],
+                    "default_operator": "AND"
+                }
+            },
+            "highlight": {
+                "fields": {
+                    "complaint_what_happened": {}
+                },
+                "number_of_fragments": 1,
+                "fragment_size": 500
+            },
+            "sort": [{"_score": {"order": "desc"}}],
+            "post_filter": {
+                "and": {
+                    "filters": [{ 
+                        "bool": {
+                            "should": [
+                                {"terms": {"consumer_disputed": [0]}},
+                                {"terms": {"consumer_disputed": [1]}}
+                            ]
+                        }
+                    }]
+                }
+            }
+        }
+        res = search(consumer_disputed=["No", "Yes"])
+        mock_search.assert_called_once_with(body=body,
+            index="INDEX")
+        self.assertEqual('OK', res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_search_with_has_narratives__valid(self, mock_search):
+        mock_search.return_value = 'OK'
+        body = {
+            "from": 0, 
+            "size": 10, 
+            "query": {
+                "query_string": {
+                    "query": "*",
+                    "fields": [
+                        "complaint_what_happened"
+                    ],
+                    "default_operator": "AND"
+                }
+            },
+            "highlight": {
+                "fields": {
+                    "complaint_what_happened": {}
+                },
+                "number_of_fragments": 1,
+                "fragment_size": 500
+            },
+            "sort": [{"_score": {"order": "desc"}}],
+            "post_filter": {
+                "and": {
+                    "filters": [{ 
+                        "bool": {
+                            "should": [
+                                {"terms": {"has_narratives": [0]}},
+                                {"terms": {"has_narratives": [1]}}
+                            ]
+                        }
+                    }]
+                }
+            }
+        }
+        res = search(has_narratives=["No", "Yes"])
         mock_search.assert_called_once_with(body=body,
             index="INDEX")
         self.assertEqual('OK', res)
