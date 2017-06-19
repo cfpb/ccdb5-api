@@ -139,11 +139,11 @@ def search(**kwargs):
 
     ## date
     if params.get("min_date") or params.get("max_date"):
-        date_clause = {"range": {"created_time": {}}}
+        date_clause = {"range": {"date_received": {}}}
         if params.get("min_date"):
-            date_clause["range"]["created_time"]["from"] = params.get("min_date")
+            date_clause["range"]["date_received"]["from"] = params.get("min_date")
         if params.get("max_date"):
-            date_clause["range"]["created_time"]["to"] = params.get("max_date")
+            date_clause["range"]["date_received"]["to"] = params.get("max_date")
 
         body["post_filter"]["and"]["filters"].append(date_clause)
 

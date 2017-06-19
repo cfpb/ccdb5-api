@@ -282,7 +282,7 @@ class EsInterfaceTest(TestCase):
                 "fragment_size": 500
             },
             "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {"and": {"filters": [{"range": {"created_time": {"from": "2014-04-14"}}}]}}
+            "post_filter": {"and": {"filters": [{"range": {"date_received": {"from": "2014-04-14"}}}]}}
         }
         res = search(min_date="2014-04-14")
         mock_search.assert_called_once_with(body=body,
@@ -313,7 +313,7 @@ class EsInterfaceTest(TestCase):
                 "fragment_size": 500
             },
             "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {"and": {"filters": [{"range": {"created_time": {"to": "2017-04-14"}}}]}}
+            "post_filter": {"and": {"filters": [{"range": {"date_received": {"to": "2017-04-14"}}}]}}
         }
         res = search(max_date="2017-04-14")
         mock_search.assert_called_once_with(body=body,
