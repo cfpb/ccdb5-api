@@ -1,7 +1,7 @@
 import os
 import urllib
 import json
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 import requests
 from elasticsearch import Elasticsearch
 
@@ -92,9 +92,15 @@ def search(**kwargs):
         "company_response", "company_public_response", 
         "consumer_consent_provided", "submitted_via", "tag")
 
+    OPTIONAL_FILTERS_PARAM_TO_ES_MAP = {
+        "product": "product.raw",
+        "sub_product": "sub_product.raw",
+        "issue": "issue.raw",
+        "sub_issue": "sub_issue.raw"
+    }
     OPTIONAL_FILTERS_CHILD_MAP = {
-        "product": "subproduct", 
-        "issue": "subissue"
+        "product": "sub_product", 
+        "issue": "sub_issue"
     }
 
     OPTIONAL_FILTERS_STRING_TO_BOOL = ("consumer_disputed", "has_narratives")
@@ -122,7 +128,14 @@ def search(**kwargs):
 
     # query
     if params.get("search_term"):
-        body["query"] = {"match": {params.get("field"): {"query": params.get("search_term"), "operator": "and"}}}
+        body["query"] = {
+            "match": {
+                params.get("field"): {
+                    "query": params.get("search_term"), 
+                    "operator": "and"
+                }
+            }
+        }
     else:
         body["query"] = {
             "query_string": {
@@ -150,12 +163,13 @@ def search(**kwargs):
     ## Create bool should clauses for fields in OPTIONAL_FILTERS
     for field in OPTIONAL_FILTERS:
         if field in OPTIONAL_FILTERS_CHILD_MAP: 
-            _create_and_append_bool_should_clauses(field, params.get(field),
-                body["post_filter"]["and"]["filters"], with_subitems=True, 
-                es_subitem_field_name=OPTIONAL_FILTERS_CHILD_MAP.get(field))
+            _create_and_append_bool_should_clauses(OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(field, field), 
+                params.get(field), body["post_filter"]["and"]["filters"], with_subitems=True, 
+                es_subitem_field_name=OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(OPTIONAL_FILTERS_CHILD_MAP.get(field), 
+                    OPTIONAL_FILTERS_CHILD_MAP.get(field)))
         else:
-            _create_and_append_bool_should_clauses(field, params.get(field),
-                body["post_filter"]["and"]["filters"])
+            _create_and_append_bool_should_clauses(OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(field, field), 
+                params.get(field), body["post_filter"]["and"]["filters"])
 
     for field in OPTIONAL_FILTERS_STRING_TO_BOOL:
         if params.get(field):
