@@ -393,12 +393,12 @@ class EsInterfaceTest(TestCase):
                         "bool": {
                             "should": [
 
-                                {"terms": {"product": ["Payday Loan"]}},
+                                {"terms": {"product.raw": ["Payday Loan"]}},
                                 {
                                     "and": {
                                         "filters": [
-                                            {"terms": {"product": ["Mortgage"]}},
-                                            {"terms": {"subproduct": ["FHA Mortgage"]}}
+                                            {"terms": {"product.raw": ["Mortgage"]}},
+                                            {"terms": {"sub_product.raw": ["FHA Mortgage"]}}
                                         ]
                                     }
                                 }
@@ -445,12 +445,12 @@ class EsInterfaceTest(TestCase):
                                 {
                                     "and": {
                                         "filters": [
-                                            {"terms": {"issue": ["Communication tactics"]}},
-                                            {"terms": {"subissue": ["Frequent or repeated calls"]}}
+                                            {"terms": {"issue.raw": ["Communication tactics"]}},
+                                            {"terms": {"sub_issue.raw": ["Frequent or repeated calls"]}}
                                         ]
                                     }
                                 },
-                                {"terms": {"issue": ["Loan servicing, payments, escrow account"]}}
+                                {"terms": {"issue.raw": ["Loan servicing, payments, escrow account"]}}
                             ]
                         }
                     }]
