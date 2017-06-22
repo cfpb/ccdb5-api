@@ -1,3 +1,7 @@
+# Django #
+#################
+*.egg-info
+
 .env
 *.pyc
 db.sqlite3
