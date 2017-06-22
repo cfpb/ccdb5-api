@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.http import JsonResponse
+from django.conf import settings
 import datetime
 import es_interface
 from complaint_search.serializer import SearchInputSerializer, SuggestInputSerializer
@@ -42,7 +43,16 @@ def search(request):
         #     "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         # }
 
-        return Response(results)#, 
+        # Local development requires CORS support
+        headers = {}
+        if settings.DEBUG:
+            headers = {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type,Authorization',
+                'Access-Control-Allow-Methods': 'GET'
+            }
+
+        return Response(results, headers=headers)#,
             # content_type=FMT_CONTENT_TYPE_MAP.get(serializer.validated_data.get("fmt", 'json')))
     else:
         return Response(serializer.errors,

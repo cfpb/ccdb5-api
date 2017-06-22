@@ -1,4 +1,5 @@
 from django.core.urlresolvers import reverse
+from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 from unittest import skip
@@ -23,6 +24,18 @@ class SearchTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         mock_essearch.assert_called_once_with()
         self.assertEqual('OK', response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_cors_headers(self, mock_essearch):
+        """
+        Make sure the response has CORS headers in debug mode
+        """
+        settings.DEBUG = True
+        url = reverse('complaint_search:search')
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.has_header('Access-Control-Allow-Origin'))
 
     # @mock.patch('complaint_search.es_interface.search')
     # def test_search_with_fmt(self, mock_essearch):
