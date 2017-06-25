@@ -61,6 +61,7 @@ def _create_aggregation(**kwargs):
     ]
     aggs = {}
 
+    # Creating aggregation object for each field above
     for field in fields:
         field_aggs = {
             "filter": {
@@ -118,27 +119,18 @@ def _create_aggregation(**kwargs):
         
         for item in kwargs:
             if item in _OPTIONAL_FILTERS and item != field.name:
-                clauses = _create_and_append_bool_should_clauses(item, 
+                clauses = _create_and_append_bool_should_clauses(_OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(item, item), 
                     kwargs[item], field_aggs["filter"]["and"]["filters"], 
-                    with_subitems=field.has_subfield, 
-                    es_subitem_field_name=es_subfield_name)
+                    with_subitems=item in _OPTIONAL_FILTERS_CHILD_MAP, 
+                    es_subitem_field_name=_OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(_OPTIONAL_FILTERS_CHILD_MAP.get(item)))
             elif item in _OPTIONAL_FILTERS_STRING_TO_BOOL and item != field.name:
-                clauses = _create_and_append_bool_should_clauses(item, 
+                clauses = _create_and_append_bool_should_clauses(_OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(item, item), 
                     [ 0 if cd.lower() == "no" else 1 for cd in kwargs[item] ],
                     field_aggs["filter"]["and"]["filters"])
 
         aggs[field.title] = field_aggs
 
     return aggs
-    # for field_aggs in aggs:
-    #     field_aggs["aggs"] =
-    # for field in fields:
-    #     if field.name in kwargs:
-    #         for field_aggs in aggs:
-    #             if field_aggs["filter"]["and"]["filters"].append()
-
-
-
 
 def _create_bool_should_clauses(es_field_name, value_list, 
     with_subitems=False, es_subitem_field_name=None):
@@ -291,8 +283,6 @@ def search(**kwargs):
                 [ 0 if cd.lower() == "no" else 1 for cd in params.get(field) ],
                 body["post_filter"]["and"]["filters"])
 
-    print "***TEST body"
-    print body
     # format
     if params.get("fmt") == "json":
         res = get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
