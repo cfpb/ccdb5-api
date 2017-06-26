@@ -5,7 +5,7 @@ from collections import defaultdict, namedtuple
 import requests
 from elasticsearch import Elasticsearch
 
-_ES_URL = "{}://{}:{}".format("http", os.environ.get('ES_HOST', 'localhost'), 
+_ES_URL = "{}://{}:{}".format("http", os.environ.get('ES_HOST', 'localhost'),
     os.environ.get('ES_PORT', '9200'))
 _ES_USER = os.environ.get('ES_USER', '')
 _ES_PASSWORD = os.environ.get('ES_PASSWORD', '')
@@ -18,15 +18,15 @@ _COMPLAINT_DOC_TYPE = os.environ.get('COMPLAINT_DOC_TYPE', 'complaint-doctype')
 def get_es():
     global _ES_INSTANCE
     if _ES_INSTANCE is None:
-        _ES_INSTANCE = Elasticsearch([_ES_URL], http_auth=(_ES_USER, _ES_PASSWORD), 
+        _ES_INSTANCE = Elasticsearch([_ES_URL], http_auth=(_ES_USER, _ES_PASSWORD),
             timeout=100)
     return _ES_INSTANCE
 
-def _create_and_append_bool_should_clauses(es_field_name, value_list, 
+def _create_and_append_bool_should_clauses(es_field_name, value_list,
     filter_list, with_subitems=False, es_subitem_field_name=None):
     if value_list:
         if not with_subitems:
-            term_list = [ {"terms": {es_field_name: [value]}} 
+            term_list = [ {"terms": {es_field_name: [value]}}
                 for value in value_list ]
             filter_list.append({"bool": {"should": term_list}})
         else:
@@ -63,7 +63,7 @@ def _create_and_append_bool_should_clauses(es_field_name, value_list,
 # - sort: sort by: "relevance_desc", "relevance_asc", "created_date_desc", "created_date_asc"
 # - search_term: the term to be searched
 # - min_date: return only date including and later than this date i.e. 2017-03-02
-# - max_date: return only date before this date, i.e. 2017-04-12 
+# - max_date: return only date before this date, i.e. 2017-04-12
 # - company: filters a list of companies you want ["Bank 1", "Bank 2"]
 # - product: filters a list of product you want if a subproduct is needed to filter, separated by a bullet (u'\u2022), i.e. [u"Mortgage\u2022FHA Mortgage", "Payday Loan"]
 # - issue: filters a list of issue you want if a subissue is needed to filter, separated by a bullet (u'\u2022), i.e. See Product above
@@ -81,15 +81,15 @@ def search(**kwargs):
 
     # base default parameters
     params = {
-        "fmt": "json", 
-        "field": "complaint_what_happened", 
-        "size": 10, 
+        "fmt": "json",
+        "field": "complaint_what_happened",
+        "size": 10,
         "frm": 0,
         "sort": "relevance_desc"
     }
 
-    OPTIONAL_FILTERS = ("product", "issue", "company", "state", "zip_code", "timely", 
-        "company_response", "company_public_response", 
+    OPTIONAL_FILTERS = ("product", "issue", "company", "state", "zip_code", "timely",
+        "company_response", "company_public_response",
         "consumer_consent_provided", "submitted_via", "tag")
 
     OPTIONAL_FILTERS_PARAM_TO_ES_MAP = {
@@ -99,7 +99,7 @@ def search(**kwargs):
         "sub_issue": "sub_issue.raw"
     }
     OPTIONAL_FILTERS_CHILD_MAP = {
-        "product": "sub_product", 
+        "product": "sub_product",
         "issue": "sub_issue"
     }
 
@@ -109,8 +109,8 @@ def search(**kwargs):
 
     res = None
     body = {
-        "from": params.get("frm"), 
-        "size": params.get("size"), 
+        "from": params.get("frm"),
+        "size": params.get("size"),
         "query": {"match_all": {}},
         "highlight": {
             "fields": {
@@ -131,7 +131,7 @@ def search(**kwargs):
         body["query"] = {
             "match": {
                 params.get("field"): {
-                    "query": params.get("search_term"), 
+                    "query": params.get("search_term"),
                     "operator": "and"
                 }
             }
@@ -162,34 +162,40 @@ def search(**kwargs):
 
     ## Create bool should clauses for fields in OPTIONAL_FILTERS
     for field in OPTIONAL_FILTERS:
-        if field in OPTIONAL_FILTERS_CHILD_MAP: 
-            _create_and_append_bool_should_clauses(OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(field, field), 
-                params.get(field), body["post_filter"]["and"]["filters"], with_subitems=True, 
-                es_subitem_field_name=OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(OPTIONAL_FILTERS_CHILD_MAP.get(field), 
+        if field in OPTIONAL_FILTERS_CHILD_MAP:
+            _create_and_append_bool_should_clauses(OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(field, field),
+                params.get(field), body["post_filter"]["and"]["filters"], with_subitems=True,
+                es_subitem_field_name=OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(OPTIONAL_FILTERS_CHILD_MAP.get(field),
                     OPTIONAL_FILTERS_CHILD_MAP.get(field)))
         else:
-            _create_and_append_bool_should_clauses(OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(field, field), 
+            _create_and_append_bool_should_clauses(OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(field, field),
                 params.get(field), body["post_filter"]["and"]["filters"])
 
     for field in OPTIONAL_FILTERS_STRING_TO_BOOL:
         if params.get(field):
-            _create_and_append_bool_should_clauses(field, 
+            _create_and_append_bool_should_clauses(field,
                 [ 0 if cd.lower() == "no" else 1 for cd in params.get(field) ],
                 body["post_filter"]["and"]["filters"])
 
     # format
     if params.get("fmt") == "json":
         res = get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
+        # Add Metadata
+        res["_meta"] = {}
+        res["_meta"]["license"] = "LICENSE GOES HERE"
+        res["_meta"]["last_updated"] = "datetime object based on max agg of date received"
+
     elif params.get("fmt") in ["csv", "xls", "xlsx"]:
         p = {"format": params.get("fmt"),
                   "source": json.dumps(body)}
         p = urllib.urlencode(p)
-        url = "{}/{}/{}/_data?{}".format(_ES_URL, _COMPLAINT_ES_INDEX, 
+        url = "{}/{}/{}/_data?{}".format(_ES_URL, _COMPLAINT_ES_INDEX,
             _COMPLAINT_DOC_TYPE, p)
-        response = requests.get(url, auth=(_ES_USER, _ES_PASSWORD), verify=False, 
+        response = requests.get(url, auth=(_ES_USER, _ES_PASSWORD), verify=False,
             timeout=30)
         if response.ok:
             res = response.content
+
     return res
 
 def suggest(text=None, size=6):
@@ -201,6 +207,6 @@ def suggest(text=None, size=6):
 
 def document(complaint_id):
     doc_query = {"query": {"term": {"_id": complaint_id}}}
-    res = get_es().search(index=_COMPLAINT_ES_INDEX, 
+    res = get_es().search(index=_COMPLAINT_ES_INDEX,
         doc_type=_COMPLAINT_DOC_TYPE, body=doc_query)
     return res
