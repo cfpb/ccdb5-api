@@ -1,5 +1,16 @@
+# Django #
+#################
+*.egg-info
+
+# Coverage #
+############
+.coverage
+htmlcov/
+
+# OS Files #
+############
+.DS_Store
+
 .env
 *.pyc
 db.sqlite3
-.coverage
-.DS_Store
