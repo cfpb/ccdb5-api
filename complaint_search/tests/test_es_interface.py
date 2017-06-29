@@ -5,9 +5,26 @@ import requests
 import os
 import urllib
 import json
+import deep
 import mock
 
 class EsInterfaceTest(TestCase):
+    # -------------------------------------------------------------------------
+    # Helper Methods
+    # -------------------------------------------------------------------------
+
+    def to_absolute(self, fileName):
+        import os.path
+        # where is this module?
+        thisDir = os.path.dirname(__file__)
+        return os.path.join(thisDir, "expected_results", fileName)
+
+    def load(self, shortName):
+        import json
+        fileName = self.to_absolute(shortName + '.json')
+        with open(fileName, 'r') as f:
+            return json.load(f)
+
     def setUp(self):
         pass
 
@@ -16,31 +33,14 @@ class EsInterfaceTest(TestCase):
     @mock.patch('requests.get', ok=True, content="RGET_OK")
     def test_search_no_param__valid(self, mock_rget, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "complaint_what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {"and": {"filters": []}}
-        }
+        body = self.load("search_no_param__valid")
         res = search()
-        mock_search.assert_called_once_with(body=body,
-            index='INDEX')
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(2, len(mock_search.call_args[1]))
+        act_body = mock_search.call_args[1]['body']
+        self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         mock_rget.assert_not_called()
         self.assertEqual('OK', res)
 
@@ -51,36 +51,29 @@ class EsInterfaceTest(TestCase):
     @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE", "DOC_TYPE")
     @mock.patch.object(Elasticsearch, 'search')
     @mock.patch('requests.get', ok=True, content="RGET_OK")
-    def test_search_with_fmt_nonjson__valid(self, mock_rget, mock_search):
+    @mock.patch('json.dumps')
+    @mock.patch('urllib.urlencode')
+    def test_search_with_fmt_nonjson__valid(self, mock_urlencode, mock_jdump, mock_rget, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "complaint_what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {"and": {"filters": []}}
-        }
+        mock_jdump.return_value = 'JDUMPS_OK'
+        body = self.load("search_with_fmt_nonjson__valid")
         for fmt in ["csv", "xls", "xlsx"]:
             res = search(fmt=fmt)
-            param = urllib.urlencode({"format": fmt, "source": json.dumps(body)})
-            other_args = {"auth": ("ES_USER", "ES_PASSWORD"), "verify": False, "timeout": 30}
-            url = "ES_URL/INDEX/DOC_TYPE/_data?{}".format(param)
-            mock_rget.assert_any_call(url, **other_args)
+            self.assertEqual(len(mock_jdump.call_args), 2)
+            self.assertEqual(1, len(mock_jdump.call_args[0]))
+            act_body = mock_jdump.call_args[0][0]
+            diff = deep.diff(body, act_body)
+            if diff:
+                print "fmt={}".format(fmt)
+                diff.print_full()
+            self.assertEqual(len(mock_urlencode.call_args), 2)
+            self.assertEqual(1, len(mock_urlencode.call_args[0]))
+            param = {"format": fmt, "source": "JDUMPS_OK"}
+            act_param = mock_urlencode.call_args[0][0]
+            self.assertEqual(param, act_param)
+
+        self.assertEqual(mock_jdump.call_count, 3)
+        self.assertEqual(mock_urlencode.call_count, 3)
         
         mock_search.assert_not_called()
         self.assertEqual(3, mock_rget.call_count)
@@ -89,31 +82,14 @@ class EsInterfaceTest(TestCase):
     @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_field__valid(self, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "test_field"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "test_field": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {"and": {"filters": []}}
-        }
+        body = self.load("search_with_field__valid")
         res = search(field="test_field")
-        mock_search.assert_called_once_with(body=body,
-            index='INDEX')
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(2, len(mock_search.call_args[1]))
+        act_body = mock_search.call_args[1]['body']
+        self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)
 
     @mock.patch.object(Elasticsearch, 'search')
@@ -129,28 +105,7 @@ class EsInterfaceTest(TestCase):
     @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_size__valid(self, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 40, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "complaint_what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {"and": {"filters": []}}
-        }
+        body = self.load("search_with_size__valid")
         res = search(size=40)
         mock_search.assert_called_once_with(body=body,
             index="INDEX")
@@ -160,31 +115,14 @@ class EsInterfaceTest(TestCase):
     @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_frm__valid(self, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 20, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "complaint_what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {"and": {"filters": []}}
-        }
+        body = self.load("search_with_frm__valid")
         res = search(frm=20)
-        mock_search.assert_called_once_with(body=body,
-            index="INDEX")
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(2, len(mock_search.call_args[1]))
+        act_body = mock_search.call_args[1]['body']
+        self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)
 
  
@@ -192,27 +130,7 @@ class EsInterfaceTest(TestCase):
     @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_sort__valid(self, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "complaint_what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "post_filter": {"and": {"filters": []}}
-        }
+        body = self.load("search_with_sort__valid")
 
         sort_fields = [
             ("relevance_desc", "_score", "desc"), 
@@ -232,134 +150,61 @@ class EsInterfaceTest(TestCase):
     @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_search_term__valid(self, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "match": {
-                    "complaint_what_happened": {
-                        "query": "test_term", 
-                        "operator": "and"
-                    }
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {"and": {"filters": []}}
-        }
+        body = self.load("search_with_search_term__valid")
         res = search(search_term="test_term")
-        mock_search.assert_called_once_with(body=body,
-            index='INDEX')
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(2, len(mock_search.call_args[1]))
+        act_body = mock_search.call_args[1]['body']
+        self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_min_date__valid(self, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "complaint_what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {"and": {"filters": [{"range": {"date_received": {"from": "2014-04-14"}}}]}}
-        }
+        body = self.load("search_with_min_date__valid")
         res = search(min_date="2014-04-14")
-        mock_search.assert_called_once_with(body=body,
-            index="INDEX")
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(2, len(mock_search.call_args[1]))
+        act_body = mock_search.call_args[1]['body']
+        self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_max_date__valid(self, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "complaint_what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {"and": {"filters": [{"range": {"date_received": {"to": "2017-04-14"}}}]}}
-        }
+        body = self.load("search_with_max_date__valid")
         res = search(max_date="2017-04-14")
-        mock_search.assert_called_once_with(body=body,
-            index="INDEX")
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(2, len(mock_search.call_args[1]))
+        act_body = mock_search.call_args[1]['body']
+        self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_company__valid(self, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "complaint_what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {
-                "and": {
-                    "filters": [{ 
-                        "bool": {
-                            "should": [
-                                {"terms": {"company": ["Bank 1"]}},
-                                {"terms": {"company": ["Second Bank"]}}
-                            ]
-                        }
-                    }]
-                }
-            }
-        }
+        body = self.load("search_with_company__valid")
         res = search(company=["Bank 1", "Second Bank"])
-        mock_search.assert_called_once_with(body=body,
-            index="INDEX")
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(2, len(mock_search.call_args[1]))
+        act_body = mock_search.call_args[1]['body']
+        diff = deep.diff(body, act_body)
+        if diff:
+            print "company"
+            diff.print_full()
+        self.assertIsNone(deep.diff(body, act_body))
+        self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)
 
 
@@ -367,522 +212,233 @@ class EsInterfaceTest(TestCase):
     @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_product__valid(self, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "complaint_what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {
-                "and": {
-                    "filters": [{ 
-                        "bool": {
-                            "should": [
-
-                                {"terms": {"product.raw": ["Payday Loan"]}},
-                                {
-                                    "and": {
-                                        "filters": [
-                                            {"terms": {"product.raw": ["Mortgage"]}},
-                                            {"terms": {"sub_product.raw": ["FHA Mortgage"]}}
-                                        ]
-                                    }
-                                }
-                            ]
-                        }
-                    }]
-                }
-            }
-        }
+        body = self.load("search_with_product__valid")
         res = search(product=["Payday Loan", u"Mortgage\u2022FHA Mortgage"])
-        mock_search.assert_called_once_with(body=body,
-            index="INDEX")
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(2, len(mock_search.call_args[1]))
+        act_body = mock_search.call_args[1]['body']
+        diff = deep.diff(body, act_body)
+        if diff:
+            print "product"
+            diff.print_full()
+        self.assertIsNone(deep.diff(body, act_body))
+        self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)  
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_issue__valid(self, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "complaint_what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {
-                "and": {
-                    "filters": [{ 
-                        "bool": {
-                            "should": [
-                                {
-                                    "and": {
-                                        "filters": [
-                                            {"terms": {"issue.raw": ["Communication tactics"]}},
-                                            {"terms": {"sub_issue.raw": ["Frequent or repeated calls"]}}
-                                        ]
-                                    }
-                                },
-                                {"terms": {"issue.raw": ["Loan servicing, payments, escrow account"]}}
-                            ]
-                        }
-                    }]
-                }
-            }
-        }
+        body = self.load("search_with_issue__valid")
         res = search(issue=[u"Communication tactics\u2022Frequent or repeated calls",
         "Loan servicing, payments, escrow account"])
-        mock_search.assert_called_once_with(body=body,
-            index="INDEX")
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(2, len(mock_search.call_args[1]))
+        act_body = mock_search.call_args[1]['body']
+        diff = deep.diff(body, act_body)
+        if diff:
+            print "issue"
+            diff.print_full()
+            print "body"
+            print body
+            print "act_body"
+            print act_body
+        self.assertIsNone(deep.diff(body, act_body))
+        self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)  
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_state__valid(self, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "complaint_what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {
-                "and": {
-                    "filters": [{ 
-                        "bool": {
-                            "should": [
-                                {"terms": {"state": ["CA"]}},
-                                {"terms": {"state": ["VA"]}},
-                                {"terms": {"state": ["OR"]}}
-                            ]
-                        }
-                    }]
-                }
-            }
-        }
+        body = self.load("search_with_state__valid")
         res = search(state=["CA", "VA", "OR"])
-        mock_search.assert_called_once_with(body=body,
-            index="INDEX")
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(2, len(mock_search.call_args[1]))
+        act_body = mock_search.call_args[1]['body']
+        diff = deep.diff(body, act_body)
+        if diff:
+            print "state"
+            diff.print_full()
+        self.assertIsNone(deep.diff(body, act_body))
+        self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_zip_code__valid(self, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "complaint_what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {
-                "and": {
-                    "filters": [{ 
-                        "bool": {
-                            "should": [
-                                {"terms": {"zip_code": ["12345"]}},
-                                {"terms": {"zip_code": ["23435"]}},
-                                {"terms": {"zip_code": ["03433"]}}
-                            ]
-                        }
-                    }]
-                }
-            }
-        }
+        body = self.load("search_with_zip_code__valid")
         res = search(zip_code=["12345", "23435", "03433"])
-        mock_search.assert_called_once_with(body=body,
-            index="INDEX")
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(2, len(mock_search.call_args[1]))
+        act_body = mock_search.call_args[1]['body']
+        diff = deep.diff(body, act_body)
+        if diff:
+            print "zip_code"
+            diff.print_full()
+        self.assertIsNone(deep.diff(body, act_body))
+        self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_timely__valid(self, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "complaint_what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {
-                "and": {
-                    "filters": [{ 
-                        "bool": {
-                            "should": [
-                                {"terms": {"timely": ["Yes"]}},
-                                {"terms": {"timely": ["No"]}}
-                            ]
-                        }
-                    }]
-                }
-            }
-        }
+        body = self.load("search_with_timely__valid")
         res = search(timely=["Yes", "No"])
-        mock_search.assert_called_once_with(body=body,
-            index="INDEX")
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(2, len(mock_search.call_args[1]))
+        act_body = mock_search.call_args[1]['body']
+        diff = deep.diff(body, act_body)
+        if diff:
+            print "timely"
+            diff.print_full()
+        self.assertIsNone(deep.diff(body, act_body))
+        self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_company_response__valid(self, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "complaint_what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {
-                "and": {
-                    "filters": [{ 
-                        "bool": {
-                            "should": [
-                                {"terms": {"company_response": ["Closed"]}},
-                                {"terms": {"company_response": ["No response"]}}
-                            ]
-                        }
-                    }]
-                }
-            }
-        }
+        body = self.load("search_with_company_response__valid")
         res = search(company_response=["Closed", "No response"])
-        mock_search.assert_called_once_with(body=body,
-            index="INDEX")
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(2, len(mock_search.call_args[1]))
+        act_body = mock_search.call_args[1]['body']
+        diff = deep.diff(body, act_body)
+        if diff:
+            print "company_response"
+            diff.print_full()
+        self.assertIsNone(deep.diff(body, act_body))
+        self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)
         
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_company_public_response__valid(self, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "complaint_what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {
-                "and": {
-                    "filters": [{ 
-                        "bool": {
-                            "should": [
-                                {"terms": {"company_public_response": ["Response 1"]}},
-                                {"terms": {"company_public_response": ["Response 2"]}}
-                            ]
-                        }
-                    }]
-                }
-            }
-        }
+        body = self.load("search_with_company_public_response__valid")
         res = search(company_public_response=["Response 1", "Response 2"])
-        mock_search.assert_called_once_with(body=body,
-            index="INDEX")
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(2, len(mock_search.call_args[1]))
+        act_body = mock_search.call_args[1]['body']
+        diff = deep.diff(body, act_body)
+        if diff:
+            print "company_public_response.raw"
+            diff.print_full()
+        self.assertIsNone(deep.diff(body, act_body))
+        self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_consumer_consent_provided__valid(self, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "complaint_what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {
-                "and": {
-                    "filters": [{ 
-                        "bool": {
-                            "should": [
-                                {"terms": {"consumer_consent_provided": ["yes"]}},
-                                {"terms": {"consumer_consent_provided": ["no"]}}
-                            ]
-                        }
-                    }]
-                }
-            }
-        }
+        body = self.load("search_with_consumer_consent_provided__valid")
         res = search(consumer_consent_provided=["yes", "no"])
-        mock_search.assert_called_once_with(body=body,
-            index="INDEX")
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(2, len(mock_search.call_args[1]))
+        act_body = mock_search.call_args[1]['body']
+        diff = deep.diff(body, act_body)
+        if diff:
+            print "consumer_consent_provided.raw"
+            diff.print_full()
+        self.assertIsNone(deep.diff(body, act_body))
+        self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_submitted_via__valid(self, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "complaint_what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {
-                "and": {
-                    "filters": [{ 
-                        "bool": {
-                            "should": [
-                                {"terms": {"submitted_via": ["mail"]}},
-                                {"terms": {"submitted_via": ["web"]}}
-                            ]
-                        }
-                    }]
-                }
-            }
-        }
+        body = self.load("search_with_submitted_via__valid")
         res = search(submitted_via=["mail", "web"])
-        mock_search.assert_called_once_with(body=body,
-            index="INDEX")
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(2, len(mock_search.call_args[1]))
+        act_body = mock_search.call_args[1]['body']
+        diff = deep.diff(body, act_body)
+        if diff:
+            print "submitted_via"
+            diff.print_full()
+        self.assertIsNone(deep.diff(body, act_body))
+        self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_tag__valid(self, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "complaint_what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {
-                "and": {
-                    "filters": [{ 
-                        "bool": {
-                            "should": [
-                                {"terms": {"tag": ["Older American"]}},
-                                {"terms": {"tag": ["Servicemember"]}}
-                            ]
-                        }
-                    }]
-                }
-            }
-        }
+        body = self.load("search_with_tag__valid")
         res = search(tag=["Older American", "Servicemember"])
-        mock_search.assert_called_once_with(body=body,
-            index="INDEX")
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(2, len(mock_search.call_args[1]))
+        act_body = mock_search.call_args[1]['body']
+        diff = deep.diff(body, act_body)
+        if diff:
+            print "tag"
+            diff.print_full()
+        self.assertIsNone(deep.diff(body, act_body))
+        self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_consumer_disputed__valid(self, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "complaint_what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {
-                "and": {
-                    "filters": [{ 
-                        "bool": {
-                            "should": [
-                                {"terms": {"consumer_disputed": [0]}},
-                                {"terms": {"consumer_disputed": [1]}}
-                            ]
-                        }
-                    }]
-                }
-            }
-        }
+        body = self.load("search_with_consumer_disputed__valid")
         res = search(consumer_disputed=["No", "Yes"])
-        mock_search.assert_called_once_with(body=body,
-            index="INDEX")
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(2, len(mock_search.call_args[1]))
+        act_body = mock_search.call_args[1]['body']
+        diff = deep.diff(body, act_body)
+        if diff:
+            print "consumer_disputed"
+            diff.print_full()
+        self.assertIsNone(deep.diff(body, act_body))
+        self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'search')
     def test_search_with_has_narratives__valid(self, mock_search):
         mock_search.return_value = 'OK'
-        body = {
-            "from": 0, 
-            "size": 10, 
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        "complaint_what_happened"
-                    ],
-                    "default_operator": "AND"
-                }
-            },
-            "highlight": {
-                "fields": {
-                    "complaint_what_happened": {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
-            },
-            "sort": [{"_score": {"order": "desc"}}],
-            "post_filter": {
-                "and": {
-                    "filters": [{ 
-                        "bool": {
-                            "should": [
-                                {"terms": {"has_narratives": [0]}},
-                                {"terms": {"has_narratives": [1]}}
-                            ]
-                        }
-                    }]
-                }
-            }
-        }
+        body = self.load("search_with_has_narratives__valid")
         res = search(has_narratives=["No", "Yes"])
-        mock_search.assert_called_once_with(body=body,
-            index="INDEX")
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(2, len(mock_search.call_args[1]))
+        act_body = mock_search.call_args[1]['body']
+        diff = deep.diff(body, act_body)
+        if diff:
+            print "has_narratives"
+            diff.print_full()
+        self.assertIsNone(deep.diff(body, act_body))
+        self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)
 
 
@@ -901,8 +457,12 @@ class EsInterfaceTest(TestCase):
         mock_suggest.return_value = 'OK'
         body = {"sgg": {"text": "Mortgage", "completion": {"field": "suggest", "size": 6}}}
         res = suggest(text="Mortgage")
-        mock_suggest.assert_called_once_with(body=body,
-            index="INDEX")
+        self.assertEqual(len(mock_suggest.call_args), 2)
+        self.assertEqual(0, len(mock_suggest.call_args[0]))
+        self.assertEqual(2, len(mock_suggest.call_args[1]))
+        act_body = mock_suggest.call_args[1]['body']
+        self.assertDictEqual(mock_suggest.call_args[1]['body'], body)
+        self.assertEqual(mock_suggest.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
@@ -911,8 +471,12 @@ class EsInterfaceTest(TestCase):
         mock_suggest.return_value = 'OK'
         body = {"sgg": {"text": "Loan", "completion": {"field": "suggest", "size": 10}}}
         res = suggest(text="Loan", size=10)
-        mock_suggest.assert_called_once_with(body=body,
-            index="INDEX")
+        self.assertEqual(len(mock_suggest.call_args), 2)
+        self.assertEqual(0, len(mock_suggest.call_args[0]))
+        self.assertEqual(2, len(mock_suggest.call_args[1]))
+        act_body = mock_suggest.call_args[1]['body']
+        self.assertDictEqual(mock_suggest.call_args[1]['body'], body)
+        self.assertEqual(mock_suggest.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
@@ -922,6 +486,11 @@ class EsInterfaceTest(TestCase):
         mock_search.return_value = 'OK'
         body = {"query": {"term": {"_id": 123456}}}
         res = document(123456)
-        mock_search.assert_called_once_with(body=body, doc_type="DOC_TYPE",
-            index="INDEX")
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(3, len(mock_search.call_args[1]))
+        act_body = mock_search.call_args[1]['body']
+        self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['doc_type'], 'DOC_TYPE')
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res) 

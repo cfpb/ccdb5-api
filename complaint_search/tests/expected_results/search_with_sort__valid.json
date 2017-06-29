@@ -1,0 +1,313 @@
+{
+    "from": 0, 
+    "size": 10, 
+    "query": {
+        "query_string": {
+            "query": "*",
+            "fields": [
+                "complaint_what_happened"
+            ],
+            "default_operator": "AND"
+        }
+    },
+    "highlight": {
+        "fields": {
+            "complaint_what_happened": {}
+        },
+        "number_of_fragments": 1,
+        "fragment_size": 500
+    },
+    "post_filter": {"and": {"filters": []}},
+    "aggs": {
+        "has_narratives": {
+            "filter": {
+                "and": {
+                    "filters": [
+                        {
+                            "range": {
+                                "date_received": {}
+                            }
+                        }
+                    ]
+                }
+            },
+            "aggs": {
+                "has_narratives": {
+                    "terms": {
+                        "field": "has_narratives",
+                        "size": 10
+                    }
+                }
+            }
+        },
+        "company": {
+            "filter": {
+                "and": {
+                    "filters": [
+                        {
+                            "range": {
+                                "date_received": {}
+                            }
+                        }
+                    ]
+                }
+            },
+            "aggs": {
+                "company": {
+                    "terms": {
+                        "field": "company",
+                        "size": 10000
+                    }
+                }
+            }
+        },
+        "product": {
+            "filter": {
+                "and": {
+                    "filters": [
+                        {
+                            "range": {
+                                "date_received": {}
+                            }
+                        }
+                    ]
+                }
+            },
+            "aggs": {
+                "product": {
+                    "terms": {
+                        "field": "product.raw",
+                        "size": 10000
+                    },
+                    "aggs": {
+                        "sub_product.raw": {
+                            "terms": {
+                                "field": "sub_product.raw",
+                                "size": 10000
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "issue": {
+            "filter": {
+                "and": {
+                    "filters": [
+                        {
+                            "range": {
+                                "date_received": {}
+                            }
+                        }
+                    ]
+                }
+            },
+            "aggs": {
+                "issue": {
+                    "terms": {
+                        "field": "issue.raw",
+                        "size": 10000
+                    },
+                    "aggs": {
+                        "sub_issue.raw": {
+                            "terms": {
+                                "field": "sub_issue.raw",
+                                "size": 10000
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "state": {
+            "filter": {
+                "and": {
+                    "filters": [
+                        {
+                            "range": {
+                                "date_received": {}
+                            }
+                        }
+                    ]
+                }
+            },
+            "aggs": {
+                "state": {
+                    "terms": {
+                        "field": "state",
+                        "size": 50
+                    }
+                }
+            }
+        },
+        "zip_code": {
+            "filter": {
+                "and": {
+                    "filters": [
+                        {
+                            "range": {
+                                "date_received": {}
+                            }
+                        }
+                    ]
+                }
+            },
+            "aggs": {
+                "zip_code": {
+                    "terms": {
+                        "field": "zip_code",
+                        "size": 1000
+                    }
+                }
+            }
+        },
+        "timely": {
+            "filter": {
+                "and": {
+                    "filters": [
+                        {
+                            "range": {
+                                "date_received": {}
+                            }
+                        }
+                    ]
+                }
+            },
+            "aggs": {
+                "timely": {
+                    "terms": {
+                        "field": "timely",
+                        "size": 10
+                    }
+                }
+            }
+        },
+        "company_response": {
+            "filter": {
+                "and": {
+                    "filters": [
+                        {
+                            "range": {
+                                "date_received": {}
+                            }
+                        }
+                    ]
+                }
+            },
+            "aggs": {
+                "company_response": {
+                    "terms": {
+                        "field": "company_response",
+                        "size": 100
+                    }
+                }
+            }
+        },
+        "company_public_response": {
+            "filter": {
+                "and": {
+                    "filters": [
+                        {
+                            "range": {
+                                "date_received": {}
+                            }
+                        }
+                    ]
+                }
+            },
+            "aggs": {
+                "company_public_response": {
+                    "terms": {
+                        "field": "company_public_response.raw",
+                        "size": 100
+                    }
+                }
+            }
+        },
+        "consumer_disputed": {
+            "filter": {
+                "and": {
+                    "filters": [
+                        {
+                            "range": {
+                                "date_received": {}
+                            }
+                        }
+                    ]
+                }
+            },
+            "aggs": {
+                "consumer_disputed": {
+                    "terms": {
+                        "field": "consumer_disputed",
+                        "size": 100
+                    }
+                }
+            }
+        },
+        "consumer_consent_provided": {
+            "filter": {
+                "and": {
+                    "filters": [
+                        {
+                            "range": {
+                                "date_received": {}
+                            }
+                        }
+                    ]
+                }
+            },
+            "aggs": {
+                "consumer_consent_provided": {
+                    "terms": {
+                        "field": "consumer_consent_provided.raw",
+                        "size": 100
+                    }
+                }
+            }
+        },
+        "tag": {
+            "filter": {
+                "and": {
+                    "filters": [
+                        {
+                            "range": {
+                                "date_received": {}
+                            }
+                        }
+                    ]
+                }
+            },
+            "aggs": {
+                "tag": {
+                    "terms": {
+                        "field": "tag",
+                        "size": 100
+                    }
+                }
+            }
+        },
+        "submitted_via": {
+            "filter": {
+                "and": {
+                    "filters": [
+                        {
+                            "range": {
+                                "date_received": {}
+                            }
+                        }
+                    ]
+                }
+            },
+            "aggs": {
+                "submitted_via": {
+                    "terms": {
+                        "field": "submitted_via",
+                        "size": 100
+                    }
+                }
+            }
+        }
+
+    }
+}
