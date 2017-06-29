@@ -238,7 +238,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -280,7 +280,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -574,7 +574,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -616,7 +616,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -913,7 +913,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -955,7 +955,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -1250,7 +1250,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -1292,7 +1292,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -1573,7 +1573,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -1615,7 +1615,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -1900,7 +1900,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -1942,7 +1942,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -2232,7 +2232,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -2274,7 +2274,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -2589,7 +2589,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -2635,7 +2635,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -2954,7 +2954,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -3000,7 +3000,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -3366,7 +3366,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -3424,7 +3424,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -3880,7 +3880,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -3954,7 +3954,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -4414,7 +4414,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -4486,7 +4486,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -4895,7 +4895,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -4955,7 +4955,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -5347,7 +5347,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -5407,7 +5407,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -5790,7 +5790,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -5848,7 +5848,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -6229,7 +6229,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -6287,7 +6287,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -6397,8 +6397,8 @@ class EsInterfaceTest(TestCase):
                     "filters": [{ 
                         "bool": {
                             "should": [
-                                {"terms": {"company_public_response": ["Response 1"]}},
-                                {"terms": {"company_public_response": ["Response 2"]}}
+                                {"terms": {"company_public_response.raw": ["Response 1"]}},
+                                {"terms": {"company_public_response.raw": ["Response 2"]}}
                             ]
                         }
                     }]
@@ -6417,8 +6417,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"company_public_response": ["Response 1"]}},
-                                            {"terms": {"company_public_response": ["Response 2"]}}
+                                            {"terms": {"company_public_response.raw": ["Response 1"]}},
+                                            {"terms": {"company_public_response.raw": ["Response 2"]}}
                                         ]
                                     }
                                 }
@@ -6446,8 +6446,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"company_public_response": ["Response 1"]}},
-                                            {"terms": {"company_public_response": ["Response 2"]}}
+                                            {"terms": {"company_public_response.raw": ["Response 1"]}},
+                                            {"terms": {"company_public_response.raw": ["Response 2"]}}
                                         ]
                                     }
                                 }
@@ -6475,8 +6475,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"company_public_response": ["Response 1"]}},
-                                            {"terms": {"company_public_response": ["Response 2"]}}
+                                            {"terms": {"company_public_response.raw": ["Response 1"]}},
+                                            {"terms": {"company_public_response.raw": ["Response 2"]}}
                                         ]
                                     }
                                 }
@@ -6512,8 +6512,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"company_public_response": ["Response 1"]}},
-                                            {"terms": {"company_public_response": ["Response 2"]}}
+                                            {"terms": {"company_public_response.raw": ["Response 1"]}},
+                                            {"terms": {"company_public_response.raw": ["Response 2"]}}
                                         ]
                                     }
                                 }
@@ -6549,8 +6549,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"company_public_response": ["Response 1"]}},
-                                            {"terms": {"company_public_response": ["Response 2"]}}
+                                            {"terms": {"company_public_response.raw": ["Response 1"]}},
+                                            {"terms": {"company_public_response.raw": ["Response 2"]}}
                                         ]
                                     }
                                 }
@@ -6578,8 +6578,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"company_public_response": ["Response 1"]}},
-                                            {"terms": {"company_public_response": ["Response 2"]}}
+                                            {"terms": {"company_public_response.raw": ["Response 1"]}},
+                                            {"terms": {"company_public_response.raw": ["Response 2"]}}
                                         ]
                                     }
                                 }
@@ -6607,8 +6607,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"company_public_response": ["Response 1"]}},
-                                            {"terms": {"company_public_response": ["Response 2"]}}
+                                            {"terms": {"company_public_response.raw": ["Response 1"]}},
+                                            {"terms": {"company_public_response.raw": ["Response 2"]}}
                                         ]
                                     }
                                 }
@@ -6636,8 +6636,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"company_public_response": ["Response 1"]}},
-                                            {"terms": {"company_public_response": ["Response 2"]}}
+                                            {"terms": {"company_public_response.raw": ["Response 1"]}},
+                                            {"terms": {"company_public_response.raw": ["Response 2"]}}
                                         ]
                                     }
                                 }
@@ -6668,7 +6668,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -6686,8 +6686,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"company_public_response": ["Response 1"]}},
-                                            {"terms": {"company_public_response": ["Response 2"]}}
+                                            {"terms": {"company_public_response.raw": ["Response 1"]}},
+                                            {"terms": {"company_public_response.raw": ["Response 2"]}}
                                         ]
                                     }
                                 }
@@ -6715,8 +6715,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"company_public_response": ["Response 1"]}},
-                                            {"terms": {"company_public_response": ["Response 2"]}}
+                                            {"terms": {"company_public_response.raw": ["Response 1"]}},
+                                            {"terms": {"company_public_response.raw": ["Response 2"]}}
                                         ]
                                     }
                                 }
@@ -6726,7 +6726,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -6744,8 +6744,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"company_public_response": ["Response 1"]}},
-                                            {"terms": {"company_public_response": ["Response 2"]}}
+                                            {"terms": {"company_public_response.raw": ["Response 1"]}},
+                                            {"terms": {"company_public_response.raw": ["Response 2"]}}
                                         ]
                                     }
                                 }
@@ -6773,8 +6773,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"company_public_response": ["Response 1"]}},
-                                            {"terms": {"company_public_response": ["Response 2"]}}
+                                            {"terms": {"company_public_response.raw": ["Response 1"]}},
+                                            {"terms": {"company_public_response.raw": ["Response 2"]}}
                                         ]
                                     }
                                 }
@@ -6800,7 +6800,7 @@ class EsInterfaceTest(TestCase):
         act_body = mock_search.call_args[1]['body']
         diff = deep.diff(body, act_body)
         if diff:
-            print "company_public_response"
+            print "company_public_response.raw"
             diff.print_full()
         self.assertIsNone(deep.diff(body, act_body))
         self.assertDictEqual(mock_search.call_args[1]['body'], body)
@@ -6836,8 +6836,8 @@ class EsInterfaceTest(TestCase):
                     "filters": [{ 
                         "bool": {
                             "should": [
-                                {"terms": {"consumer_consent_provided": ["yes"]}},
-                                {"terms": {"consumer_consent_provided": ["no"]}}
+                                {"terms": {"consumer_consent_provided.raw": ["yes"]}},
+                                {"terms": {"consumer_consent_provided.raw": ["no"]}}
                             ]
                         }
                     }]
@@ -6856,8 +6856,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"consumer_consent_provided": ["yes"]}},
-                                            {"terms": {"consumer_consent_provided": ["no"]}}
+                                            {"terms": {"consumer_consent_provided.raw": ["yes"]}},
+                                            {"terms": {"consumer_consent_provided.raw": ["no"]}}
                                         ]
                                     }
                                 }
@@ -6885,8 +6885,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"consumer_consent_provided": ["yes"]}},
-                                            {"terms": {"consumer_consent_provided": ["no"]}}
+                                            {"terms": {"consumer_consent_provided.raw": ["yes"]}},
+                                            {"terms": {"consumer_consent_provided.raw": ["no"]}}
                                         ]
                                     }
                                 }
@@ -6914,8 +6914,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"consumer_consent_provided": ["yes"]}},
-                                            {"terms": {"consumer_consent_provided": ["no"]}}
+                                            {"terms": {"consumer_consent_provided.raw": ["yes"]}},
+                                            {"terms": {"consumer_consent_provided.raw": ["no"]}}
                                         ]
                                     }
                                 }
@@ -6951,8 +6951,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"consumer_consent_provided": ["yes"]}},
-                                            {"terms": {"consumer_consent_provided": ["no"]}}
+                                            {"terms": {"consumer_consent_provided.raw": ["yes"]}},
+                                            {"terms": {"consumer_consent_provided.raw": ["no"]}}
                                         ]
                                     }
                                 }
@@ -6988,8 +6988,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"consumer_consent_provided": ["yes"]}},
-                                            {"terms": {"consumer_consent_provided": ["no"]}}
+                                            {"terms": {"consumer_consent_provided.raw": ["yes"]}},
+                                            {"terms": {"consumer_consent_provided.raw": ["no"]}}
                                         ]
                                     }
                                 }
@@ -7017,8 +7017,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"consumer_consent_provided": ["yes"]}},
-                                            {"terms": {"consumer_consent_provided": ["no"]}}
+                                            {"terms": {"consumer_consent_provided.raw": ["yes"]}},
+                                            {"terms": {"consumer_consent_provided.raw": ["no"]}}
                                         ]
                                     }
                                 }
@@ -7046,8 +7046,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"consumer_consent_provided": ["yes"]}},
-                                            {"terms": {"consumer_consent_provided": ["no"]}}
+                                            {"terms": {"consumer_consent_provided.raw": ["yes"]}},
+                                            {"terms": {"consumer_consent_provided.raw": ["no"]}}
                                         ]
                                     }
                                 }
@@ -7075,8 +7075,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"consumer_consent_provided": ["yes"]}},
-                                            {"terms": {"consumer_consent_provided": ["no"]}}
+                                            {"terms": {"consumer_consent_provided.raw": ["yes"]}},
+                                            {"terms": {"consumer_consent_provided.raw": ["no"]}}
                                         ]
                                     }
                                 }
@@ -7104,8 +7104,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"consumer_consent_provided": ["yes"]}},
-                                            {"terms": {"consumer_consent_provided": ["no"]}}
+                                            {"terms": {"consumer_consent_provided.raw": ["yes"]}},
+                                            {"terms": {"consumer_consent_provided.raw": ["no"]}}
                                         ]
                                     }
                                 }
@@ -7115,7 +7115,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -7133,8 +7133,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"consumer_consent_provided": ["yes"]}},
-                                            {"terms": {"consumer_consent_provided": ["no"]}}
+                                            {"terms": {"consumer_consent_provided.raw": ["yes"]}},
+                                            {"terms": {"consumer_consent_provided.raw": ["no"]}}
                                         ]
                                     }
                                 }
@@ -7165,7 +7165,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -7183,8 +7183,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"consumer_consent_provided": ["yes"]}},
-                                            {"terms": {"consumer_consent_provided": ["no"]}}
+                                            {"terms": {"consumer_consent_provided.raw": ["yes"]}},
+                                            {"terms": {"consumer_consent_provided.raw": ["no"]}}
                                         ]
                                     }
                                 }
@@ -7212,8 +7212,8 @@ class EsInterfaceTest(TestCase):
                                 { 
                                     "bool": {
                                         "should": [
-                                            {"terms": {"consumer_consent_provided": ["yes"]}},
-                                            {"terms": {"consumer_consent_provided": ["no"]}}
+                                            {"terms": {"consumer_consent_provided.raw": ["yes"]}},
+                                            {"terms": {"consumer_consent_provided.raw": ["no"]}}
                                         ]
                                     }
                                 }
@@ -7239,7 +7239,7 @@ class EsInterfaceTest(TestCase):
         act_body = mock_search.call_args[1]['body']
         diff = deep.diff(body, act_body)
         if diff:
-            print "consumer_consent_provided"
+            print "consumer_consent_provided.raw"
             diff.print_full()
         self.assertIsNone(deep.diff(body, act_body))
         self.assertDictEqual(mock_search.call_args[1]['body'], body)
@@ -7554,7 +7554,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -7612,7 +7612,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -7993,7 +7993,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -8051,7 +8051,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -8432,7 +8432,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -8482,7 +8482,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }
@@ -8863,7 +8863,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Company public response": {
                             "terms": {
-                                "field": "company_public_response",
+                                "field": "company_public_response.raw",
                                 "size": 100
                             }
                         }
@@ -8921,7 +8921,7 @@ class EsInterfaceTest(TestCase):
                     "aggs": {
                         "Consumer Consent": {
                             "terms": {
-                                "field": "consumer_consent_provided",
+                                "field": "consumer_consent_provided.raw",
                                 "size": 100
                             }
                         }

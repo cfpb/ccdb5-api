@@ -23,7 +23,9 @@ _OPTIONAL_FILTERS_PARAM_TO_ES_MAP = {
     "product": "product.raw",
     "sub_product": "sub_product.raw",
     "issue": "issue.raw",
-    "sub_issue": "sub_issue.raw"
+    "sub_issue": "sub_issue.raw",
+    "company_public_response": "company_public_response.raw",
+    "consumer_consent_provided": "consumer_consent_provided.raw"
 }
 _OPTIONAL_FILTERS_CHILD_MAP = {
     "product": "sub_product", 
