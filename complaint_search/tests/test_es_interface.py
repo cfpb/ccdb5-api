@@ -39,7 +39,7 @@ class EsInterfaceTest(TestCase):
             "sort": [{"_score": {"order": "desc"}}],
             "post_filter": {"and": {"filters": []}},
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -52,7 +52,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -60,7 +60,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -73,7 +73,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -81,7 +81,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -94,7 +94,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -110,7 +110,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -123,7 +123,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -139,7 +139,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -152,7 +152,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -160,7 +160,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -173,7 +173,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -181,7 +181,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -194,7 +194,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -202,7 +202,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -215,7 +215,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -223,7 +223,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -236,7 +236,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -244,7 +244,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -257,7 +257,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -265,7 +265,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -278,7 +278,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -286,7 +286,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -299,7 +299,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -307,7 +307,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -320,7 +320,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -375,7 +375,7 @@ class EsInterfaceTest(TestCase):
             "sort": [{"_score": {"order": "desc"}}],
             "post_filter": {"and": {"filters": []}},
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -388,7 +388,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -396,7 +396,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -409,7 +409,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -417,7 +417,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -430,7 +430,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -446,7 +446,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -459,7 +459,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -475,7 +475,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -488,7 +488,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -496,7 +496,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -509,7 +509,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -517,7 +517,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -530,7 +530,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -538,7 +538,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -551,7 +551,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -559,7 +559,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -572,7 +572,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -580,7 +580,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -593,7 +593,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -601,7 +601,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -614,7 +614,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -622,7 +622,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -635,7 +635,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -643,7 +643,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -656,7 +656,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -714,7 +714,7 @@ class EsInterfaceTest(TestCase):
             "sort": [{"_score": {"order": "desc"}}],
             "post_filter": {"and": {"filters": []}},
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -727,7 +727,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -735,7 +735,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -748,7 +748,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -756,7 +756,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -769,7 +769,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -785,7 +785,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -798,7 +798,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -814,7 +814,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -827,7 +827,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -835,7 +835,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -848,7 +848,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -856,7 +856,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -869,7 +869,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -877,7 +877,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -890,7 +890,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -898,7 +898,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -911,7 +911,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -919,7 +919,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -932,7 +932,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -940,7 +940,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -953,7 +953,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -961,7 +961,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -974,7 +974,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -982,7 +982,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -995,7 +995,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -1051,7 +1051,7 @@ class EsInterfaceTest(TestCase):
             "sort": [{"_score": {"order": "desc"}}],
             "post_filter": {"and": {"filters": []}},
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1064,7 +1064,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -1072,7 +1072,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1085,7 +1085,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -1093,7 +1093,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1106,7 +1106,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -1122,7 +1122,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1135,7 +1135,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -1151,7 +1151,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1164,7 +1164,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -1172,7 +1172,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1185,7 +1185,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -1193,7 +1193,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1206,7 +1206,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -1214,7 +1214,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1227,7 +1227,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -1235,7 +1235,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1248,7 +1248,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -1256,7 +1256,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1269,7 +1269,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -1277,7 +1277,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1290,7 +1290,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -1298,7 +1298,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1311,7 +1311,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -1319,7 +1319,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1332,7 +1332,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -1374,7 +1374,7 @@ class EsInterfaceTest(TestCase):
             "sort": [{"_score": {"order": "desc"}}],
             "post_filter": {"and": {"filters": []}},
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1387,7 +1387,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -1395,7 +1395,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1408,7 +1408,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -1416,7 +1416,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1429,7 +1429,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -1445,7 +1445,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1458,7 +1458,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -1474,7 +1474,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1487,7 +1487,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -1495,7 +1495,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1508,7 +1508,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -1516,7 +1516,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1529,7 +1529,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -1537,7 +1537,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1550,7 +1550,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -1558,7 +1558,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1571,7 +1571,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -1579,7 +1579,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1592,7 +1592,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -1600,7 +1600,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1613,7 +1613,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -1621,7 +1621,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1634,7 +1634,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -1642,7 +1642,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1655,7 +1655,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -1701,7 +1701,7 @@ class EsInterfaceTest(TestCase):
             },
             "post_filter": {"and": {"filters": []}},
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1714,7 +1714,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -1722,7 +1722,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1735,7 +1735,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -1743,7 +1743,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1756,7 +1756,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -1772,7 +1772,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1785,7 +1785,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -1801,7 +1801,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1814,7 +1814,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -1822,7 +1822,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1835,7 +1835,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -1843,7 +1843,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1856,7 +1856,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -1864,7 +1864,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1877,7 +1877,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -1885,7 +1885,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1898,7 +1898,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -1906,7 +1906,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1919,7 +1919,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -1927,7 +1927,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1940,7 +1940,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -1948,7 +1948,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1961,7 +1961,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -1969,7 +1969,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -1982,7 +1982,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -2033,7 +2033,7 @@ class EsInterfaceTest(TestCase):
             "sort": [{"_score": {"order": "desc"}}],
             "post_filter": {"and": {"filters": []}},
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2046,7 +2046,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -2054,7 +2054,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2067,7 +2067,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -2075,7 +2075,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2088,7 +2088,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -2104,7 +2104,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2117,7 +2117,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -2133,7 +2133,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2146,7 +2146,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -2154,7 +2154,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2167,7 +2167,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -2175,7 +2175,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2188,7 +2188,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -2196,7 +2196,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2209,7 +2209,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -2217,7 +2217,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2230,7 +2230,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -2238,7 +2238,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2251,7 +2251,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -2259,7 +2259,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2272,7 +2272,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -2280,7 +2280,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2293,7 +2293,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -2301,7 +2301,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2314,7 +2314,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -2372,7 +2372,7 @@ class EsInterfaceTest(TestCase):
                 }
             },
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2387,7 +2387,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -2395,7 +2395,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2410,7 +2410,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -2418,7 +2418,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2433,7 +2433,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -2449,7 +2449,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2464,7 +2464,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -2480,7 +2480,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2495,7 +2495,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -2503,7 +2503,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2518,7 +2518,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -2526,7 +2526,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2541,7 +2541,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -2549,7 +2549,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2564,7 +2564,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -2572,7 +2572,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2587,7 +2587,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -2595,7 +2595,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2610,7 +2610,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -2618,7 +2618,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2633,7 +2633,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -2641,7 +2641,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2656,7 +2656,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -2664,7 +2664,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2679,7 +2679,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -2737,7 +2737,7 @@ class EsInterfaceTest(TestCase):
                 }
             },
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2752,7 +2752,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -2760,7 +2760,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2775,7 +2775,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -2783,7 +2783,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2798,7 +2798,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -2814,7 +2814,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2829,7 +2829,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -2845,7 +2845,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2860,7 +2860,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -2868,7 +2868,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2883,7 +2883,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -2891,7 +2891,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2906,7 +2906,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -2914,7 +2914,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2929,7 +2929,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -2937,7 +2937,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2952,7 +2952,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -2960,7 +2960,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2975,7 +2975,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -2983,7 +2983,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -2998,7 +2998,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -3006,7 +3006,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3021,7 +3021,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -3029,7 +3029,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3044,7 +3044,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -3103,7 +3103,7 @@ class EsInterfaceTest(TestCase):
                 }
             },
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3124,7 +3124,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -3132,7 +3132,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3145,7 +3145,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -3153,7 +3153,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3174,7 +3174,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -3190,7 +3190,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3211,7 +3211,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -3227,7 +3227,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3248,7 +3248,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -3256,7 +3256,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3277,7 +3277,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -3285,7 +3285,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3306,7 +3306,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -3314,7 +3314,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3335,7 +3335,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -3343,7 +3343,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3364,7 +3364,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -3372,7 +3372,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3393,7 +3393,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -3401,7 +3401,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3422,7 +3422,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -3430,7 +3430,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3451,7 +3451,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -3459,7 +3459,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3480,7 +3480,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -3553,7 +3553,7 @@ class EsInterfaceTest(TestCase):
                 }
             },
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3582,7 +3582,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -3590,7 +3590,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3619,7 +3619,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -3627,7 +3627,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3640,7 +3640,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -3656,7 +3656,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3685,7 +3685,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -3701,7 +3701,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3730,7 +3730,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -3738,7 +3738,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3767,7 +3767,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -3775,7 +3775,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3804,7 +3804,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -3812,7 +3812,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3841,7 +3841,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -3849,7 +3849,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3878,7 +3878,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -3886,7 +3886,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3915,7 +3915,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -3923,7 +3923,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3952,7 +3952,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -3960,7 +3960,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -3989,7 +3989,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -3997,7 +3997,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4026,7 +4026,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -4095,7 +4095,7 @@ class EsInterfaceTest(TestCase):
                 }
             },
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4123,7 +4123,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -4131,7 +4131,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4159,7 +4159,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -4167,7 +4167,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4195,7 +4195,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -4211,7 +4211,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4224,7 +4224,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -4240,7 +4240,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4268,7 +4268,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -4276,7 +4276,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4304,7 +4304,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -4312,7 +4312,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4340,7 +4340,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -4348,7 +4348,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4376,7 +4376,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -4384,7 +4384,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4412,7 +4412,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -4420,7 +4420,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4448,7 +4448,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -4456,7 +4456,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4484,7 +4484,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -4492,7 +4492,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4520,7 +4520,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -4528,7 +4528,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4556,7 +4556,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -4624,7 +4624,7 @@ class EsInterfaceTest(TestCase):
                 }
             },
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4646,7 +4646,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -4654,7 +4654,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4676,7 +4676,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -4684,7 +4684,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4706,7 +4706,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -4722,7 +4722,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4744,7 +4744,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -4760,7 +4760,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4773,7 +4773,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -4781,7 +4781,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4803,7 +4803,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -4811,7 +4811,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4833,7 +4833,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -4841,7 +4841,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4863,7 +4863,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -4871,7 +4871,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4893,7 +4893,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -4901,7 +4901,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4923,7 +4923,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -4931,7 +4931,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4953,7 +4953,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -4961,7 +4961,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -4983,7 +4983,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -4991,7 +4991,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5013,7 +5013,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -5076,7 +5076,7 @@ class EsInterfaceTest(TestCase):
                 }
             },
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5098,7 +5098,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -5106,7 +5106,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5128,7 +5128,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -5136,7 +5136,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5158,7 +5158,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -5174,7 +5174,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5196,7 +5196,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -5212,7 +5212,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5234,7 +5234,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -5242,7 +5242,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5255,7 +5255,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -5263,7 +5263,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5285,7 +5285,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -5293,7 +5293,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5315,7 +5315,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -5323,7 +5323,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5345,7 +5345,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -5353,7 +5353,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5375,7 +5375,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -5383,7 +5383,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5405,7 +5405,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -5413,7 +5413,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5435,7 +5435,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -5443,7 +5443,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5465,7 +5465,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -5527,7 +5527,7 @@ class EsInterfaceTest(TestCase):
                 }
             },
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5548,7 +5548,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -5556,7 +5556,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5577,7 +5577,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -5585,7 +5585,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5606,7 +5606,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -5622,7 +5622,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5643,7 +5643,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -5659,7 +5659,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5680,7 +5680,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -5688,7 +5688,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5709,7 +5709,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -5717,7 +5717,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5730,7 +5730,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -5738,7 +5738,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5759,7 +5759,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -5767,7 +5767,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5788,7 +5788,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -5796,7 +5796,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5817,7 +5817,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -5825,7 +5825,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5846,7 +5846,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -5854,7 +5854,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5875,7 +5875,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -5883,7 +5883,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5904,7 +5904,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -5966,7 +5966,7 @@ class EsInterfaceTest(TestCase):
                 }
             },
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -5987,7 +5987,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -5995,7 +5995,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6016,7 +6016,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -6024,7 +6024,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6045,7 +6045,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -6061,7 +6061,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6082,7 +6082,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -6098,7 +6098,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6119,7 +6119,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -6127,7 +6127,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6148,7 +6148,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -6156,7 +6156,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6177,7 +6177,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -6185,7 +6185,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6198,7 +6198,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -6206,7 +6206,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6227,7 +6227,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -6235,7 +6235,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6256,7 +6256,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -6264,7 +6264,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6285,7 +6285,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -6293,7 +6293,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6314,7 +6314,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -6322,7 +6322,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6343,7 +6343,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -6405,7 +6405,7 @@ class EsInterfaceTest(TestCase):
                 }
             },
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6426,7 +6426,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -6434,7 +6434,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6455,7 +6455,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -6463,7 +6463,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6484,7 +6484,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -6500,7 +6500,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6521,7 +6521,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -6537,7 +6537,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6558,7 +6558,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -6566,7 +6566,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6587,7 +6587,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -6595,7 +6595,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6616,7 +6616,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -6624,7 +6624,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6645,7 +6645,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -6653,7 +6653,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6666,7 +6666,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -6674,7 +6674,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6695,7 +6695,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -6703,7 +6703,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6724,7 +6724,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -6732,7 +6732,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6753,7 +6753,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -6761,7 +6761,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6782,7 +6782,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -6844,7 +6844,7 @@ class EsInterfaceTest(TestCase):
                 }
             },
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6865,7 +6865,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -6873,7 +6873,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6894,7 +6894,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -6902,7 +6902,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6923,7 +6923,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -6939,7 +6939,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6960,7 +6960,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -6976,7 +6976,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -6997,7 +6997,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -7005,7 +7005,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7026,7 +7026,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -7034,7 +7034,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7055,7 +7055,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -7063,7 +7063,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7084,7 +7084,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -7092,7 +7092,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7113,7 +7113,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -7121,7 +7121,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7142,7 +7142,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -7150,7 +7150,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7163,7 +7163,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -7171,7 +7171,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7192,7 +7192,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -7200,7 +7200,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7221,7 +7221,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -7283,7 +7283,7 @@ class EsInterfaceTest(TestCase):
                 }
             },
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7304,7 +7304,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -7312,7 +7312,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7333,7 +7333,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -7341,7 +7341,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7362,7 +7362,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -7378,7 +7378,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7399,7 +7399,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -7415,7 +7415,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7436,7 +7436,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -7444,7 +7444,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7465,7 +7465,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -7473,7 +7473,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7494,7 +7494,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -7502,7 +7502,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7523,7 +7523,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -7531,7 +7531,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7552,7 +7552,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -7560,7 +7560,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7581,7 +7581,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -7589,7 +7589,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7610,7 +7610,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -7618,7 +7618,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7639,7 +7639,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -7647,7 +7647,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7660,7 +7660,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -7722,7 +7722,7 @@ class EsInterfaceTest(TestCase):
                 }
             },
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7743,7 +7743,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -7751,7 +7751,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7772,7 +7772,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -7780,7 +7780,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7801,7 +7801,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -7817,7 +7817,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7838,7 +7838,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -7854,7 +7854,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7875,7 +7875,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -7883,7 +7883,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7904,7 +7904,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -7912,7 +7912,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7933,7 +7933,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -7941,7 +7941,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7962,7 +7962,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -7970,7 +7970,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -7991,7 +7991,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -7999,7 +7999,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8020,7 +8020,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -8028,7 +8028,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8049,7 +8049,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -8057,7 +8057,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8070,7 +8070,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -8078,7 +8078,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8099,7 +8099,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -8161,7 +8161,7 @@ class EsInterfaceTest(TestCase):
                 }
             },
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8182,7 +8182,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -8190,7 +8190,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8211,7 +8211,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -8219,7 +8219,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8240,7 +8240,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -8256,7 +8256,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8277,7 +8277,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -8293,7 +8293,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8314,7 +8314,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -8322,7 +8322,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8343,7 +8343,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -8351,7 +8351,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8372,7 +8372,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -8380,7 +8380,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8401,7 +8401,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -8409,7 +8409,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8430,7 +8430,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -8438,7 +8438,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8451,7 +8451,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -8459,7 +8459,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8480,7 +8480,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -8488,7 +8488,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8509,7 +8509,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -8517,7 +8517,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8538,7 +8538,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100
@@ -8600,7 +8600,7 @@ class EsInterfaceTest(TestCase):
                 }
             },
             "aggs": {
-                "Only show complaints with narratives?": {
+                "has_narratives": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8613,7 +8613,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Only show complaints with narratives?": {
+                        "has_narratives": {
                             "terms": {
                                 "field": "has_narratives",
                                 "size": 10
@@ -8621,7 +8621,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Matched company name": {
+                "company": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8642,7 +8642,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Matched company name": {
+                        "company": {
                             "terms": {
                                 "field": "company",
                                 "size": 10000
@@ -8650,7 +8650,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Product / Subproduct": {
+                "product": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8671,7 +8671,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Product / Subproduct": {
+                        "product": {
                             "terms": {
                                 "field": "product.raw",
                                 "size": 10000
@@ -8687,7 +8687,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Issue / Subissue": {
+                "issue": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8708,7 +8708,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Issue / Subissue": {
+                        "issue": {
                             "terms": {
                                 "field": "issue.raw",
                                 "size": 10000
@@ -8724,7 +8724,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "State": {
+                "state": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8745,7 +8745,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "State": {
+                        "state": {
                             "terms": {
                                 "field": "state",
                                 "size": 50
@@ -8753,7 +8753,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Zip code": {
+                "zip_code": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8774,7 +8774,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Zip code": {
+                        "zip_code": {
                             "terms": {
                                 "field": "zip_code",
                                 "size": 1000
@@ -8782,7 +8782,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did company provide a timely response?": {
+                "timely": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8803,7 +8803,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did company provide a timely response?": {
+                        "timely": {
                             "terms": {
                                 "field": "timely",
                                 "size": 10
@@ -8811,7 +8811,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company response": {
+                "company_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8832,7 +8832,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company response": {
+                        "company_response": {
                             "terms": {
                                 "field": "company_response",
                                 "size": 100
@@ -8840,7 +8840,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Company public response": {
+                "company_public_response": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8861,7 +8861,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Company public response": {
+                        "company_public_response": {
                             "terms": {
                                 "field": "company_public_response.raw",
                                 "size": 100
@@ -8869,7 +8869,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Did the consumer dispute the response?": {
+                "consumer_disputed": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8890,7 +8890,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Did the consumer dispute the response?": {
+                        "consumer_disputed": {
                             "terms": {
                                 "field": "consumer_disputed",
                                 "size": 100
@@ -8898,7 +8898,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Consumer Consent": {
+                "consumer_consent_provided": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8919,7 +8919,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Consumer Consent": {
+                        "consumer_consent_provided": {
                             "terms": {
                                 "field": "consumer_consent_provided.raw",
                                 "size": 100
@@ -8927,7 +8927,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "Tags": {
+                "tag": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8948,7 +8948,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "Tags": {
+                        "tag": {
                             "terms": {
                                 "field": "tag",
                                 "size": 100
@@ -8956,7 +8956,7 @@ class EsInterfaceTest(TestCase):
                         }
                     }
                 },
-                "How did the consumer submit the complaint to CFPB?": {
+                "submitted_via": {
                     "filter": {
                         "and": {
                             "filters": [
@@ -8977,7 +8977,7 @@ class EsInterfaceTest(TestCase):
                         }
                     },
                     "aggs": {
-                        "How did the consumer submit the complaint to CFPB?": {
+                        "submitted_via": {
                             "terms": {
                                 "field": "submitted_via",
                                 "size": 100

@@ -45,21 +45,21 @@ def get_es():
 
 def _create_aggregation(**kwargs):
 
-    Field = namedtuple('Field', 'name title size has_subfield')
+    Field = namedtuple('Field', 'name size has_subfield')
     fields = [
-        Field('has_narratives', 'Only show complaints with narratives?', 10, False),
-        Field('company', 'Matched company name', 10000, False),
-        Field('product', 'Product / Subproduct', 10000, True),
-        Field('issue', 'Issue / Subissue', 10000, True),
-        Field('state', 'State', 50, False),
-        Field('zip_code', 'Zip code', 1000, False),
-        Field('timely', 'Did company provide a timely response?', 10, False),
-        Field('company_response', 'Company response', 100, False),
-        Field('company_public_response', 'Company public response', 100, False),
-        Field('consumer_disputed', 'Did the consumer dispute the response?', 100, False),
-        Field('consumer_consent_provided', 'Consumer Consent', 100, False),
-        Field('tag', 'Tags', 100, False),
-        Field('submitted_via', 'How did the consumer submit the complaint to CFPB?', 100, False)
+        Field('has_narratives', 10, False),
+        Field('company', 10000, False),
+        Field('product', 10000, True),
+        Field('issue', 10000, True),
+        Field('state', 50, False),
+        Field('zip_code', 1000, False),
+        Field('timely', 10, False),
+        Field('company_response', 100, False),
+        Field('company_public_response', 100, False),
+        Field('consumer_disputed', 100, False),
+        Field('consumer_consent_provided', 100, False),
+        Field('tag', 100, False),
+        Field('submitted_via', 100, False)
     ]
     aggs = {}
 
@@ -80,7 +80,7 @@ def _create_aggregation(**kwargs):
         if field.has_subfield:
             es_subfield_name = _OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(_OPTIONAL_FILTERS_CHILD_MAP.get(field.name))
             field_aggs["aggs"] = {
-                field.title: {
+                field.name: {
                     "terms": {
                         "field": es_field_name,
                         "size": field.size
@@ -97,7 +97,7 @@ def _create_aggregation(**kwargs):
             }
         else:
             field_aggs["aggs"] = {
-                field.title: {
+                field.name: {
                     "terms": {
                         "field": es_field_name,
                         "size": field.size
@@ -130,7 +130,7 @@ def _create_aggregation(**kwargs):
                     [ 0 if cd.lower() == "no" else 1 for cd in kwargs[item] ],
                     field_aggs["filter"]["and"]["filters"])
 
-        aggs[field.title] = field_aggs
+        aggs[field.name] = field_aggs
 
     return aggs
 
