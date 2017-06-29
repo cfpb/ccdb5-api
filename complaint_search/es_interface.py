@@ -254,7 +254,7 @@ def search(**kwargs):
     # post-filter
     body["post_filter"] = {"and": {"filters": []}}
 
-    ## Create base aggregation (without filters at this point)
+    ## Create base aggregation
     body["aggs"] = _create_aggregation(**kwargs)
 
     ## date
