@@ -254,8 +254,6 @@ def search(**kwargs):
     # post-filter
     body["post_filter"] = {"and": {"filters": []}}
 
-    ## Create base aggregation
-    body["aggs"] = _create_aggregation(**kwargs)
 
     ## date
     if params.get("min_date") or params.get("max_date"):
@@ -287,6 +285,8 @@ def search(**kwargs):
 
     # format
     if params.get("fmt") == "json":
+        ## Create base aggregation
+        body["aggs"] = _create_aggregation(**kwargs)
         res = get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
     elif params.get("fmt") in ["csv", "xls", "xlsx"]:
         p = {"format": params.get("fmt"),
@@ -294,8 +294,7 @@ def search(**kwargs):
         p = urllib.urlencode(p)
         url = "{}/{}/{}/_data?{}".format(_ES_URL, _COMPLAINT_ES_INDEX, 
             _COMPLAINT_DOC_TYPE, p)
-        response = requests.get(url, auth=(_ES_USER, _ES_PASSWORD), verify=False, 
-            timeout=30)
+        response = requests.get(url, auth=(_ES_USER, _ES_PASSWORD), timeout=30)
         if response.ok:
             res = response.content
     return res
