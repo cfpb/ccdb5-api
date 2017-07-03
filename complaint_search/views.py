@@ -62,8 +62,8 @@ def search(request):
             for header in headers:
                 response[header] = headers[header]
 
-            filename = 'complaints-%s.%s' %(datetime.now().strftime('%m-%d-%Y_%H_%M'), fmt)
-            response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+            filename = 'complaints-{}.{}'.format(datetime.now().strftime('%Y-%m-%d_%H_%M'), fmt)
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
 
             return response
     else:
