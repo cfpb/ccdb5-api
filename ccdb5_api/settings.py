@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'rest_framework',
     'complaint_search',
+    'rest_framework_swagger',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -73,6 +74,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ccdb5_api.wsgi.application'
 
+SWAGGER_SETTINGS = {
+    'info': {
+          "title": "CCDB API",
+          "description": "This is api for Consumer Complaint Database application.",
+          "termsOfServiceUrl": "",
+          "contact": "info@cfpb.gov",
+          "license": "Apache 2.0",
+          "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
