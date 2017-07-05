@@ -15,9 +15,13 @@ _ES_INSTANCE = None
 _COMPLAINT_ES_INDEX = os.environ.get('COMPLAINT_ES_INDEX', 'complaint-index')
 _COMPLAINT_DOC_TYPE = os.environ.get('COMPLAINT_DOC_TYPE', 'complaint-doctype')
 
+# Filters for those with string type
 _OPTIONAL_FILTERS = ("product", "issue", "company", "state", "zip_code", "timely", 
     "company_response", "company_public_response", 
-    "consumer_consent_provided", "submitted_via", "tag")
+    "consumer_consent_provided", "submitted_via", "tag", "consumer_disputed")
+
+# Filters for those that need conversion from string to boolean
+_OPTIONAL_FILTERS_STRING_TO_BOOL = ("has_narratives",)
 
 _OPTIONAL_FILTERS_PARAM_TO_ES_MAP = {
     "product": "product.raw",
@@ -27,12 +31,16 @@ _OPTIONAL_FILTERS_PARAM_TO_ES_MAP = {
     "company_public_response": "company_public_response.raw",
     "consumer_consent_provided": "consumer_consent_provided.raw"
 }
+
+_OPTIONAL_FILTERS_AGGS_ES_MAP = {
+    "consumer_disputed": "consumer_disputed.raw"
+}
+_OPTIONAL_FILTERS_AGGS_ES_MAP.update(_OPTIONAL_FILTERS_PARAM_TO_ES_MAP)
+
 _OPTIONAL_FILTERS_CHILD_MAP = {
     "product": "sub_product", 
     "issue": "sub_issue"
 }
-
-_OPTIONAL_FILTERS_STRING_TO_BOOL = ("consumer_disputed", "has_narratives")
 
 def get_es():
     global _ES_INSTANCE
@@ -45,6 +53,7 @@ def get_es():
 
 def _create_aggregation(**kwargs):
 
+    # All fields that need to have an aggregation entry
     Field = namedtuple('Field', 'name size has_subfield')
     fields = [
         Field('has_narratives', 10, False),
@@ -75,10 +84,10 @@ def _create_aggregation(**kwargs):
             }        
         }
 
-        es_field_name = _OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(field.name, field.name)
+        es_field_name = _OPTIONAL_FILTERS_AGGS_ES_MAP.get(field.name, field.name)
         es_subfield_name = None
         if field.has_subfield:
-            es_subfield_name = _OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(_OPTIONAL_FILTERS_CHILD_MAP.get(field.name))
+            es_subfield_name = _OPTIONAL_FILTERS_AGGS_ES_MAP.get(_OPTIONAL_FILTERS_CHILD_MAP.get(field.name))
             field_aggs["aggs"] = {
                 field.name: {
                     "terms": {
@@ -119,6 +128,7 @@ def _create_aggregation(**kwargs):
         
         field_aggs["filter"]["and"]["filters"].append(date_filter)
         
+        # Add filter clauses to aggregation entries (only those that are not the same as field name)
         for item in kwargs:
             if item in _OPTIONAL_FILTERS and item != field.name:
                 clauses = _create_and_append_bool_should_clauses(_OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(item, item), 
