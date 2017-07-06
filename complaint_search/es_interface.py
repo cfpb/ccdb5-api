@@ -29,13 +29,9 @@ _OPTIONAL_FILTERS_PARAM_TO_ES_MAP = {
     "issue": "issue.raw",
     "sub_issue": "sub_issue.raw",
     "company_public_response": "company_public_response.raw",
-    "consumer_consent_provided": "consumer_consent_provided.raw"
-}
-
-_OPTIONAL_FILTERS_AGGS_ES_MAP = {
+    "consumer_consent_provided": "consumer_consent_provided.raw",
     "consumer_disputed": "consumer_disputed.raw"
 }
-_OPTIONAL_FILTERS_AGGS_ES_MAP.update(_OPTIONAL_FILTERS_PARAM_TO_ES_MAP)
 
 _OPTIONAL_FILTERS_CHILD_MAP = {
     "product": "sub_product", 
@@ -84,10 +80,10 @@ def _create_aggregation(**kwargs):
             }        
         }
 
-        es_field_name = _OPTIONAL_FILTERS_AGGS_ES_MAP.get(field.name, field.name)
+        es_field_name = _OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(field.name, field.name)
         es_subfield_name = None
         if field.has_subfield:
-            es_subfield_name = _OPTIONAL_FILTERS_AGGS_ES_MAP.get(_OPTIONAL_FILTERS_CHILD_MAP.get(field.name))
+            es_subfield_name = _OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(_OPTIONAL_FILTERS_CHILD_MAP.get(field.name))
             field_aggs["aggs"] = {
                 field.name: {
                     "terms": {

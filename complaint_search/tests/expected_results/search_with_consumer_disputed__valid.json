@@ -23,8 +23,8 @@
             "filters": [{ 
                 "bool": {
                     "should": [
-                        {"terms": {"consumer_disputed": ["No"]}},
-                        {"terms": {"consumer_disputed": ["Yes"]}}
+                        {"terms": {"consumer_disputed.raw": ["No"]}},
+                        {"terms": {"consumer_disputed.raw": ["Yes"]}}
                     ]
                 }
             }]
@@ -43,8 +43,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"consumer_disputed": ["No"]}},
-                                    {"terms": {"consumer_disputed": ["Yes"]}}
+                                    {"terms": {"consumer_disputed.raw": ["No"]}},
+                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
                                 ]
                             }
                         }
@@ -72,8 +72,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"consumer_disputed": ["No"]}},
-                                    {"terms": {"consumer_disputed": ["Yes"]}}
+                                    {"terms": {"consumer_disputed.raw": ["No"]}},
+                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
                                 ]
                             }
                         }
@@ -101,8 +101,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"consumer_disputed": ["No"]}},
-                                    {"terms": {"consumer_disputed": ["Yes"]}}
+                                    {"terms": {"consumer_disputed.raw": ["No"]}},
+                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
                                 ]
                             }
                         }
@@ -138,8 +138,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"consumer_disputed": ["No"]}},
-                                    {"terms": {"consumer_disputed": ["Yes"]}}
+                                    {"terms": {"consumer_disputed.raw": ["No"]}},
+                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
                                 ]
                             }
                         }
@@ -175,8 +175,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"consumer_disputed": ["No"]}},
-                                    {"terms": {"consumer_disputed": ["Yes"]}}
+                                    {"terms": {"consumer_disputed.raw": ["No"]}},
+                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
                                 ]
                             }
                         }
@@ -204,8 +204,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"consumer_disputed": ["No"]}},
-                                    {"terms": {"consumer_disputed": ["Yes"]}}
+                                    {"terms": {"consumer_disputed.raw": ["No"]}},
+                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
                                 ]
                             }
                         }
@@ -233,8 +233,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"consumer_disputed": ["No"]}},
-                                    {"terms": {"consumer_disputed": ["Yes"]}}
+                                    {"terms": {"consumer_disputed.raw": ["No"]}},
+                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
                                 ]
                             }
                         }
@@ -262,8 +262,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"consumer_disputed": ["No"]}},
-                                    {"terms": {"consumer_disputed": ["Yes"]}}
+                                    {"terms": {"consumer_disputed.raw": ["No"]}},
+                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
                                 ]
                             }
                         }
@@ -291,8 +291,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"consumer_disputed": ["No"]}},
-                                    {"terms": {"consumer_disputed": ["Yes"]}}
+                                    {"terms": {"consumer_disputed.raw": ["No"]}},
+                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
                                 ]
                             }
                         }
@@ -341,8 +341,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"consumer_disputed": ["No"]}},
-                                    {"terms": {"consumer_disputed": ["Yes"]}}
+                                    {"terms": {"consumer_disputed.raw": ["No"]}},
+                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
                                 ]
                             }
                         }
@@ -370,8 +370,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"consumer_disputed": ["No"]}},
-                                    {"terms": {"consumer_disputed": ["Yes"]}}
+                                    {"terms": {"consumer_disputed.raw": ["No"]}},
+                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
                                 ]
                             }
                         }
@@ -399,8 +399,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"consumer_disputed": ["No"]}},
-                                    {"terms": {"consumer_disputed": ["Yes"]}}
+                                    {"terms": {"consumer_disputed.raw": ["No"]}},
+                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
                                 ]
                             }
                         }
