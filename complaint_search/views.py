@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from django.http import HttpResponse
 from django.conf import settings
 from datetime import datetime
+from elasticsearch import TransportError
 import es_interface
 from complaint_search.serializer import SearchInputSerializer, SuggestInputSerializer
 
@@ -34,7 +35,15 @@ def search(request):
     serializer = SearchInputSerializer(data=data)
 
     if serializer.is_valid():
-        results = es_interface.search(**serializer.validated_data)
+        try:
+            results = es_interface.search(**serializer.validated_data)
+        except TransportError as e:
+            status_code = e.status_code if isinstance(e.status_code, int) \
+                else status.HTTP_400_BAD_REQUEST
+            res = {
+                "error": 'Elasticsearch error: ' + e.error
+            }
+            return Response(res, status=status_code)
 
         FMT_CONTENT_TYPE_MAP = {
             "json": "application/json",
@@ -76,7 +85,15 @@ def suggest(request):
     data = { k:v for k,v in request.query_params.iteritems() if k in QPARAMS_VARS }
     serializer = SuggestInputSerializer(data=data)
     if serializer.is_valid():
-        results = es_interface.suggest(**serializer.validated_data)
+        try:
+            results = es_interface.suggest(**serializer.validated_data)
+        except TransportError as e:
+            status_code = e.status_code if isinstance(e.status_code, int) \
+                else status.HTTP_400_BAD_REQUEST
+            res = {
+                "error": 'Elasticsearch error: ' + e.error
+            }
+            return Response(res, status=status_code)
         return Response(results)
     else:
         return Response(serializer.errors,
@@ -84,5 +101,13 @@ def suggest(request):
 
 @api_view(['GET'])
 def document(request, id):
-    results = es_interface.document(id)
+    try:
+        results = es_interface.document(id)
+    except TransportError as e:
+        status_code = e.status_code if isinstance(e.status_code, int) \
+            else status.HTTP_400_BAD_REQUEST
+        res = {
+            "error": 'Elasticsearch error: ' + e.error
+        }
+        return Response(res, status=status_code)
     return Response(results)

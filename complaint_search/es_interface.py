@@ -1,9 +1,11 @@
 import os
+import sys
 import urllib
 import json
 from collections import defaultdict, namedtuple
 import requests
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, TransportError
+
 
 _ES_URL = "{}://{}:{}".format("http", os.environ.get('ES_HOST', 'localhost'), 
     os.environ.get('ES_PORT', '9200'))
