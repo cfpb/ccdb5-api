@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from unittest import skip
 import mock
-from datetime import date
+from datetime import date, datetime
 from complaint_search.es_interface import search
 from complaint_search.serializer import SearchInputSerializer
 
@@ -37,18 +37,31 @@ class SearchTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response.has_header('Access-Control-Allow-Origin'))
 
-    # @mock.patch('complaint_search.es_interface.search')
-    # def test_search_with_fmt(self, mock_essearch):
-    #     """
-    #     Searching with fmt
-    #     """
-    #     url = reverse('complaint_search:search')
-    #     params = {"test": "fowrawe", "erara": "earea"}
-    #     mock_essearch.return_value = 'OK'
-    #     response = self.client.get(url, params)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     mock_essearch.assert_called_once_with()
-    #     self.assertEqual('OK', response.data)
+    @mock.patch('complaint_search.views.datetime')
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_fmt(self, mock_essearch, mock_dt):
+        """
+        Searching with fmt
+        """
+        FMT_CONTENT_TYPE_MAP = {
+            "csv": "text/csv",
+            "xls": "application/vnd.ms-excel",
+            "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        }
+
+        for k, v in FMT_CONTENT_TYPE_MAP.iteritems():
+            url = reverse('complaint_search:search')
+            params = {"fmt": k}
+            mock_essearch.return_value = 'OK'
+            mock_dt.now.return_value = datetime(2017,1,1,12,0)
+            response = self.client.get(url, params)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            # mock_essearch.assert_called_once_with(fmt=k)
+            self.assertEqual(response.get('Content-Type'), v)
+            self.assertEqual(response.get('Content-Disposition'), 'attachment; filename="complaints-2017-01-01_12_00.{}"'.format(k))
+            self.assertEqual('OK', response.content)
+        mock_essearch.has_calls([ mock.call(fmt=k) for k in FMT_CONTENT_TYPE_MAP ], any_order=True)
+        self.assertEqual(3, mock_essearch.call_count)
 
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_field__valid(self, mock_essearch):

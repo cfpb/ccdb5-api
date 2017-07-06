@@ -405,7 +405,7 @@
             "aggs": {
                 "consumer_disputed": {
                     "terms": {
-                        "field": "consumer_disputed",
+                        "field": "consumer_disputed.raw",
                         "size": 100
                     }
                 }

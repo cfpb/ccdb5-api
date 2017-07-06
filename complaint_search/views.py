@@ -1,9 +1,9 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.http import JsonResponse
+from django.http import HttpResponse
 from django.conf import settings
-import datetime
+from datetime import datetime
 import es_interface
 from complaint_search.serializer import SearchInputSerializer, SuggestInputSerializer
 
@@ -36,12 +36,12 @@ def search(request):
     if serializer.is_valid():
         results = es_interface.search(**serializer.validated_data)
 
-        # FMT_CONTENT_TYPE_MAP = {
-        #     "json": "application/json",
-        #     "csv": "text/csv",
-        #     "xls": "application/vnd.ms-excel",
-        #     "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        # }
+        FMT_CONTENT_TYPE_MAP = {
+            "json": "application/json",
+            "csv": "text/csv",
+            "xls": "application/vnd.ms-excel",
+            "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        }
 
         # Local development requires CORS support
         headers = {}
@@ -52,8 +52,20 @@ def search(request):
                 'Access-Control-Allow-Methods': 'GET'
             }
 
-        return Response(results, headers=headers)#,
-            # content_type=FMT_CONTENT_TYPE_MAP.get(serializer.validated_data.get("fmt", 'json')))
+        # Putting response together based on format
+        fmt = serializer.validated_data.get("fmt", 'json')
+        if fmt == 'json':
+            return Response(results, headers=headers)
+        elif fmt in ('csv', 'xls', 'xlsx'):
+            media_type = FMT_CONTENT_TYPE_MAP.get(fmt)
+            response = HttpResponse(results, content_type=media_type)
+            for header in headers:
+                response[header] = headers[header]
+
+            filename = 'complaints-{}.{}'.format(datetime.now().strftime('%Y-%m-%d_%H_%M'), fmt)
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
+
+            return response
     else:
         return Response(serializer.errors,
             status=status.HTTP_400_BAD_REQUEST)

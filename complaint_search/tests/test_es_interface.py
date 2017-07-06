@@ -66,6 +66,7 @@ class EsInterfaceTest(TestCase):
             if diff:
                 print "fmt={}".format(fmt)
                 diff.print_full()
+            self.assertIsNone(deep.diff(body, act_body))
             self.assertEqual(len(mock_urlencode.call_args), 2)
             self.assertEqual(1, len(mock_urlencode.call_args[0]))
             param = {"format": fmt, "source": "JDUMPS_OK"}

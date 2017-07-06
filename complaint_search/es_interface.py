@@ -15,9 +15,13 @@ _ES_INSTANCE = None
 _COMPLAINT_ES_INDEX = os.environ.get('COMPLAINT_ES_INDEX', 'complaint-index')
 _COMPLAINT_DOC_TYPE = os.environ.get('COMPLAINT_DOC_TYPE', 'complaint-doctype')
 
+# Filters for those with string type
 _OPTIONAL_FILTERS = ("product", "issue", "company", "state", "zip_code", "timely", 
     "company_response", "company_public_response", 
-    "consumer_consent_provided", "submitted_via", "tag")
+    "consumer_consent_provided", "submitted_via", "tag", "consumer_disputed")
+
+# Filters for those that need conversion from string to boolean
+_OPTIONAL_FILTERS_STRING_TO_BOOL = ("has_narratives",)
 
 _OPTIONAL_FILTERS_PARAM_TO_ES_MAP = {
     "product": "product.raw",
@@ -25,14 +29,14 @@ _OPTIONAL_FILTERS_PARAM_TO_ES_MAP = {
     "issue": "issue.raw",
     "sub_issue": "sub_issue.raw",
     "company_public_response": "company_public_response.raw",
-    "consumer_consent_provided": "consumer_consent_provided.raw"
+    "consumer_consent_provided": "consumer_consent_provided.raw",
+    "consumer_disputed": "consumer_disputed.raw"
 }
+
 _OPTIONAL_FILTERS_CHILD_MAP = {
     "product": "sub_product", 
     "issue": "sub_issue"
 }
-
-_OPTIONAL_FILTERS_STRING_TO_BOOL = ("consumer_disputed", "has_narratives")
 
 def get_es():
     global _ES_INSTANCE
@@ -45,6 +49,7 @@ def get_es():
 
 def _create_aggregation(**kwargs):
 
+    # All fields that need to have an aggregation entry
     Field = namedtuple('Field', 'name size has_subfield')
     fields = [
         Field('has_narratives', 10, False),
@@ -119,6 +124,7 @@ def _create_aggregation(**kwargs):
         
         field_aggs["filter"]["and"]["filters"].append(date_filter)
         
+        # Add filter clauses to aggregation entries (only those that are not the same as field name)
         for item in kwargs:
             if item in _OPTIONAL_FILTERS and item != field.name:
                 clauses = _create_and_append_bool_should_clauses(_OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(item, item), 
@@ -254,8 +260,6 @@ def search(**kwargs):
     # post-filter
     body["post_filter"] = {"and": {"filters": []}}
 
-    ## Create base aggregation
-    body["aggs"] = _create_aggregation(**kwargs)
 
     ## date
     if params.get("min_date") or params.get("max_date"):
@@ -287,6 +291,8 @@ def search(**kwargs):
 
     # format
     if params.get("fmt") == "json":
+        ## Create base aggregation
+        body["aggs"] = _create_aggregation(**kwargs)
         res = get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
     elif params.get("fmt") in ["csv", "xls", "xlsx"]:
         p = {"format": params.get("fmt"),
@@ -294,8 +300,7 @@ def search(**kwargs):
         p = urllib.urlencode(p)
         url = "{}/{}/{}/_data?{}".format(_ES_URL, _COMPLAINT_ES_INDEX, 
             _COMPLAINT_DOC_TYPE, p)
-        response = requests.get(url, auth=(_ES_USER, _ES_PASSWORD), verify=False, 
-            timeout=30)
+        response = requests.get(url, auth=(_ES_USER, _ES_PASSWORD), timeout=30)
         if response.ok:
             res = response.content
     return res
