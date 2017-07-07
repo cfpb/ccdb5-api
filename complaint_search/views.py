@@ -6,9 +6,12 @@ from django.conf import settings
 from datetime import datetime
 from elasticsearch import TransportError
 import es_interface
+from complaint_search.decorators import catch_es_error
 from complaint_search.serializer import SearchInputSerializer, SuggestInputSerializer
 
+
 @api_view(['GET'])
+@catch_es_error
 def search(request):
     fixed_qparam = request.query_params
     QPARAMS_VARS = ('fmt', 'field', 'size', 'frm', 'sort', 
@@ -35,15 +38,7 @@ def search(request):
     serializer = SearchInputSerializer(data=data)
 
     if serializer.is_valid():
-        try:
-            results = es_interface.search(**serializer.validated_data)
-        except TransportError as e:
-            status_code = e.status_code if isinstance(e.status_code, int) \
-                else status.HTTP_400_BAD_REQUEST
-            res = {
-                "error": 'Elasticsearch error: ' + e.error
-            }
-            return Response(res, status=status_code)
+        results = es_interface.search(**serializer.validated_data)
 
         FMT_CONTENT_TYPE_MAP = {
             "json": "application/json",
@@ -80,34 +75,20 @@ def search(request):
             status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
+@catch_es_error
 def suggest(request):
     QPARAMS_VARS = ("text", "size")
     data = { k:v for k,v in request.query_params.iteritems() if k in QPARAMS_VARS }
     serializer = SuggestInputSerializer(data=data)
     if serializer.is_valid():
-        try:
-            results = es_interface.suggest(**serializer.validated_data)
-        except TransportError as e:
-            status_code = e.status_code if isinstance(e.status_code, int) \
-                else status.HTTP_400_BAD_REQUEST
-            res = {
-                "error": 'Elasticsearch error: ' + e.error
-            }
-            return Response(res, status=status_code)
+        results = es_interface.suggest(**serializer.validated_data)
         return Response(results)
     else:
         return Response(serializer.errors,
             status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
+@catch_es_error
 def document(request, id):
-    try:
-        results = es_interface.document(id)
-    except TransportError as e:
-        status_code = e.status_code if isinstance(e.status_code, int) \
-            else status.HTTP_400_BAD_REQUEST
-        res = {
-            "error": 'Elasticsearch error: ' + e.error
-        }
-        return Response(res, status=status_code)
+    results = es_interface.document(id)
     return Response(results)
