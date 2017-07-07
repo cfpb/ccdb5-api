@@ -4,10 +4,14 @@ from rest_framework.response import Response
 from django.http import HttpResponse
 from django.conf import settings
 from datetime import datetime
+from elasticsearch import TransportError
 import es_interface
+from complaint_search.decorators import catch_es_error
 from complaint_search.serializer import SearchInputSerializer, SuggestInputSerializer
 
+
 @api_view(['GET'])
+@catch_es_error
 def search(request):
     fixed_qparam = request.query_params
     QPARAMS_VARS = ('fmt', 'field', 'size', 'frm', 'sort', 
@@ -71,6 +75,7 @@ def search(request):
             status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
+@catch_es_error
 def suggest(request):
     QPARAMS_VARS = ("text", "size")
     data = { k:v for k,v in request.query_params.iteritems() if k in QPARAMS_VARS }
@@ -83,6 +88,7 @@ def suggest(request):
             status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
+@catch_es_error
 def document(request, id):
     results = es_interface.document(id)
     return Response(results)
