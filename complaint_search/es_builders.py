@@ -1,6 +1,8 @@
+import abc
 from collections import defaultdict, namedtuple
 
-class BaseBuilder():
+class BaseBuilder(object):
+    __metaclass__  = abc.ABCMeta
 
     # Filters for those with string type
     _OPTIONAL_FILTERS = ("product", "issue", "company", "state", "zip_code", "timely", 
@@ -31,8 +33,9 @@ class BaseBuilder():
     def add(self, **kwargs):
         self.params.update(**kwargs)
 
+    @abc.abstractmethod
     def build(self):
-        return {}
+         """Method that will build the body dictionary."""
 
     def _create_bool_should_clauses(self, es_field_name, value_list, 
         with_subitems=False, es_subitem_field_name=None):
