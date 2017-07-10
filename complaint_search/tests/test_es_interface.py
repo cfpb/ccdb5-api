@@ -53,23 +53,23 @@ class EsInterfaceTest(TestCase):
     @mock.patch('requests.get', ok=True, content="RGET_OK")
     @mock.patch('json.dumps')
     @mock.patch('urllib.urlencode')
-    def test_search_with_fmt_nonjson__valid(self, mock_urlencode, mock_jdump, mock_rget, mock_search):
+    def test_search_with_format_nonjson__valid(self, mock_urlencode, mock_jdump, mock_rget, mock_search):
         mock_search.return_value = 'OK'
         mock_jdump.return_value = 'JDUMPS_OK'
-        body = self.load("search_with_fmt_nonjson__valid")
-        for fmt in ["csv", "xls", "xlsx"]:
-            res = search(fmt=fmt)
+        body = self.load("search_with_format_nonjson__valid")
+        for format in ["csv", "xls", "xlsx"]:
+            res = search(format=format)
             self.assertEqual(len(mock_jdump.call_args), 2)
             self.assertEqual(1, len(mock_jdump.call_args[0]))
             act_body = mock_jdump.call_args[0][0]
             diff = deep.diff(body, act_body)
             if diff:
-                print "fmt={}".format(fmt)
+                print "format={}".format(format)
                 diff.print_full()
             self.assertIsNone(deep.diff(body, act_body))
             self.assertEqual(len(mock_urlencode.call_args), 2)
             self.assertEqual(1, len(mock_urlencode.call_args[0]))
-            param = {"format": fmt, "source": "JDUMPS_OK"}
+            param = {"format": format, "source": "JDUMPS_OK"}
             act_param = mock_urlencode.call_args[0][0]
             self.assertEqual(param, act_param)
 
@@ -95,9 +95,9 @@ class EsInterfaceTest(TestCase):
 
     @mock.patch.object(Elasticsearch, 'search')
     @mock.patch('requests.get', ok=True, content="RGET_OK")
-    def test_search_with_fmt__invalid(self, mock_rget, mock_search):
+    def test_search_with_format__invalid(self, mock_rget, mock_search):
         mock_search.return_value = 'OK'
-        res = search(fmt="pdf")
+        res = search(format="pdf")
         self.assertIsNone(res)
         mock_search.assert_not_called()
         mock_rget.assert_not_called()

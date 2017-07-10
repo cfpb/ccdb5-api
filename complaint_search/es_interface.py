@@ -183,7 +183,7 @@ def _create_and_append_bool_should_clauses(es_field_name, value_list,
         filter_list.append(filter_clauses)
 
 # List of possible arguments:
-# - fmt: format to be returned: "json", "csv", "xls", or "xlsx"
+# - format: format to be returned: "json", "csv", "xls", or "xlsx"
 # - field: field you want to search in: "complaint_what_happened", "company_public_response", "_all"
 # - size: number of complaints to return
 # - frm: from which index to start returning
@@ -208,7 +208,7 @@ def search(**kwargs):
 
     # base default parameters
     params = {
-        "fmt": "json", 
+        "format": "json", 
         "field": "complaint_what_happened", 
         "size": 10, 
         "frm": 0,
@@ -216,7 +216,6 @@ def search(**kwargs):
     }
 
     params.update(**kwargs)
-
     res = None
     body = {
         "from": params.get("frm"), 
@@ -290,12 +289,12 @@ def search(**kwargs):
                 body["post_filter"]["and"]["filters"])
 
     # format
-    if params.get("fmt") == "json":
+    if params.get("format") == "json":
         ## Create base aggregation
         body["aggs"] = _create_aggregation(**kwargs)
         res = get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
-    elif params.get("fmt") in ["csv", "xls", "xlsx"]:
-        p = {"format": params.get("fmt"),
+    elif params.get("format") in ("csv", "xls", "xlsx"):
+        p = {"format": params.get("format"),
                   "source": json.dumps(body)}
         p = urllib.urlencode(p)
         url = "{}/{}/{}/_data?{}".format(_ES_URL, _COMPLAINT_ES_INDEX, 
