@@ -15,6 +15,7 @@ def search(request):
     """
     Search through everything in Consumer Complaints
     ---
+    path: "/"
     parameters:
         - name: format
           in: query
@@ -173,15 +174,31 @@ def search(request):
           items: 
           type: string
           collectionFormat: multi
-    responses:
-        200:
-          description: "successful operation"
-          schema:
+
+    type:
+        results_array:
+            required: True
             type: array
             items:
               $ref: '#/definitions/Complaint'
-        400:
-          description: "Invalid status value"
+
+    many: True
+
+    responseMessages:
+        - code: 200
+          message: "Successful Operation"
+        - code: 400
+          message: "Invalid status value"
+
+    consumes:
+        - application/json
+        - application/xml
+
+    produces:
+        - "application/json"
+        - "text/csv"
+        - "application/vnd.ms-excel"
+        - "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     """
     fixed_qparam = request.query_params
     QPARAMS_VARS = ('fmt', 'field', 'size', 'frm', 'sort', 
@@ -235,7 +252,7 @@ def search(request):
 @api_view(['GET'])
 def suggest(request):
     """
-    Automcomplete for the Search of consumer complaints
+    Autocomplete for the Search of consumer complaints
     ---
     parameters:
         - name: size
@@ -248,15 +265,28 @@ def suggest(request):
           description: text to find suggestions on
           required: true
           type: string
-    responses:
-        200:
-          description: "successful operation"
-          schema:
+
+    type:
+        suggest_array:
+            required: True
             type: array
             items:
-              type: "string"
-        400:
-          description: "Invalid input"
+                type: string
+
+    many: True
+
+    responseMessages:
+        - code: 200
+          message: "Successful Operation"
+        - code: 400
+          message: "Invalid input"
+
+    consumes:
+        - application/json
+        - application/xml
+
+    produces:
+        - application/json
     """
     QPARAMS_VARS = ("text", "size")
     data = { k:v for k,v in request.query_params.iteritems() if k in QPARAMS_VARS }
@@ -275,7 +305,7 @@ def document(request, id):
     Find comsumer complaint by ID
     ---
     parameters:
-        - name: complaintId
+        - name: id
           in: path
           description: ID of the complaint
           required: true
@@ -283,15 +313,12 @@ def document(request, id):
           maximum: 9999999999
           minimum: 0
           format: int64
-    responses:
-        200:
-          description: "successful operation"
-          schema:
-            type: array
-            items:
-              type: "string"
-        400:
-          description: "Invalid input"
+
+    responseMessages:
+        - code: 200
+          message: "Successful Operation"
+        - code: 400
+          message: "Invalid input"
     """
     results = es_interface.document(id)
     return Response(results)
