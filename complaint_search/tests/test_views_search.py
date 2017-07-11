@@ -4,7 +4,8 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from unittest import skip
 import mock
-from datetime import date
+from datetime import date, datetime
+from elasticsearch import TransportError
 from complaint_search.es_interface import search
 from complaint_search.serializer import SearchInputSerializer
 
@@ -37,18 +38,30 @@ class SearchTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response.has_header('Access-Control-Allow-Origin'))
 
-    # @mock.patch('complaint_search.es_interface.search')
-    # def test_search_with_fmt(self, mock_essearch):
-    #     """
-    #     Searching with fmt
-    #     """
-    #     url = reverse('complaint_search:search')
-    #     params = {"test": "fowrawe", "erara": "earea"}
-    #     mock_essearch.return_value = 'OK'
-    #     response = self.client.get(url, params)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     mock_essearch.assert_called_once_with()
-    #     self.assertEqual('OK', response.data)
+    @mock.patch('complaint_search.views.datetime')
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_format(self, mock_essearch, mock_dt):
+        """
+        Searching with format
+        """
+        FORMAT_CONTENT_TYPE_MAP = {
+            "csv": "text/csv",
+            "xls": "application/vnd.ms-excel",
+            "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        }
+
+        for k, v in FORMAT_CONTENT_TYPE_MAP.iteritems():
+            url = reverse('complaint_search:search')
+            params = {"format": k}
+            mock_essearch.return_value = 'OK'
+            mock_dt.now.return_value = datetime(2017,1,1,12,0)
+            response = self.client.get(url, params)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertIn(v, response.get('Content-Type'))
+            self.assertEqual(response.get('Content-Disposition'), 'attachment; filename="complaints-2017-01-01_12_00.{}"'.format(k))
+            self.assertEqual('OK', response.content)
+        mock_essearch.has_calls([ mock.call(format=k) for k in FORMAT_CONTENT_TYPE_MAP ], any_order=True)
+        self.assertEqual(3, mock_essearch.call_count)
 
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_field__valid(self, mock_essearch):
@@ -320,3 +333,21 @@ class SearchTests(APITestCase):
         mock_essearch.assert_called_once_with(
             **{"company_response": ["Closed", "No response"]})
         self.assertEqual('OK', response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search__transport_error_with_status_code(self, mock_essearch):
+        mock_essearch.side_effect = TransportError(status.HTTP_404_NOT_FOUND, "Error")
+        url = reverse('complaint_search:search')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertDictEqual({"error": "Elasticsearch error: Error"}, response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search__transport_error_without_status_code(self, mock_essearch):
+        mock_essearch.side_effect = TransportError('N/A', "Error")
+        url = reverse('complaint_search:search')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertDictEqual({"error": "Elasticsearch error: Error"}, response.data)
+
+
