@@ -23,6 +23,19 @@ def get_es():
             timeout=100)
     return _ES_INSTANCE
 
+def get_meta():
+    body = {
+        # size: 0 here to prevent taking too long since we only needed max_date
+        "size": 0,
+        "aggs": { "max_date" : { "max" : { "field" : "date_received" }}}
+    }
+    max_date_res = get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
+    count_res = get_es().count(index=_COMPLAINT_ES_INDEX, doc_type=_COMPLAINT_DOC_TYPE)
+    return {
+        "license": "CC0",
+        "last_updated": max_date_res["aggregations"]["max_date"]["value_as_string"],
+        "total_record_count": count_res["count"]
+    }
 # List of possible arguments:
 # - format: format to be returned: "json", "csv", "xls", or "xlsx"
 # - field: field you want to search in: "complaint_what_happened", "company_public_response", "_all"
@@ -64,6 +77,8 @@ def search(**kwargs):
         body["aggs"] = aggregation_builder.build()
 
         res = get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
+
+        res["_meta"] = get_meta()
 
     elif format in ("csv", "xls", "xlsx"):
         p = {"format": format, "source": json.dumps(body)}

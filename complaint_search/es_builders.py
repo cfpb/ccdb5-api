@@ -186,6 +186,7 @@ class AggregationBuilder(BaseBuilder):
             Field('tag', 100, False),
             Field('submitted_via', 100, False)
         ]
+
         aggs = {}
 
         # Creating aggregation object for each field above
