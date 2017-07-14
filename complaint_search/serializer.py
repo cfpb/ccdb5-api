@@ -42,7 +42,7 @@ class SearchInputSerializer(serializers.Serializer):
         (SORT_CREATED_DATE_DESC, 'Descending Created Date'),
         (SORT_CREATED_DATE_ASC, 'Ascending Created Date'),
     )
-    fmt = serializers.ChoiceField(FORMAT_CHOICES, required=False)
+    format = serializers.ChoiceField(FORMAT_CHOICES, required=False)
     field = serializers.ChoiceField(FIELD_CHOICES, required=False)
     size = serializers.IntegerField(min_value=1, max_value=100000, required=False)
     frm = serializers.IntegerField(min_value=0, max_value=100000, required=False)

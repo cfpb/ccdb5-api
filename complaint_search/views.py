@@ -2,15 +2,22 @@
 # coding: utf-8
 
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
 from rest_framework.response import Response
-from django.http import JsonResponse
+from django.http import HttpResponse
 from django.conf import settings
-import datetime
+from datetime import datetime
+from elasticsearch import TransportError
 import es_interface
+from complaint_search.renderers import CSVRenderer, XLSRenderer, XLSXRenderer
+from complaint_search.decorators import catch_es_error
 from complaint_search.serializer import SearchInputSerializer, SuggestInputSerializer
 
+
 @api_view(['GET'])
+@renderer_classes((JSONRenderer, CSVRenderer, XLSRenderer, XLSXRenderer, BrowsableAPIRenderer))
+@catch_es_error
 def search(request):
     """
     Search through everything in Consumer Complaints
@@ -217,6 +224,12 @@ def search(request):
     #     for param in request.query_params if param in QPARAMS_VARS + QPARAMS_LISTS}
 
     data = {}
+
+    # Add format to data (only checking if it is csv, xls, xlsx, then specific them)
+    format = request.accepted_renderer.format
+    if format and format in ('csv', 'xls', 'xlsx'):
+        data['format'] = format
+
     for param in request.query_params:
         if param in QPARAMS_VARS:
             data[param] = request.query_params.get(param) 
@@ -229,13 +242,6 @@ def search(request):
     if serializer.is_valid():
         results = es_interface.search(**serializer.validated_data)
 
-        # FMT_CONTENT_TYPE_MAP = {
-        #     "json": "application/json",
-        #     "csv": "text/csv",
-        #     "xls": "application/vnd.ms-excel",
-        #     "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        # }
-
         # Local development requires CORS support
         headers = {}
         if settings.DEBUG:
@@ -245,13 +251,21 @@ def search(request):
                 'Access-Control-Allow-Methods': 'GET'
             }
 
-        return Response(results, headers=headers)#,
-            # content_type=FMT_CONTENT_TYPE_MAP.get(serializer.validated_data.get("fmt", 'json')))
+        # If format is in csv, xls, xlsx, update its attachment response 
+        # with a filename
+        if format in ('csv', 'xls', 'xlsx'):
+            filename = 'complaints-{}.{}'.format(
+                datetime.now().strftime('%Y-%m-%d_%H_%M'), format)
+            headers['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
+
+        return Response(results, headers=headers)
+
     else:
         return Response(serializer.errors,
             status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
+@catch_es_error
 def suggest(request):
     """
     Autocomplete for the Search of consumer complaints
@@ -304,6 +318,7 @@ def suggest(request):
 
 
 @api_view(['GET'])
+@catch_es_error
 def document(request, id):
     """
     Find comsumer complaint by ID

@@ -1,0 +1,22 @@
+{
+    "from": 0, 
+    "size": 10, 
+    "query": {
+        "query_string": {
+            "query": "*",
+            "fields": [
+                "complaint_what_happened"
+            ],
+            "default_operator": "AND"
+        }
+    },
+    "highlight": {
+        "fields": {
+            "complaint_what_happened": {}
+        },
+        "number_of_fragments": 1,
+        "fragment_size": 500
+    },
+    "sort": [{"_score": {"order": "desc"}}],
+    "post_filter": {"and": {"filters": []}}
+}
