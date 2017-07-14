@@ -1,0 +1,312 @@
+swagger: "2.0"
+info:
+  description: "This is the initial API for looking at Complaint Search Data"
+  version: "1.0.0"
+  title: "Complaint Search Public API"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "apiteam@swagger.io"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "localhost:8000"
+basePath: "/"
+tags:
+- name: "search"
+  description: "Search through everything in consumer complaints"
+  externalDocs:
+    description: "Find out more information about the consumer complaints"
+    url: "https://www.consumerfinance.gov/data-research/consumer-complaint/"
+- name: "suggest"
+  description: "Autocomplete"
+  externalDocs:
+    description: "Find out more information about the consumer complaints"
+    url: "https://www.consumerfinance.gov/data-research/consumer-complaint/"
+- name: "Complaint"
+  description: "Get complaint details by their complaint ID"
+  externalDocs:
+    description: "Find out more information about the consumer complaints"
+    url: "https://www.consumerfinance.gov/data-research/consumer-complaint/"
+schemes:
+- "http"
+paths:
+  /:
+    get:
+      tags:
+      - "search"
+      summary: "Search consumer complaints"
+      description: ""
+      operationId: ""
+      produces:
+      - "application/json"
+      - "text/csv"
+      - "application/vnd.ms-excel"
+      - "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      parameters:
+      - name: "fmt"
+        in: "query"
+        description: "Format to be returned"
+        required: false
+        type: "string"
+        enum:
+        - "json"
+        - "csv"
+        - "xls"
+        - "xlsx"
+        default: "json"
+        collectionFormat: "multi"
+      - name: "field"
+        in: "query"
+        description: "Search by particular field"
+        required: false
+        type: "array"
+        items:
+          type: "string"
+          enum:
+          - "complaint_what_happened"
+          - "company_public_response"
+          - "all"
+          default: "all"
+        collectionFormat: "multi"
+      - name: "size"
+        in: "query"
+        description: "Limit the size of the search result"
+        required: false
+        type: "integer"
+        maximum: 100000
+        minimum: 1
+        format: "int64"
+      - name: "frm"
+        in: "query"
+        description: "Return results starting from a specific index"
+        required: false
+        type: "integer"
+        maximum: 100000
+        minimum: 1
+        format: "int64"
+      - name: "sort"
+        in: "query"
+        description: "Return results sort in a particular order"
+        required: false
+        type: "string"
+        enum:
+        - "relevance_desc"
+        - "relevance_asc"
+        - "created_date_desc"
+        - "created_date_asc"
+        default: "relevance_desc"
+      - name: "search_term"
+        in: "query"
+        description: "Return results containing specific term"
+        required: false
+        type: "string"
+      - name: "min_date"
+        in: "query"
+        description: "Return results with date >= min_date (i.e. 2017-03-04)"
+        required: false
+        type: "string"
+        format: "date"
+      - name: "max_date"
+        in: "query"
+        description: "Return results with date < max_date (i.e. 2017-03-04)"
+        required: false
+        type: "string"
+        format: "date"
+      - name: "company"
+        in: "query"
+        description: "Filter the results to only return these companies"
+        required: false      
+        type: "array"
+        items: 
+          type: "string"
+        collectionFormat: "multi"
+      - name: "product"
+        in: "query"
+        description: "Filter the results to only return these types of product and subproduct, i.e. product-only: Mortgage, subproduct needs to include product, separated by '•', U+2022: Mortgage•FHA mortgage"
+        required: false
+        type: "array"
+        items: 
+          type: "string"
+        collectionFormat: "multi"
+      - name: "issue"
+        in: "query"
+        description: "Filter the results to only return these types of issue and subissue, i.e. product-only: Getting a Loan, subproduct needs to include product, separated by '•', U+2022: Getting a Loan•Can't qualify for a loan"
+        required: false
+        type: "array"
+        items: 
+          type: "string"
+        collectionFormat: "multi"
+      - name: "state"
+        in: "query"
+        description: "Filter the results to only return these states (use abbreviation, i.e. CA, VA"
+        required: false
+        type: "array"
+        items: 
+          type: "string"
+        collectionFormat: "multi"
+      - name: "consumer_disputed"
+        in: "query"
+        description: "Filter the results to only return the specified state of consumer disputed, i.e. yes, no"
+        required: false
+        type: "array"
+        items: 
+          type: "string"
+        collectionFormat: "multi"
+      - name: "company_response"
+        in: "query"
+        description: "Filter the results to only return these types of response by the company"
+        required: false
+        type: "array"
+        items: 
+          type: "string"
+        collectionFormat: "multi"
+      - name: "company_public_response"
+        in: "query"
+        description: "Filter the results to only return these types of public response by the company"
+        required: false
+        type: "array"
+        items: 
+          type: "string"
+        collectionFormat: "multi"        
+      - name: "consumer_consent_provided"
+        in: "query"
+        description: "Filter the results to only return these types of consent consumer provided"
+        required: false
+        type: "array"
+        items: 
+          type: "string"
+        collectionFormat: "multi"        
+      - name: "submitted_via"
+        in: "query"
+        description: "Filter the results to only return these types of way consumers submitted their complaints"
+        required: false
+        type: "array"
+        items: 
+          type: "string"
+        collectionFormat: "multi"        
+      - name: "tag"
+        in: "query"
+        description: "Filter the results to only return these types of tag"
+        required: false
+        type: "array"
+        items: 
+          type: "string"
+        collectionFormat: "multi"
+        
+      - name: "has_narratives"
+        in: "query"
+        description: "Filter the results to only return the specified state of whether it has narrative in the complaint or not, i.e. yes, no"
+        required: false
+        type: "array"
+        items: 
+          type: "string"
+        collectionFormat: "multi"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Complaint'
+        400:
+          description: "Invalid status value"
+  /suggest:
+    get:
+      tags:
+      - "suggest"
+      summary: "Automcomplete for the Search of consumer complaints"
+      description: ""
+      operationId: ""
+      produces:
+      - "application/json"
+      parameters:
+      - name: "size"
+        in: "query"
+        description: "number of suggestions to return, default 6"
+        required: true
+        type: "integer"
+      - name: "text"
+        in: "query"
+        description: "text to find suggestions on"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: array
+            items:
+              type: "string"
+        400:
+          description: "Invalid input"
+  /{complaintId}:
+    get:
+      tags:
+      - "complaint"
+      summary: "Find comsumer complaint by ID"
+      description: ""
+      operationId: "getComplaintById"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "complaintId"
+        in: "path"
+        description: "ID of the complaint"
+        required: true
+        type: "integer"
+        maximum: 9999999999
+        minimum: 0
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Complaint"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Complaint not found"
+definitions:
+  Complaint:
+    type: "object"
+    properties:
+      date_received:
+        type: "string"
+        format: "date"
+      product:
+        type: "string"
+      sub_product:
+        type: "string"
+      issue:
+        type: "string"
+      sub_issue:
+        type: "string"
+      consumer_what_happened:
+        type: "string"
+      company_public_response:
+        type: "string"
+      state:
+        type: "string"
+      zip_code:
+        type: "integer"
+        format: "int32"
+      tags:
+        type: "string"
+      consumer_consent_provided:
+        type: "string"
+      submitted_via:
+        type: "string"
+      date_sent_to_company:
+        type: "string"
+        format: "date"
+      company_response:
+        type: "string"
+      timely:
+        type: "string"
+      consumer_disputed:
+        type: "string"
+      complaint_id:
+        type: "integer"
+        format: "int32"

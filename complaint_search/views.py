@@ -175,6 +175,8 @@ def search(request):
           type: string
           collectionFormat: multi
 
+    request_serializer: SearchInputSerializer
+
     type:
         results_array:
             required: True
@@ -265,6 +267,8 @@ def suggest(request):
           description: text to find suggestions on
           required: true
           type: string
+
+    request_serializer: SuggestInputSerializer
 
     type:
         suggest_array:
