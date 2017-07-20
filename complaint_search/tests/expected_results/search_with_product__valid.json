@@ -73,7 +73,7 @@
                 "has_narratives": {
                     "terms": {
                         "field": "has_narratives",
-                        "size": 10
+                        "size": 0
                     }
                 }
             }
@@ -110,7 +110,7 @@
                 "company": {
                     "terms": {
                         "field": "company",
-                        "size": 10000
+                        "size": 0
                     }
                 }
             }
@@ -131,13 +131,13 @@
                 "product": {
                     "terms": {
                         "field": "product.raw",
-                        "size": 10000
+                        "size": 0
                     },
                     "aggs": {
                         "sub_product.raw": {
                             "terms": {
                                 "field": "sub_product.raw",
-                                "size": 10000
+                                "size": 0
                             }
                         }
                     }
@@ -176,13 +176,13 @@
                 "issue": {
                     "terms": {
                         "field": "issue.raw",
-                        "size": 10000
+                        "size": 0
                     },
                     "aggs": {
                         "sub_issue.raw": {
                             "terms": {
                                 "field": "sub_issue.raw",
-                                "size": 10000
+                                "size": 0
                             }
                         }
                     }
@@ -221,7 +221,7 @@
                 "state": {
                     "terms": {
                         "field": "state",
-                        "size": 50
+                        "size": 0
                     }
                 }
             }
@@ -258,7 +258,7 @@
                 "zip_code": {
                     "terms": {
                         "field": "zip_code",
-                        "size": 1000
+                        "size": 0
                     }
                 }
             }
@@ -295,7 +295,7 @@
                 "timely": {
                     "terms": {
                         "field": "timely",
-                        "size": 10
+                        "size": 0
                     }
                 }
             }
@@ -332,7 +332,7 @@
                 "company_response": {
                     "terms": {
                         "field": "company_response",
-                        "size": 100
+                        "size": 0
                     }
                 }
             }
@@ -369,7 +369,7 @@
                 "company_public_response": {
                     "terms": {
                         "field": "company_public_response.raw",
-                        "size": 100
+                        "size": 0
                     }
                 }
             }
@@ -406,7 +406,7 @@
                 "consumer_disputed": {
                     "terms": {
                         "field": "consumer_disputed.raw",
-                        "size": 100
+                        "size": 0
                     }
                 }
             }
@@ -443,7 +443,7 @@
                 "consumer_consent_provided": {
                     "terms": {
                         "field": "consumer_consent_provided.raw",
-                        "size": 100
+                        "size": 0
                     }
                 }
             }
@@ -480,7 +480,7 @@
                 "tag": {
                     "terms": {
                         "field": "tag",
-                        "size": 100
+                        "size": 0
                     }
                 }
             }
@@ -517,7 +517,7 @@
                 "submitted_via": {
                     "terms": {
                         "field": "submitted_via",
-                        "size": 100
+                        "size": 0
                     }
                 }
             }

@@ -72,7 +72,7 @@ class BaseBuilder(object):
 
     def _create_and_append_bool_should_clauses(self, es_field_name, value_list, 
         filter_list, with_subitems=False, es_subitem_field_name=None):
-        
+
         filter_clauses = self._create_bool_should_clauses(es_field_name, value_list, 
             with_subitems, es_subitem_field_name)
 
@@ -172,19 +172,19 @@ class AggregationBuilder(BaseBuilder):
     # All fields that need to have an aggregation entry
         Field = namedtuple('Field', 'name size has_subfield')
         fields = [
-            Field('has_narratives', 10, False),
-            Field('company', 10000, False),
-            Field('product', 10000, True),
-            Field('issue', 10000, True),
-            Field('state', 50, False),
-            Field('zip_code', 1000, False),
-            Field('timely', 10, False),
-            Field('company_response', 100, False),
-            Field('company_public_response', 100, False),
-            Field('consumer_disputed', 100, False),
-            Field('consumer_consent_provided', 100, False),
-            Field('tag', 100, False),
-            Field('submitted_via', 100, False)
+            Field('has_narratives', 0, False),
+            Field('company', 0, False),
+            Field('product', 0, True),
+            Field('issue', 0, True),
+            Field('state', 0, False),
+            Field('zip_code', 0, False),
+            Field('timely', 0, False),
+            Field('company_response', 0, False),
+            Field('company_public_response', 0, False),
+            Field('consumer_disputed', 0, False),
+            Field('consumer_consent_provided', 0, False),
+            Field('tag', 0, False),
+            Field('submitted_via', 0, False)
         ]
 
         aggs = {}
