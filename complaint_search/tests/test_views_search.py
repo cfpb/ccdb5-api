@@ -311,6 +311,30 @@ class SearchTests(APITestCase):
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_zip_code__valid(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        url += "?zip_code=94XXX&zip_code=24236&zip_code=23456"
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        # -*- coding: utf-8 -*-
+        mock_essearch.assert_called_once_with(
+            **{"zip_code": ["94XXX", "24236", "23456"]})
+        self.assertEqual('OK', response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_timely__valid(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        url += "?timely=YES&timely=NO"
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        # -*- coding: utf-8 -*-
+        mock_essearch.assert_called_once_with(
+            **{"timely": ["YES", "NO"]})
+        self.assertEqual('OK', response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
     def test_search_with_consumer_disputed__valid(self, mock_essearch):
         url = reverse('complaint_search:search')
         url += "?consumer_disputed=yes&consumer_disputed=no"
@@ -332,6 +356,66 @@ class SearchTests(APITestCase):
         # -*- coding: utf-8 -*-
         mock_essearch.assert_called_once_with(
             **{"company_response": ["Closed", "No response"]})
+        self.assertEqual('OK', response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_company_public_response__valid(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        url += "?company_public_response=Closed&company_public_response=No%20response"
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        # -*- coding: utf-8 -*-
+        mock_essearch.assert_called_once_with(
+            **{"company_public_response": ["Closed", "No response"]})
+        self.assertEqual('OK', response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_consumer_consent_provided__valid(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        url += "?consumer_consent_provided=Yes&consumer_consent_provided=No"
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        # -*- coding: utf-8 -*-
+        mock_essearch.assert_called_once_with(
+            **{"consumer_consent_provided": ["Yes", "No"]})
+        self.assertEqual('OK', response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_has_narratives__valid(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        url += "?has_narratives=Yes&has_narratives=No"
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        # -*- coding: utf-8 -*-
+        mock_essearch.assert_called_once_with(
+            **{"has_narratives": ["Yes", "No"]})
+        self.assertEqual('OK', response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_submitted_via__valid(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        url += "?submitted_via=Web&submitted_via=Phone"
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        # -*- coding: utf-8 -*-
+        mock_essearch.assert_called_once_with(
+            **{"submitted_via": ["Web", "Phone"]})
+        self.assertEqual('OK', response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_tag__valid(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        url += "?tag=Older%20American&tag=Servicemember"
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        # -*- coding: utf-8 -*-
+        mock_essearch.assert_called_once_with(
+            **{"tag": ["Older American", "Servicemember"]})
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
