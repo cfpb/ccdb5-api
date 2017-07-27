@@ -24,8 +24,8 @@
                 { 
                     "bool": {
                         "should": [
-                            {"terms": {"company": ["Bank 1"]}},
-                            {"terms": {"company": ["Second Bank"]}}
+                            {"terms": {"company.raw": ["Bank 1"]}},
+                            {"terms": {"company.raw": ["Second Bank"]}}
                         ]
                     }
                 }
@@ -45,8 +45,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"company": ["Bank 1"]}},
-                                    {"terms": {"company": ["Second Bank"]}}
+                                    {"terms": {"company.raw": ["Bank 1"]}},
+                                    {"terms": {"company.raw": ["Second Bank"]}}
                                 ]
                             }
                         }
@@ -77,7 +77,7 @@
             "aggs": {
                 "company": {
                     "terms": {
-                        "field": "company",
+                        "field": "company.raw",
                         "size": 0
                     }
                 }
@@ -95,8 +95,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"company": ["Bank 1"]}},
-                                    {"terms": {"company": ["Second Bank"]}}
+                                    {"terms": {"company.raw": ["Bank 1"]}},
+                                    {"terms": {"company.raw": ["Second Bank"]}}
                                 ]
                             }
                         }
@@ -132,8 +132,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"company": ["Bank 1"]}},
-                                    {"terms": {"company": ["Second Bank"]}}
+                                    {"terms": {"company.raw": ["Bank 1"]}},
+                                    {"terms": {"company.raw": ["Second Bank"]}}
                                 ]
                             }
                         }
@@ -169,8 +169,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"company": ["Bank 1"]}},
-                                    {"terms": {"company": ["Second Bank"]}}
+                                    {"terms": {"company.raw": ["Bank 1"]}},
+                                    {"terms": {"company.raw": ["Second Bank"]}}
                                 ]
                             }
                         }
@@ -198,8 +198,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"company": ["Bank 1"]}},
-                                    {"terms": {"company": ["Second Bank"]}}
+                                    {"terms": {"company.raw": ["Bank 1"]}},
+                                    {"terms": {"company.raw": ["Second Bank"]}}
                                 ]
                             }
                         }
@@ -227,8 +227,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"company": ["Bank 1"]}},
-                                    {"terms": {"company": ["Second Bank"]}}
+                                    {"terms": {"company.raw": ["Bank 1"]}},
+                                    {"terms": {"company.raw": ["Second Bank"]}}
                                 ]
                             }
                         }
@@ -256,8 +256,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"company": ["Bank 1"]}},
-                                    {"terms": {"company": ["Second Bank"]}}
+                                    {"terms": {"company.raw": ["Bank 1"]}},
+                                    {"terms": {"company.raw": ["Second Bank"]}}
                                 ]
                             }
                         }
@@ -285,8 +285,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"company": ["Bank 1"]}},
-                                    {"terms": {"company": ["Second Bank"]}}
+                                    {"terms": {"company.raw": ["Bank 1"]}},
+                                    {"terms": {"company.raw": ["Second Bank"]}}
                                 ]
                             }
                         }
@@ -314,8 +314,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"company": ["Bank 1"]}},
-                                    {"terms": {"company": ["Second Bank"]}}
+                                    {"terms": {"company.raw": ["Bank 1"]}},
+                                    {"terms": {"company.raw": ["Second Bank"]}}
                                 ]
                             }
                         }
@@ -343,8 +343,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"company": ["Bank 1"]}},
-                                    {"terms": {"company": ["Second Bank"]}}
+                                    {"terms": {"company.raw": ["Bank 1"]}},
+                                    {"terms": {"company.raw": ["Second Bank"]}}
                                 ]
                             }
                         }
@@ -372,8 +372,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"company": ["Bank 1"]}},
-                                    {"terms": {"company": ["Second Bank"]}}
+                                    {"terms": {"company.raw": ["Bank 1"]}},
+                                    {"terms": {"company.raw": ["Second Bank"]}}
                                 ]
                             }
                         }
@@ -401,8 +401,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"company": ["Bank 1"]}},
-                                    {"terms": {"company": ["Second Bank"]}}
+                                    {"terms": {"company.raw": ["Bank 1"]}},
+                                    {"terms": {"company.raw": ["Second Bank"]}}
                                 ]
                             }
                         }

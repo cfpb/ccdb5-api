@@ -17,12 +17,12 @@ class SearchInputSerializer(serializers.Serializer):
 
     ### Field Choices
     FIELD_NARRATIVE = 'complaint_what_happened'
-    FIELD_RESPONSE = 'company_public_response'
+    FIELD_COMPANY = 'company'
     FIELD_ALL = 'all'
 
     FIELD_CHOICES = (
         (FIELD_NARRATIVE, 'complaint_what_happened field'),
-        (FIELD_RESPONSE, 'company_public_response field'),
+        (FIELD_COMPANY, 'company field'),
         (FIELD_ALL, 'all fields'),
     )
 
