@@ -94,7 +94,15 @@ class SearchBuilder(BaseBuilder):
         search = {
             "from": self.params.get("frm"), 
             "size": self.params.get("size"), 
-            "query": {"match_all": {}},
+            "query": {
+                "query_string": {
+                    "query": "*",
+                    "fields": [
+                        self.params.get("field")
+                    ],
+                    "default_operator": "AND"
+                }
+            },
             "highlight": {
                 "fields": {
                     self.params.get("field"): {}
@@ -111,24 +119,29 @@ class SearchBuilder(BaseBuilder):
 
         # query
         if self.params.get("search_term"):
-            search["query"] = {
-                "match": {
-                    self.params.get("field"): {
-                        "query": self.params.get("search_term"), 
-                        "operator": "and"
+            if any(keyword in self.params.get("search_term") 
+                for keyword in ("AND", "OR", "NOT", "TO")):
+
+                # QueryString Query
+                search["query"] = {
+                    "query_string": {
+                        "query": self.params.get("search_term"),
+                        "fields": [
+                            self.params.get("field")
+                        ],
+                        "default_operator": "AND"
                     }
                 }
-            }
-        else:
-            search["query"] = {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        self.params.get("field")
-                    ],
-                    "default_operator": "AND"
+            else: 
+                # Match Query
+                search["query"] = {
+                    "match": {
+                        self.params.get("field"): {
+                            "query": self.params.get("search_term"), 
+                            "operator": "and"
+                        }
+                    }
                 }
-            }
 
         return search
 
