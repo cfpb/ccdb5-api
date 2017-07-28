@@ -58,7 +58,7 @@ class SearchInputSerializer(serializers.Serializer):
         child=serializers.CharField(max_length=200), required=False)
     state = serializers.ListField(
         child=serializers.ChoiceField(STATE_CHOICES), required=False)
-    zipcode = serializers.ListField(
+    zip_code = serializers.ListField(
         child=serializers.CharField(min_length=5, max_length=5), required=False)
     timely = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False)
