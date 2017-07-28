@@ -74,7 +74,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
@@ -127,7 +127,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
@@ -153,7 +153,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
@@ -170,7 +170,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
@@ -197,7 +197,7 @@ class EsInterfaceTest(TestCase):
         for s in sort_fields:
             res = search(sort=s[0])
             body["sort"] = [{s[1]: {"order": s[2]}}]
-            mock_search.assert_any_call(body=body, index="INDEX")
+            mock_search.assert_any_call(body=body, index="INDEX", doc_type=_COMPLAINT_DOC_TYPE, scroll="10m")
             self.assertEqual(self.MOCK_SEARCH_RESULT, res)
 
         self.assertEqual(8, mock_search.call_count)
@@ -205,11 +205,79 @@ class EsInterfaceTest(TestCase):
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'search')
     @mock.patch.object(Elasticsearch, 'count')
-    def test_search_with_search_term__valid(self, mock_count, mock_search):
+    def test_search_with_search_term_match__valid(self, mock_count, mock_search):
         mock_search.side_effect = self.MOCK_SEARCH_SIDE_EFFECT
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
-        body = self.load("search_with_search_term__valid")
+        body = self.load("search_with_search_term_match__valid")
         res = search(search_term="test_term")
+        self.assertEqual(2, len(mock_search.call_args_list))
+        self.assertEqual(2, len(mock_search.call_args_list[0]))
+        self.assertEqual(0, len(mock_search.call_args_list[0][0]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
+        act_body = mock_search.call_args_list[0][1]['body']
+        self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
+        self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
+        self.assertEqual(self.MOCK_SEARCH_RESULT, res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    @mock.patch.object(Elasticsearch, 'count')
+    def test_search_with_search_term_qsq_and__valid(self, mock_count, mock_search):
+        mock_search.side_effect = self.MOCK_SEARCH_SIDE_EFFECT
+        mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
+        body = self.load("search_with_search_term_qsq_and__valid")
+        res = search(search_term="test AND term")
+        self.assertEqual(2, len(mock_search.call_args_list))
+        self.assertEqual(2, len(mock_search.call_args_list[0]))
+        self.assertEqual(0, len(mock_search.call_args_list[0][0]))
+        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        act_body = mock_search.call_args_list[0][1]['body']
+        self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
+        self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
+        self.assertEqual(self.MOCK_SEARCH_RESULT, res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    @mock.patch.object(Elasticsearch, 'count')
+    def test_search_with_search_term_qsq_or__valid(self, mock_count, mock_search):
+        mock_search.side_effect = self.MOCK_SEARCH_SIDE_EFFECT
+        mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
+        body = self.load("search_with_search_term_qsq_or__valid")
+        res = search(search_term="test OR term")
+        self.assertEqual(2, len(mock_search.call_args_list))
+        self.assertEqual(2, len(mock_search.call_args_list[0]))
+        self.assertEqual(0, len(mock_search.call_args_list[0][0]))
+        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        act_body = mock_search.call_args_list[0][1]['body']
+        self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
+        self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
+        self.assertEqual(self.MOCK_SEARCH_RESULT, res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    @mock.patch.object(Elasticsearch, 'count')
+    def test_search_with_search_term_qsq_not__valid(self, mock_count, mock_search):
+        mock_search.side_effect = self.MOCK_SEARCH_SIDE_EFFECT
+        mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
+        body = self.load("search_with_search_term_qsq_not__valid")
+        res = search(search_term="test NOT term")
+        self.assertEqual(2, len(mock_search.call_args_list))
+        self.assertEqual(2, len(mock_search.call_args_list[0]))
+        self.assertEqual(0, len(mock_search.call_args_list[0][0]))
+        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        act_body = mock_search.call_args_list[0][1]['body']
+        self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
+        self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
+        self.assertEqual(self.MOCK_SEARCH_RESULT, res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    @mock.patch.object(Elasticsearch, 'count')
+    def test_search_with_search_term_qsq_to__valid(self, mock_count, mock_search):
+        mock_search.side_effect = self.MOCK_SEARCH_SIDE_EFFECT
+        mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
+        body = self.load("search_with_search_term_qsq_to__valid")
+        res = search(search_term="term TO test")
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
@@ -230,7 +298,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
@@ -247,7 +315,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
@@ -264,7 +332,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -287,7 +355,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -310,7 +378,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -332,7 +400,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -354,7 +422,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -376,7 +444,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -398,7 +466,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -420,7 +488,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -442,7 +510,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -464,7 +532,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -486,7 +554,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -508,7 +576,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -530,7 +598,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
