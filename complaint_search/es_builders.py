@@ -17,6 +17,7 @@ class BaseBuilder(object):
         "sub_product": "sub_product.raw",
         "issue": "issue.raw",
         "sub_issue": "sub_issue.raw",
+        "company": "company.raw",
         "company_public_response": "company_public_response.raw",
         "consumer_consent_provided": "consumer_consent_provided.raw",
         "consumer_disputed": "consumer_disputed.raw"
