@@ -56,7 +56,7 @@
             "aggs": {
                 "company": {
                     "terms": {
-                        "field": "company",
+                        "field": "company.raw",
                         "size": 0
                     }
                 }
