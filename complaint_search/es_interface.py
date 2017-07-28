@@ -76,7 +76,7 @@ def search(**kwargs):
         aggregation_builder.add(**kwargs)
         body["aggs"] = aggregation_builder.build()
 
-        res = get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
+        res = get_es().search(index=_COMPLAINT_ES_INDEX, doc_type=_COMPLAINT_DOC_TYPE, body=body, scroll="10m")
 
         res["_meta"] = get_meta()
 

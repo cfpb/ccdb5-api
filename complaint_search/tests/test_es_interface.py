@@ -74,7 +74,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
@@ -127,7 +127,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
@@ -153,7 +153,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
@@ -170,7 +170,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
@@ -197,7 +197,7 @@ class EsInterfaceTest(TestCase):
         for s in sort_fields:
             res = search(sort=s[0])
             body["sort"] = [{s[1]: {"order": s[2]}}]
-            mock_search.assert_any_call(body=body, index="INDEX")
+            mock_search.assert_any_call(body=body, index="INDEX", doc_type=_COMPLAINT_DOC_TYPE, scroll="10m")
             self.assertEqual(self.MOCK_SEARCH_RESULT, res)
 
         self.assertEqual(8, mock_search.call_count)
@@ -213,7 +213,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
@@ -230,7 +230,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
@@ -247,7 +247,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
@@ -264,7 +264,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -287,7 +287,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -310,7 +310,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -332,7 +332,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -354,7 +354,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -376,7 +376,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -398,7 +398,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -420,7 +420,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -442,7 +442,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -464,7 +464,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -486,7 +486,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -508,7 +508,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
@@ -530,7 +530,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(body, act_body)
         if diff:
