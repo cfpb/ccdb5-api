@@ -92,10 +92,11 @@ def search(**kwargs):
 
 def suggest(text=None, size=6):
     if text is None:
-        return {}
+        return []
     body = {"sgg": {"text": text, "completion": {"field": "suggest", "size": size}}}
     res = get_es().suggest(index=_COMPLAINT_ES_INDEX, body=body)
-    return res
+    candidates = [ e['text'] for e in res['sgg'][0]['options'] ]
+    return candidates
 
 def document(complaint_id):
     doc_query = {"query": {"term": {"_id": complaint_id}}}
