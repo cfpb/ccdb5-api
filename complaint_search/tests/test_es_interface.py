@@ -633,16 +633,46 @@ class EsInterfaceTest(TestCase):
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'suggest')
     def test_suggest_with_no_param__valid(self, mock_suggest):
-        mock_suggest.return_value = 'OK'
+        mock_suggest.return_value = {
+            "sgg": [
+                {
+                    'options': [
+                        {
+                            "text": "test 1",
+                            "score": 1.0
+                        },
+                        {
+                            "text": "test 2",
+                            "score": 1.0
+                        }
+                    ]
+                }
+            ]
+        }
         body = {}
         res = suggest()
         mock_suggest.assert_not_called()
-        self.assertEqual({}, res)
+        self.assertEqual([], res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'suggest')
     def test_suggest_with_text__valid(self, mock_suggest):
-        mock_suggest.return_value = 'OK'
+        mock_suggest.return_value = {
+            "sgg": [
+                {
+                    'options': [
+                        {
+                            "text": "test 1",
+                            "score": 1.0
+                        },
+                        {
+                            "text": "test 2",
+                            "score": 1.0
+                        }
+                    ]
+                }
+            ]
+        }
         body = {"sgg": {"text": "Mortgage", "completion": {"field": "suggest", "size": 6}}}
         res = suggest(text="Mortgage")
         self.assertEqual(len(mock_suggest.call_args), 2)
@@ -651,12 +681,27 @@ class EsInterfaceTest(TestCase):
         act_body = mock_suggest.call_args[1]['body']
         self.assertDictEqual(mock_suggest.call_args[1]['body'], body)
         self.assertEqual(mock_suggest.call_args[1]['index'], 'INDEX')
-        self.assertEqual('OK', res)
+        self.assertEqual(['test 1', 'test 2'], res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'suggest')
     def test_suggest_with_size__valid(self, mock_suggest):
-        mock_suggest.return_value = 'OK'
+        mock_suggest.return_value = {
+            "sgg": [
+                {
+                    'options': [
+                        {
+                            "text": "test 1",
+                            "score": 1.0
+                        },
+                        {
+                            "text": "test 2",
+                            "score": 1.0
+                        }
+                    ]
+                }
+            ]
+        }
         body = {"sgg": {"text": "Loan", "completion": {"field": "suggest", "size": 10}}}
         res = suggest(text="Loan", size=10)
         self.assertEqual(len(mock_suggest.call_args), 2)
@@ -665,7 +710,7 @@ class EsInterfaceTest(TestCase):
         act_body = mock_suggest.call_args[1]['body']
         self.assertDictEqual(mock_suggest.call_args[1]['body'], body)
         self.assertEqual(mock_suggest.call_args[1]['index'], 'INDEX')
-        self.assertEqual('OK', res)
+        self.assertEqual(['test 1', 'test 2'], res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE", "DOC_TYPE")
