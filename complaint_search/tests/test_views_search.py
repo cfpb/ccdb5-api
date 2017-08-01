@@ -14,6 +14,19 @@ class SearchTests(APITestCase):
     def setUp(self):
         pass
 
+    def buildDefaultParams(self, overrides):
+        params = {
+            "field": "complaint_what_happened", 
+            "format": "json", 
+            "frm": 0, 
+            "no_aggs": False, 
+            "size": 10, 
+            "sort": "relevance_desc"
+        }
+
+        params.update(overrides)
+        return params
+
     @mock.patch('complaint_search.es_interface.search')
     def test_search_no_param(self, mock_essearch):
         """
@@ -23,16 +36,7 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        mock_essearch.assert_called_once_with(
-            **{
-                "field": "complaint_what_happened", 
-                "format": "json", 
-                "frm": 0, 
-                "no_aggs": False, 
-                "size": 10, 
-                "sort": "relevance_desc"
-                }
-            )
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -82,16 +86,10 @@ class SearchTests(APITestCase):
             self.assertEqual(status.HTTP_200_OK, response.status_code)
             self.assertEqual('OK', response.data)
 
-        calls = [ mock.call(
-            **{
-                "format": "json", 
-                "frm": 0, 
-                "no_aggs": False, 
-                "size": 10, 
-                "sort": "relevance_desc", 
-                "field": SearchInputSerializer.FIELD_MAP.get(field_pair[0], 
-                field_pair[0])}) 
-                for field_pair in SearchInputSerializer.FIELD_CHOICES ]
+        calls = [ mock.call(**self.buildDefaultParams({
+            "field": SearchInputSerializer.FIELD_MAP.get(field_pair[0], 
+                field_pair[0])}))
+            for field_pair in SearchInputSerializer.FIELD_CHOICES ]
         mock_essearch.assert_has_calls(calls)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -112,14 +110,7 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(
-            **{
-                "field": "complaint_what_happened", 
-                "format": "json", 
-                "frm": 0, 
-                "no_aggs": False, 
-                "sort": "relevance_desc", 
-                "size": 4})
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams(params))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -164,16 +155,7 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(
-            **{
-                "field": "complaint_what_happened", 
-                "format": "json", 
-                "frm": 4, 
-                "no_aggs": False, 
-                "size": 10, 
-                "sort": "relevance_desc"
-            }
-        )
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams(params))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -221,15 +203,7 @@ class SearchTests(APITestCase):
             self.assertEqual(status.HTTP_200_OK, response.status_code)
             self.assertEqual('OK', response.data)
 
-        calls = [ mock.call(
-            **{
-                "field": "complaint_what_happened", 
-                "format": "json", 
-                "frm": 0, 
-                "no_aggs": False, 
-                "size": 10, 
-                "sort": "relevance_desc", 
-                "sort": sort_pair[0]}) 
+        calls = [ mock.call(**self.buildDefaultParams({"sort": sort_pair[0]}))
             for sort_pair in SearchInputSerializer.SORT_CHOICES ]
         mock_essearch.assert_has_calls(calls)
 
@@ -251,15 +225,7 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(**{
-            "field": "complaint_what_happened", 
-            "format": "json", 
-            "frm": 0, 
-            "no_aggs": False, 
-            "size": 10, 
-            "sort": "relevance_desc", 
-            "search_term": "FHA Mortgage"
-        })
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams(params))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -269,15 +235,8 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(
-            **{
-                "field": "complaint_what_happened", 
-                "format": "json", 
-                "frm": 0, 
-                "no_aggs": False, 
-                "size": 10, 
-                "sort": "relevance_desc", 
-                "min_date": date(2017, 04, 11)})
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+            "min_date": date(2017, 4, 11)}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -298,15 +257,8 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(
-            **{
-                "field": "complaint_what_happened", 
-                "format": "json", 
-                "frm": 0, 
-                "no_aggs": False, 
-                "size": 10, 
-                "sort": "relevance_desc", 
-                "max_date": date(2017, 04, 11)})
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+            "max_date": date(2017, 4, 11)}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -327,15 +279,8 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(
-            **{
-                "field": "complaint_what_happened", 
-                "format": "json", 
-                "frm": 0, 
-                "no_aggs": False, 
-                "size": 10, 
-                "sort": "relevance_desc", 
-                "company": ["One Bank", "Bank 2"]})
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+            "company": ["One Bank", "Bank 2"]}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -348,15 +293,8 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(
-            **{
-                "field": "complaint_what_happened", 
-                "format": "json", 
-                "frm": 0, 
-                "no_aggs": False, 
-                "size": 10, 
-                "sort": "relevance_desc", 
-                "product": ["Mortgage-FHA Mortgage", "Payday Loan"]})
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+            "product": ["Mortgage-FHA Mortgage", "Payday Loan"]}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -371,16 +309,9 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(
-            **{
-                "field": "complaint_what_happened", 
-                "format": "json", 
-                "frm": 0, 
-                "no_aggs": False, 
-                "size": 10, 
-                "sort": "relevance_desc", 
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
                 "issue": ["Communication tactics-Frequent or repeated calls", 
-            "Loan servicing, payments, escrow account"]})
+            "Loan servicing, payments, escrow account"]}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -391,15 +322,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(
-            **{
-                "field": "complaint_what_happened", 
-                "format": "json", 
-                "frm": 0, 
-                "no_aggs": False, 
-                "size": 10, 
-                "sort": "relevance_desc", 
-                "state": ["CA", "FL", "VA"]})
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+                "state": ["CA", "FL", "VA"]}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -410,17 +334,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(
-            **{
-                "field": "complaint_what_happened", 
-                "format": "json", 
-                "frm": 0, 
-                "no_aggs": False, 
-                "size": 10, 
-                "sort": "relevance_desc", 
-                "zip_code": ["94XXX", "24236", "23456"]
-            }
-        )
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+                "zip_code": ["94XXX", "24236", "23456"]}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -431,15 +346,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(
-            **{
-                "field": "complaint_what_happened", 
-                "format": "json", 
-                "frm": 0, 
-                "no_aggs": False, 
-                "size": 10, 
-                "sort": "relevance_desc", 
-                "timely": ["YES", "NO"]})
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+                "timely": ["YES", "NO"]}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -450,15 +358,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(
-            **{
-                "field": "complaint_what_happened", 
-                "format": "json", 
-                "frm": 0, 
-                "no_aggs": False, 
-                "size": 10, 
-                "sort": "relevance_desc", 
-                "consumer_disputed": ["yes", "no"]})
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+                "consumer_disputed": ["yes", "no"]}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -469,15 +370,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(
-            **{
-                "field": "complaint_what_happened", 
-                "format": "json", 
-                "frm": 0, 
-                "no_aggs": False, 
-                "size": 10, 
-                "sort": "relevance_desc", 
-                "company_response": ["Closed", "No response"]})
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({ 
+                "company_response": ["Closed", "No response"]}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -488,15 +382,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(
-            **{
-                "field": "complaint_what_happened", 
-                "format": "json", 
-                "frm": 0, 
-                "no_aggs": False, 
-                "size": 10, 
-                "sort": "relevance_desc", 
-                "company_public_response": ["Closed", "No response"]})
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+                "company_public_response": ["Closed", "No response"]}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -507,15 +394,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(
-            **{
-                "field": "complaint_what_happened", 
-                "format": "json", 
-                "frm": 0, 
-                "no_aggs": False, 
-                "size": 10, 
-                "sort": "relevance_desc", 
-                "consumer_consent_provided": ["Yes", "No"]})
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+                "consumer_consent_provided": ["Yes", "No"]}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -526,15 +406,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(
-            **{
-                "field": "complaint_what_happened", 
-                "format": "json", 
-                "frm": 0, 
-                "no_aggs": False, 
-                "size": 10, 
-                "sort": "relevance_desc", 
-                "has_narratives": ["Yes", "No"]})
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+                "has_narratives": ["Yes", "No"]}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -545,15 +418,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(
-            **{
-                "field": "complaint_what_happened", 
-                "format": "json", 
-                "frm": 0, 
-                "no_aggs": False, 
-                "size": 10, 
-                "sort": "relevance_desc", 
-                "submitted_via": ["Web", "Phone"]})
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+                "submitted_via": ["Web", "Phone"]}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -564,15 +430,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(
-            **{
-                "field": "complaint_what_happened", 
-                "format": "json", 
-                "frm": 0, 
-                "no_aggs": False, 
-                "size": 10, 
-                "sort": "relevance_desc", 
-                "tag": ["Older American", "Servicemember"]})
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+                "tag": ["Older American", "Servicemember"]}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -582,14 +441,8 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(
-            **{
-                "field": "complaint_what_happened", 
-                "format": "json", 
-                "frm": 0, 
-                "no_aggs": True, 
-                "sort": "relevance_desc", 
-                "size": 10})
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+                "no_aggs": True}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
