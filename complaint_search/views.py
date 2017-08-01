@@ -79,8 +79,17 @@ def suggest(request):
     data = { k:v for k,v in request.query_params.iteritems() if k in QPARAMS_VARS }
     serializer = SuggestInputSerializer(data=data)
     if serializer.is_valid():
+        # Local development requires CORS support
+        headers = {}
+        if settings.DEBUG:
+            headers = {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type,Authorization',
+                'Access-Control-Allow-Methods': 'GET'
+            }
+
         results = es_interface.suggest(**serializer.validated_data)
-        return Response(results)
+        return Response(results, headers=headers)
     else:
         return Response(serializer.errors,
             status=status.HTTP_400_BAD_REQUEST)
