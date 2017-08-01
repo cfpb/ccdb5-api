@@ -23,7 +23,16 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        mock_essearch.assert_called_once_with()
+        mock_essearch.assert_called_once_with(
+            **{
+                "field": "complaint_what_happened", 
+                "format": "json", 
+                "frm": 0, 
+                "no_aggs": False, 
+                "size": 10, 
+                "sort": "relevance_desc"
+                }
+            )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -74,7 +83,13 @@ class SearchTests(APITestCase):
             self.assertEqual('OK', response.data)
 
         calls = [ mock.call(
-            **{"field": SearchInputSerializer.FIELD_MAP.get(field_pair[0], 
+            **{
+                "format": "json", 
+                "frm": 0, 
+                "no_aggs": False, 
+                "size": 10, 
+                "sort": "relevance_desc", 
+                "field": SearchInputSerializer.FIELD_MAP.get(field_pair[0], 
                 field_pair[0])}) 
                 for field_pair in SearchInputSerializer.FIELD_CHOICES ]
         mock_essearch.assert_has_calls(calls)
@@ -97,7 +112,14 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(**{"size": 4})
+        mock_essearch.assert_called_once_with(
+            **{
+                "field": "complaint_what_happened", 
+                "format": "json", 
+                "frm": 0, 
+                "no_aggs": False, 
+                "sort": "relevance_desc", 
+                "size": 4})
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -138,11 +160,20 @@ class SearchTests(APITestCase):
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_frm__valid(self, mock_essearch):
         url = reverse('complaint_search:search')
-        params = {"frm": 4}
+        params = { "frm": 4 }
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(**{"frm": 4})
+        mock_essearch.assert_called_once_with(
+            **{
+                "field": "complaint_what_happened", 
+                "format": "json", 
+                "frm": 4, 
+                "no_aggs": False, 
+                "size": 10, 
+                "sort": "relevance_desc"
+            }
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -190,7 +221,15 @@ class SearchTests(APITestCase):
             self.assertEqual(status.HTTP_200_OK, response.status_code)
             self.assertEqual('OK', response.data)
 
-        calls = [ mock.call(**{"sort": sort_pair[0]}) 
+        calls = [ mock.call(
+            **{
+                "field": "complaint_what_happened", 
+                "format": "json", 
+                "frm": 0, 
+                "no_aggs": False, 
+                "size": 10, 
+                "sort": "relevance_desc", 
+                "sort": sort_pair[0]}) 
             for sort_pair in SearchInputSerializer.SORT_CHOICES ]
         mock_essearch.assert_has_calls(calls)
 
@@ -212,7 +251,15 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(**params)
+        mock_essearch.assert_called_once_with(**{
+            "field": "complaint_what_happened", 
+            "format": "json", 
+            "frm": 0, 
+            "no_aggs": False, 
+            "size": 10, 
+            "sort": "relevance_desc", 
+            "search_term": "FHA Mortgage"
+        })
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -222,7 +269,15 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(**{"min_date": date(2017, 04, 11)})
+        mock_essearch.assert_called_once_with(
+            **{
+                "field": "complaint_what_happened", 
+                "format": "json", 
+                "frm": 0, 
+                "no_aggs": False, 
+                "size": 10, 
+                "sort": "relevance_desc", 
+                "min_date": date(2017, 04, 11)})
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -243,7 +298,15 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(**{"max_date": date(2017, 04, 11)})
+        mock_essearch.assert_called_once_with(
+            **{
+                "field": "complaint_what_happened", 
+                "format": "json", 
+                "frm": 0, 
+                "no_aggs": False, 
+                "size": 10, 
+                "sort": "relevance_desc", 
+                "max_date": date(2017, 04, 11)})
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -264,7 +327,15 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(**{"company": ["One Bank", "Bank 2"]})
+        mock_essearch.assert_called_once_with(
+            **{
+                "field": "complaint_what_happened", 
+                "format": "json", 
+                "frm": 0, 
+                "no_aggs": False, 
+                "size": 10, 
+                "sort": "relevance_desc", 
+                "company": ["One Bank", "Bank 2"]})
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -278,7 +349,14 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         mock_essearch.assert_called_once_with(
-            **{"product": ["Mortgage-FHA Mortgage", "Payday Loan"]})
+            **{
+                "field": "complaint_what_happened", 
+                "format": "json", 
+                "frm": 0, 
+                "no_aggs": False, 
+                "size": 10, 
+                "sort": "relevance_desc", 
+                "product": ["Mortgage-FHA Mortgage", "Payday Loan"]})
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -294,7 +372,14 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
         mock_essearch.assert_called_once_with(
-            **{"issue": ["Communication tactics-Frequent or repeated calls", 
+            **{
+                "field": "complaint_what_happened", 
+                "format": "json", 
+                "frm": 0, 
+                "no_aggs": False, 
+                "size": 10, 
+                "sort": "relevance_desc", 
+                "issue": ["Communication tactics-Frequent or repeated calls", 
             "Loan servicing, payments, escrow account"]})
         self.assertEqual('OK', response.data)
 
@@ -307,7 +392,14 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
         mock_essearch.assert_called_once_with(
-            **{"state": ["CA", "FL", "VA"]})
+            **{
+                "field": "complaint_what_happened", 
+                "format": "json", 
+                "frm": 0, 
+                "no_aggs": False, 
+                "size": 10, 
+                "sort": "relevance_desc", 
+                "state": ["CA", "FL", "VA"]})
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -319,7 +411,16 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
         mock_essearch.assert_called_once_with(
-            **{"zip_code": ["94XXX", "24236", "23456"]})
+            **{
+                "field": "complaint_what_happened", 
+                "format": "json", 
+                "frm": 0, 
+                "no_aggs": False, 
+                "size": 10, 
+                "sort": "relevance_desc", 
+                "zip_code": ["94XXX", "24236", "23456"]
+            }
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -331,7 +432,14 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
         mock_essearch.assert_called_once_with(
-            **{"timely": ["YES", "NO"]})
+            **{
+                "field": "complaint_what_happened", 
+                "format": "json", 
+                "frm": 0, 
+                "no_aggs": False, 
+                "size": 10, 
+                "sort": "relevance_desc", 
+                "timely": ["YES", "NO"]})
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -343,7 +451,14 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
         mock_essearch.assert_called_once_with(
-            **{"consumer_disputed": ["yes", "no"]})
+            **{
+                "field": "complaint_what_happened", 
+                "format": "json", 
+                "frm": 0, 
+                "no_aggs": False, 
+                "size": 10, 
+                "sort": "relevance_desc", 
+                "consumer_disputed": ["yes", "no"]})
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -355,7 +470,14 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
         mock_essearch.assert_called_once_with(
-            **{"company_response": ["Closed", "No response"]})
+            **{
+                "field": "complaint_what_happened", 
+                "format": "json", 
+                "frm": 0, 
+                "no_aggs": False, 
+                "size": 10, 
+                "sort": "relevance_desc", 
+                "company_response": ["Closed", "No response"]})
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -367,7 +489,14 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
         mock_essearch.assert_called_once_with(
-            **{"company_public_response": ["Closed", "No response"]})
+            **{
+                "field": "complaint_what_happened", 
+                "format": "json", 
+                "frm": 0, 
+                "no_aggs": False, 
+                "size": 10, 
+                "sort": "relevance_desc", 
+                "company_public_response": ["Closed", "No response"]})
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -379,7 +508,14 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
         mock_essearch.assert_called_once_with(
-            **{"consumer_consent_provided": ["Yes", "No"]})
+            **{
+                "field": "complaint_what_happened", 
+                "format": "json", 
+                "frm": 0, 
+                "no_aggs": False, 
+                "size": 10, 
+                "sort": "relevance_desc", 
+                "consumer_consent_provided": ["Yes", "No"]})
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -391,7 +527,14 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
         mock_essearch.assert_called_once_with(
-            **{"has_narratives": ["Yes", "No"]})
+            **{
+                "field": "complaint_what_happened", 
+                "format": "json", 
+                "frm": 0, 
+                "no_aggs": False, 
+                "size": 10, 
+                "sort": "relevance_desc", 
+                "has_narratives": ["Yes", "No"]})
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -403,7 +546,14 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
         mock_essearch.assert_called_once_with(
-            **{"submitted_via": ["Web", "Phone"]})
+            **{
+                "field": "complaint_what_happened", 
+                "format": "json", 
+                "frm": 0, 
+                "no_aggs": False, 
+                "size": 10, 
+                "sort": "relevance_desc", 
+                "submitted_via": ["Web", "Phone"]})
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -415,8 +565,43 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
         mock_essearch.assert_called_once_with(
-            **{"tag": ["Older American", "Servicemember"]})
+            **{
+                "field": "complaint_what_happened", 
+                "format": "json", 
+                "frm": 0, 
+                "no_aggs": False, 
+                "size": 10, 
+                "sort": "relevance_desc", 
+                "tag": ["Older American", "Servicemember"]})
         self.assertEqual('OK', response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_no_aggs__valid(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        params = {"no_aggs": True}
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url, params)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        mock_essearch.assert_called_once_with(
+            **{
+                "field": "complaint_what_happened", 
+                "format": "json", 
+                "frm": 0, 
+                "no_aggs": True, 
+                "sort": "relevance_desc", 
+                "size": 10})
+        self.assertEqual('OK', response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_no_aggs__invalid_type(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        params = {"no_aggs": "Not boolean"}
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url, params)
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+        mock_essearch.assert_not_called()
+        self.assertDictEqual({"no_aggs": [u'"Not boolean" is not a valid boolean.']}, 
+            response.data)
 
     @mock.patch('complaint_search.es_interface.search')
     def test_search__transport_error_with_status_code(self, mock_essearch):

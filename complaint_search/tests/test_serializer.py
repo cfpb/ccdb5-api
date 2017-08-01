@@ -11,7 +11,20 @@ class SearchInputSerializerTests(TestCase):
     def test_is_valid__no_args(self):
         serializer = SearchInputSerializer(data={})
         self.assertTrue(serializer.is_valid())
-        self.assertEqual({}, serializer.validated_data)
+        exp_dict = {
+            "format": "json", 
+            "field": "complaint_what_happened", 
+            "size": 10, 
+            "frm": 0, 
+            "no_aggs": False, 
+            "search_term": "complaint_what_happened",
+            "sort": "relevance_desc"
+        }
+        # This is an OrderedDict
+        for k, v in serializer.validated_data.iteritems():
+
+            self.assertIn(k, exp_dict)
+            self.assertEqual(v, exp_dict[k])
 
     def test_is_valid__valid_product(self):
         self.data['product'] = [u"Mortgage\u2022FHA Mortgage", "Payday Loan"]

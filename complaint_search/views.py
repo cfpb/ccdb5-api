@@ -18,8 +18,12 @@ from complaint_search.serializer import SearchInputSerializer, SuggestInputSeria
 def search(request):
 
     fixed_qparam = request.query_params
+    
+    # When you add a query parameter, make sure you add it to one of the 
+    # constant tuples below so it will be parse correctly
+
     QPARAMS_VARS = ('fmt', 'field', 'size', 'frm', 'sort', 
-        'search_term', 'min_date', 'max_date')
+        'search_term', 'min_date', 'max_date', 'no_aggs')
 
     QPARAMS_LISTS = ('company', 'product', 'issue', 'state', 
         'zip_code', 'timely', 'consumer_disputed', 'company_response',
