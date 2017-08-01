@@ -72,9 +72,10 @@ def search(**kwargs):
     res = None
     format = kwargs.get("format", "json")
     if format == "json":
-        aggregation_builder = AggregationBuilder()
-        aggregation_builder.add(**kwargs)
-        body["aggs"] = aggregation_builder.build()
+        if not kwargs.get("no_aggs", False):
+            aggregation_builder = AggregationBuilder()
+            aggregation_builder.add(**kwargs)
+            body["aggs"] = aggregation_builder.build()
 
         res = get_es().search(index=_COMPLAINT_ES_INDEX, doc_type=_COMPLAINT_DOC_TYPE, body=body, scroll="10m")
 
