@@ -11,6 +11,16 @@ from complaint_search.renderers import CSVRenderer, XLSRenderer, XLSXRenderer
 from complaint_search.decorators import catch_es_error
 from complaint_search.serializer import SearchInputSerializer, SuggestInputSerializer
 
+def _buildHeaders():
+    # Local development requires CORS support
+    headers = {}
+    if settings.DEBUG:
+        headers = {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Content-Type,Authorization',
+            'Access-Control-Allow-Methods': 'GET'
+        }
+    return headers
 
 @api_view(['GET'])
 @renderer_classes((JSONRenderer, CSVRenderer, XLSRenderer, XLSXRenderer, BrowsableAPIRenderer))
@@ -54,14 +64,7 @@ def search(request):
     if serializer.is_valid():
         results = es_interface.search(**serializer.validated_data)
 
-        # Local development requires CORS support
-        headers = {}
-        if settings.DEBUG:
-            headers = {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Headers': 'Content-Type,Authorization',
-                'Access-Control-Allow-Methods': 'GET'
-            }
+        headers = _buildHeaders()
 
         # If format is in csv, xls, xlsx, update its attachment response 
         # with a filename
@@ -83,17 +86,8 @@ def suggest(request):
     data = { k:v for k,v in request.query_params.iteritems() if k in QPARAMS_VARS }
     serializer = SuggestInputSerializer(data=data)
     if serializer.is_valid():
-        # Local development requires CORS support
-        headers = {}
-        if settings.DEBUG:
-            headers = {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Headers': 'Content-Type,Authorization',
-                'Access-Control-Allow-Methods': 'GET'
-            }
-
         results = es_interface.suggest(**serializer.validated_data)
-        return Response(results, headers=headers)
+        return Response(results, headers=_buildHeaders())
     else:
         return Response(serializer.errors,
             status=status.HTTP_400_BAD_REQUEST)
@@ -102,4 +96,4 @@ def suggest(request):
 @catch_es_error
 def document(request, id):
     results = es_interface.document(id)
-    return Response(results)
+    return Response(results, headers=_buildHeaders())
