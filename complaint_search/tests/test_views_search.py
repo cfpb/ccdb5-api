@@ -151,7 +151,7 @@ class SearchTests(APITestCase):
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_frm__valid(self, mock_essearch):
         url = reverse('complaint_search:search')
-        params = { "frm": 4 }
+        params = { "frm": 10 }
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
@@ -191,6 +191,18 @@ class SearchTests(APITestCase):
         mock_essearch.assert_not_called()
         self.assertDictEqual(
             {"frm": ["Ensure this value is less than or equal to 100000."]}, 
+            response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_frm__invalid_frm_not_multiples_of_size(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        params = { "frm": 4 }
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url, params)
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+        mock_essearch.assert_not_called()
+        self.assertDictEqual(
+            {"non_field_errors": ["frm is not zero or a multiple of size"]}, 
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
