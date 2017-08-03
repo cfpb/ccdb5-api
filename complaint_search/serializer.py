@@ -71,7 +71,7 @@ class SearchInputSerializer(serializers.Serializer):
         child=serializers.CharField(max_length=200), required=False)
     consumer_consent_provided = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False)
-    has_narratives = serializers.ListField(
+    has_narrative = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False)
     submitted_via = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False)

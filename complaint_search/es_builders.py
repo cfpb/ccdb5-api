@@ -12,7 +12,7 @@ class BaseBuilder(object):
         "consumer_consent_provided", "submitted_via", "tag", "consumer_disputed")
 
     # Filters for those that need conversion from string to boolean
-    _OPTIONAL_FILTERS_STRING_TO_BOOL = ("has_narratives",)
+    _OPTIONAL_FILTERS_STRING_TO_BOOL = ("has_narrative",)
 
     _OPTIONAL_FILTERS_PARAM_TO_ES_MAP = {
         "product": "product.raw",
@@ -75,7 +75,6 @@ class BaseBuilder(object):
 
     def _create_and_append_bool_should_clauses(self, es_field_name, value_list, 
         filter_list, with_subitems=False, es_subitem_field_name=None):
-
         filter_clauses = self._create_bool_should_clauses(es_field_name, value_list, 
             with_subitems, es_subitem_field_name)
 
@@ -182,7 +181,7 @@ class AggregationBuilder(BaseBuilder):
     # All fields that need to have an aggregation entry
         Field = namedtuple('Field', 'name size has_subfield')
         fields = [
-            Field('has_narratives', 0, False),
+            Field('has_narrative', 0, False),
             Field('company', 0, False),
             Field('product', 0, True),
             Field('issue', 0, True),

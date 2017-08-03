@@ -19,7 +19,7 @@
     "sort": [{"_score": {"order": "desc"}}],
     "post_filter": {"and": {"filters": []}},
     "aggs": {
-        "has_narratives": {
+        "has_narrative": {
             "filter": {
                 "and": {
                     "filters": [
@@ -32,9 +32,9 @@
                 }
             },
             "aggs": {
-                "has_narratives": {
+                "has_narrative": {
                     "terms": {
-                        "field": "has_narratives",
+                        "field": "has_narrative",
                         "size": 0
                     }
                 }
