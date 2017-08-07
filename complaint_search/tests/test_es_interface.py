@@ -610,11 +610,11 @@ class EsInterfaceTest(TestCase):
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'search')
     @mock.patch.object(Elasticsearch, 'count')
-    def test_search_with_has_narratives__valid(self, mock_count, mock_search):
+    def test_search_with_has_narrative__valid(self, mock_count, mock_search):
         mock_search.side_effect = self.MOCK_SEARCH_SIDE_EFFECT
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
-        body = self.load("search_with_has_narratives__valid")
-        res = search(has_narratives=["No", "Yes"])
+        body = self.load("search_with_has_narrative__valid")
+        res = search(has_narrative=["No", "Yes"])
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
@@ -622,7 +622,7 @@ class EsInterfaceTest(TestCase):
         act_body = mock_search.call_args_list[0][1]['body']
         diff = deep.diff(act_body, body)
         if diff:
-            print "has_narratives"
+            print "has_narrative"
             diff.print_full()
         self.assertIsNone(deep.diff(act_body, body))
         self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)

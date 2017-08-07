@@ -55,7 +55,7 @@ def get_meta():
 # - company_response: filters a list of response from the company to consumer
 # - company_public_response: filters a list of public response from the company
 # - consumer_consent_provided: filters a list of whether consumer consent was provided in the complaint
-# - has_narratives: filters a list of whether complaint has narratives or not
+# - has_narrative: filters a list of whether complaint has narratives or not
 # - submitted_via: filters a list of ways the complaint was submitted
 # - tag - filters a list of tags
 def search(**kwargs):

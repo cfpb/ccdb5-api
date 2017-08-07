@@ -23,15 +23,15 @@
             "filters": [{ 
                 "bool": {
                     "should": [
-                        {"terms": {"has_narratives": [0]}},
-                        {"terms": {"has_narratives": [1]}}
+                        {"terms": {"has_narrative": [0]}},
+                        {"terms": {"has_narrative": [1]}}
                     ]
                 }
             }]
         }
     },
     "aggs": {
-        "has_narratives": {
+        "has_narrative": {
             "filter": {
                 "and": {
                     "filters": [
@@ -44,9 +44,9 @@
                 }
             },
             "aggs": {
-                "has_narratives": {
+                "has_narrative": {
                     "terms": {
-                        "field": "has_narratives",
+                        "field": "has_narrative",
                         "size": 0
                     }
                 }
@@ -64,8 +64,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"has_narratives": [0]}},
-                                    {"terms": {"has_narratives": [1]}}
+                                    {"terms": {"has_narrative": [0]}},
+                                    {"terms": {"has_narrative": [1]}}
                                 ]
                             }
                         }
@@ -93,8 +93,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"has_narratives": [0]}},
-                                    {"terms": {"has_narratives": [1]}}
+                                    {"terms": {"has_narrative": [0]}},
+                                    {"terms": {"has_narrative": [1]}}
                                 ]
                             }
                         }
@@ -130,8 +130,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"has_narratives": [0]}},
-                                    {"terms": {"has_narratives": [1]}}
+                                    {"terms": {"has_narrative": [0]}},
+                                    {"terms": {"has_narrative": [1]}}
                                 ]
                             }
                         }
@@ -167,8 +167,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"has_narratives": [0]}},
-                                    {"terms": {"has_narratives": [1]}}
+                                    {"terms": {"has_narrative": [0]}},
+                                    {"terms": {"has_narrative": [1]}}
                                 ]
                             }
                         }
@@ -196,8 +196,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"has_narratives": [0]}},
-                                    {"terms": {"has_narratives": [1]}}
+                                    {"terms": {"has_narrative": [0]}},
+                                    {"terms": {"has_narrative": [1]}}
                                 ]
                             }
                         }
@@ -225,8 +225,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"has_narratives": [0]}},
-                                    {"terms": {"has_narratives": [1]}}
+                                    {"terms": {"has_narrative": [0]}},
+                                    {"terms": {"has_narrative": [1]}}
                                 ]
                             }
                         }
@@ -254,8 +254,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"has_narratives": [0]}},
-                                    {"terms": {"has_narratives": [1]}}
+                                    {"terms": {"has_narrative": [0]}},
+                                    {"terms": {"has_narrative": [1]}}
                                 ]
                             }
                         }
@@ -283,8 +283,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"has_narratives": [0]}},
-                                    {"terms": {"has_narratives": [1]}}
+                                    {"terms": {"has_narrative": [0]}},
+                                    {"terms": {"has_narrative": [1]}}
                                 ]
                             }
                         }
@@ -312,8 +312,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"has_narratives": [0]}},
-                                    {"terms": {"has_narratives": [1]}}
+                                    {"terms": {"has_narrative": [0]}},
+                                    {"terms": {"has_narrative": [1]}}
                                 ]
                             }
                         }
@@ -341,8 +341,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"has_narratives": [0]}},
-                                    {"terms": {"has_narratives": [1]}}
+                                    {"terms": {"has_narrative": [0]}},
+                                    {"terms": {"has_narrative": [1]}}
                                 ]
                             }
                         }
@@ -370,8 +370,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"has_narratives": [0]}},
-                                    {"terms": {"has_narratives": [1]}}
+                                    {"terms": {"has_narrative": [0]}},
+                                    {"terms": {"has_narrative": [1]}}
                                 ]
                             }
                         }
@@ -399,8 +399,8 @@
                         { 
                             "bool": {
                                 "should": [
-                                    {"terms": {"has_narratives": [0]}},
-                                    {"terms": {"has_narratives": [1]}}
+                                    {"terms": {"has_narrative": [0]}},
+                                    {"terms": {"has_narrative": [1]}}
                                 ]
                             }
                         }

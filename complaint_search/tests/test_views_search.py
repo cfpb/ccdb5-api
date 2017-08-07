@@ -399,15 +399,15 @@ class SearchTests(APITestCase):
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
-    def test_search_with_has_narratives__valid(self, mock_essearch):
+    def test_search_with_has_narrative__valid(self, mock_essearch):
         url = reverse('complaint_search:search')
-        url += "?has_narratives=Yes&has_narratives=No"
+        url += "?has_narrative=Yes&has_narrative=No"
         mock_essearch.return_value = 'OK'
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
         mock_essearch.assert_called_once_with(**self.buildDefaultParams({
-                "has_narratives": ["Yes", "No"]}))
+                "has_narrative": ["Yes", "No"]}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
