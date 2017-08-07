@@ -1,12 +1,10 @@
 import os
 import urllib
 import json
-import copy
 from collections import defaultdict, namedtuple
 import requests
 from elasticsearch import Elasticsearch
 from complaint_search.es_builders import SearchBuilder, PostFilterBuilder, AggregationBuilder
-from complaint_search.defaults import PARAMS
 
 _ES_URL = "{}://{}:{}".format("http", os.environ.get('ES_HOST', 'localhost'), 
     os.environ.get('ES_PORT', '9200'))
@@ -61,38 +59,25 @@ def get_meta():
 # - submitted_via: filters a list of ways the complaint was submitted
 # - tag - filters a list of tags
 def search(**kwargs):
-    params = copy.deepcopy(PARAMS)
-    params.update(**kwargs)
+
     search_builder = SearchBuilder()
-    search_builder.add(**params)
+    search_builder.add(**kwargs)
     body = search_builder.build()
 
     post_filter_builder = PostFilterBuilder()
-    post_filter_builder.add(**params)
+    post_filter_builder.add(**kwargs)
     body["post_filter"] = post_filter_builder.build()
 
     # format
     res = None
-    format = params.get("format")
+    format = kwargs.get("format", "json")
     if format == "json":
-        if not params.get("no_aggs"):
+        if not kwargs.get("no_aggs", False):
             aggregation_builder = AggregationBuilder()
-            aggregation_builder.add(**params)
+            aggregation_builder.add(**kwargs)
             body["aggs"] = aggregation_builder.build()
 
-        res = get_es().search(index=_COMPLAINT_ES_INDEX, 
-            doc_type=_COMPLAINT_DOC_TYPE, 
-            body=body, 
-            scroll="10m")
-
-        num_of_scroll = params.get("frm") / params.get("size")
-
-        scroll_id = res['_scroll_id']
-        if num_of_scroll > 0:
-            while num_of_scroll > 0:
-                res['hits']['hits'] = get_es().scroll(scroll_id=scroll_id, 
-                    scroll="10m")['hits']['hits']
-                num_of_scroll -= 1
+        res = get_es().search(index=_COMPLAINT_ES_INDEX, doc_type=_COMPLAINT_DOC_TYPE, body=body, scroll="10m")
 
         res["_meta"] = get_meta()
 
