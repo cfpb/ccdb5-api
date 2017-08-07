@@ -1,10 +1,12 @@
 import os
 import urllib
 import json
+import copy
 from collections import defaultdict, namedtuple
 import requests
 from elasticsearch import Elasticsearch
 from complaint_search.es_builders import SearchBuilder, PostFilterBuilder, AggregationBuilder
+from complaint_search.defaults import PARAMS
 
 _ES_URL = "{}://{}:{}".format("http", os.environ.get('ES_HOST', 'localhost'), 
     os.environ.get('ES_PORT', '9200'))
@@ -60,25 +62,37 @@ def get_meta():
 # - tag - filters a list of tags
 def search(**kwargs):
 
+    params = copy.deepcopy(PARAMS)
+    params.update(**kwargs)
     search_builder = SearchBuilder()
-    search_builder.add(**kwargs)
+    search_builder.add(**params)
     body = search_builder.build()
 
     post_filter_builder = PostFilterBuilder()
-    post_filter_builder.add(**kwargs)
+    post_filter_builder.add(**params)
     body["post_filter"] = post_filter_builder.build()
 
     # format
     res = None
-    format = kwargs.get("format", "json")
+    format = params.get("format")
     if format == "json":
-        if not kwargs.get("no_aggs", False):
+        if not params.get("no_aggs"):
             aggregation_builder = AggregationBuilder()
-            aggregation_builder.add(**kwargs)
+            aggregation_builder.add(**params)
             body["aggs"] = aggregation_builder.build()
 
-        res = get_es().search(index=_COMPLAINT_ES_INDEX, doc_type=_COMPLAINT_DOC_TYPE, body=body, scroll="10m")
+        res = get_es().search(index=_COMPLAINT_ES_INDEX, 
+            doc_type=_COMPLAINT_DOC_TYPE, 
+            body=body, 
+            scroll="10m")
 
+        num_of_scroll = params.get("frm") / params.get("size")
+        scroll_id = res['_scroll_id']
+        if num_of_scroll > 0:
+            while num_of_scroll > 0:
+                res['hits']['hits'] = get_es().scroll(scroll_id=scroll_id, 
+                    scroll="10m")['hits']['hits']
+                num_of_scroll -= 1
         res["_meta"] = get_meta()
 
     elif format in ("csv", "xls", "xlsx"):

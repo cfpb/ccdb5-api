@@ -1,5 +1,7 @@
+import copy
 import abc
 from collections import defaultdict, namedtuple
+from complaint_search.defaults import PARAMS
 
 class BaseBuilder(object):
     __metaclass__  = abc.ABCMeta
@@ -82,14 +84,7 @@ class BaseBuilder(object):
 
 class SearchBuilder(BaseBuilder):
     def __init__(self):
-        self.params = {
-            "format": "json", 
-            "field": "complaint_what_happened", 
-            "size": 10, 
-            "frm": 0,
-            "sort": "relevance_desc",
-            "no_aggs": False
-        }
+        self.params = copy.deepcopy(PARAMS)
 
     def build(self):
         search = {
