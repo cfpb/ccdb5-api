@@ -1,3 +1,4 @@
+import re
 import copy
 import abc
 from collections import defaultdict, namedtuple
@@ -114,28 +115,32 @@ class SearchBuilder(BaseBuilder):
         search["sort"] = [{sort_field: {"order": sort_order}}]
 
         # query
-        if self.params.get("search_term"):
-            if any(keyword in self.params.get("search_term") 
+        search_term = self.params.get("search_term")
+        if search_term:
+            if re.match("^[A-Za-z\d\s]+$", search_term) and \
+            not any(keyword in search_term 
                 for keyword in ("AND", "OR", "NOT", "TO")):
 
-                # QueryString Query
-                search["query"] = {
-                    "query_string": {
-                        "query": self.params.get("search_term"),
-                        "fields": [
-                            self.params.get("field")
-                        ],
-                        "default_operator": "AND"
-                    }
-                }
-            else: 
                 # Match Query
                 search["query"] = {
                     "match": {
                         self.params.get("field"): {
-                            "query": self.params.get("search_term"), 
+                            "query": search_term, 
                             "operator": "and"
                         }
+                    }
+                }
+
+            else: 
+
+                # QueryString Query
+                search["query"] = {
+                    "query_string": {
+                        "query": search_term,
+                        "fields": [
+                            self.params.get("field")
+                        ],
+                        "default_operator": "AND"
                     }
                 }
 

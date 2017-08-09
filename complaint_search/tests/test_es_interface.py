@@ -256,7 +256,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         body = self.load("search_with_search_term_match__valid")
-        res = search(search_term="test_term")
+        res = search(search_term="test term")
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
