@@ -20,14 +20,15 @@
     "sort": [{"_score": {"order": "desc"}}],
     "post_filter": {
         "and": {
-            "filters": [{ 
-                "bool": {
-                    "should": [
-                        {"terms": {"consumer_disputed.raw": ["No"]}},
-                        {"terms": {"consumer_disputed.raw": ["Yes"]}}
-                    ]
+            "filters": [
+                {
+                    "range": {
+                        "date_received": {
+                            "from": "2014-04-14"
+                        }
+                    }
                 }
-            }]
+            ]
         }
     },
     "aggs": {
@@ -37,20 +38,14 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
+                                "date_received": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         },
                         {
                             "range": {
                                 "date_sent_to_company": {}
-                            }
-                        },
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_disputed.raw": ["No"]}},
-                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
-                                ]
                             }
                         }
                     ]
@@ -71,20 +66,14 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
+                                "date_received": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         },
                         {
                             "range": {
                                 "date_sent_to_company": {}
-                            }
-                        },
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_disputed.raw": ["No"]}},
-                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
-                                ]
                             }
                         }
                     ]
@@ -105,20 +94,14 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
+                                "date_received": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         },
                         {
                             "range": {
                                 "date_sent_to_company": {}
-                            }
-                        },
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_disputed.raw": ["No"]}},
-                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
-                                ]
                             }
                         }
                     ]
@@ -147,20 +130,14 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
+                                "date_received": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         },
                         {
                             "range": {
                                 "date_sent_to_company": {}
-                            }
-                        },
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_disputed.raw": ["No"]}},
-                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
-                                ]
                             }
                         }
                     ]
@@ -189,20 +166,14 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
+                                "date_received": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         },
                         {
                             "range": {
                                 "date_sent_to_company": {}
-                            }
-                        },
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_disputed.raw": ["No"]}},
-                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
-                                ]
                             }
                         }
                     ]
@@ -223,20 +194,14 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
+                                "date_received": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         },
                         {
                             "range": {
                                 "date_sent_to_company": {}
-                            }
-                        },
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_disputed.raw": ["No"]}},
-                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
-                                ]
                             }
                         }
                     ]
@@ -257,20 +222,14 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
+                                "date_received": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         },
                         {
                             "range": {
                                 "date_sent_to_company": {}
-                            }
-                        },
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_disputed.raw": ["No"]}},
-                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
-                                ]
                             }
                         }
                     ]
@@ -291,20 +250,14 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
+                                "date_received": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         },
                         {
                             "range": {
                                 "date_sent_to_company": {}
-                            }
-                        },
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_disputed.raw": ["No"]}},
-                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
-                                ]
                             }
                         }
                     ]
@@ -325,20 +278,14 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
+                                "date_received": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         },
                         {
                             "range": {
                                 "date_sent_to_company": {}
-                            }
-                        },
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_disputed.raw": ["No"]}},
-                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
-                                ]
                             }
                         }
                     ]
@@ -359,7 +306,9 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
+                                "date_received": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         },
                         {
@@ -385,20 +334,14 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
+                                "date_received": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         },
                         {
                             "range": {
                                 "date_sent_to_company": {}
-                            }
-                        },
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_disputed.raw": ["No"]}},
-                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
-                                ]
                             }
                         }
                     ]
@@ -419,20 +362,14 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
+                                "date_received": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         },
                         {
                             "range": {
                                 "date_sent_to_company": {}
-                            }
-                        },
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_disputed.raw": ["No"]}},
-                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
-                                ]
                             }
                         }
                     ]
@@ -453,20 +390,14 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
+                                "date_received": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         },
                         {
                             "range": {
                                 "date_sent_to_company": {}
-                            }
-                        },
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_disputed.raw": ["No"]}},
-                                    {"terms": {"consumer_disputed.raw": ["Yes"]}}
-                                ]
                             }
                         }
                     ]

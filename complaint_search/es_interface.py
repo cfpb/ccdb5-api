@@ -38,6 +38,7 @@ def get_meta():
         "last_updated": max_date_res["aggregations"]["max_date"]["value_as_string"],
         "total_record_count": count_res["count"]
     }
+    
 # List of possible arguments:
 # - format: format to be returned: "json", "csv", "xls", or "xlsx"
 # - field: field you want to search in: "complaint_what_happened", "company_public_response", "_all"
@@ -45,8 +46,10 @@ def get_meta():
 # - frm: from which index to start returning
 # - sort: sort by: "relevance_desc", "relevance_asc", "created_date_desc", "created_date_asc"
 # - search_term: the term to be searched
-# - min_date: return only date including and later than this date i.e. 2017-03-02
-# - max_date: return only date before this date, i.e. 2017-04-12 
+# - date_received_min: return only date received including and later than this date i.e. 2017-03-02
+# - date_received_max: return only date received before this date, i.e. 2017-04-12 
+# - company_received_min: return only date company received including and later than this date i.e. 2017-03-02
+# - company_received_max: return only date company received before this date, i.e. 2017-04-12 
 # - company: filters a list of companies you want ["Bank 1", "Bank 2"]
 # - product: filters a list of product you want if a subproduct is needed to filter, separated by a bullet (u'\u2022), i.e. [u"Mortgage\u2022FHA Mortgage", "Payday Loan"]
 # - issue: filters a list of issue you want if a subissue is needed to filter, separated by a bullet (u'\u2022), i.e. See Product above

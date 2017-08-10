@@ -151,15 +151,29 @@ class PostFilterBuilder(BaseBuilder):
     def build(self):
         post_filter = {"and": {"filters": []}}
 
-        ## date
-        if self.params.get("min_date") or self.params.get("max_date"):
+        ## date_received
+        date_received_min = self.params.get("date_received_min")
+        date_received_max = self.params.get("date_received_max")
+        if date_received_min or date_received_max:
             date_clause = {"range": {"date_received": {}}}
-            if self.params.get("min_date"):
-                date_clause["range"]["date_received"]["from"] = self.params.get("min_date")
-            if self.params.get("max_date"):
-                date_clause["range"]["date_received"]["to"] = self.params.get("max_date")
+            if date_received_min:
+                date_clause["range"]["date_received"]["from"] = date_received_min
+            if date_received_max:
+                date_clause["range"]["date_received"]["to"] = date_received_max
 
             post_filter["and"]["filters"].append(date_clause)
+
+        ## company_received
+        company_received_min = self.params.get("company_received_min")
+        company_received_max = self.params.get("company_received_max")
+        if company_received_min or company_received_max:
+            company_clause = {"range": {"date_sent_to_company": {}}}
+            if company_received_min:
+                company_clause["range"]["date_sent_to_company"]["from"] = company_received_min
+            if company_received_max:
+                company_clause["range"]["date_sent_to_company"]["to"] = company_received_max
+
+            post_filter["and"]["filters"].append(company_clause)        
 
         ## Create bool should clauses for fields in self._OPTIONAL_FILTERS
         for field in self._OPTIONAL_FILTERS:
@@ -252,12 +266,26 @@ class AggregationBuilder(BaseBuilder):
                     }
                 }
             }
-            if "min_date" in self.params:
-                date_filter["range"]["date_received"]["from"] = self.params["min_date"]
-            if "max_date" in self.params:
-                date_filter["range"]["date_received"]["to"] = self.params["max_date"]
+            if "date_received_min" in self.params:
+                date_filter["range"]["date_received"]["from"] = self.params["date_received_min"]
+            if "date_received_max" in self.params:
+                date_filter["range"]["date_received"]["to"] = self.params["date_received_max"]
             
             field_aggs["filter"]["and"]["filters"].append(date_filter)
+
+            company_date_filter = {
+                "range": {
+                    "date_sent_to_company": {
+
+                    }
+                }
+            }
+            if "company_received_min" in self.params:
+                company_date_filter["range"]["date_sent_to_company"]["from"] = self.params["company_received_min"]
+            if "company_received_max" in self.params:
+                company_date_filter["range"]["date_sent_to_company"]["to"] = self.params["company_received_max"]
+            
+            field_aggs["filter"]["and"]["filters"].append(company_date_filter)
             
             # Add filter clauses to aggregation entries (only those that are not the same as field name)
             for item in self.params:

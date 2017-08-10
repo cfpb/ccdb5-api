@@ -42,6 +42,11 @@
                                 "date_received": {}
                             }
                         },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
+                            }
+                        },
                         { 
                             "bool": {
                                 "should": [
@@ -70,6 +75,11 @@
                             "range": {
                                 "date_received": {}
                             }
+                        },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
+                            }
                         }
                     ]
                 }
@@ -90,6 +100,11 @@
                         {
                             "range": {
                                 "date_received": {}
+                            }
+                        },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
                             }
                         },
                         { 
@@ -129,6 +144,11 @@
                                 "date_received": {}
                             }
                         },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
+                            }
+                        },
                         { 
                             "bool": {
                                 "should": [
@@ -166,6 +186,11 @@
                                 "date_received": {}
                             }
                         },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
+                            }
+                        },
                         { 
                             "bool": {
                                 "should": [
@@ -193,6 +218,11 @@
                         {
                             "range": {
                                 "date_received": {}
+                            }
+                        },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
                             }
                         },
                         { 
@@ -224,6 +254,11 @@
                                 "date_received": {}
                             }
                         },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
+                            }
+                        },
                         { 
                             "bool": {
                                 "should": [
@@ -251,6 +286,11 @@
                         {
                             "range": {
                                 "date_received": {}
+                            }
+                        },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
                             }
                         },
                         { 
@@ -282,6 +322,11 @@
                                 "date_received": {}
                             }
                         },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
+                            }
+                        },
                         { 
                             "bool": {
                                 "should": [
@@ -309,6 +354,11 @@
                         {
                             "range": {
                                 "date_received": {}
+                            }
+                        },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
                             }
                         },
                         { 
@@ -340,6 +390,11 @@
                                 "date_received": {}
                             }
                         },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
+                            }
+                        },
                         { 
                             "bool": {
                                 "should": [
@@ -369,6 +424,11 @@
                                 "date_received": {}
                             }
                         },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
+                            }
+                        },
                         { 
                             "bool": {
                                 "should": [
@@ -396,6 +456,11 @@
                         {
                             "range": {
                                 "date_received": {}
+                            }
+                        },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
                             }
                         },
                         { 

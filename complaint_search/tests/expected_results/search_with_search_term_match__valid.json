@@ -27,6 +27,11 @@
                             "range": {
                                 "date_received": {}
                             }
+                        },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
+                            }
                         }
                     ]
                 }
@@ -48,6 +53,11 @@
                             "range": {
                                 "date_received": {}
                             }
+                        },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
+                            }
                         }
                     ]
                 }
@@ -68,6 +78,11 @@
                         {
                             "range": {
                                 "date_received": {}
+                            }
+                        },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
                             }
                         }
                     ]
@@ -98,6 +113,11 @@
                             "range": {
                                 "date_received": {}
                             }
+                        },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
+                            }
                         }
                     ]
                 }
@@ -127,6 +147,11 @@
                             "range": {
                                 "date_received": {}
                             }
+                        },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
+                            }
                         }
                     ]
                 }
@@ -147,6 +172,11 @@
                         {
                             "range": {
                                 "date_received": {}
+                            }
+                        },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
                             }
                         }
                     ]
@@ -169,6 +199,11 @@
                             "range": {
                                 "date_received": {}
                             }
+                        },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
+                            }
                         }
                     ]
                 }
@@ -189,6 +224,11 @@
                         {
                             "range": {
                                 "date_received": {}
+                            }
+                        },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
                             }
                         }
                     ]
@@ -211,6 +251,11 @@
                             "range": {
                                 "date_received": {}
                             }
+                        },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
+                            }
                         }
                     ]
                 }
@@ -231,6 +276,11 @@
                         {
                             "range": {
                                 "date_received": {}
+                            }
+                        },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
                             }
                         }
                     ]
@@ -253,6 +303,11 @@
                             "range": {
                                 "date_received": {}
                             }
+                        },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
+                            }
                         }
                     ]
                 }
@@ -274,6 +329,11 @@
                             "range": {
                                 "date_received": {}
                             }
+                        },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
+                            }
                         }
                     ]
                 }
@@ -294,6 +354,11 @@
                         {
                             "range": {
                                 "date_received": {}
+                            }
+                        },
+                        {
+                            "range": {
+                                "date_sent_to_company": {}
                             }
                         }
                     ]
