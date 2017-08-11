@@ -36,16 +36,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -71,16 +61,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -106,16 +86,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -149,16 +119,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -192,16 +152,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -226,18 +176,7 @@
         "zip_code": {
             "filter": {
                 "and": {
-                    "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        }
-                    ]
+                    "filters": []
                 }
             },
             "aggs": {
@@ -253,16 +192,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -288,16 +217,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -323,16 +242,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -358,16 +267,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -393,16 +292,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -428,16 +317,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -463,16 +342,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [

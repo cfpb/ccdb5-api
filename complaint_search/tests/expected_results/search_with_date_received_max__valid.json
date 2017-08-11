@@ -42,11 +42,6 @@
                                     "to": "2017-04-14"
                                 }
                             }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
                         }
                     ]
                 }
@@ -70,11 +65,6 @@
                                     "to": "2017-04-14"
                                 }
                             }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
                         }
                     ]
                 }
@@ -97,11 +87,6 @@
                                 "date_received": {
                                     "to": "2017-04-14"
                                 }
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
                             }
                         }
                     ]
@@ -134,11 +119,6 @@
                                     "to": "2017-04-14"
                                 }
                             }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
                         }
                     ]
                 }
@@ -170,11 +150,6 @@
                                     "to": "2017-04-14"
                                 }
                             }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
                         }
                     ]
                 }
@@ -197,11 +172,6 @@
                                 "date_received": {
                                     "to": "2017-04-14"
                                 }
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
                             }
                         }
                     ]
@@ -226,11 +196,6 @@
                                     "to": "2017-04-14"
                                 }
                             }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
                         }
                     ]
                 }
@@ -253,11 +218,6 @@
                                 "date_received": {
                                     "to": "2017-04-14"
                                 }
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
                             }
                         }
                     ]
@@ -282,11 +242,6 @@
                                     "to": "2017-04-14"
                                 }
                             }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
                         }
                     ]
                 }
@@ -309,11 +264,6 @@
                                 "date_received": {
                                     "to": "2017-04-14"
                                 }
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
                             }
                         }
                     ]
@@ -338,11 +288,6 @@
                                     "to": "2017-04-14"
                                 }
                             }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
                         }
                     ]
                 }
@@ -366,11 +311,6 @@
                                     "to": "2017-04-14"
                                 }
                             }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
                         }
                     ]
                 }
@@ -393,11 +333,6 @@
                                 "date_received": {
                                     "to": "2017-04-14"
                                 }
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
                             }
                         }
                     ]

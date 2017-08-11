@@ -38,11 +38,6 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
                                 "date_sent_to_company": {
                                     "from": "2014-04-14"
                                 }
@@ -66,11 +61,6 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
                                 "date_sent_to_company": {
                                     "from": "2014-04-14"
                                 }
@@ -92,11 +82,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
                         {
                             "range": {
                                 "date_sent_to_company": {
@@ -130,11 +115,6 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
                                 "date_sent_to_company": {
                                     "from": "2014-04-14"
                                 }
@@ -166,11 +146,6 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
                                 "date_sent_to_company": {
                                     "from": "2014-04-14"
                                 }
@@ -192,11 +167,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
                         {
                             "range": {
                                 "date_sent_to_company": {
@@ -222,11 +192,6 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
                                 "date_sent_to_company": {
                                     "from": "2014-04-14"
                                 }
@@ -248,11 +213,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
                         {
                             "range": {
                                 "date_sent_to_company": {
@@ -278,11 +238,6 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
                                 "date_sent_to_company": {
                                     "from": "2014-04-14"
                                 }
@@ -304,11 +259,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
                         {
                             "range": {
                                 "date_sent_to_company": {
@@ -334,11 +284,6 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
                                 "date_sent_to_company": {
                                     "from": "2014-04-14"
                                 }
@@ -362,11 +307,6 @@
                     "filters": [
                         {
                             "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
                                 "date_sent_to_company": {
                                     "from": "2014-04-14"
                                 }
@@ -388,11 +328,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
                         {
                             "range": {
                                 "date_sent_to_company": {

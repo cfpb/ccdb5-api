@@ -23,18 +23,7 @@
         "has_narrative": {
             "filter": {
                 "and": {
-                    "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        }
-                    ]
+                    "filters": []
                 }
             },
             "aggs": {
@@ -49,18 +38,7 @@
         "company": {
             "filter": {
                 "and": {
-                    "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        }
-                    ]
+                    "filters": []
                 }
             },
             "aggs": {
@@ -75,18 +53,7 @@
         "product": {
             "filter": {
                 "and": {
-                    "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        }
-                    ]
+                    "filters": []
                 }
             },
             "aggs": {
@@ -109,18 +76,7 @@
         "issue": {
             "filter": {
                 "and": {
-                    "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        }
-                    ]
+                    "filters": []
                 }
             },
             "aggs": {
@@ -143,18 +99,7 @@
         "state": {
             "filter": {
                 "and": {
-                    "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        }
-                    ]
+                    "filters": []
                 }
             },
             "aggs": {
@@ -169,18 +114,7 @@
         "zip_code": {
             "filter": {
                 "and": {
-                    "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        }
-                    ]
+                    "filters": []
                 }
             },
             "aggs": {
@@ -195,18 +129,7 @@
         "timely": {
             "filter": {
                 "and": {
-                    "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        }
-                    ]
+                    "filters": []
                 }
             },
             "aggs": {
@@ -221,18 +144,7 @@
         "company_response": {
             "filter": {
                 "and": {
-                    "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        }
-                    ]
+                    "filters": []
                 }
             },
             "aggs": {
@@ -247,18 +159,7 @@
         "company_public_response": {
             "filter": {
                 "and": {
-                    "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        }
-                    ]
+                    "filters": []
                 }
             },
             "aggs": {
@@ -273,18 +174,7 @@
         "consumer_disputed": {
             "filter": {
                 "and": {
-                    "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        }
-                    ]
+                    "filters": []
                 }
             },
             "aggs": {
@@ -299,18 +189,7 @@
         "consumer_consent_provided": {
             "filter": {
                 "and": {
-                    "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        }
-                    ]
+                    "filters": []
                 }
             },
             "aggs": {
@@ -325,18 +204,7 @@
         "tag": {
             "filter": {
                 "and": {
-                    "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        }
-                    ]
+                    "filters": []
                 }
             },
             "aggs": {
@@ -351,18 +219,7 @@
         "submitted_via": {
             "filter": {
                 "and": {
-                    "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_sent_to_company": {}
-                            }
-                        }
-                    ]
+                    "filters": []
                 }
             },
             "aggs": {
