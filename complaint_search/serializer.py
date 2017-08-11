@@ -49,8 +49,10 @@ class SearchInputSerializer(serializers.Serializer):
     frm = serializers.IntegerField(min_value=0, max_value=100000, default=PARAMS['frm'])
     sort = serializers.ChoiceField(SORT_CHOICES, default=PARAMS['sort'])
     search_term = serializers.CharField(max_length=200, required=False)
-    min_date = serializers.DateField(required=False)
-    max_date = serializers.DateField(required=False)
+    date_received_min = serializers.DateField(required=False)
+    date_received_max = serializers.DateField(required=False)
+    company_received_min = serializers.DateField(required=False)
+    company_received_max = serializers.DateField(required=False)
     company = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False)
     product = serializers.ListField(

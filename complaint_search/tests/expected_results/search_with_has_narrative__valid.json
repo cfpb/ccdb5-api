@@ -34,13 +34,7 @@
         "has_narrative": {
             "filter": {
                 "and": {
-                    "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        }
-                    ]
+                    "filters": []
                 }
             },
             "aggs": {
@@ -56,11 +50,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -85,11 +74,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -122,11 +106,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -159,11 +138,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -188,11 +162,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -217,11 +186,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -246,11 +210,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -275,11 +234,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -304,11 +258,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -333,11 +282,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -362,11 +306,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [
@@ -391,11 +330,6 @@
             "filter": {
                 "and": {
                     "filters": [
-                        {
-                            "range": {
-                                "date_received": {}
-                            }
-                        },
                         { 
                             "bool": {
                                 "should": [

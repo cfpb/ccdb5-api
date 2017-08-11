@@ -20,14 +20,15 @@
     "sort": [{"_score": {"order": "desc"}}],
     "post_filter": {
         "and": {
-            "filters": [{ 
-                "bool": {
-                    "should": [
-                        {"terms": {"consumer_consent_provided.raw": ["yes"]}},
-                        {"terms": {"consumer_consent_provided.raw": ["no"]}}
-                    ]
+            "filters": [
+                {
+                    "range": {
+                        "date_sent_to_company": {
+                            "to": "2017-04-14"
+                        }
+                    }
                 }
-            }]
+            ]
         }
     },
     "aggs": {
@@ -35,12 +36,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_consent_provided.raw": ["yes"]}},
-                                    {"terms": {"consumer_consent_provided.raw": ["no"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "to": "2017-04-14"
+                                }
                             }
                         }
                     ]
@@ -59,12 +59,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_consent_provided.raw": ["yes"]}},
-                                    {"terms": {"consumer_consent_provided.raw": ["no"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "to": "2017-04-14"
+                                }
                             }
                         }
                     ]
@@ -83,12 +82,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_consent_provided.raw": ["yes"]}},
-                                    {"terms": {"consumer_consent_provided.raw": ["no"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "to": "2017-04-14"
+                                }
                             }
                         }
                     ]
@@ -115,12 +113,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_consent_provided.raw": ["yes"]}},
-                                    {"terms": {"consumer_consent_provided.raw": ["no"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "to": "2017-04-14"
+                                }
                             }
                         }
                     ]
@@ -147,12 +144,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_consent_provided.raw": ["yes"]}},
-                                    {"terms": {"consumer_consent_provided.raw": ["no"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "to": "2017-04-14"
+                                }
                             }
                         }
                     ]
@@ -171,12 +167,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_consent_provided.raw": ["yes"]}},
-                                    {"terms": {"consumer_consent_provided.raw": ["no"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "to": "2017-04-14"
+                                }
                             }
                         }
                     ]
@@ -195,12 +190,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_consent_provided.raw": ["yes"]}},
-                                    {"terms": {"consumer_consent_provided.raw": ["no"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "to": "2017-04-14"
+                                }
                             }
                         }
                     ]
@@ -219,12 +213,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_consent_provided.raw": ["yes"]}},
-                                    {"terms": {"consumer_consent_provided.raw": ["no"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "to": "2017-04-14"
+                                }
                             }
                         }
                     ]
@@ -243,12 +236,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_consent_provided.raw": ["yes"]}},
-                                    {"terms": {"consumer_consent_provided.raw": ["no"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "to": "2017-04-14"
+                                }
                             }
                         }
                     ]
@@ -267,12 +259,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_consent_provided.raw": ["yes"]}},
-                                    {"terms": {"consumer_consent_provided.raw": ["no"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "to": "2017-04-14"
+                                }
                             }
                         }
                     ]
@@ -290,7 +281,15 @@
         "consumer_consent_provided": {
             "filter": {
                 "and": {
-                    "filters": []
+                    "filters": [
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "to": "2017-04-14"
+                                }
+                            }
+                        }
+                    ]
                 }
             },
             "aggs": {
@@ -306,12 +305,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_consent_provided.raw": ["yes"]}},
-                                    {"terms": {"consumer_consent_provided.raw": ["no"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "to": "2017-04-14"
+                                }
                             }
                         }
                     ]
@@ -330,12 +328,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"consumer_consent_provided.raw": ["yes"]}},
-                                    {"terms": {"consumer_consent_provided.raw": ["no"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "to": "2017-04-14"
+                                }
                             }
                         }
                     ]

@@ -241,47 +241,91 @@ class SearchTests(APITestCase):
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
-    def test_search_with_min_date__valid(self, mock_essearch):
+    def test_search_with_date_received_min__valid(self, mock_essearch):
         url = reverse('complaint_search:search')
-        params = {"min_date": "2017-04-11"}
+        params = {"date_received_min": "2017-04-11"}
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         mock_essearch.assert_called_once_with(**self.buildDefaultParams({
-            "min_date": date(2017, 4, 11)}))
+            "date_received_min": date(2017, 4, 11)}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
-    def test_search_with_min_date__invalid_format(self, mock_essearch):
+    def test_search_with_date_received_min__invalid_format(self, mock_essearch):
         url = reverse('complaint_search:search')
-        params = {"min_date": "not_a_date"}
+        params = {"date_received_min": "not_a_date"}
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
-        self.assertDictEqual({"min_date": ["Date has wrong format. Use one of these formats instead: YYYY[-MM[-DD]]."]}, 
+        self.assertDictEqual({"date_received_min": ["Date has wrong format. Use one of these formats instead: YYYY[-MM[-DD]]."]}, 
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
-    def test_search_with_max_date__valid(self, mock_essearch):
+    def test_search_with_date_received_max__valid(self, mock_essearch):
         url = reverse('complaint_search:search')
-        params = {"max_date": "2017-04-11"}
+        params = {"date_received_max": "2017-04-11"}
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         mock_essearch.assert_called_once_with(**self.buildDefaultParams({
-            "max_date": date(2017, 4, 11)}))
+            "date_received_max": date(2017, 4, 11)}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
-    def test_search_with_max_date__invalid_format(self, mock_essearch):
+    def test_search_with_date_received_max__invalid_format(self, mock_essearch):
         url = reverse('complaint_search:search')
-        params = {"max_date": "not_a_date"}
+        params = {"date_received_max": "not_a_date"}
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
-        self.assertDictEqual({"max_date": ["Date has wrong format. Use one of these formats instead: YYYY[-MM[-DD]]."]}, 
+        self.assertDictEqual({"date_received_max": ["Date has wrong format. Use one of these formats instead: YYYY[-MM[-DD]]."]}, 
+            response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_company_received_min__valid(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        params = {"company_received_min": "2017-04-11"}
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url, params)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+            "company_received_min": date(2017, 4, 11)}))
+        self.assertEqual('OK', response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_company_received_min__invalid_format(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        params = {"company_received_min": "not_a_date"}
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url, params)
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+        mock_essearch.assert_not_called()
+        self.assertDictEqual({"company_received_min": ["Date has wrong format. Use one of these formats instead: YYYY[-MM[-DD]]."]}, 
+            response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_company_received_max__valid(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        params = {"company_received_max": "2017-04-11"}
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url, params)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+            "company_received_max": date(2017, 4, 11)}))
+        self.assertEqual('OK', response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_company_received_max__invalid_format(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        params = {"company_received_max": "not_a_date"}
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url, params)
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+        mock_essearch.assert_not_called()
+        self.assertDictEqual({"company_received_max": ["Date has wrong format. Use one of these formats instead: YYYY[-MM[-DD]]."]}, 
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
