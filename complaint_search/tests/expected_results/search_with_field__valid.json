@@ -11,8 +11,9 @@
         }
     },
     "highlight": {
+        "require_field_match": false,
         "fields": {
-            "test_field": {}
+            "complaint_what_happened": {}
         },
         "number_of_fragments": 1,
         "fragment_size": 500

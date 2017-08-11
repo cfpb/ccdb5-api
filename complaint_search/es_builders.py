@@ -101,8 +101,9 @@ class SearchBuilder(BaseBuilder):
                 }
             },
             "highlight": {
+                "require_field_match": False,
                 "fields": {
-                    self.params.get("field"): {}
+                    "complaint_what_happened": {}
                 },
                 "number_of_fragments": 1,
                 "fragment_size": 500
