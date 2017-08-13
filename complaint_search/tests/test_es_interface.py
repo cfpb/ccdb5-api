@@ -158,7 +158,37 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
         self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
-        self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
+        diff = deep.diff(act_body, body)
+        if diff:
+            print "search with field"
+            diff.print_full()
+        self.assertIsNone(deep.diff(act_body, body))
+        self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
+        mock_scroll.assert_not_called()
+        self.assertDictEqual(self.MOCK_SEARCH_RESULT, res)
+
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    @mock.patch.object(Elasticsearch, 'count')
+    @mock.patch.object(Elasticsearch, 'scroll')
+    def test_search_with_field_all__valid(self, mock_scroll, mock_count, mock_search):
+        mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
+        mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
+        mock_scroll.return_value = self.MOCK_SEARCH_SIDE_EFFECT[0]
+        body = self.load("search_with_field_all__valid")
+        res = search(field="_all")
+        self.assertEqual(2, len(mock_search.call_args_list))
+        self.assertEqual(2, len(mock_search.call_args_list[0]))
+        self.assertEqual(0, len(mock_search.call_args_list[0][0]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
+        act_body = mock_search.call_args_list[0][1]['body']
+        diff = deep.diff(act_body, body)
+        if diff:
+            print "search with field _all"
+            diff.print_full()
+
+        self.assertIsNone(deep.diff(act_body, body))
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
         mock_scroll.assert_not_called()
         self.assertDictEqual(self.MOCK_SEARCH_RESULT, res)
@@ -517,6 +547,7 @@ class EsInterfaceTest(TestCase):
         if diff:
             print "zip_code"
             diff.print_full()
+
         self.assertIsNone(deep.diff(act_body, body))
         self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
