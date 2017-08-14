@@ -11,6 +11,7 @@
         }
     },
     "highlight": {
+        "require_field_match": false,
         "fields": {
             "test_field": {}
         },

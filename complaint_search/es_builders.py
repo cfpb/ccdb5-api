@@ -87,6 +87,40 @@ class SearchBuilder(BaseBuilder):
     def __init__(self):
         self.params = copy.deepcopy(PARAMS)
 
+    def _build_highlight(self):
+        highlight = {
+            "require_field_match": False,
+            "number_of_fragments": 1,
+            "fragment_size": 500
+        }
+        if self.params.get("field") == "_all":
+            highlight["fields"] = {
+                "sub_product": {},
+                "date_sent_to_company": {},
+                "complaint_id": {},
+                "consumer_consent_provided": {},
+                "date_received": {},
+                "state": {},
+                "issue": {},
+                "company_response": {},
+                "zip_code": {},
+                "timely": {},
+                "product": {},
+                "complaint_what_happened": {},
+                "company": {},
+                "sub_issue": {},
+                "tags": {},
+                "company_public_response": {},
+                "consumer_disputed": {},
+                "has_narrative": {},
+                "submitted_via": {}
+            }
+
+        else:
+            highlight["fields"] = { self.params.get("field"): {}}
+
+        return highlight
+
     def build(self):
         search = {
             "from": self.params.get("frm"), 
@@ -99,15 +133,11 @@ class SearchBuilder(BaseBuilder):
                     ],
                     "default_operator": "AND"
                 }
-            },
-            "highlight": {
-                "fields": {
-                    self.params.get("field"): {}
-                },
-                "number_of_fragments": 1,
-                "fragment_size": 500
             }
         }
+
+        # Highlight
+        search["highlight"] = self._build_highlight()
 
         # sort
         sort_field, sort_order = self.params.get("sort").rsplit("_", 1)

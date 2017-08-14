@@ -1,11 +1,11 @@
 {
     "from": 0, 
-    "size": 40, 
+    "size": 10, 
     "query": {
         "query_string": {
             "query": "*",
             "fields": [
-                "complaint_what_happened"
+                "_all"
             ],
             "default_operator": "AND"
         }
@@ -13,7 +13,25 @@
     "highlight": {
         "require_field_match": false,
         "fields": {
-            "complaint_what_happened": {}
+            "sub_product": {},
+            "date_sent_to_company": {},
+            "complaint_id": {},
+            "consumer_consent_provided": {},
+            "date_received": {},
+            "state": {},
+            "issue": {},
+            "company_response": {},
+            "zip_code": {},
+            "timely": {},
+            "product": {},
+            "complaint_what_happened": {},
+            "company": {},
+            "sub_issue": {},
+            "tags": {},
+            "company_public_response": {},
+            "consumer_disputed": {},
+            "has_narrative": {},
+            "submitted_via": {}
         },
         "number_of_fragments": 1,
         "fragment_size": 500
@@ -312,4 +330,5 @@
         }
 
     }
+
 }
