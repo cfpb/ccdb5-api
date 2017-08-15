@@ -21,14 +21,15 @@
     "sort": [{"_score": {"order": "desc"}}],
     "post_filter": {
         "and": {
-            "filters": [{ 
-                "bool": {
-                    "should": [
-                        {"terms": {"timely": ["Yes"]}},
-                        {"terms": {"timely": ["No"]}}
-                    ]
+            "filters": [
+                {
+                    "range": {
+                        "date_sent_to_company": {
+                            "from": "2014-04-14"
+                        }
+                    }
                 }
-            }]
+            ]
         }
     },
     "aggs": {
@@ -36,12 +37,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"timely": ["Yes"]}},
-                                    {"terms": {"timely": ["No"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         }
                     ]
@@ -60,12 +60,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"timely": ["Yes"]}},
-                                    {"terms": {"timely": ["No"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         }
                     ]
@@ -84,12 +83,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"timely": ["Yes"]}},
-                                    {"terms": {"timely": ["No"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         }
                     ]
@@ -116,12 +114,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"timely": ["Yes"]}},
-                                    {"terms": {"timely": ["No"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         }
                     ]
@@ -148,12 +145,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"timely": ["Yes"]}},
-                                    {"terms": {"timely": ["No"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         }
                     ]
@@ -172,12 +168,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"timely": ["Yes"]}},
-                                    {"terms": {"timely": ["No"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         }
                     ]
@@ -195,7 +190,15 @@
         "timely": {
             "filter": {
                 "and": {
-                    "filters": []
+                    "filters": [
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "from": "2014-04-14"
+                                }
+                            }
+                        }
+                    ]
                 }
             },
             "aggs": {
@@ -211,12 +214,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"timely": ["Yes"]}},
-                                    {"terms": {"timely": ["No"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         }
                     ]
@@ -235,12 +237,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"timely": ["Yes"]}},
-                                    {"terms": {"timely": ["No"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         }
                     ]
@@ -259,12 +260,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"timely": ["Yes"]}},
-                                    {"terms": {"timely": ["No"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         }
                     ]
@@ -283,12 +283,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"timely": ["Yes"]}},
-                                    {"terms": {"timely": ["No"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         }
                     ]
@@ -307,12 +306,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"timely": ["Yes"]}},
-                                    {"terms": {"timely": ["No"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         }
                     ]
@@ -331,12 +329,11 @@
             "filter": {
                 "and": {
                     "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"timely": ["Yes"]}},
-                                    {"terms": {"timely": ["No"]}}
-                                ]
+                        {
+                            "range": {
+                                "date_sent_to_company": {
+                                    "from": "2014-04-14"
+                                }
                             }
                         }
                     ]
