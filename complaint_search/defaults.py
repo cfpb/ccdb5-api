@@ -6,3 +6,6 @@ PARAMS = {
     "sort": "relevance_desc",
     "no_aggs": False
 }
+
+# -*- coding: utf-8 -*-
+DELIMITER = u'\u2022'

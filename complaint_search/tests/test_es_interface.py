@@ -102,6 +102,10 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
         self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
+        diff = deep.diff(act_body, body)
+        if diff:
+            print "search no param"
+            diff.print_full()
         self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
         mock_scroll.assert_not_called()
@@ -397,16 +401,20 @@ class EsInterfaceTest(TestCase):
     @mock.patch.object(Elasticsearch, 'search')
     @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'scroll')
-    def test_search_with_min_date__valid(self, mock_scroll, mock_count, mock_search):
+    def test_search_with_date_received_min__valid(self, mock_scroll, mock_count, mock_search):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
-        body = self.load("search_with_min_date__valid")
-        res = search(min_date="2014-04-14")
+        body = self.load("search_with_date_received_min__valid")
+        res = search(date_received_min="2014-04-14")
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
         self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
+        diff = deep.diff(act_body, body)
+        if diff:
+            print "search with date_received_min"
+            diff.print_full()
         self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
         mock_scroll.assert_not_called()
@@ -416,16 +424,67 @@ class EsInterfaceTest(TestCase):
     @mock.patch.object(Elasticsearch, 'search')
     @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'scroll')
-    def test_search_with_max_date__valid(self, mock_scroll, mock_count, mock_search):
+    def test_search_with_date_received_max__valid(self, mock_scroll, mock_count, mock_search):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
-        body = self.load("search_with_max_date__valid")
-        res = search(max_date="2017-04-14")
+        body = self.load("search_with_date_received_max__valid")
+        res = search(date_received_max="2017-04-14")
         self.assertEqual(2, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
         self.assertEqual(4, len(mock_search.call_args_list[0][1]))
         act_body = mock_search.call_args_list[0][1]['body']
+        diff = deep.diff(act_body, body)
+        if diff:
+            print "search with date_received_max"
+            diff.print_full()
+        self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
+        self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
+        mock_scroll.assert_not_called()
+        self.assertEqual(self.MOCK_SEARCH_RESULT, res)
+
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    @mock.patch.object(Elasticsearch, 'count')
+    @mock.patch.object(Elasticsearch, 'scroll')
+    def test_search_with_company_received_min__valid(self, mock_scroll, mock_count, mock_search):
+        mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
+        mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
+        body = self.load("search_with_company_received_min__valid")
+        res = search(company_received_min="2014-04-14")
+        self.assertEqual(2, len(mock_search.call_args_list))
+        self.assertEqual(2, len(mock_search.call_args_list[0]))
+        self.assertEqual(0, len(mock_search.call_args_list[0][0]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
+        act_body = mock_search.call_args_list[0][1]['body']
+        diff = deep.diff(act_body, body)
+        if diff:
+            print "search with company_received_min"
+            diff.print_full()
+        self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
+        self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
+        mock_scroll.assert_not_called()
+        self.assertEqual(self.MOCK_SEARCH_RESULT, res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(Elasticsearch, 'search')
+    @mock.patch.object(Elasticsearch, 'count')
+    @mock.patch.object(Elasticsearch, 'scroll')
+    def test_search_with_company_received_max__valid(self, mock_scroll, mock_count, mock_search):
+        mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
+        mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
+        body = self.load("search_with_company_received_max__valid")
+        res = search(company_received_max="2017-04-14")
+        self.assertEqual(2, len(mock_search.call_args_list))
+        self.assertEqual(2, len(mock_search.call_args_list[0]))
+        self.assertEqual(0, len(mock_search.call_args_list[0][0]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
+        act_body = mock_search.call_args_list[0][1]['body']
+        diff = deep.diff(act_body, body)
+        if diff:
+            print "search with company_received_max"
+            diff.print_full()
         self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
         mock_scroll.assert_not_called()
