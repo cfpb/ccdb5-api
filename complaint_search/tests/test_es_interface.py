@@ -1,5 +1,15 @@
 from django.test import TestCase
-from complaint_search.es_interface import _ES_URL, _COMPLAINT_ES_INDEX, _COMPLAINT_DOC_TYPE, _ES_USER, _ES_PASSWORD, get_meta, search, suggest, document
+from complaint_search.es_interface import (
+    _ES_URL, 
+    _COMPLAINT_ES_INDEX, 
+    _COMPLAINT_DOC_TYPE, 
+    _ES_USER, 
+    _ES_PASSWORD, 
+    _get_meta, 
+    search, 
+    suggest, 
+    document
+)
 from elasticsearch import Elasticsearch
 import requests
 import os
@@ -83,7 +93,7 @@ class EsInterfaceTest(TestCase):
         mock_search.return_value = self.MOCK_SEARCH_SIDE_EFFECT[1]
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
 
-        res = get_meta()
+        res = _get_meta()
         self.assertDictEqual(self.MOCK_SEARCH_RESULT["_meta"], res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
