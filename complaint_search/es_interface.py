@@ -6,11 +6,7 @@ from datetime import datetime, date, timedelta
 from collections import defaultdict, namedtuple
 import requests
 from elasticsearch import Elasticsearch
-from flags.state import (
-    flag_state,
-    flag_enabled,
-    flag_disabled,
-)
+from flags.state import flag_enabled
 from complaint_search.es_builders import (
     SearchBuilder, 
     PostFilterBuilder, 
@@ -35,10 +31,13 @@ def _get_es():
             timeout=100)
     return _ES_INSTANCE
 
+def _get_now():
+    return datetime.now()
+
 def _four_business_days_ago():
     # show notification starting fifth business day data has not been updated
     # M-Th, data needs to have been updated 6 days ago; F-S, preceding Monday
-    now = datetime.now()
+    now = _get_now()
     weekday = datetime.weekday(now)
     # When bigger than 3, it means it is a Friday/Saturday/Sunday,
     # we can use the weekday integer to get 4 days ago without the need to
@@ -47,15 +46,10 @@ def _four_business_days_ago():
     return (now - timedelta(delta)).strftime("%Y-%m-%d")
 
 def _is_data_stale(last_updated_time):
-    result = {
-        "data_down": flag_enabled('CCDB_TECHNICAL_ISSUES'),
-        "narratives_down": False
-    }
-
     if (last_updated_time < _four_business_days_ago()):
-        result["narratives_down"] = True
+        return True
 
-    return result
+    return False
 
 def _get_meta():
     body = {
@@ -64,10 +58,7 @@ def _get_meta():
         "aggs": { 
             "max_date" : { "max" : { "field" : "date_received" }},
             "max_update": { "max" : { "field" : ":updated_at" }},
-            "max_created": { "max" : { "field" : ":created_at" }},
-            "min_date" : { "min" : { "field" : "date_received" }},
-            "min_update": { "min" : { "field" : ":updated_at" }},
-            "min_created": { "min" : { "field" : ":created_at" }}
+            "max_created": { "max" : { "field" : ":created_at" }}
         }
     }
     max_date_res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
@@ -78,8 +69,8 @@ def _get_meta():
         "license": "CC0",
         "last_updated": max_date_res["aggregations"]["max_date"]["value_as_string"],
         "total_record_count": count_res["count"],
-        "data_down": down_res["data_down"],
-        "narratives_down": down_res["narratives_down"]
+        "is_data_stale": _is_data_stale(max_date_res["aggregations"]["max_date"]["value_as_string"]),
+        "has_data_issue": flag_enabled('CCDB_TECHNICAL_ISSUES')
     }
 
     return result
