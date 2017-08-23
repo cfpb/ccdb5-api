@@ -4,3 +4,4 @@ elasticsearch==2.4.1
 requests==2.14.2
 urllib3==1.21.1
 django-localflavor==1.5
+wagtail-flags==2.0.5

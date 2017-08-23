@@ -47,7 +47,6 @@ def search(request):
     #     for param in request.query_params if param in QPARAMS_VARS + QPARAMS_LISTS}
 
     data = {}
-
     # Add format to data (only checking if it is csv, xls, xlsx, then specific them)
     format = request.accepted_renderer.format
     if format and format in ('csv', 'xls', 'xlsx'):

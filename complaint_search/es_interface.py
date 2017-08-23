@@ -2,10 +2,16 @@ import os
 import urllib
 import json
 import copy
+from datetime import datetime, date, timedelta
 from collections import defaultdict, namedtuple
 import requests
 from elasticsearch import Elasticsearch
-from complaint_search.es_builders import SearchBuilder, PostFilterBuilder, AggregationBuilder
+from flags.state import flag_enabled
+from complaint_search.es_builders import (
+    SearchBuilder, 
+    PostFilterBuilder, 
+    AggregationBuilder
+)
 from complaint_search.defaults import PARAMS
 
 _ES_URL = "{}://{}:{}".format("http", os.environ.get('ES_HOST', 'localhost'), 
@@ -18,26 +24,56 @@ _ES_INSTANCE = None
 _COMPLAINT_ES_INDEX = os.environ.get('COMPLAINT_ES_INDEX', 'complaint-index')
 _COMPLAINT_DOC_TYPE = os.environ.get('COMPLAINT_DOC_TYPE', 'complaint-doctype')
 
-def get_es():
+def _get_es():
     global _ES_INSTANCE
     if _ES_INSTANCE is None:
         _ES_INSTANCE = Elasticsearch([_ES_URL], http_auth=(_ES_USER, _ES_PASSWORD), 
             timeout=100)
     return _ES_INSTANCE
 
-def get_meta():
+def _get_now():
+    return datetime.now()
+
+def _min_valid_time():
+    # show notification starting fifth business day data has not been updated
+    # M-Th, data needs to have been updated 6 days ago; F-S, preceding Monday
+    now = _get_now()
+    weekday = datetime.weekday(now)
+    # When bigger than 3, it means it is a Friday/Saturday/Sunday,
+    # we can use the weekday integer to get 4 days ago without the need to
+    # worry about hitting the weekend.  Else we need to include the weekend
+    delta = weekday if weekday > 3 else 6
+    return (now - timedelta(delta)).strftime("%Y-%m-%d")
+
+def _is_data_stale(last_updated_time):
+    if (last_updated_time < _min_valid_time()):
+        return True
+
+    return False
+
+def _get_meta():
     body = {
         # size: 0 here to prevent taking too long since we only needed max_date
         "size": 0,
-        "aggs": { "max_date" : { "max" : { "field" : "date_received" }}}
+        "aggs": { 
+            "max_date" : { "max" : { "field" : "date_received" }},
+            "max_update": { "max" : { "field" : ":updated_at" }},
+            "max_created": { "max" : { "field" : ":created_at" }}
+        }
     }
-    max_date_res = get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
-    count_res = get_es().count(index=_COMPLAINT_ES_INDEX, doc_type=_COMPLAINT_DOC_TYPE)
-    return {
+    max_date_res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
+    count_res = _get_es().count(index=_COMPLAINT_ES_INDEX, doc_type=_COMPLAINT_DOC_TYPE)
+    down_res = _is_data_stale(max_date_res["aggregations"]["max_date"]["value_as_string"])
+
+    result = {
         "license": "CC0",
         "last_updated": max_date_res["aggregations"]["max_date"]["value_as_string"],
-        "total_record_count": count_res["count"]
+        "total_record_count": count_res["count"],
+        "is_data_stale": _is_data_stale(max_date_res["aggregations"]["max_date"]["value_as_string"]),
+        "has_data_issue": flag_enabled('CCDB_TECHNICAL_ISSUES')
     }
+
+    return result
     
 # List of possible arguments:
 # - format: format to be returned: "json", "csv", "xls", or "xlsx"
@@ -64,7 +100,6 @@ def get_meta():
 # - submitted_via: filters a list of ways the complaint was submitted
 # - tag - filters a list of tags
 def search(**kwargs):
-
     params = copy.deepcopy(PARAMS)
     params.update(**kwargs)
     search_builder = SearchBuilder()
@@ -84,7 +119,7 @@ def search(**kwargs):
             aggregation_builder.add(**params)
             body["aggs"] = aggregation_builder.build()
 
-        res = get_es().search(index=_COMPLAINT_ES_INDEX, 
+        res = _get_es().search(index=_COMPLAINT_ES_INDEX, 
             doc_type=_COMPLAINT_DOC_TYPE, 
             body=body, 
             scroll="10m")
@@ -93,10 +128,10 @@ def search(**kwargs):
         scroll_id = res['_scroll_id']
         if num_of_scroll > 0:
             while num_of_scroll > 0:
-                res['hits']['hits'] = get_es().scroll(scroll_id=scroll_id, 
+                res['hits']['hits'] = _get_es().scroll(scroll_id=scroll_id, 
                     scroll="10m")['hits']['hits']
                 num_of_scroll -= 1
-        res["_meta"] = get_meta()
+        res["_meta"] = _get_meta()
 
     elif format in ("csv", "xls", "xlsx"):
         p = {"format": format, "source": json.dumps(body)}
@@ -112,12 +147,12 @@ def suggest(text=None, size=6):
     if text is None:
         return []
     body = {"sgg": {"text": text, "completion": {"field": "suggest", "size": size}}}
-    res = get_es().suggest(index=_COMPLAINT_ES_INDEX, body=body)
+    res = _get_es().suggest(index=_COMPLAINT_ES_INDEX, body=body)
     candidates = [ e['text'] for e in res['sgg'][0]['options'] ]
     return candidates
 
 def document(complaint_id):
     doc_query = {"query": {"term": {"_id": complaint_id}}}
-    res = get_es().search(index=_COMPLAINT_ES_INDEX, 
+    res = _get_es().search(index=_COMPLAINT_ES_INDEX, 
         doc_type=_COMPLAINT_DOC_TYPE, body=doc_query)
     return res
