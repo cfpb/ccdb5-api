@@ -34,7 +34,7 @@ def _get_es():
 def _get_now():
     return datetime.now()
 
-def _four_business_days_ago():
+def _min_valid_time():
     # show notification starting fifth business day data has not been updated
     # M-Th, data needs to have been updated 6 days ago; F-S, preceding Monday
     now = _get_now()
@@ -46,7 +46,7 @@ def _four_business_days_ago():
     return (now - timedelta(delta)).strftime("%Y-%m-%d")
 
 def _is_data_stale(last_updated_time):
-    if (last_updated_time < _four_business_days_ago()):
+    if (last_updated_time < _min_valid_time()):
         return True
 
     return False
