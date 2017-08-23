@@ -134,6 +134,7 @@ def search(**kwargs):
         res["_meta"] = _get_meta()
 
     elif format in ("csv", "xls", "xlsx"):
+        print body
         p = {"format": format, "source": json.dumps(body)}
         p = urllib.urlencode(p)
         url = "{}/{}/{}/_data?{}".format(_ES_URL, _COMPLAINT_ES_INDEX, 
