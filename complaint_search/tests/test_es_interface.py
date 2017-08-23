@@ -308,8 +308,8 @@ class EsInterfaceTest(TestCase):
         sort_fields = [
             ("relevance_desc", "_score", "desc"), 
             ("relevance_asc", "_score", "asc"), 
-            ("created_date_desc", "created_date", "desc"), 
-            ("created_date_asc", "created_date", "asc")
+            ("created_date_desc", "date_received", "desc"), 
+            ("created_date_asc", "date_received", "asc")
         ]
 
         # 4 is the length of sort_field

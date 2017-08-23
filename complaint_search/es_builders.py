@@ -154,6 +154,16 @@ class SearchBuilder(BaseBuilder):
 
         return highlight
 
+    def _build_sort(self):
+        sort_field_mapping = {
+            "relevance": "_score",
+            "created_date": "date_received"
+        }
+
+        sort_field, sort_order = self.params.get("sort").rsplit("_", 1)
+        sort_field = sort_field_mapping.get(sort_field, "_score")
+        return [{sort_field: {"order": sort_order}}]
+
     def build(self):
         search = {
             "from": self.params.get("frm"), 
@@ -173,9 +183,7 @@ class SearchBuilder(BaseBuilder):
         search["highlight"] = self._build_highlight()
 
         # sort
-        sort_field, sort_order = self.params.get("sort").rsplit("_", 1)
-        sort_field = "_score" if sort_field == "relevance" else sort_field
-        search["sort"] = [{sort_field: {"order": sort_order}}]
+        search["sort"] = self._build_sort()
 
         # query
         search_term = self.params.get("search_term")
