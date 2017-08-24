@@ -7,7 +7,7 @@ from django.conf import settings
 from datetime import datetime
 from elasticsearch import TransportError
 import es_interface
-from complaint_search.renderers import CSVRenderer, XLSRenderer, XLSXRenderer
+from complaint_search.renderers import DefaultRenderer, CSVRenderer, XLSRenderer, XLSXRenderer
 from complaint_search.decorators import catch_es_error
 from complaint_search.serializer import SearchInputSerializer, SuggestInputSerializer
 
@@ -23,7 +23,14 @@ def _buildHeaders():
     return headers
 
 @api_view(['GET'])
-@renderer_classes((JSONRenderer, CSVRenderer, XLSRenderer, XLSXRenderer, BrowsableAPIRenderer))
+@renderer_classes((
+    DefaultRenderer, 
+    JSONRenderer, 
+    CSVRenderer, 
+    XLSRenderer, 
+    XLSXRenderer, 
+    BrowsableAPIRenderer
+))
 @catch_es_error
 def search(request):
 
@@ -49,8 +56,12 @@ def search(request):
     data = {}
     # Add format to data (only checking if it is csv, xls, xlsx, then specific them)
     format = request.accepted_renderer.format
-    if format and format in ('csv', 'xls', 'xlsx'):
+    print format
+    data['format'] = format
+    if format and format in ('json', 'csv', 'xls', 'xlsx'):
         data['format'] = format
+    else:
+        data['format'] = 'default'
 
     for param in request.query_params:
         if param in QPARAMS_VARS:
@@ -68,7 +79,7 @@ def search(request):
 
         # If format is in csv, xls, xlsx, update its attachment response 
         # with a filename
-        if format in ('csv', 'xls', 'xlsx'):
+        if format in ('json', 'csv', 'xls', 'xlsx'):
             filename = 'complaints-{}.{}'.format(
                 datetime.now().strftime('%Y-%m-%d_%H_%M'), format)
             headers['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
