@@ -119,7 +119,7 @@ class SearchInputSerializer(serializers.Serializer):
         """
         Check that from is a multiple of size
         """
-        if data['frm'] % data['size'] != 0:
+        if data['size'] != 0 and data['frm'] % data['size'] != 0:
             raise serializers.ValidationError("frm is not zero or a multiple of size")
         return data
 

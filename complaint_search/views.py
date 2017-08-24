@@ -56,8 +56,6 @@ def search(request):
     data = {}
     # Add format to data (only checking if it is csv, xls, xlsx, then specific them)
     format = request.accepted_renderer.format
-    print format
-    data['format'] = format
     if format and format in ('json', 'csv', 'xls', 'xlsx'):
         data['format'] = format
     else:
@@ -77,7 +75,7 @@ def search(request):
 
         headers = _buildHeaders()
 
-        # If format is in csv, xls, xlsx, update its attachment response 
+        # If format is in json, csv, xls, xlsx, update its attachment response 
         # with a filename
         if format in ('json', 'csv', 'xls', 'xlsx'):
             filename = 'complaints-{}.{}'.format(
