@@ -77,7 +77,7 @@ class SearchInputSerializer(serializers.Serializer):
         child=serializers.CharField(max_length=200), required=False)
     submitted_via = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False)
-    tag = serializers.ListField(
+    tags = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False)
     no_aggs = serializers.BooleanField(default=PARAMS['no_aggs'])
 
@@ -124,4 +124,3 @@ class SearchInputSerializer(serializers.Serializer):
 class SuggestInputSerializer(serializers.Serializer):
     text = serializers.CharField(max_length=200, required=False)
     size = serializers.IntegerField(min_value=1, max_value=100000, required=False)
-    

@@ -28,21 +28,21 @@ def _buildHeaders():
 def search(request):
 
     fixed_qparam = request.query_params
-    
-    # When you add a query parameter, make sure you add it to one of the 
+
+    # When you add a query parameter, make sure you add it to one of the
     # constant tuples below so it will be parse correctly
 
-    QPARAMS_VARS = ('fmt', 'field', 'size', 'frm', 'sort', 'search_term', 
+    QPARAMS_VARS = ('fmt', 'field', 'size', 'frm', 'sort', 'search_term',
         'date_received_min', 'date_received_max', 'company_received_min',
         'company_received_max', 'no_aggs')
 
-    QPARAMS_LISTS = ('company', 'product', 'issue', 'state', 
+    QPARAMS_LISTS = ('company', 'product', 'issue', 'state',
         'zip_code', 'timely', 'consumer_disputed', 'company_response',
-        'company_public_response', 'consumer_consent_provided', 
-        'has_narrative', 'submitted_via', 'tag')
+        'company_public_response', 'consumer_consent_provided',
+        'has_narrative', 'submitted_via', 'tags')
 
     # This works too but it may be harder to read
-    # data = { param: request.query_params.get(param) 
+    # data = { param: request.query_params.get(param)
     #     if param in QPARAMS_VARS else request.query_params.getlist(param)
     #     for param in request.query_params if param in QPARAMS_VARS + QPARAMS_LISTS}
 
@@ -54,7 +54,7 @@ def search(request):
 
     for param in request.query_params:
         if param in QPARAMS_VARS:
-            data[param] = request.query_params.get(param) 
+            data[param] = request.query_params.get(param)
         elif param in QPARAMS_LISTS:
             data[param] = request.query_params.getlist(param)
           # TODO: else: Error if extra parameters? Or ignore?
@@ -66,7 +66,7 @@ def search(request):
 
         headers = _buildHeaders()
 
-        # If format is in csv, xls, xlsx, update its attachment response 
+        # If format is in csv, xls, xlsx, update its attachment response
         # with a filename
         if format in ('csv', 'xls', 'xlsx'):
             filename = 'complaints-{}.{}'.format(

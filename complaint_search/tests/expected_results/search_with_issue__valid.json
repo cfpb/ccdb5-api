@@ -380,7 +380,7 @@
                 }
             }
         },
-        "tag": {
+        "tags": {
             "filter": {
                 "and": {
                     "filters": [
@@ -403,9 +403,9 @@
                 }
             },
             "aggs": {
-                "tag": {
+                "tags": {
                     "terms": {
-                        "field": "tag",
+                        "field": "tags",
                         "size": 0
                     }
                 }
