@@ -113,7 +113,7 @@ def search(**kwargs):
     # format
     res = None
     format = params.get("format")
-    if format == "json":
+    if format == "default":
         if not params.get("no_aggs"):
             aggregation_builder = AggregationBuilder()
             aggregation_builder.add(**params)
@@ -133,12 +133,17 @@ def search(**kwargs):
                 num_of_scroll -= 1
         res["_meta"] = _get_meta()
 
-    elif format in ("csv", "xls", "xlsx"):
+    elif format in ("json", "csv", "xls", "xlsx"):
+        # Deleting from field and this will force data format plugin to use 
+        # scan/scroll query to create the content, 
+        # Size also doesn't seem to be relevant anymore
+        del(body["from"])
+
         p = {"format": format, "source": json.dumps(body)}
         p = urllib.urlencode(p)
         url = "{}/{}/{}/_data?{}".format(_ES_URL, _COMPLAINT_ES_INDEX, 
             _COMPLAINT_DOC_TYPE, p)
-        response = requests.get(url, auth=(_ES_USER, _ES_PASSWORD), timeout=30)
+        response = requests.get(url, auth=(_ES_USER, _ES_PASSWORD))
         if response.ok:
             res = response.content
     return res

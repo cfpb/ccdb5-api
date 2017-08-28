@@ -17,7 +17,7 @@ class SearchTests(APITestCase):
     def buildDefaultParams(self, overrides):
         params = {
             "field": "complaint_what_happened", 
-            "format": "json", 
+            "format": "default", 
             "frm": 0, 
             "no_aggs": False, 
             "size": 10, 
@@ -58,6 +58,7 @@ class SearchTests(APITestCase):
         Searching with format
         """
         FORMAT_CONTENT_TYPE_MAP = {
+            "json": "application/json",
             "csv": "text/csv",
             "xls": "application/vnd.ms-excel",
             "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -72,9 +73,12 @@ class SearchTests(APITestCase):
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertIn(v, response.get('Content-Type'))
             self.assertEqual(response.get('Content-Disposition'), 'attachment; filename="complaints-2017-01-01_12_00.{}"'.format(k))
-            self.assertEqual('OK', response.content)
+            if k == "json":
+                self.assertEqual('"OK"', response.content)
+            else:
+                self.assertEqual('OK', response.content)
         mock_essearch.has_calls([ mock.call(format=k) for k in FORMAT_CONTENT_TYPE_MAP ], any_order=True)
-        self.assertEqual(3, mock_essearch.call_count)
+        self.assertEqual(len(FORMAT_CONTENT_TYPE_MAP), mock_essearch.call_count)
 
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_field__valid(self, mock_essearch):
@@ -114,6 +118,16 @@ class SearchTests(APITestCase):
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_size__valid_zero(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        params = {"size": 0}
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url, params)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams(params))
+        self.assertEqual('OK', response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
     def test_search_with_size__invalid_type(self, mock_essearch):
         url = reverse('complaint_search:search')
         params = {"size": "not_integer"}
@@ -133,19 +147,19 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
         self.assertDictEqual(
-            {"size": ["Ensure this value is greater than or equal to 1."]}, 
+            {"size": ["Ensure this value is greater than or equal to 0."]}, 
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_size__invalid_exceed_max_number(self, mock_essearch):
         url = reverse('complaint_search:search')
-        params = {"size": 100001}
+        params = {"size": 10000001}
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
         self.assertDictEqual(
-            {"size": ["Ensure this value is less than or equal to 100000."]}, 
+            {"size": ["Ensure this value is less than or equal to 10000000."]}, 
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -184,13 +198,13 @@ class SearchTests(APITestCase):
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_frm__invalid_exceed_max_number(self, mock_essearch):
         url = reverse('complaint_search:search')
-        params = {"frm": 100001}
+        params = {"frm": 10000001}
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
         self.assertDictEqual(
-            {"frm": ["Ensure this value is less than or equal to 100000."]}, 
+            {"frm": ["Ensure this value is less than or equal to 10000000."]}, 
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')

@@ -5,12 +5,14 @@ from complaint_search.defaults import PARAMS
 class SearchInputSerializer(serializers.Serializer):
 
     ### Format Choices
+    FORMAT_DEFAULT = 'default'
     FORMAT_JSON = 'json'
     FORMAT_CSV = 'csv'
     FORMAT_XLS = 'xls'
     FORMAT_XLSX = 'xlsx'
 
     FORMAT_CHOICES = (
+        (FORMAT_DEFAULT, 'DEFAULT'),
         (FORMAT_JSON, 'JSON'),
         (FORMAT_CSV, 'CSV'),
         (FORMAT_XLS, 'XLS'),
@@ -45,8 +47,8 @@ class SearchInputSerializer(serializers.Serializer):
     )
     format = serializers.ChoiceField(FORMAT_CHOICES, default=PARAMS['format'])
     field = serializers.ChoiceField(FIELD_CHOICES, default=PARAMS['field'])
-    size = serializers.IntegerField(min_value=1, max_value=100000, default=PARAMS['size'])
-    frm = serializers.IntegerField(min_value=0, max_value=100000, default=PARAMS['frm'])
+    size = serializers.IntegerField(min_value=0, max_value=10000000, default=PARAMS['size'])
+    frm = serializers.IntegerField(min_value=0, max_value=10000000, default=PARAMS['frm'])
     sort = serializers.ChoiceField(SORT_CHOICES, default=PARAMS['sort'])
     search_term = serializers.CharField(max_length=200, required=False)
     date_received_min = serializers.DateField(required=False)
@@ -117,7 +119,7 @@ class SearchInputSerializer(serializers.Serializer):
         """
         Check that from is a multiple of size
         """
-        if data['frm'] % data['size'] != 0:
+        if data['size'] != 0 and data['frm'] % data['size'] != 0:
             raise serializers.ValidationError("frm is not zero or a multiple of size")
         return data
 
