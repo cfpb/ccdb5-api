@@ -12,7 +12,7 @@ class SearchInputSerializerTests(TestCase):
         serializer = SearchInputSerializer(data={})
         self.assertTrue(serializer.is_valid())
         exp_dict = {
-            "format": "json", 
+            "format": "default", 
             "field": "complaint_what_happened", 
             "size": 10, 
             "frm": 0, 

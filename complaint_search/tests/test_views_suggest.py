@@ -50,14 +50,14 @@ class SuggestTests(APITestCase):
         mock_essuggest.assert_called_once_with(**param)
         self.assertEqual('OK', response.data)
 
-    @mock.patch('complaint_search.es_interface.search')
-    def test_search_with_size__invalid_smaller_than_min_number(self, mock_essearch):
-        url = reverse('complaint_search:search')
+    @mock.patch('complaint_search.es_interface.suggest')
+    def test_suggest_with_size__invalid_smaller_than_min_number(self, mock_essuggest):
+        url = reverse('complaint_search:suggest')
         params = {"size": 0}
-        mock_essearch.return_value = 'OK'
+        mock_essuggest.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
-        mock_essearch.assert_not_called()
+        mock_essuggest.assert_not_called()
         self.assertDictEqual(
             {"size": ["Ensure this value is greater than or equal to 1."]}, 
             response.data)

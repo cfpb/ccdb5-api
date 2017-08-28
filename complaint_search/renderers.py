@@ -1,4 +1,7 @@
-from rest_framework.renderers import BaseRenderer
+from rest_framework.renderers import BaseRenderer, JSONRenderer
+
+class DefaultRenderer(JSONRenderer):
+    format = 'default'
 
 class CSVRenderer(BaseRenderer):
     media_type = 'text/csv'

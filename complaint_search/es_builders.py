@@ -110,9 +110,9 @@ class BaseBuilder(object):
         if date_min or date_max:
             date_clause = {"range": {es_field_name: {}}}
             if date_min:
-                date_clause["range"][es_field_name]["from"] = date_min
+                date_clause["range"][es_field_name]["from"] = str(date_min)
             if date_max:
-                date_clause["range"][es_field_name]["to"] = date_max
+                date_clause["range"][es_field_name]["to"] = str(date_max)
 
         return date_clause
 

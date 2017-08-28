@@ -163,11 +163,12 @@ class EsInterfaceTest(TestCase):
     @mock.patch('requests.get', ok=True, content="RGET_OK")
     @mock.patch('json.dumps')
     @mock.patch('urllib.urlencode')
-    def test_search_with_format_nonjson__valid(self, mock_urlencode, mock_jdump, mock_rget, mock_search):
+    def test_search_with_format_nondefault__valid(self, mock_urlencode, mock_jdump, mock_rget, mock_search):
         mock_search.return_value = 'OK'
         mock_jdump.return_value = 'JDUMPS_OK'
-        body = self.load("search_with_format_nonjson__valid")
-        for format in ["csv", "xls", "xlsx"]:
+        body = self.load("search_with_format_nondefault__valid")
+        format_list = ["json", "csv", "xls", "xlsx"]
+        for format in format_list:
             res = search(format=format)
             self.assertEqual(len(mock_jdump.call_args), 2)
             self.assertEqual(1, len(mock_jdump.call_args[0]))
@@ -183,11 +184,11 @@ class EsInterfaceTest(TestCase):
             act_param = mock_urlencode.call_args[0][0]
             self.assertEqual(param, act_param)
 
-        self.assertEqual(mock_jdump.call_count, 3)
-        self.assertEqual(mock_urlencode.call_count, 3)
-
+        self.assertEqual(mock_jdump.call_count, len(format_list))
+        self.assertEqual(mock_urlencode.call_count, len(format_list))
+        
         mock_search.assert_not_called()
-        self.assertEqual(3, mock_rget.call_count)
+        self.assertEqual(len(format_list), mock_rget.call_count)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._get_meta")
