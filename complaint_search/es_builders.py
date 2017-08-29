@@ -10,7 +10,9 @@ class BaseBuilder(object):
     # Filters for those with string type
     _OPTIONAL_FILTERS = ("product", "issue", "company", "state", "zip_code", "timely",
         "company_response", "company_public_response",
-        "consumer_consent_provided", "submitted_via", "tags", "consumer_disputed")
+        "consumer_consent_provided", "submitted_via", "consumer_disputed")
+
+    _OPTIONAL_FILTERS_MUST = ("tags",)
 
     # Filters for those that need conversion from string to boolean
     _OPTIONAL_FILTERS_STRING_TO_BOOL = ("has_narrative",)
@@ -58,15 +60,17 @@ class BaseBuilder(object):
     ## with_child: set to true if this field has a child field
     ## es_child_field_name: if with_child is true, this holds the field
     ## name of the child used (to be filtered in ES)
-    def _build_bool_should_clauses(self, field):
+    def _build_bool_clauses(self, field):
         es_field_name = self._get_es_name(field)
         value_list = [ 0 if cd.lower() == "no" else 1 for cd in self.params[field] ] \
             if field in self._OPTIONAL_FILTERS_STRING_TO_BOOL else self.params.get(field)
         if value_list:
             if not self._has_child(field):
-                term_list = [ {"terms": {es_field_name: [value]}}
+                term_list_container = {"terms": {es_field_name: [] }}
+                term_list = [ term_list_container["terms"][es_field_name].append(value)
                     for value in value_list ]
-                return {"bool": {"should": term_list}}
+
+                return term_list_container
             else:
                 item_dict = defaultdict(list)
                 for v in value_list:
@@ -83,26 +87,23 @@ class BaseBuilder(object):
                 # Go through item_dict to create filters
                 f_list = []
                 for item, child in item_dict.iteritems():
-                    item_term = {"terms": {es_field_name: [item]}}
-                    # Item without any child specified
-                    if not child:
-                        f_list.append(item_term)
-                    else:
-                        child_term = {
-                            "terms": {
-                                self._get_es_name(self._get_child(field)): child
-                            }
-                        }
-                        f_list.append({"and": {"filters": [item_term, child_term]}})
+                    # Always append the item to list
+                    f_list.append({"terms": {es_field_name: [item]}})
 
-                return {"bool": {"should": f_list}}
+                    # If a child item is selected, also add it
+                    if child:
+                        child_term = { "terms": {self._get_es_name(self._get_child(field)): child }}
+                        f_list.append(child_term)
+
+                return f_list
+
 
     # This creates a dictionary of all filter_clauses, where the keys are the field name
     def _build_filter_clauses(self):
         filter_clauses = {}
         for item in self.params:
-            if item in self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL:
-                filter_clauses[item] = self._build_bool_should_clauses(item)
+            if item in self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL + self._OPTIONAL_FILTERS_MUST:
+                filter_clauses[item] = self._build_bool_clauses(item)
         return filter_clauses
 
     def _build_date_range_filter(self, date_min, date_max, es_field_name):
@@ -221,7 +222,7 @@ class PostFilterBuilder(BaseBuilder):
 
     def build(self):
         filter_clauses = self._build_filter_clauses()
-        post_filter = {"and": {"filters": []}}
+        post_filter = {"bool": {"should": [], "must": [], "filter": [] }}
 
         ## date_received
         date_received = self._build_date_range_filter(
@@ -230,7 +231,7 @@ class PostFilterBuilder(BaseBuilder):
             "date_received")
 
         if date_received:
-            post_filter["and"]["filters"].append(date_received)
+            post_filter["bool"]["filter"].append(date_received)
 
         ## company_received
         company_received = self._build_date_range_filter(
@@ -239,12 +240,14 @@ class PostFilterBuilder(BaseBuilder):
             "date_sent_to_company")
 
         if company_received:
-            post_filter["and"]["filters"].append(company_received)
+            post_filter["bool"]["filter"].append(company_received)
 
         ## Create filter clauses for all other filters
         for item in self.params:
             if item in self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL:
-                post_filter["and"]["filters"].append(filter_clauses[item])
+                post_filter["bool"]["should"].append(filter_clauses[item])
+            if item in self._OPTIONAL_FILTERS_MUST:
+                post_filter["bool"]["must"].append(filter_clauses[item])
 
         return post_filter
 
@@ -262,24 +265,29 @@ class AggregationBuilder(BaseBuilder):
         aggs = {}
 
         # Creating aggregation object for each field above
-        for field in self._AGG_FIELDS:
+        for field_name in self._AGG_FIELDS:
             field_aggs = {
                 "filter": {
-                    "and": {
-                        "filters": [
+                    "bool": {
+                        "must": [],
+                        "should": [],
+                        "filter": {
+                            "bool": {
+                                "must": []
+                            }
+                        },
 
-                        ]
                     }
                 }
             }
 
-            es_field_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(field, field)
+            es_field_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(field_name, field_name)
             es_child_name = None
-            if field in self._OPTIONAL_FILTERS_CHILD_MAP:
+            if field_name in self._OPTIONAL_FILTERS_CHILD_MAP:
                 es_child_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
-                    self._OPTIONAL_FILTERS_CHILD_MAP.get(field))
+                    self._OPTIONAL_FILTERS_CHILD_MAP.get(field_name))
                 field_aggs["aggs"] = {
-                    field: {
+                    field_name: {
                         "terms": {
                             "field": es_field_name,
                             "size": 0
@@ -296,7 +304,7 @@ class AggregationBuilder(BaseBuilder):
                 }
             else:
                 field_aggs["aggs"] = {
-                    field: {
+                    field_name: {
                         "terms": {
                             "field": es_field_name,
                             "size": 0
@@ -309,21 +317,24 @@ class AggregationBuilder(BaseBuilder):
                 self.params.get("date_received_max"), "date_received")
 
             if date_filter:
-                field_aggs["filter"]["and"]["filters"].append(date_filter)
+                field_aggs["filter"]["bool"]["filter"]["bool"]["must"].append(date_filter)
 
             company_filter = self._build_date_range_filter(
                 self.params.get("company_received_min"),
                 self.params.get("company_received_max"), "date_sent_to_company")
 
             if company_filter:
-                field_aggs["filter"]["and"]["filters"].append(company_filter)
+                field_aggs["filter"]["bool"]["filter"]["bool"]["must"].append(company_filter)
 
             # Add filter clauses to aggregation entries (only those that are not the same as field name)
             for item in self.params:
-                if item != field and item in self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL:
-                    field_aggs["filter"]["and"]["filters"].append(filter_clauses[item])
+                if item != field_name and item in self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL:
+                    field_aggs["filter"]["bool"]["should"].extend(filter_clauses[item])
 
-            aggs[field] = field_aggs
+                if item != field_name and item in self._OPTIONAL_FILTERS_MUST:
+                    field_aggs["filter"]["bool"]["filter"]["must"].append(filter_clauses[item])
+
+            aggs[field_name] = field_aggs
 
         return aggs
 
