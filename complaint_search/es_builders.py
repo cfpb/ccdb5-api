@@ -8,9 +8,9 @@ class BaseBuilder(object):
     __metaclass__  = abc.ABCMeta
 
     # Filters for those with string type
-    _OPTIONAL_FILTERS = ("product", "issue", "company", "state", "zip_code", "timely", 
-        "company_response", "company_public_response", 
-        "consumer_consent_provided", "submitted_via", "tag", "consumer_disputed")
+    _OPTIONAL_FILTERS = ("product", "issue", "company", "state", "zip_code", "timely",
+        "company_response", "company_public_response",
+        "consumer_consent_provided", "submitted_via", "tags", "consumer_disputed")
 
     # Filters for those that need conversion from string to boolean
     _OPTIONAL_FILTERS_STRING_TO_BOOL = ("has_narrative",)
@@ -29,7 +29,7 @@ class BaseBuilder(object):
 
     # Filters that have a child and this maps to their child's name
     _OPTIONAL_FILTERS_CHILD_MAP = {
-        "product": "sub_product", 
+        "product": "sub_product",
         "issue": "sub_issue"
     }
 
@@ -61,10 +61,10 @@ class BaseBuilder(object):
     def _build_bool_should_clauses(self, field):
         es_field_name = self._get_es_name(field)
         value_list = [ 0 if cd.lower() == "no" else 1 for cd in self.params[field] ] \
-            if field in self._OPTIONAL_FILTERS_STRING_TO_BOOL else self.params.get(field) 
+            if field in self._OPTIONAL_FILTERS_STRING_TO_BOOL else self.params.get(field)
         if value_list:
             if not self._has_child(field):
-                term_list = [ {"terms": {es_field_name: [value]}} 
+                term_list = [ {"terms": {es_field_name: [value]}}
                     for value in value_list ]
                 return {"bool": {"should": term_list}}
             else:
@@ -73,7 +73,7 @@ class BaseBuilder(object):
                     v_pair = v.split(DELIMITER)
                     # No child specified
                     if len(v_pair) == 1:
-                        # This will initialize empty list for item if not in 
+                        # This will initialize empty list for item if not in
                         # item_dict yet
                         item_dict[v_pair[0]]
                     elif len(v_pair) == 2:
@@ -166,8 +166,8 @@ class SearchBuilder(BaseBuilder):
 
     def build(self):
         search = {
-            "from": self.params.get("frm"), 
-            "size": self.params.get("size"), 
+            "from": self.params.get("frm"),
+            "size": self.params.get("size"),
             "query": {
                 "query_string": {
                     "query": "*",
@@ -189,20 +189,20 @@ class SearchBuilder(BaseBuilder):
         search_term = self.params.get("search_term")
         if search_term:
             if re.match("^[A-Za-z\d\s]+$", search_term) and \
-            not any(keyword in search_term 
+            not any(keyword in search_term
                 for keyword in ("AND", "OR", "NOT", "TO")):
 
                 # Match Query
                 search["query"] = {
                     "match": {
                         self.params.get("field"): {
-                            "query": search_term, 
+                            "query": search_term,
                             "operator": "and"
                         }
                     }
                 }
 
-            else: 
+            else:
 
                 # QueryString Query
                 search["query"] = {
@@ -226,7 +226,7 @@ class PostFilterBuilder(BaseBuilder):
         ## date_received
         date_received = self._build_date_range_filter(
             self.params.get("date_received_min"),
-            self.params.get("date_received_max"), 
+            self.params.get("date_received_max"),
             "date_received")
 
         if date_received:
@@ -235,7 +235,7 @@ class PostFilterBuilder(BaseBuilder):
         ## company_received
         company_received = self._build_date_range_filter(
             self.params.get("company_received_min"),
-            self.params.get("company_received_max"), 
+            self.params.get("company_received_max"),
             "date_sent_to_company")
 
         if company_received:
@@ -249,10 +249,10 @@ class PostFilterBuilder(BaseBuilder):
         return post_filter
 
 class AggregationBuilder(BaseBuilder):
-    
-    _AGG_FIELDS = ('has_narrative', 'company', 'product', 'issue', 'state', 
+
+    _AGG_FIELDS = ('has_narrative', 'company', 'product', 'issue', 'state',
         'zip_code', 'timely', 'company_response', 'company_public_response',
-        'consumer_disputed', 'consumer_consent_provided', 'tag', 'submitted_via')
+        'consumer_disputed', 'consumer_consent_provided', 'tags', 'submitted_via')
 
 
     def build(self):
@@ -270,7 +270,7 @@ class AggregationBuilder(BaseBuilder):
 
                         ]
                     }
-                }        
+                }
             }
 
             es_field_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(field, field)
@@ -305,19 +305,19 @@ class AggregationBuilder(BaseBuilder):
                 }
 
             date_filter = self._build_date_range_filter(
-                self.params.get("date_received_min"), 
+                self.params.get("date_received_min"),
                 self.params.get("date_received_max"), "date_received")
 
-            if date_filter:            
+            if date_filter:
                 field_aggs["filter"]["and"]["filters"].append(date_filter)
 
             company_filter = self._build_date_range_filter(
-                self.params.get("company_received_min"), 
+                self.params.get("company_received_min"),
                 self.params.get("company_received_max"), "date_sent_to_company")
 
-            if company_filter:            
+            if company_filter:
                 field_aggs["filter"]["and"]["filters"].append(company_filter)
- 
+
             # Add filter clauses to aggregation entries (only those that are not the same as field name)
             for item in self.params:
                 if item != field and item in self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL:
@@ -325,7 +325,7 @@ class AggregationBuilder(BaseBuilder):
 
             aggs[field] = field_aggs
 
-        return aggs        
+        return aggs
 
 if __name__ == "__main__":
     searchbuilder = SearchBuilder()
@@ -334,4 +334,3 @@ if __name__ == "__main__":
     print pfbuilder.build()
     aggbuilder = AggregationBuilder()
     print aggbuilder.build()
-

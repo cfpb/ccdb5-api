@@ -8,13 +8,13 @@ import requests
 from elasticsearch import Elasticsearch
 from flags.state import flag_enabled
 from complaint_search.es_builders import (
-    SearchBuilder, 
-    PostFilterBuilder, 
+    SearchBuilder,
+    PostFilterBuilder,
     AggregationBuilder
 )
 from complaint_search.defaults import PARAMS
 
-_ES_URL = "{}://{}:{}".format("http", os.environ.get('ES_HOST', 'localhost'), 
+_ES_URL = "{}://{}:{}".format("http", os.environ.get('ES_HOST', 'localhost'),
     os.environ.get('ES_PORT', '9200'))
 _ES_USER = os.environ.get('ES_USER', '')
 _ES_PASSWORD = os.environ.get('ES_PASSWORD', '')
@@ -27,7 +27,7 @@ _COMPLAINT_DOC_TYPE = os.environ.get('COMPLAINT_DOC_TYPE', 'complaint-doctype')
 def _get_es():
     global _ES_INSTANCE
     if _ES_INSTANCE is None:
-        _ES_INSTANCE = Elasticsearch([_ES_URL], http_auth=(_ES_USER, _ES_PASSWORD), 
+        _ES_INSTANCE = Elasticsearch([_ES_URL], http_auth=(_ES_USER, _ES_PASSWORD),
             timeout=100)
     return _ES_INSTANCE
 
@@ -55,7 +55,7 @@ def _get_meta():
     body = {
         # size: 0 here to prevent taking too long since we only needed max_date
         "size": 0,
-        "aggs": { 
+        "aggs": {
             "max_date" : { "max" : { "field" : "date_received" }},
             "max_update": { "max" : { "field" : ":updated_at" }},
             "max_created": { "max" : { "field" : ":created_at" }}
@@ -74,7 +74,7 @@ def _get_meta():
     }
 
     return result
-    
+
 # List of possible arguments:
 # - format: format to be returned: "json", "csv", "xls", or "xlsx"
 # - field: field you want to search in: "complaint_what_happened", "company_public_response", "_all"
@@ -83,9 +83,9 @@ def _get_meta():
 # - sort: sort by: "relevance_desc", "relevance_asc", "created_date_desc", "created_date_asc"
 # - search_term: the term to be searched
 # - date_received_min: return only date received including and later than this date i.e. 2017-03-02
-# - date_received_max: return only date received before this date, i.e. 2017-04-12 
+# - date_received_max: return only date received before this date, i.e. 2017-04-12
 # - company_received_min: return only date company received including and later than this date i.e. 2017-03-02
-# - company_received_max: return only date company received before this date, i.e. 2017-04-12 
+# - company_received_max: return only date company received before this date, i.e. 2017-04-12
 # - company: filters a list of companies you want ["Bank 1", "Bank 2"]
 # - product: filters a list of product you want if a subproduct is needed to filter, separated by a bullet (u'\u2022), i.e. [u"Mortgage\u2022FHA Mortgage", "Payday Loan"]
 # - issue: filters a list of issue you want if a subissue is needed to filter, separated by a bullet (u'\u2022), i.e. See Product above
@@ -98,7 +98,7 @@ def _get_meta():
 # - consumer_consent_provided: filters a list of whether consumer consent was provided in the complaint
 # - has_narrative: filters a list of whether complaint has narratives or not
 # - submitted_via: filters a list of ways the complaint was submitted
-# - tag - filters a list of tags
+# - tags - filters a list of tags
 def search(**kwargs):
     params = copy.deepcopy(PARAMS)
     params.update(**kwargs)
@@ -119,16 +119,16 @@ def search(**kwargs):
             aggregation_builder.add(**params)
             body["aggs"] = aggregation_builder.build()
 
-        res = _get_es().search(index=_COMPLAINT_ES_INDEX, 
-            doc_type=_COMPLAINT_DOC_TYPE, 
-            body=body, 
+        res = _get_es().search(index=_COMPLAINT_ES_INDEX,
+            doc_type=_COMPLAINT_DOC_TYPE,
+            body=body,
             scroll="10m")
 
         num_of_scroll = params.get("frm") / params.get("size")
         scroll_id = res['_scroll_id']
         if num_of_scroll > 0:
             while num_of_scroll > 0:
-                res['hits']['hits'] = _get_es().scroll(scroll_id=scroll_id, 
+                res['hits']['hits'] = _get_es().scroll(scroll_id=scroll_id,
                     scroll="10m")['hits']['hits']
                 num_of_scroll -= 1
         res["_meta"] = _get_meta()
@@ -141,7 +141,7 @@ def search(**kwargs):
 
         p = {"format": format, "source": json.dumps(body)}
         p = urllib.urlencode(p)
-        url = "{}/{}/{}/_data?{}".format(_ES_URL, _COMPLAINT_ES_INDEX, 
+        url = "{}/{}/{}/_data?{}".format(_ES_URL, _COMPLAINT_ES_INDEX,
             _COMPLAINT_DOC_TYPE, p)
         response = requests.get(url, auth=(_ES_USER, _ES_PASSWORD))
         if response.ok:
@@ -158,6 +158,6 @@ def suggest(text=None, size=6):
 
 def document(complaint_id):
     doc_query = {"query": {"term": {"_id": complaint_id}}}
-    res = _get_es().search(index=_COMPLAINT_ES_INDEX, 
+    res = _get_es().search(index=_COMPLAINT_ES_INDEX,
         doc_type=_COMPLAINT_DOC_TYPE, body=doc_query)
     return res

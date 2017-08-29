@@ -91,7 +91,7 @@ class SearchTests(APITestCase):
             self.assertEqual('OK', response.data)
 
         calls = [ mock.call(**self.buildDefaultParams({
-            "field": SearchInputSerializer.FIELD_MAP.get(field_pair[0], 
+            "field": SearchInputSerializer.FIELD_MAP.get(field_pair[0],
                 field_pair[0])}))
             for field_pair in SearchInputSerializer.FIELD_CHOICES ]
         mock_essearch.assert_has_calls(calls)
@@ -104,7 +104,7 @@ class SearchTests(APITestCase):
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
-        self.assertDictEqual({"field": ["\"invalid_choice\" is not a valid choice."]}, 
+        self.assertDictEqual({"field": ["\"invalid_choice\" is not a valid choice."]},
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -135,7 +135,7 @@ class SearchTests(APITestCase):
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
-        self.assertDictEqual({"size": ["A valid integer is required."]}, 
+        self.assertDictEqual({"size": ["A valid integer is required."]},
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -180,7 +180,7 @@ class SearchTests(APITestCase):
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
-        self.assertDictEqual({"frm": ["A valid integer is required."]}, 
+        self.assertDictEqual({"frm": ["A valid integer is required."]},
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -192,7 +192,7 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
         self.assertDictEqual(
-            {"frm": ["Ensure this value is greater than or equal to 0."]}, 
+            {"frm": ["Ensure this value is greater than or equal to 0."]},
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -216,7 +216,7 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
         self.assertDictEqual(
-            {"non_field_errors": ["frm is not zero or a multiple of size"]}, 
+            {"non_field_errors": ["frm is not zero or a multiple of size"]},
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -241,7 +241,7 @@ class SearchTests(APITestCase):
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
-        self.assertDictEqual({"sort": ["\"invalid_choice\" is not a valid choice."]}, 
+        self.assertDictEqual({"sort": ["\"invalid_choice\" is not a valid choice."]},
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -273,7 +273,7 @@ class SearchTests(APITestCase):
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
-        self.assertDictEqual({"date_received_min": ["Date has wrong format. Use one of these formats instead: YYYY[-MM[-DD]]."]}, 
+        self.assertDictEqual({"date_received_min": ["Date has wrong format. Use one of these formats instead: YYYY[-MM[-DD]]."]},
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -295,7 +295,7 @@ class SearchTests(APITestCase):
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
-        self.assertDictEqual({"date_received_max": ["Date has wrong format. Use one of these formats instead: YYYY[-MM[-DD]]."]}, 
+        self.assertDictEqual({"date_received_max": ["Date has wrong format. Use one of these formats instead: YYYY[-MM[-DD]]."]},
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -317,7 +317,7 @@ class SearchTests(APITestCase):
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
-        self.assertDictEqual({"company_received_min": ["Date has wrong format. Use one of these formats instead: YYYY[-MM[-DD]]."]}, 
+        self.assertDictEqual({"company_received_min": ["Date has wrong format. Use one of these formats instead: YYYY[-MM[-DD]]."]},
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -339,7 +339,7 @@ class SearchTests(APITestCase):
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
-        self.assertDictEqual({"company_received_max": ["Date has wrong format. Use one of these formats instead: YYYY[-MM[-DD]]."]}, 
+        self.assertDictEqual({"company_received_max": ["Date has wrong format. Use one of these formats instead: YYYY[-MM[-DD]]."]},
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -356,8 +356,8 @@ class SearchTests(APITestCase):
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_product__valid(self, mock_essearch):
         url = reverse('complaint_search:search')
-        # parameter doesn't represent real data, as client has a hard time 
-        # taking unicode.  The original API will use a bullet u2022 in place 
+        # parameter doesn't represent real data, as client has a hard time
+        # taking unicode.  The original API will use a bullet u2022 in place
         # of the '-'
         url += "?product=Mortgage-FHA%20Mortgage&product=Payday%20Loan"
         mock_essearch.return_value = 'OK'
@@ -370,8 +370,8 @@ class SearchTests(APITestCase):
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_issue__valid(self, mock_essearch):
         url = reverse('complaint_search:search')
-        # parameter doesn't represent real data, as client has a hard time 
-        # taking unicode.  The original API will use a bullet u2022 in place 
+        # parameter doesn't represent real data, as client has a hard time
+        # taking unicode.  The original API will use a bullet u2022 in place
         # of the '-'
         url += "?issue=Communication%20tactics-Frequent%20or%20repeated%20calls" \
         "&issue=Loan%20servicing,%20payments,%20escrow%20account"
@@ -380,7 +380,7 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
         mock_essearch.assert_called_once_with(**self.buildDefaultParams({
-                "issue": ["Communication tactics-Frequent or repeated calls", 
+                "issue": ["Communication tactics-Frequent or repeated calls",
             "Loan servicing, payments, escrow account"]}))
         self.assertEqual('OK', response.data)
 
@@ -440,7 +440,7 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({ 
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
                 "company_response": ["Closed", "No response"]}))
         self.assertEqual('OK', response.data)
 
@@ -493,15 +493,15 @@ class SearchTests(APITestCase):
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
-    def test_search_with_tag__valid(self, mock_essearch):
+    def test_search_with_tags__valid(self, mock_essearch):
         url = reverse('complaint_search:search')
-        url += "?tag=Older%20American&tag=Servicemember"
+        url += "?tags=Older%20American&tags=Servicemember"
         mock_essearch.return_value = 'OK'
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
         mock_essearch.assert_called_once_with(**self.buildDefaultParams({
-                "tag": ["Older American", "Servicemember"]}))
+                "tags": ["Older American", "Servicemember"]}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -523,7 +523,7 @@ class SearchTests(APITestCase):
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
-        self.assertDictEqual({"no_aggs": [u'"Not boolean" is not a valid boolean.']}, 
+        self.assertDictEqual({"no_aggs": [u'"Not boolean" is not a valid boolean.']},
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -541,5 +541,3 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertDictEqual({"error": "Elasticsearch error: Error"}, response.data)
-
-

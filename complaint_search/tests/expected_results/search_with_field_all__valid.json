@@ -1,6 +1,6 @@
 {
-    "from": 0, 
-    "size": 10, 
+    "from": 0,
+    "size": 10,
     "query": {
         "query_string": {
             "query": "*",
@@ -220,16 +220,16 @@
                 }
             }
         },
-        "tag": {
+        "tags": {
             "filter": {
                 "and": {
                     "filters": []
                 }
             },
             "aggs": {
-                "tag": {
+                "tags": {
                     "terms": {
-                        "field": "tag",
+                        "field": "tags",
                         "size": 0
                     }
                 }
