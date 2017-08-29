@@ -64,7 +64,18 @@ class BaseBuilder(object):
         es_field_name = self._get_es_name(field)
         value_list = [ 0 if cd.lower() == "no" else 1 for cd in self.params[field] ] \
             if field in self._OPTIONAL_FILTERS_STRING_TO_BOOL else self.params.get(field)
+
         if value_list:
+
+            # MUST filters must be in parallel otherwise they will not execute as intended
+            if field in self._OPTIONAL_FILTERS_MUST:
+                term_list_container = []
+                term_list = [ term_list_container.append({"terms": {es_field_name: [value] }})
+                    for value in value_list]
+
+                return term_list_container
+
+            # The most common property for data is to not have a child element
             if not self._has_child(field):
                 term_list_container = {"terms": {es_field_name: [] }}
                 term_list = [ term_list_container["terms"][es_field_name].append(value)
@@ -248,6 +259,9 @@ class PostFilterBuilder(BaseBuilder):
                 post_filter["bool"]["should"].append(filter_clauses[item])
             if item in self._OPTIONAL_FILTERS_MUST:
                 post_filter["bool"]["must"].append(filter_clauses[item])
+                print "POST FILTER: "
+                print post_filter
+
 
         return post_filter
 
@@ -332,7 +346,7 @@ class AggregationBuilder(BaseBuilder):
                     field_aggs["filter"]["bool"]["should"].extend(filter_clauses[item])
 
                 if item != field_name and item in self._OPTIONAL_FILTERS_MUST:
-                    field_aggs["filter"]["bool"]["filter"]["must"].append(filter_clauses[item])
+                    field_aggs["filter"]["bool"]["must"].append(filter_clauses[item])
 
             aggs[field_name] = field_aggs
 
