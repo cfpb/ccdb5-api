@@ -1,5 +1,5 @@
 from rest_framework import status
-from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.decorators import api_view, renderer_classes, throttle_classes
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
 from rest_framework.response import Response
 from django.http import HttpResponse
@@ -10,6 +10,12 @@ import es_interface
 from complaint_search.renderers import DefaultRenderer, CSVRenderer, XLSRenderer, XLSXRenderer
 from complaint_search.decorators import catch_es_error
 from complaint_search.serializer import SearchInputSerializer, SuggestInputSerializer
+from complaint_search.throttling import (
+    SearchAnonRateThrottle,
+    ExportUIRateThrottle, 
+    ExportAnonRateThrottle,
+    DocumentAnonRateThrottle,
+)
 
 def _buildHeaders():
     # Local development requires CORS support
@@ -29,8 +35,13 @@ def _buildHeaders():
     CSVRenderer, 
     XLSRenderer, 
     XLSXRenderer, 
-    BrowsableAPIRenderer
+    BrowsableAPIRenderer,
 ))
+@throttle_classes([ 
+    SearchAnonRateThrottle, 
+    ExportUIRateThrottle, 
+    ExportAnonRateThrottle,
+])
 @catch_es_error
 def search(request):
 
@@ -102,6 +113,7 @@ def suggest(request):
             status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
+@throttle_classes([DocumentAnonRateThrottle,])
 @catch_es_error
 def document(request, id):
     results = es_interface.document(id)
