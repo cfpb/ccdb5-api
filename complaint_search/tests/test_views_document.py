@@ -47,7 +47,7 @@ class DocumentTests(APITestCase):
             self.assertEqual('OK', response.data)
 
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 429)
+        self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
         self.assertIsNotNone(response.data.get('detail'))
         self.assertIn("Request was throttled", response.data.get('detail'))
         self.assertEqual(limit, mock_esdocument.call_count)
