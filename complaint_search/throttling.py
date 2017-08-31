@@ -33,15 +33,15 @@ class CCDBUIRateThrottle(CCDBRateThrottle):
         else:
             return True
 
-class SearchUIRateThrottle(CCDBUIRateThrottle):
-    scope = 'ccdb_ui_search'
-    # rate needs to be set if use
+# class SearchUIRateThrottle(CCDBUIRateThrottle):
+#     scope = 'ccdb_ui_search'
+#     # rate needs to be set if use
 
-    def allow_request(self, request, view):
-        if not self.is_export(request):
-            return super(SearchUIRateThrottle, self).allow_request(request, view)
-        else:
-            return True
+#     def allow_request(self, request, view):
+#         if not self.is_export(request):
+#             return super(SearchUIRateThrottle, self).allow_request(request, view)
+#         else:
+#             return True
 
 class SearchAnonRateThrottle(CCDBAnonRateThrottle):
     scope = 'ccdb_anon_search'
@@ -73,9 +73,9 @@ class ExportAnonRateThrottle(CCDBAnonRateThrottle):
         else:
             return True
 
-class DocumentUIRateThrottle(CCDBUIRateThrottle):
-    scope = 'ccdb_ui_document'
-    # rate needs to be set if use
+# class DocumentUIRateThrottle(CCDBUIRateThrottle):
+#     scope = 'ccdb_ui_document'
+#     # rate needs to be set if use
 
 class DocumentAnonRateThrottle(CCDBAnonRateThrottle):
     scope = 'ccdb_anon_document'

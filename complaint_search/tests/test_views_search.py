@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.core.cache import cache
 from rest_framework import status
 from rest_framework.test import APITestCase
 from unittest import skip
@@ -8,11 +9,29 @@ from datetime import date, datetime
 from elasticsearch import TransportError
 from complaint_search.es_interface import search
 from complaint_search.serializer import SearchInputSerializer
+from complaint_search.throttling import (
+    SearchAnonRateThrottle,
+    ExportUIRateThrottle,
+    ExportAnonRateThrottle,
+    _CCDB_UI_URL,
+)
 
 class SearchTests(APITestCase):
 
     def setUp(self):
-        pass
+        self.orig_search_anon_rate = SearchAnonRateThrottle.rate
+        self.orig_export_ui_rate = ExportUIRateThrottle.rate
+        self.orig_export_anon_rate = ExportAnonRateThrottle.rate
+        # Setting rates to something really big so it doesn't affect testing
+        SearchAnonRateThrottle.rate = '2000/min'
+        ExportUIRateThrottle.rate = '2000/min'
+        ExportAnonRateThrottle.rate = '2000/min'
+
+    def tearDown(self):
+        cache.clear()
+        SearchAnonRateThrottle.rate = self.orig_search_anon_rate
+        ExportUIRateThrottle.rate = self.orig_export_ui_rate
+        ExportAnonRateThrottle.rate = self.orig_export_anon_rate
 
     def buildDefaultParams(self, overrides):
         params = {
@@ -525,6 +544,86 @@ class SearchTests(APITestCase):
         mock_essearch.assert_not_called()
         self.assertDictEqual({"no_aggs": [u'"Not boolean" is not a valid boolean.']},
             response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_search_anon_rate_throttle(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        mock_essearch.return_value = 'OK'
+        SearchAnonRateThrottle.rate = self.orig_search_anon_rate
+        ExportUIRateThrottle.rate = self.orig_export_ui_rate
+        ExportAnonRateThrottle.rate = self.orig_export_anon_rate
+        limit = int(self.orig_search_anon_rate.split('/')[0])
+        for _ in range(limit):
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual('OK', response.data)
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 429)
+        self.assertIsNotNone(response.data.get('detail'))
+        self.assertIn("Request was throttled", response.data.get('detail'))
+        self.assertEqual(limit, mock_essearch.call_count)
+        self.assertEqual(20, limit)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_search_ui_rate_throttle(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        mock_essearch.return_value = 'OK'
+
+        SearchAnonRateThrottle.rate = self.orig_search_anon_rate
+        ExportUIRateThrottle.rate = self.orig_export_ui_rate
+        ExportAnonRateThrottle.rate = self.orig_export_anon_rate
+        limit = int(self.orig_search_anon_rate.split('/')[0])
+        for _ in range(limit):
+            response = self.client.get(url, HTTP_REFERER=_CCDB_UI_URL)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual('OK', response.data)
+
+        response = self.client.get(url, HTTP_REFERER=_CCDB_UI_URL)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual('OK', response.data)
+        self.assertEqual(limit + 1, mock_essearch.call_count)
+        self.assertEqual(20, limit)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_export_anon_rate_throttle(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        mock_essearch.return_value = 'OK'
+        SearchAnonRateThrottle.rate = self.orig_search_anon_rate
+        ExportUIRateThrottle.rate = self.orig_export_ui_rate
+        ExportAnonRateThrottle.rate = self.orig_export_anon_rate
+        limit = int(self.orig_export_anon_rate.split('/')[0])
+        for i in range(limit):
+            response = self.client.get(url, {"format": "csv"})
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual('OK', response.data)
+
+        response = self.client.get(url, {"format": "csv"})
+        self.assertEqual(response.status_code, 429)
+        self.assertIsNotNone(response.data.get('detail'))
+        self.assertIn("Request was throttled", response.data.get('detail'))
+        self.assertEqual(limit, mock_essearch.call_count)
+        self.assertEqual(2, limit)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_export_ui_rate_throttle(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        mock_essearch.return_value = 'OK'
+        SearchAnonRateThrottle.rate = self.orig_search_anon_rate
+        ExportUIRateThrottle.rate = self.orig_export_ui_rate
+        ExportAnonRateThrottle.rate = self.orig_export_anon_rate
+        limit = int(self.orig_export_ui_rate.split('/')[0])
+        for _ in range(limit):
+            response = self.client.get(url, {"format": "csv"}, HTTP_REFERER=_CCDB_UI_URL)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual('OK', response.data)
+
+        response = self.client.get(url, {"format": "csv"}, HTTP_REFERER=_CCDB_UI_URL)
+        self.assertEqual(response.status_code, 429)
+        self.assertIsNotNone(response.data.get('detail'))
+        self.assertIn("Request was throttled", response.data.get('detail'))
+        self.assertEqual(limit, mock_essearch.call_count)
+        self.assertEqual(6, limit)
 
     @mock.patch('complaint_search.es_interface.search')
     def test_search__transport_error_with_status_code(self, mock_essearch):
