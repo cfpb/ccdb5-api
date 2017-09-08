@@ -35,11 +35,7 @@ def _buildHeaders():
     CSVRenderer,
     XLSRenderer,
     XLSXRenderer,
-<<<<<<< HEAD
     BrowsableAPIRenderer,
-=======
-    BrowsableAPIRenderer
->>>>>>> 964d87232040e8ec5fd9611b539ea3b2c18c2395
 ))
 @throttle_classes([
     SearchAnonRateThrottle,
