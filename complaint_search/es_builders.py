@@ -100,9 +100,16 @@ class BaseBuilder(object):
                 f_list = []
                 for item, child in item_dict.iteritems():
                     # Always append the item to list
+<<<<<<< HEAD
                     if not child:
                         f_list.append({"terms": {es_field_name: [item]}})
                     else:
+=======
+                    f_list.append({"terms": {es_field_name: [item]}})
+
+                    # If a child item is selected, also add it
+                    if child:
+>>>>>>> 964d87232040e8ec5fd9611b539ea3b2c18c2395
                         child_term = { "terms": {self._get_es_name(self._get_child(field)): child }}
                         f_list.append(child_term)
 
@@ -233,7 +240,10 @@ class PostFilterBuilder(BaseBuilder):
 
     def build(self):
         filter_clauses = self._build_filter_clauses()
+<<<<<<< HEAD
 
+=======
+>>>>>>> 964d87232040e8ec5fd9611b539ea3b2c18c2395
         post_filter = {"bool": {"should": [], "must": [], "filter": [] }}
 
         ## date_received
@@ -257,6 +267,7 @@ class PostFilterBuilder(BaseBuilder):
         ## Create filter clauses for all other filters
         for item in self.params:
             if item in self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL:
+<<<<<<< HEAD
                 # for filters selected, we are creating the field level OR query that must match
                 # e.g (this OR that) AND (y or z) AND servicemember
                 field_level_should = {"bool": {"should":filter_clauses[item]}}
@@ -266,6 +277,14 @@ class PostFilterBuilder(BaseBuilder):
 
         print "FILTER CLAUSES: "
         print json.dumps(filter_clauses)
+=======
+                post_filter["bool"]["should"].append(filter_clauses[item])
+            if item in self._OPTIONAL_FILTERS_MUST:
+                post_filter["bool"]["must"].append(filter_clauses[item])
+                print "POST FILTER: "
+                print post_filter
+
+>>>>>>> 964d87232040e8ec5fd9611b539ea3b2c18c2395
 
         return post_filter
 
@@ -289,7 +308,16 @@ class AggregationBuilder(BaseBuilder):
                     "bool": {
                         "must": [],
                         "should": [],
+<<<<<<< HEAD
                         "filter": [],
+=======
+                        "filter": {
+                            "bool": {
+                                "must": []
+                            }
+                        },
+
+>>>>>>> 964d87232040e8ec5fd9611b539ea3b2c18c2395
                     }
                 }
             }
@@ -330,23 +358,38 @@ class AggregationBuilder(BaseBuilder):
                 self.params.get("date_received_max"), "date_received")
 
             if date_filter:
+<<<<<<< HEAD
                 field_aggs["filter"]["bool"]["filter"].append(date_filter)
+=======
+                field_aggs["filter"]["bool"]["filter"]["bool"]["must"].append(date_filter)
+>>>>>>> 964d87232040e8ec5fd9611b539ea3b2c18c2395
 
             company_filter = self._build_date_range_filter(
                 self.params.get("company_received_min"),
                 self.params.get("company_received_max"), "date_sent_to_company")
 
             if company_filter:
+<<<<<<< HEAD
                 field_aggs["filter"]["bool"]["filter"].append(company_filter)
+=======
+                field_aggs["filter"]["bool"]["filter"]["bool"]["must"].append(company_filter)
+>>>>>>> 964d87232040e8ec5fd9611b539ea3b2c18c2395
 
             # Add filter clauses to aggregation entries (only those that are not the same as field name)
             for item in self.params:
                 if item != field_name and item in self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL:
+<<<<<<< HEAD
                     field_level_should = {"bool": {"should":filter_clauses[item]}}
                     field_aggs["filter"]["bool"]["filter"].append(field_level_should)
 
                 if item != field_name and item in self._OPTIONAL_FILTERS_MUST:
                     field_aggs["filter"]["bool"]["filter"].append(filter_clauses[item])
+=======
+                    field_aggs["filter"]["bool"]["should"].extend(filter_clauses[item])
+
+                if item != field_name and item in self._OPTIONAL_FILTERS_MUST:
+                    field_aggs["filter"]["bool"]["must"].append(filter_clauses[item])
+>>>>>>> 964d87232040e8ec5fd9611b539ea3b2c18c2395
 
             aggs[field_name] = field_aggs
 
