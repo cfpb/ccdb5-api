@@ -12,7 +12,7 @@ from complaint_search.decorators import catch_es_error
 from complaint_search.serializer import SearchInputSerializer, SuggestInputSerializer
 from complaint_search.throttling import (
     SearchAnonRateThrottle,
-    ExportUIRateThrottle, 
+    ExportUIRateThrottle,
     ExportAnonRateThrottle,
     DocumentAnonRateThrottle,
 )
@@ -30,16 +30,20 @@ def _buildHeaders():
 
 @api_view(['GET'])
 @renderer_classes((
-    DefaultRenderer, 
-    JSONRenderer, 
-    CSVRenderer, 
-    XLSRenderer, 
-    XLSXRenderer, 
+    DefaultRenderer,
+    JSONRenderer,
+    CSVRenderer,
+    XLSRenderer,
+    XLSXRenderer,
+<<<<<<< HEAD
     BrowsableAPIRenderer,
+=======
+    BrowsableAPIRenderer
+>>>>>>> 964d87232040e8ec5fd9611b539ea3b2c18c2395
 ))
-@throttle_classes([ 
-    SearchAnonRateThrottle, 
-    ExportUIRateThrottle, 
+@throttle_classes([
+    SearchAnonRateThrottle,
+    ExportUIRateThrottle,
     ExportAnonRateThrottle,
 ])
 @catch_es_error
@@ -50,7 +54,7 @@ def search(request):
     # When you add a query parameter, make sure you add it to one of the
     # constant tuples below so it will be parse correctly
 
-    QPARAMS_VARS = ('field', 'size', 'frm', 'sort', 'search_term', 
+    QPARAMS_VARS = ('field', 'size', 'frm', 'sort', 'search_term',
         'date_received_min', 'date_received_max', 'company_received_min',
         'company_received_max', 'no_aggs')
 
@@ -86,7 +90,7 @@ def search(request):
 
         headers = _buildHeaders()
 
-        # If format is in json, csv, xls, xlsx, update its attachment response 
+        # If format is in json, csv, xls, xlsx, update its attachment response
         # with a filename
         if format in ('json', 'csv', 'xls', 'xlsx'):
             filename = 'complaints-{}.{}'.format(
