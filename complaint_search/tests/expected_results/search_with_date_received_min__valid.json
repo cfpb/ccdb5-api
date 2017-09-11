@@ -1,6 +1,6 @@
 {
-    "from": 0, 
-    "size": 10, 
+    "from": 0,
+    "size": 10,
     "query": {
         "query_string": {
             "query": "*",
@@ -20,8 +20,8 @@
     },
     "sort": [{"_score": {"order": "desc"}}],
     "post_filter": {
-        "and": {
-            "filters": [
+        "bool": {
+            "filter": [
                 {
                     "range": {
                         "date_received": {
@@ -29,14 +29,18 @@
                         }
                     }
                 }
-            ]
+            ],
+            "must": [],
+            "should": []
         }
     },
     "aggs": {
         "has_narrative": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
@@ -58,8 +62,10 @@
         },
         "company": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
@@ -81,8 +87,10 @@
         },
         "product": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
@@ -112,8 +120,10 @@
         },
         "issue": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
@@ -143,8 +153,10 @@
         },
         "state": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
@@ -166,8 +178,10 @@
         },
         "zip_code": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
@@ -189,8 +203,10 @@
         },
         "timely": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
@@ -212,8 +228,10 @@
         },
         "company_response": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
@@ -235,8 +253,10 @@
         },
         "company_public_response": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
@@ -258,8 +278,10 @@
         },
         "consumer_disputed": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
@@ -281,8 +303,10 @@
         },
         "consumer_consent_provided": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
@@ -304,8 +328,10 @@
         },
         "tags": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
@@ -327,8 +353,10 @@
         },
         "submitted_via": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {

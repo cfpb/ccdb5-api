@@ -1,369 +1,456 @@
 {
-    "from": 0, 
-    "size": 10, 
-    "query": {
-        "query_string": {
-            "query": "*",
-            "fields": [
-                "complaint_what_happened"
-            ],
-            "default_operator": "AND"
-        }
-    },
-    "highlight": {
-        "require_field_match": false,
-        "fields": {
-            "complaint_what_happened": {}
-        },
-        "number_of_fragments": 1,
-        "fragment_size": 500
-    },
-    "sort": [{"_score": {"order": "desc"}}],
-    "post_filter": {
-        "and": {
-            "filters": [{ 
-                "bool": {
-                    "should": [
-                        {"terms": {"zip_code": ["12345"]}},
-                        {"terms": {"zip_code": ["23435"]}},
-                        {"terms": {"zip_code": ["03433"]}}
-                    ]
-                }
-            }]
-        }
-    },
-    "aggs": {
-        "has_narrative": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"zip_code": ["12345"]}},
-                                    {"terms": {"zip_code": ["23435"]}},
-                                    {"terms": {"zip_code": ["03433"]}}
-                                ]
-                            }
-                        }
-                    ]
-                }
-            },
-            "aggs": {
-                "has_narrative": {
-                    "terms": {
-                        "field": "has_narrative",
-                        "size": 0
-                    }
-                }
-            }
-        },
-        "company": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"zip_code": ["12345"]}},
-                                    {"terms": {"zip_code": ["23435"]}},
-                                    {"terms": {"zip_code": ["03433"]}}
-                                ]
-                            }
-                        }
-                    ]
-                }
-            },
-            "aggs": {
-                "company": {
-                    "terms": {
-                        "field": "company.raw",
-                        "size": 0
-                    }
-                }
-            }
-        },
-        "product": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"zip_code": ["12345"]}},
-                                    {"terms": {"zip_code": ["23435"]}},
-                                    {"terms": {"zip_code": ["03433"]}}
-                                ]
-                            }
-                        }
-                    ]
-                }
-            },
-            "aggs": {
-                "product": {
-                    "terms": {
-                        "field": "product.raw",
-                        "size": 0
-                    },
-                    "aggs": {
-                        "sub_product.raw": {
-                            "terms": {
-                                "field": "sub_product.raw",
-                                "size": 0
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "issue": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"zip_code": ["12345"]}},
-                                    {"terms": {"zip_code": ["23435"]}},
-                                    {"terms": {"zip_code": ["03433"]}}
-                                ]
-                            }
-                        }
-                    ]
-                }
-            },
-            "aggs": {
-                "issue": {
-                    "terms": {
-                        "field": "issue.raw",
-                        "size": 0
-                    },
-                    "aggs": {
-                        "sub_issue.raw": {
-                            "terms": {
-                                "field": "sub_issue.raw",
-                                "size": 0
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "state": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"zip_code": ["12345"]}},
-                                    {"terms": {"zip_code": ["23435"]}},
-                                    {"terms": {"zip_code": ["03433"]}}
-                                ]
-                            }
-                        }
-                    ]
-                }
-            },
-            "aggs": {
-                "state": {
-                    "terms": {
-                        "field": "state",
-                        "size": 0
-                    }
-                }
-            }
-        },
-        "zip_code": {
-            "filter": {
-                "and": {
-                    "filters": []
-                }
-            },
-            "aggs": {
-                "zip_code": {
-                    "terms": {
-                        "field": "zip_code",
-                        "size": 0
-                    }
-                }
-            }
-        },
-        "timely": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"zip_code": ["12345"]}},
-                                    {"terms": {"zip_code": ["23435"]}},
-                                    {"terms": {"zip_code": ["03433"]}}
-                                ]
-                            }
-                        }
-                    ]
-                }
-            },
-            "aggs": {
-                "timely": {
-                    "terms": {
-                        "field": "timely",
-                        "size": 0
-                    }
-                }
-            }
-        },
-        "company_response": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"zip_code": ["12345"]}},
-                                    {"terms": {"zip_code": ["23435"]}},
-                                    {"terms": {"zip_code": ["03433"]}}
-                                ]
-                            }
-                        }
-                    ]
-                }
-            },
-            "aggs": {
-                "company_response": {
-                    "terms": {
-                        "field": "company_response",
-                        "size": 0
-                    }
-                }
-            }
-        },
-        "company_public_response": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"zip_code": ["12345"]}},
-                                    {"terms": {"zip_code": ["23435"]}},
-                                    {"terms": {"zip_code": ["03433"]}}
-                                ]
-                            }
-                        }
-                    ]
-                }
-            },
-            "aggs": {
-                "company_public_response": {
-                    "terms": {
-                        "field": "company_public_response.raw",
-                        "size": 0
-                    }
-                }
-            }
-        },
-        "consumer_disputed": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"zip_code": ["12345"]}},
-                                    {"terms": {"zip_code": ["23435"]}},
-                                    {"terms": {"zip_code": ["03433"]}}
-                                ]
-                            }
-                        }
-                    ]
-                }
-            },
-            "aggs": {
-                "consumer_disputed": {
-                    "terms": {
-                        "field": "consumer_disputed.raw",
-                        "size": 0
-                    }
-                }
-            }
-        },
-        "consumer_consent_provided": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"zip_code": ["12345"]}},
-                                    {"terms": {"zip_code": ["23435"]}},
-                                    {"terms": {"zip_code": ["03433"]}}
-                                ]
-                            }
-                        }
-                    ]
-                }
-            },
-            "aggs": {
-                "consumer_consent_provided": {
-                    "terms": {
-                        "field": "consumer_consent_provided.raw",
-                        "size": 0
-                    }
-                }
-            }
-        },
-        "tags": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"zip_code": ["12345"]}},
-                                    {"terms": {"zip_code": ["23435"]}},
-                                    {"terms": {"zip_code": ["03433"]}}
-                                ]
-                            }
-                        }
-                    ]
-                }
-            },
-            "aggs": {
-                "tags": {
-                    "terms": {
-                        "field": "tags",
-                        "size": 0
-                    }
-                }
-            }
-        },
-        "submitted_via": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"zip_code": ["12345"]}},
-                                    {"terms": {"zip_code": ["23435"]}},
-                                    {"terms": {"zip_code": ["03433"]}}
-                                ]
-                            }
-                        }
-                    ]
-                }
-            },
-            "aggs": {
-                "submitted_via": {
-                    "terms": {
-                        "field": "submitted_via",
-                        "size": 0
-                    }
-                }
-            }
-        }
-
+  "sort": [
+    {
+      "_score": {
+        "order": "desc"
+      }
     }
+  ],
+  "from": 0,
+  "aggs": {
+    "timely": {
+      "filter": {
+        "bool": {
+          "filter": [
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "should": [],
+          "must": []
+        }
+      },
+      "aggs": {
+        "timely": {
+          "terms": {
+            "field": "timely",
+            "size": 0
+          }
+        }
+      }
+    },
+    "company_public_response": {
+      "filter": {
+        "bool": {
+          "filter": [
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "should": [],
+          "must": []
+        }
+      },
+      "aggs": {
+        "company_public_response": {
+          "terms": {
+            "field": "company_public_response.raw",
+            "size": 0
+          }
+        }
+      }
+    },
+    "product": {
+      "filter": {
+        "bool": {
+          "filter": [
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "should": [],
+          "must": []
+        }
+      },
+      "aggs": {
+        "product": {
+          "terms": {
+            "field": "product.raw",
+            "size": 0
+          },
+          "aggs": {
+            "sub_product.raw": {
+              "terms": {
+                "field": "sub_product.raw",
+                "size": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "tags": {
+      "filter": {
+        "bool": {
+          "filter": [
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "should": [],
+          "must": []
+        }
+      },
+      "aggs": {
+        "tags": {
+          "terms": {
+            "field": "tags",
+            "size": 0
+          }
+        }
+      }
+    },
+    "company": {
+      "filter": {
+        "bool": {
+          "filter": [
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "should": [],
+          "must": []
+        }
+      },
+      "aggs": {
+        "company": {
+          "terms": {
+            "field": "company.raw",
+            "size": 0
+          }
+        }
+      }
+    },
+    "consumer_disputed": {
+      "filter": {
+        "bool": {
+          "filter": [
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "should": [],
+          "must": []
+        }
+      },
+      "aggs": {
+        "consumer_disputed": {
+          "terms": {
+            "field": "consumer_disputed.raw",
+            "size": 0
+          }
+        }
+      }
+    },
+    "consumer_consent_provided": {
+      "filter": {
+        "bool": {
+          "filter": [
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "should": [],
+          "must": []
+        }
+      },
+      "aggs": {
+        "consumer_consent_provided": {
+          "terms": {
+            "field": "consumer_consent_provided.raw",
+            "size": 0
+          }
+        }
+      }
+    },
+    "state": {
+      "filter": {
+        "bool": {
+          "filter": [
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "should": [],
+          "must": []
+        }
+      },
+      "aggs": {
+        "state": {
+          "terms": {
+            "field": "state",
+            "size": 0
+          }
+        }
+      }
+    },
+    "has_narrative": {
+      "filter": {
+        "bool": {
+          "filter": [
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "should": [],
+          "must": []
+        }
+      },
+      "aggs": {
+        "has_narrative": {
+          "terms": {
+            "field": "has_narrative",
+            "size": 0
+          }
+        }
+      }
+    },
+    "submitted_via": {
+      "filter": {
+        "bool": {
+          "filter": [
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "should": [],
+          "must": []
+        }
+      },
+      "aggs": {
+        "submitted_via": {
+          "terms": {
+            "field": "submitted_via",
+            "size": 0
+          }
+        }
+      }
+    },
+    "issue": {
+      "filter": {
+        "bool": {
+          "filter": [
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "should": [],
+          "must": []
+        }
+      },
+      "aggs": {
+        "issue": {
+          "terms": {
+            "field": "issue.raw",
+            "size": 0
+          },
+          "aggs": {
+            "sub_issue.raw": {
+              "terms": {
+                "field": "sub_issue.raw",
+                "size": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "company_response": {
+      "filter": {
+        "bool": {
+          "filter": [
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "should": [],
+          "must": []
+        }
+      },
+      "aggs": {
+        "company_response": {
+          "terms": {
+            "field": "company_response",
+            "size": 0
+          }
+        }
+      }
+    },
+    "zip_code": {
+      "filter": {
+        "bool": {
+          "filter": [],
+          "should": [],
+          "must": []
+        }
+      },
+      "aggs": {
+        "zip_code": {
+          "terms": {
+            "field": "zip_code",
+            "size": 0
+          }
+        }
+      }
+    }
+  },
+  "query": {
+    "query_string": {
+      "query": "*",
+      "default_operator": "AND",
+      "fields": [
+        "complaint_what_happened"
+      ]
+    }
+  },
+  "post_filter": {
+    "bool": {
+      "filter": [
+        {
+          "bool": {
+            "should": {
+              "terms": {
+                "zip_code": [
+                  "12345",
+                  "23435",
+                  "03433"
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "must": [],
+      "should": []
+    }
+  },
+  "highlight": {
+    "fragment_size": 500,
+    "number_of_fragments": 1,
+    "require_field_match": false,
+    "fields": {
+      "complaint_what_happened": {}
+    }
+  },
+  "size": 10
 }

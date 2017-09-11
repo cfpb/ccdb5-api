@@ -118,9 +118,6 @@ def search(**kwargs):
             aggregation_builder.add(**params)
             body["aggs"] = aggregation_builder.build()
 
-        # print "BODY "
-        # print json.dumps(body)
-
         res = _get_es().search(index=_COMPLAINT_ES_INDEX,
             doc_type=_COMPLAINT_DOC_TYPE,
             body=body,

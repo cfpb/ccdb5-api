@@ -1,6 +1,6 @@
 {
-    "from": 0, 
-    "size": 10, 
+    "from": 0,
+    "size": 10,
     "query": {
         "query_string": {
             "query": "*",
@@ -20,35 +20,47 @@
     },
     "sort": [{"_score": {"order": "desc"}}],
     "post_filter": {
-        "and": {
-            "filters": [
-                { 
-                    "bool": {
-                        "should": [
-                            {"terms": {"company.raw": ["Bank 1"]}},
-                            {"terms": {"company.raw": ["Second Bank"]}}
-                        ]
-                    }
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "should": {
+                "terms": {
+                  "company.raw": [
+                    "Bank 1",
+                    "Second Bank"
+                  ]
                 }
-            ]
-        }
+              }
+            }
+          }
+        ],
+        "must": [],
+        "should": []
+      }
     },
     "aggs": {
         "has_narrative": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"company.raw": ["Bank 1"]}},
-                                    {"terms": {"company.raw": ["Second Bank"]}}
-                                ]
-                            }
-                        }
-                    ]
+          "filter": {
+            "bool": {
+              "filter": [
+                {
+                  "bool": {
+                    "should": {
+                      "terms": {
+                        "company.raw": [
+                          "Bank 1",
+                          "Second Bank"
+                        ]
+                      }
+                    }
+                  }
                 }
-            },
+              ],
+              "should": [],
+              "must": []
+            }
+          },
             "aggs": {
                 "has_narrative": {
                     "terms": {
@@ -60,8 +72,10 @@
         },
         "company": {
             "filter": {
-                "and": {
-                    "filters": []
+                "bool": {
+                    "filter": [],
+                    "should": [],
+                    "must": []
                 }
             },
             "aggs": {
@@ -74,20 +88,26 @@
             }
         },
         "product": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"company.raw": ["Bank 1"]}},
-                                    {"terms": {"company.raw": ["Second Bank"]}}
-                                ]
-                            }
-                        }
-                    ]
+          "filter": {
+            "bool": {
+              "filter": [
+                {
+                  "bool": {
+                    "should": {
+                      "terms": {
+                        "company.raw": [
+                          "Bank 1",
+                          "Second Bank"
+                        ]
+                      }
+                    }
+                  }
                 }
-            },
+              ],
+              "should": [],
+              "must": []
+            }
+          },
             "aggs": {
                 "product": {
                     "terms": {
@@ -106,20 +126,26 @@
             }
         },
         "issue": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"company.raw": ["Bank 1"]}},
-                                    {"terms": {"company.raw": ["Second Bank"]}}
-                                ]
-                            }
-                        }
-                    ]
+          "filter": {
+            "bool": {
+              "filter": [
+                {
+                  "bool": {
+                    "should": {
+                      "terms": {
+                        "company.raw": [
+                          "Bank 1",
+                          "Second Bank"
+                        ]
+                      }
+                    }
+                  }
                 }
-            },
+              ],
+              "should": [],
+              "must": []
+            }
+          },
             "aggs": {
                 "issue": {
                     "terms": {
@@ -138,20 +164,26 @@
             }
         },
         "state": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"company.raw": ["Bank 1"]}},
-                                    {"terms": {"company.raw": ["Second Bank"]}}
-                                ]
-                            }
-                        }
-                    ]
+          "filter": {
+            "bool": {
+              "filter": [
+                {
+                  "bool": {
+                    "should": {
+                      "terms": {
+                        "company.raw": [
+                          "Bank 1",
+                          "Second Bank"
+                        ]
+                      }
+                    }
+                  }
                 }
-            },
+              ],
+              "should": [],
+              "must": []
+            }
+          },
             "aggs": {
                 "state": {
                     "terms": {
@@ -162,20 +194,26 @@
             }
         },
         "zip_code": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"company.raw": ["Bank 1"]}},
-                                    {"terms": {"company.raw": ["Second Bank"]}}
-                                ]
-                            }
-                        }
-                    ]
+          "filter": {
+            "bool": {
+              "filter": [
+                {
+                  "bool": {
+                    "should": {
+                      "terms": {
+                        "company.raw": [
+                          "Bank 1",
+                          "Second Bank"
+                        ]
+                      }
+                    }
+                  }
                 }
-            },
+              ],
+              "should": [],
+              "must": []
+            }
+          },
             "aggs": {
                 "zip_code": {
                     "terms": {
@@ -186,20 +224,26 @@
             }
         },
         "timely": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"company.raw": ["Bank 1"]}},
-                                    {"terms": {"company.raw": ["Second Bank"]}}
-                                ]
-                            }
-                        }
-                    ]
+          "filter": {
+            "bool": {
+              "filter": [
+                {
+                  "bool": {
+                    "should": {
+                      "terms": {
+                        "company.raw": [
+                          "Bank 1",
+                          "Second Bank"
+                        ]
+                      }
+                    }
+                  }
                 }
-            },
+              ],
+              "should": [],
+              "must": []
+            }
+          },
             "aggs": {
                 "timely": {
                     "terms": {
@@ -210,20 +254,26 @@
             }
         },
         "company_response": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"company.raw": ["Bank 1"]}},
-                                    {"terms": {"company.raw": ["Second Bank"]}}
-                                ]
-                            }
-                        }
-                    ]
+          "filter": {
+            "bool": {
+              "filter": [
+                {
+                  "bool": {
+                    "should": {
+                      "terms": {
+                        "company.raw": [
+                          "Bank 1",
+                          "Second Bank"
+                        ]
+                      }
+                    }
+                  }
                 }
-            },
+              ],
+              "should": [],
+              "must": []
+            }
+          },
             "aggs": {
                 "company_response": {
                     "terms": {
@@ -234,20 +284,26 @@
             }
         },
         "company_public_response": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"company.raw": ["Bank 1"]}},
-                                    {"terms": {"company.raw": ["Second Bank"]}}
-                                ]
-                            }
-                        }
-                    ]
+          "filter": {
+            "bool": {
+              "filter": [
+                {
+                  "bool": {
+                    "should": {
+                      "terms": {
+                        "company.raw": [
+                          "Bank 1",
+                          "Second Bank"
+                        ]
+                      }
+                    }
+                  }
                 }
-            },
+              ],
+              "should": [],
+              "must": []
+            }
+          },
             "aggs": {
                 "company_public_response": {
                     "terms": {
@@ -258,20 +314,26 @@
             }
         },
         "consumer_disputed": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"company.raw": ["Bank 1"]}},
-                                    {"terms": {"company.raw": ["Second Bank"]}}
-                                ]
-                            }
-                        }
-                    ]
+          "filter": {
+            "bool": {
+              "filter": [
+                {
+                  "bool": {
+                    "should": {
+                      "terms": {
+                        "company.raw": [
+                          "Bank 1",
+                          "Second Bank"
+                        ]
+                      }
+                    }
+                  }
                 }
-            },
+              ],
+              "should": [],
+              "must": []
+            }
+          },
             "aggs": {
                 "consumer_disputed": {
                     "terms": {
@@ -282,20 +344,26 @@
             }
         },
         "consumer_consent_provided": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"company.raw": ["Bank 1"]}},
-                                    {"terms": {"company.raw": ["Second Bank"]}}
-                                ]
-                            }
-                        }
-                    ]
+          "filter": {
+            "bool": {
+              "filter": [
+                {
+                  "bool": {
+                    "should": {
+                      "terms": {
+                        "company.raw": [
+                          "Bank 1",
+                          "Second Bank"
+                        ]
+                      }
+                    }
+                  }
                 }
-            },
+              ],
+              "should": [],
+              "must": []
+            }
+          },
             "aggs": {
                 "consumer_consent_provided": {
                     "terms": {
@@ -306,20 +374,26 @@
             }
         },
         "tags": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"company.raw": ["Bank 1"]}},
-                                    {"terms": {"company.raw": ["Second Bank"]}}
-                                ]
-                            }
-                        }
-                    ]
+          "filter": {
+            "bool": {
+              "filter": [
+                {
+                  "bool": {
+                    "should": {
+                      "terms": {
+                        "company.raw": [
+                          "Bank 1",
+                          "Second Bank"
+                        ]
+                      }
+                    }
+                  }
                 }
-            },
+              ],
+              "should": [],
+              "must": []
+            }
+          },
             "aggs": {
                 "tags": {
                     "terms": {
@@ -330,20 +404,26 @@
             }
         },
         "submitted_via": {
-            "filter": {
-                "and": {
-                    "filters": [
-                        { 
-                            "bool": {
-                                "should": [
-                                    {"terms": {"company.raw": ["Bank 1"]}},
-                                    {"terms": {"company.raw": ["Second Bank"]}}
-                                ]
-                            }
-                        }
-                    ]
+          "filter": {
+            "bool": {
+              "filter": [
+                {
+                  "bool": {
+                    "should": {
+                      "terms": {
+                        "company.raw": [
+                          "Bank 1",
+                          "Second Bank"
+                        ]
+                      }
+                    }
+                  }
                 }
-            },
+              ],
+              "should": [],
+              "must": []
+            }
+          },
             "aggs": {
                 "submitted_via": {
                     "terms": {

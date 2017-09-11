@@ -264,9 +264,6 @@ class PostFilterBuilder(BaseBuilder):
             if item in self._OPTIONAL_FILTERS_MUST:
                 post_filter["bool"]["filter"].append(filter_clauses[item])
 
-        print "FILTER CLAUSES: "
-        print json.dumps(filter_clauses)
-
         return post_filter
 
 class AggregationBuilder(BaseBuilder):
