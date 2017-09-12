@@ -71,16 +71,16 @@ class BaseBuilder(object):
             # MUST filters must be in parallel otherwise they will not execute as intended
             if field in self._OPTIONAL_FILTERS_MUST:
                 term_list_container = []
-                term_list = [ term_list_container.append({"terms": {es_field_name: [value] }})
-                    for value in value_list]
+                term_list = [ {"terms": {es_field_name: [value] }} for value in value_list]
 
-                return term_list_container
+                return term_list
 
             # The most common property for data is to not have a child element
             if not self._has_child(field):
                 term_list_container = {"terms": {es_field_name: [] }}
-                term_list = [ term_list_container["terms"][es_field_name].append(value)
-                    for value in value_list ]
+
+                for value in value_list:
+                    term_list_container["terms"][es_field_name].append(value)
 
                 return term_list_container
             else:
