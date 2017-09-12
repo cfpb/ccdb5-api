@@ -79,8 +79,7 @@ class BaseBuilder(object):
             if not self._has_child(field):
                 term_list_container = {"terms": {es_field_name: [] }}
 
-                for value in value_list:
-                    term_list_container["terms"][es_field_name].append(value)
+                term_list_container["terms"][es_field_name] = value_list
 
                 return term_list_container
             else:
