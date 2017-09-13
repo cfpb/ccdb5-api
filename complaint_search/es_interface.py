@@ -105,7 +105,6 @@ def search(**kwargs):
     search_builder = SearchBuilder()
     search_builder.add(**params)
     body = search_builder.build()
-
     post_filter_builder = PostFilterBuilder()
     post_filter_builder.add(**params)
     body["post_filter"] = post_filter_builder.build()
@@ -134,8 +133,8 @@ def search(**kwargs):
         res["_meta"] = _get_meta()
 
     elif format in ("json", "csv", "xls", "xlsx"):
-        # Deleting from field and this will force data format plugin to use 
-        # scan/scroll query to create the content, 
+        # Deleting from field and this will force data format plugin to use
+        # scan/scroll query to create the content,
         # Size also doesn't seem to be relevant anymore
         del(body["from"])
 

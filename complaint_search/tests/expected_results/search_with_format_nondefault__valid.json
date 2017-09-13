@@ -1,5 +1,5 @@
-{ 
-    "size": 10, 
+{
+    "size": 10,
     "query": {
         "query_string": {
             "query": "*",
@@ -18,5 +18,5 @@
         "fragment_size": 500
     },
     "sort": [{"_score": {"order": "desc"}}],
-    "post_filter": {"and": {"filters": []}}
+    "post_filter": {"bool": {"filter": [], "should": [], "must": []}}
 }

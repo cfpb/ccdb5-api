@@ -1,10 +1,10 @@
 {
-    "from": 0, 
-    "size": 10, 
+    "from": 0,
+    "size": 10,
     "query": {
         "match": {
             "complaint_what_happened": {
-                "query": "test term", 
+                "query": "test term",
                 "operator": "and"
             }
         }
@@ -18,12 +18,14 @@
         "fragment_size": 500
     },
     "sort": [{"_score": {"order": "desc"}}],
-    "post_filter": {"and": {"filters": []}},
+    "post_filter": {"bool": {"filter": [], "must": [], "should":[] }},
     "aggs": {
         "has_narrative": {
             "filter": {
-                "and": {
-                    "filters": []
+                "bool": {
+                    "filter": [],
+                    "must": [],
+                    "should": []
                 }
             },
             "aggs": {
@@ -37,8 +39,10 @@
         },
         "company": {
             "filter": {
-                "and": {
-                    "filters": []
+                "bool": {
+                    "filter": [],
+                    "must": [],
+                    "should": []
                 }
             },
             "aggs": {
@@ -52,8 +56,10 @@
         },
         "product": {
             "filter": {
-                "and": {
-                    "filters": []
+                "bool": {
+                    "filter": [],
+                    "must": [],
+                    "should": []
                 }
             },
             "aggs": {
@@ -75,8 +81,10 @@
         },
         "issue": {
             "filter": {
-                "and": {
-                    "filters": []
+                "bool": {
+                    "filter": [],
+                    "must": [],
+                    "should": []
                 }
             },
             "aggs": {
@@ -98,8 +106,10 @@
         },
         "state": {
             "filter": {
-                "and": {
-                    "filters": []
+                "bool": {
+                    "filter": [],
+                    "must": [],
+                    "should": []
                 }
             },
             "aggs": {
@@ -113,8 +123,10 @@
         },
         "zip_code": {
             "filter": {
-                "and": {
-                    "filters": []
+                "bool": {
+                    "filter": [],
+                    "must": [],
+                    "should": []
                 }
             },
             "aggs": {
@@ -128,8 +140,10 @@
         },
         "timely": {
             "filter": {
-                "and": {
-                    "filters": []
+                "bool": {
+                    "filter": [],
+                    "must": [],
+                    "should": []
                 }
             },
             "aggs": {
@@ -143,8 +157,10 @@
         },
         "company_response": {
             "filter": {
-                "and": {
-                    "filters": []
+                "bool": {
+                    "filter": [],
+                    "must": [],
+                    "should": []
                 }
             },
             "aggs": {
@@ -158,8 +174,10 @@
         },
         "company_public_response": {
             "filter": {
-                "and": {
-                    "filters": []
+                "bool": {
+                    "filter": [],
+                    "must": [],
+                    "should": []
                 }
             },
             "aggs": {
@@ -173,8 +191,10 @@
         },
         "consumer_disputed": {
             "filter": {
-                "and": {
-                    "filters": []
+                "bool": {
+                    "filter": [],
+                    "must": [],
+                    "should": []
                 }
             },
             "aggs": {
@@ -188,8 +208,10 @@
         },
         "consumer_consent_provided": {
             "filter": {
-                "and": {
-                    "filters": []
+                "bool": {
+                    "filter": [],
+                    "must": [],
+                    "should": []
                 }
             },
             "aggs": {
@@ -203,8 +225,10 @@
         },
         "tags": {
             "filter": {
-                "and": {
-                    "filters": []
+                "bool": {
+                    "filter": [],
+                    "must": [],
+                    "should": []
                 }
             },
             "aggs": {
@@ -218,8 +242,10 @@
         },
         "submitted_via": {
             "filter": {
-                "and": {
-                    "filters": []
+                "bool": {
+                    "filter": [],
+                    "must": [],
+                    "should": []
                 }
             },
             "aggs": {

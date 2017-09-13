@@ -186,7 +186,7 @@ class EsInterfaceTest(TestCase):
 
         self.assertEqual(mock_jdump.call_count, len(format_list))
         self.assertEqual(mock_urlencode.call_count, len(format_list))
-        
+
         mock_search.assert_not_called()
         self.assertEqual(len(format_list), mock_rget.call_count)
 
@@ -202,6 +202,8 @@ class EsInterfaceTest(TestCase):
         mock_scroll.return_value = self.MOCK_SEARCH_SIDE_EFFECT[0]
         body = self.load("search_with_field__valid")
         res = search(field="test_field")
+        # print "MOCK CALL ARGS LIST: "
+        # print json.dumps(mock_search.call_args_list)
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
@@ -211,6 +213,7 @@ class EsInterfaceTest(TestCase):
         if diff:
             print "search with field"
             diff.print_full()
+            print "body"
         self.assertIsNone(deep.diff(act_body, body))
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
         mock_scroll.assert_not_called()
@@ -599,7 +602,7 @@ class EsInterfaceTest(TestCase):
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
         body = self.load("search_with_product__valid")
-        res = search(product=["Payday Loan", u"Mortgage\u2022FHA Mortgage"])
+        res = search(product=["Payday Loan", u"Mortgage\u2022FHA mortgage"])
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
@@ -731,7 +734,7 @@ class EsInterfaceTest(TestCase):
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
         body = self.load("search_with_company_response__valid")
-        res = search(company_response=["Closed", "No response"])
+        res = search(company_response=["Closed", "Closed with non-monetary relief"])
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
@@ -757,7 +760,7 @@ class EsInterfaceTest(TestCase):
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
         body = self.load("search_with_company_public_response__valid")
-        res = search(company_public_response=["Response 1", "Response 2"])
+        res = search(company_public_response=["Company chooses not to provide a public response", "Company believes it acted appropriately as authorized by contract or law"])
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
@@ -783,7 +786,7 @@ class EsInterfaceTest(TestCase):
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
         body = self.load("search_with_consumer_consent_provided__valid")
-        res = search(consumer_consent_provided=["yes", "no"])
+        res = search(consumer_consent_provided=["Consent provided"])
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
@@ -809,7 +812,7 @@ class EsInterfaceTest(TestCase):
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
         body = self.load("search_with_submitted_via__valid")
-        res = search(submitted_via=["mail", "web"])
+        res = search(submitted_via=["Web"])
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
@@ -856,38 +859,12 @@ class EsInterfaceTest(TestCase):
     @mock.patch.object(Elasticsearch, 'search')
     @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'scroll')
-    def test_search_with_consumer_disputed__valid(self, mock_scroll, mock_count, mock_search, mock_get_meta):
-        mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
-        mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
-        mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_consumer_disputed__valid")
-        res = search(consumer_disputed=["No", "Yes"])
-        self.assertEqual(1, len(mock_search.call_args_list))
-        self.assertEqual(2, len(mock_search.call_args_list[0]))
-        self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
-        act_body = mock_search.call_args_list[0][1]['body']
-        diff = deep.diff(act_body, body)
-        if diff:
-            print "consumer_disputed"
-            diff.print_full()
-        self.assertIsNone(deep.diff(act_body, body))
-        self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
-        self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
-        mock_scroll.assert_not_called()
-        self.assertEqual(self.MOCK_SEARCH_RESULT, res)
-
-    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch("complaint_search.es_interface._get_meta")
-    @mock.patch.object(Elasticsearch, 'search')
-    @mock.patch.object(Elasticsearch, 'count')
-    @mock.patch.object(Elasticsearch, 'scroll')
     def test_search_with_has_narrative__valid(self, mock_scroll, mock_count, mock_search, mock_get_meta):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
         body = self.load("search_with_has_narrative__valid")
-        res = search(has_narrative=["No", "Yes"])
+        res = search(has_narrative=["true"])
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
