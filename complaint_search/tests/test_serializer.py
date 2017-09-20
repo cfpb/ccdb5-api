@@ -1,5 +1,7 @@
 # Most of the serializer code has been tested through the views
+import copy
 from django.test import TestCase
+from complaint_search.defaults import PARAMS
 from complaint_search.serializer import SearchInputSerializer
 
 class SearchInputSerializerTests(TestCase):
@@ -11,15 +13,9 @@ class SearchInputSerializerTests(TestCase):
     def test_is_valid__no_args(self):
         serializer = SearchInputSerializer(data={})
         self.assertTrue(serializer.is_valid())
-        exp_dict = {
-            "format": "default", 
-            "field": "complaint_what_happened", 
-            "size": 10, 
-            "frm": 0, 
-            "no_aggs": False, 
-            "search_term": "complaint_what_happened",
-            "sort": "relevance_desc"
-        }
+
+        exp_dict = copy.deepcopy(PARAMS)
+
         # This is an OrderedDict
         for k, v in serializer.validated_data.iteritems():
 

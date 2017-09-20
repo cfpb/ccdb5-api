@@ -82,6 +82,7 @@ class SearchInputSerializer(serializers.Serializer):
     tags = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False)
     no_aggs = serializers.BooleanField(default=PARAMS['no_aggs'])
+    no_highlight = serializers.BooleanField(default=PARAMS['no_highlight'])
 
     def to_internal_value(self, data):
         ret = super(SearchInputSerializer, self).to_internal_value(data)

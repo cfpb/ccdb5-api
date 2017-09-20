@@ -191,7 +191,8 @@ class SearchBuilder(BaseBuilder):
         }
 
         # Highlight
-        search["highlight"] = self._build_highlight()
+        if not self.params.get("no_highlight"):
+            search["highlight"] = self._build_highlight()
 
         # sort
         search["sort"] = self._build_sort()

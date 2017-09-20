@@ -52,7 +52,7 @@ def search(request):
 
     QPARAMS_VARS = ('field', 'size', 'frm', 'sort', 'search_term',
         'date_received_min', 'date_received_max', 'company_received_min',
-        'company_received_max', 'no_aggs')
+        'company_received_max', 'no_aggs', 'no_highlight')
 
     QPARAMS_LISTS = ('company', 'product', 'issue', 'state',
         'zip_code', 'timely', 'consumer_disputed', 'company_response',
