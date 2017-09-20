@@ -4,7 +4,8 @@ PARAMS = {
     "size": 10, 
     "frm": 0,
     "sort": "relevance_desc",
-    "no_aggs": False
+    "no_aggs": False,
+    "no_highlight": False,
 }
 
 # -*- coding: utf-8 -*-

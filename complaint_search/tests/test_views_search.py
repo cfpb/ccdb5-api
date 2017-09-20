@@ -4,9 +4,11 @@ from django.core.cache import cache
 from rest_framework import status
 from rest_framework.test import APITestCase
 from unittest import skip
+import copy
 import mock
 from datetime import date, datetime
 from elasticsearch import TransportError
+from complaint_search.defaults import PARAMS
 from complaint_search.es_interface import search
 from complaint_search.serializer import SearchInputSerializer
 from complaint_search.throttling import (
@@ -34,15 +36,7 @@ class SearchTests(APITestCase):
         ExportAnonRateThrottle.rate = self.orig_export_anon_rate
 
     def buildDefaultParams(self, overrides):
-        params = {
-            "field": "complaint_what_happened", 
-            "format": "default", 
-            "frm": 0, 
-            "no_aggs": False, 
-            "size": 10, 
-            "sort": "relevance_desc"
-        }
-
+        params = copy.deepcopy(PARAMS)
         params.update(overrides)
         return params
 
@@ -543,6 +537,28 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
         self.assertDictEqual({"no_aggs": [u'"Not boolean" is not a valid boolean.']},
+            response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_no_highlight__valid(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        params = {"no_highlight": True}
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url, params)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+                "no_highlight": True}))
+        self.assertEqual('OK', response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_no_highlight__invalid_type(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        params = {"no_highlight": "Not boolean"}
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url, params)
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+        mock_essearch.assert_not_called()
+        self.assertDictEqual({"no_highlight": [u'"Not boolean" is not a valid boolean.']},
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')

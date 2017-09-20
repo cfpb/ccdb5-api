@@ -882,6 +882,34 @@ class EsInterfaceTest(TestCase):
 
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch("complaint_search.es_interface._get_meta")
+    @mock.patch.object(Elasticsearch, 'search')
+    @mock.patch.object(Elasticsearch, 'count')
+    @mock.patch.object(Elasticsearch, 'scroll')
+    @mock.patch('requests.get', ok=True, content="RGET_OK")
+    def test_search_no_highlight__valid(self, mock_rget, mock_scroll, mock_count, mock_search, mock_get_meta):
+        mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
+        mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
+        mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
+        mock_scroll.return_value = self.MOCK_SEARCH_SIDE_EFFECT[0]
+        body = self.load("search_no_highlight__valid")
+        res = search(no_highlight=True)
+        self.assertEqual(1, len(mock_search.call_args_list))
+        self.assertEqual(2, len(mock_search.call_args_list[0]))
+        self.assertEqual(0, len(mock_search.call_args_list[0][0]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
+        act_body = mock_search.call_args_list[0][1]['body']
+        diff = deep.diff(act_body, body)
+        if diff:
+            print "search no highlight"
+            diff.print_full()
+        self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
+        self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
+        mock_scroll.assert_not_called()
+        mock_rget.assert_not_called()
+        self.assertDictEqual(self.MOCK_SEARCH_RESULT, res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'suggest')
     def test_suggest_with_no_param__valid(self, mock_suggest):
         mock_suggest.return_value = {
