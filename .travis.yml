@@ -1,12 +1,22 @@
 language: python
 python:
-  - "2.7"
+- '2.7'
 install:
-  - pip install -r requirements.txt
-  - pip install -r requirements_test.txt
-  - pip install coveralls
-script: 
-  - ./manage.py migrate
-  - coverage run --source='.' manage.py test
+- pip install -r requirements.txt
+- pip install -r requirements_test.txt
+- pip install coveralls
+script:
+- ./manage.py migrate
+- coverage run --source='.' manage.py test
+- python setup.py bdist_wheel
 after_success:
-  - coveralls
+- coveralls
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: e0jvsY5M/c+HFZQcvbgXEkMQWJm5Ct4M6tVoBIDiDVPoiCZFFNRCqUI69zfRttr8LKVgoRYVKSvLUoKtjfReBlyUWs7Lj52JaQQw4mKznHRP4j/jstQ7QMVsmGKAUkHXhrS0tL5Pzl4LgP8YqbZ+z1OV3oQcD/iSGkvIO02GBe9F+YF5EKeMwjQsHYct7pzGY/IKNGs3ki6Io5uduTHzXxATsbKy5Kkd1AVtdfHksro/tSpLC59R1SSNzwr1MRbtqZq2Gid8tYl0+HYvfRFuZOa75M3sX3BsZvWF7hcNYC0e4xa4JPWFzkwuSb//F6Oc338HRJdC/WkFJc1r7T/UMK+cPoWOfrX7oaWyU1qIWgob8o/mMbNeIzxUA15M1J9HRNBHPD299gY68aM4kT0RIfmdDAy9t9EXMaqhPjz18YpkZsCG7GpaqFdJlceuCg2gJCAZgpls0CSzr+pZjvv68OShRBEpmvdaINHzL3/JHf2hMxJ4YYigtzolAeC8/rPqUYHTnZaRLGhjAX4NP4APcHMqqbd1zZQbuF0un1qWMJKW7b3Q6XfeiS9ezJKAxZdQVmGzr9SAH0Va0ggmZpy8GHWcSsmLDvTDPprU8eugPx7yXrLcJumAFOEnjJV2u5v9teNspEBq1jFXN1ZPNAnULJJCiHTlpnvqxTmREXXDQr4=
+  file_glob: true
+  file: dist/*.whl
+  on:
+    tags: true
