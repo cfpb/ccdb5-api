@@ -1,0 +1,556 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>complaint_search package &#8212; Consumer Complaint API 0.8.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="complaint-search-package">
+<h1>complaint_search package<a class="headerlink" href="#complaint-search-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-complaint_search.admin">
+<span id="complaint-search-admin-module"></span><h2>complaint_search.admin module<a class="headerlink" href="#module-complaint_search.admin" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-complaint_search.decorators">
+<span id="complaint-search-decorators-module"></span><h2>complaint_search.decorators module<a class="headerlink" href="#module-complaint_search.decorators" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="complaint_search.decorators.catch_es_error">
+<code class="descclassname">complaint_search.decorators.</code><code class="descname">catch_es_error</code><span class="sig-paren">(</span><em>function</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.decorators.catch_es_error" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-complaint_search.defaults">
+<span id="complaint-search-defaults-module"></span><h2>complaint_search.defaults module<a class="headerlink" href="#module-complaint_search.defaults" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-complaint_search.es_builders">
+<span id="complaint-search-es-builders-module"></span><h2>complaint_search.es_builders module<a class="headerlink" href="#module-complaint_search.es_builders" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="complaint_search.es_builders.AggregationBuilder">
+<em class="property">class </em><code class="descclassname">complaint_search.es_builders.</code><code class="descname">AggregationBuilder</code><a class="headerlink" href="#complaint_search.es_builders.AggregationBuilder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#complaint_search.es_builders.BaseBuilder" title="complaint_search.es_builders.BaseBuilder"><code class="xref py py-class docutils literal"><span class="pre">complaint_search.es_builders.BaseBuilder</span></code></a></p>
+<dl class="method">
+<dt id="complaint_search.es_builders.AggregationBuilder.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.es_builders.AggregationBuilder.build" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="complaint_search.es_builders.BaseBuilder">
+<em class="property">class </em><code class="descclassname">complaint_search.es_builders.</code><code class="descname">BaseBuilder</code><a class="headerlink" href="#complaint_search.es_builders.BaseBuilder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="complaint_search.es_builders.BaseBuilder.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.es_builders.BaseBuilder.add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="complaint_search.es_builders.BaseBuilder.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.es_builders.BaseBuilder.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that will build the body dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="complaint_search.es_builders.PostFilterBuilder">
+<em class="property">class </em><code class="descclassname">complaint_search.es_builders.</code><code class="descname">PostFilterBuilder</code><a class="headerlink" href="#complaint_search.es_builders.PostFilterBuilder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#complaint_search.es_builders.BaseBuilder" title="complaint_search.es_builders.BaseBuilder"><code class="xref py py-class docutils literal"><span class="pre">complaint_search.es_builders.BaseBuilder</span></code></a></p>
+<dl class="method">
+<dt id="complaint_search.es_builders.PostFilterBuilder.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.es_builders.PostFilterBuilder.build" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="complaint_search.es_builders.SearchBuilder">
+<em class="property">class </em><code class="descclassname">complaint_search.es_builders.</code><code class="descname">SearchBuilder</code><a class="headerlink" href="#complaint_search.es_builders.SearchBuilder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#complaint_search.es_builders.BaseBuilder" title="complaint_search.es_builders.BaseBuilder"><code class="xref py py-class docutils literal"><span class="pre">complaint_search.es_builders.BaseBuilder</span></code></a></p>
+<dl class="method">
+<dt id="complaint_search.es_builders.SearchBuilder.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.es_builders.SearchBuilder.build" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-complaint_search.es_interface">
+<span id="complaint-search-es-interface-module"></span><h2>complaint_search.es_interface module<a class="headerlink" href="#module-complaint_search.es_interface" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="complaint_search.es_interface.document">
+<code class="descclassname">complaint_search.es_interface.</code><code class="descname">document</code><span class="sig-paren">(</span><em>complaint_id</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.es_interface.document" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="complaint_search.es_interface.search">
+<code class="descclassname">complaint_search.es_interface.</code><code class="descname">search</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.es_interface.search" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="complaint_search.es_interface.suggest">
+<code class="descclassname">complaint_search.es_interface.</code><code class="descname">suggest</code><span class="sig-paren">(</span><em>text=None</em>, <em>size=6</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.es_interface.suggest" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-complaint_search.models">
+<span id="complaint-search-models-module"></span><h2>complaint_search.models module<a class="headerlink" href="#module-complaint_search.models" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-complaint_search.renderers">
+<span id="complaint-search-renderers-module"></span><h2>complaint_search.renderers module<a class="headerlink" href="#module-complaint_search.renderers" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="complaint_search.renderers.CSVRenderer">
+<em class="property">class </em><code class="descclassname">complaint_search.renderers.</code><code class="descname">CSVRenderer</code><a class="headerlink" href="#complaint_search.renderers.CSVRenderer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">rest_framework.renderers.BaseRenderer</span></code></p>
+<dl class="attribute">
+<dt id="complaint_search.renderers.CSVRenderer.format">
+<code class="descname">format</code><em class="property"> = 'csv'</em><a class="headerlink" href="#complaint_search.renderers.CSVRenderer.format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.renderers.CSVRenderer.media_type">
+<code class="descname">media_type</code><em class="property"> = 'text/csv'</em><a class="headerlink" href="#complaint_search.renderers.CSVRenderer.media_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="complaint_search.renderers.CSVRenderer.render">
+<code class="descname">render</code><span class="sig-paren">(</span><em>data</em>, <em>media_type=None</em>, <em>renderer_context=None</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.renderers.CSVRenderer.render" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="complaint_search.renderers.DefaultRenderer">
+<em class="property">class </em><code class="descclassname">complaint_search.renderers.</code><code class="descname">DefaultRenderer</code><a class="headerlink" href="#complaint_search.renderers.DefaultRenderer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">rest_framework.renderers.JSONRenderer</span></code></p>
+<dl class="attribute">
+<dt id="complaint_search.renderers.DefaultRenderer.format">
+<code class="descname">format</code><em class="property"> = 'default'</em><a class="headerlink" href="#complaint_search.renderers.DefaultRenderer.format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="complaint_search.renderers.XLSRenderer">
+<em class="property">class </em><code class="descclassname">complaint_search.renderers.</code><code class="descname">XLSRenderer</code><a class="headerlink" href="#complaint_search.renderers.XLSRenderer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">rest_framework.renderers.BaseRenderer</span></code></p>
+<dl class="attribute">
+<dt id="complaint_search.renderers.XLSRenderer.charset">
+<code class="descname">charset</code><em class="property"> = None</em><a class="headerlink" href="#complaint_search.renderers.XLSRenderer.charset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.renderers.XLSRenderer.format">
+<code class="descname">format</code><em class="property"> = 'xls'</em><a class="headerlink" href="#complaint_search.renderers.XLSRenderer.format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.renderers.XLSRenderer.media_type">
+<code class="descname">media_type</code><em class="property"> = 'application/vnd.ms-excel'</em><a class="headerlink" href="#complaint_search.renderers.XLSRenderer.media_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="complaint_search.renderers.XLSRenderer.render">
+<code class="descname">render</code><span class="sig-paren">(</span><em>data</em>, <em>media_type=None</em>, <em>renderer_context=None</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.renderers.XLSRenderer.render" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.renderers.XLSRenderer.render_style">
+<code class="descname">render_style</code><em class="property"> = 'binary'</em><a class="headerlink" href="#complaint_search.renderers.XLSRenderer.render_style" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="complaint_search.renderers.XLSXRenderer">
+<em class="property">class </em><code class="descclassname">complaint_search.renderers.</code><code class="descname">XLSXRenderer</code><a class="headerlink" href="#complaint_search.renderers.XLSXRenderer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">rest_framework.renderers.BaseRenderer</span></code></p>
+<dl class="attribute">
+<dt id="complaint_search.renderers.XLSXRenderer.charset">
+<code class="descname">charset</code><em class="property"> = None</em><a class="headerlink" href="#complaint_search.renderers.XLSXRenderer.charset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.renderers.XLSXRenderer.format">
+<code class="descname">format</code><em class="property"> = 'xlsx'</em><a class="headerlink" href="#complaint_search.renderers.XLSXRenderer.format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.renderers.XLSXRenderer.media_type">
+<code class="descname">media_type</code><em class="property"> = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'</em><a class="headerlink" href="#complaint_search.renderers.XLSXRenderer.media_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="complaint_search.renderers.XLSXRenderer.render">
+<code class="descname">render</code><span class="sig-paren">(</span><em>data</em>, <em>media_type=None</em>, <em>renderer_context=None</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.renderers.XLSXRenderer.render" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.renderers.XLSXRenderer.render_style">
+<code class="descname">render_style</code><em class="property"> = 'binary'</em><a class="headerlink" href="#complaint_search.renderers.XLSXRenderer.render_style" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-complaint_search.serializer">
+<span id="complaint-search-serializer-module"></span><h2>complaint_search.serializer module<a class="headerlink" href="#module-complaint_search.serializer" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="complaint_search.serializer.SearchInputSerializer">
+<em class="property">class </em><code class="descclassname">complaint_search.serializer.</code><code class="descname">SearchInputSerializer</code><span class="sig-paren">(</span><em>instance=None</em>, <em>data=&lt;class rest_framework.fields.empty&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">rest_framework.serializers.Serializer</span></code></p>
+<dl class="attribute">
+<dt id="complaint_search.serializer.SearchInputSerializer.FIELD_ALL">
+<code class="descname">FIELD_ALL</code><em class="property"> = 'all'</em><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer.FIELD_ALL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.serializer.SearchInputSerializer.FIELD_CHOICES">
+<code class="descname">FIELD_CHOICES</code><em class="property"> = (('complaint_what_happened', 'complaint_what_happened field'), ('company', 'company field'), ('all', 'all fields'))</em><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer.FIELD_CHOICES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.serializer.SearchInputSerializer.FIELD_COMPANY">
+<code class="descname">FIELD_COMPANY</code><em class="property"> = 'company'</em><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer.FIELD_COMPANY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.serializer.SearchInputSerializer.FIELD_MAP">
+<code class="descname">FIELD_MAP</code><em class="property"> = {'all': '_all'}</em><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer.FIELD_MAP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.serializer.SearchInputSerializer.FIELD_NARRATIVE">
+<code class="descname">FIELD_NARRATIVE</code><em class="property"> = 'complaint_what_happened'</em><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer.FIELD_NARRATIVE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.serializer.SearchInputSerializer.FORMAT_CHOICES">
+<code class="descname">FORMAT_CHOICES</code><em class="property"> = (('default', 'DEFAULT'), ('json', 'JSON'), ('csv', 'CSV'), ('xls', 'XLS'), ('xlsx', 'XLSX'))</em><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer.FORMAT_CHOICES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.serializer.SearchInputSerializer.FORMAT_CSV">
+<code class="descname">FORMAT_CSV</code><em class="property"> = 'csv'</em><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer.FORMAT_CSV" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.serializer.SearchInputSerializer.FORMAT_DEFAULT">
+<code class="descname">FORMAT_DEFAULT</code><em class="property"> = 'default'</em><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer.FORMAT_DEFAULT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.serializer.SearchInputSerializer.FORMAT_JSON">
+<code class="descname">FORMAT_JSON</code><em class="property"> = 'json'</em><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer.FORMAT_JSON" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.serializer.SearchInputSerializer.FORMAT_XLS">
+<code class="descname">FORMAT_XLS</code><em class="property"> = 'xls'</em><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer.FORMAT_XLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.serializer.SearchInputSerializer.FORMAT_XLSX">
+<code class="descname">FORMAT_XLSX</code><em class="property"> = 'xlsx'</em><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer.FORMAT_XLSX" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.serializer.SearchInputSerializer.SORT_CHOICES">
+<code class="descname">SORT_CHOICES</code><em class="property"> = (('relevance_desc', 'Descending Relevance'), ('relevance_asc', 'Ascending Relevance'), ('created_date_desc', 'Descending Created Date'), ('created_date_asc', 'Ascending Created Date'))</em><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer.SORT_CHOICES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.serializer.SearchInputSerializer.SORT_CREATED_DATE_ASC">
+<code class="descname">SORT_CREATED_DATE_ASC</code><em class="property"> = 'created_date_asc'</em><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer.SORT_CREATED_DATE_ASC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.serializer.SearchInputSerializer.SORT_CREATED_DATE_DESC">
+<code class="descname">SORT_CREATED_DATE_DESC</code><em class="property"> = 'created_date_desc'</em><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer.SORT_CREATED_DATE_DESC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.serializer.SearchInputSerializer.SORT_RELEVANCE_ASC">
+<code class="descname">SORT_RELEVANCE_ASC</code><em class="property"> = 'relevance_asc'</em><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer.SORT_RELEVANCE_ASC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.serializer.SearchInputSerializer.SORT_RELEVANCE_DESC">
+<code class="descname">SORT_RELEVANCE_DESC</code><em class="property"> = 'relevance_desc'</em><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer.SORT_RELEVANCE_DESC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="complaint_search.serializer.SearchInputSerializer.to_internal_value">
+<code class="descname">to_internal_value</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer.to_internal_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="complaint_search.serializer.SearchInputSerializer.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that from is a multiple of size</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="complaint_search.serializer.SearchInputSerializer.validate_issue">
+<code class="descname">validate_issue</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer.validate_issue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Valid Issue format where if subissue is presented, it should
+be prefixed with the parent product and a bullet point u2022</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="complaint_search.serializer.SearchInputSerializer.validate_product">
+<code class="descname">validate_product</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.serializer.SearchInputSerializer.validate_product" title="Permalink to this definition">¶</a></dt>
+<dd><p>Valid Product format where if subproduct is presented, it should
+be prefixed with the parent product and a bullet point u2022</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="complaint_search.serializer.SuggestInputSerializer">
+<em class="property">class </em><code class="descclassname">complaint_search.serializer.</code><code class="descname">SuggestInputSerializer</code><span class="sig-paren">(</span><em>instance=None</em>, <em>data=&lt;class rest_framework.fields.empty&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.serializer.SuggestInputSerializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">rest_framework.serializers.Serializer</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-complaint_search.throttling">
+<span id="complaint-search-throttling-module"></span><h2>complaint_search.throttling module<a class="headerlink" href="#module-complaint_search.throttling" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="complaint_search.throttling.CCDBAnonRateThrottle">
+<em class="property">class </em><code class="descclassname">complaint_search.throttling.</code><code class="descname">CCDBAnonRateThrottle</code><a class="headerlink" href="#complaint_search.throttling.CCDBAnonRateThrottle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#complaint_search.throttling.CCDBRateThrottle" title="complaint_search.throttling.CCDBRateThrottle"><code class="xref py py-class docutils literal"><span class="pre">complaint_search.throttling.CCDBRateThrottle</span></code></a></p>
+<dl class="method">
+<dt id="complaint_search.throttling.CCDBAnonRateThrottle.allow_request">
+<code class="descname">allow_request</code><span class="sig-paren">(</span><em>request</em>, <em>view</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.throttling.CCDBAnonRateThrottle.allow_request" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.throttling.CCDBAnonRateThrottle.scope">
+<code class="descname">scope</code><em class="property"> = 'ccdb_anon'</em><a class="headerlink" href="#complaint_search.throttling.CCDBAnonRateThrottle.scope" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="complaint_search.throttling.CCDBRateThrottle">
+<em class="property">class </em><code class="descclassname">complaint_search.throttling.</code><code class="descname">CCDBRateThrottle</code><a class="headerlink" href="#complaint_search.throttling.CCDBRateThrottle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">rest_framework.throttling.AnonRateThrottle</span></code></p>
+<dl class="method">
+<dt id="complaint_search.throttling.CCDBRateThrottle.is_export">
+<code class="descname">is_export</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.throttling.CCDBRateThrottle.is_export" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="complaint_search.throttling.CCDBRateThrottle.is_referred_from_ui">
+<code class="descname">is_referred_from_ui</code><span class="sig-paren">(</span><em>request</em>, <em>view</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.throttling.CCDBRateThrottle.is_referred_from_ui" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.throttling.CCDBRateThrottle.scope">
+<code class="descname">scope</code><em class="property"> = 'ccdb'</em><a class="headerlink" href="#complaint_search.throttling.CCDBRateThrottle.scope" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="complaint_search.throttling.CCDBUIRateThrottle">
+<em class="property">class </em><code class="descclassname">complaint_search.throttling.</code><code class="descname">CCDBUIRateThrottle</code><a class="headerlink" href="#complaint_search.throttling.CCDBUIRateThrottle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#complaint_search.throttling.CCDBRateThrottle" title="complaint_search.throttling.CCDBRateThrottle"><code class="xref py py-class docutils literal"><span class="pre">complaint_search.throttling.CCDBRateThrottle</span></code></a></p>
+<dl class="method">
+<dt id="complaint_search.throttling.CCDBUIRateThrottle.allow_request">
+<code class="descname">allow_request</code><span class="sig-paren">(</span><em>request</em>, <em>view</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.throttling.CCDBUIRateThrottle.allow_request" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.throttling.CCDBUIRateThrottle.scope">
+<code class="descname">scope</code><em class="property"> = 'ccdb_ui'</em><a class="headerlink" href="#complaint_search.throttling.CCDBUIRateThrottle.scope" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="complaint_search.throttling.DocumentAnonRateThrottle">
+<em class="property">class </em><code class="descclassname">complaint_search.throttling.</code><code class="descname">DocumentAnonRateThrottle</code><a class="headerlink" href="#complaint_search.throttling.DocumentAnonRateThrottle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#complaint_search.throttling.CCDBAnonRateThrottle" title="complaint_search.throttling.CCDBAnonRateThrottle"><code class="xref py py-class docutils literal"><span class="pre">complaint_search.throttling.CCDBAnonRateThrottle</span></code></a></p>
+<dl class="attribute">
+<dt id="complaint_search.throttling.DocumentAnonRateThrottle.rate">
+<code class="descname">rate</code><em class="property"> = '5/min'</em><a class="headerlink" href="#complaint_search.throttling.DocumentAnonRateThrottle.rate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.throttling.DocumentAnonRateThrottle.scope">
+<code class="descname">scope</code><em class="property"> = 'ccdb_anon_document'</em><a class="headerlink" href="#complaint_search.throttling.DocumentAnonRateThrottle.scope" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="complaint_search.throttling.ExportAnonRateThrottle">
+<em class="property">class </em><code class="descclassname">complaint_search.throttling.</code><code class="descname">ExportAnonRateThrottle</code><a class="headerlink" href="#complaint_search.throttling.ExportAnonRateThrottle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#complaint_search.throttling.CCDBAnonRateThrottle" title="complaint_search.throttling.CCDBAnonRateThrottle"><code class="xref py py-class docutils literal"><span class="pre">complaint_search.throttling.CCDBAnonRateThrottle</span></code></a></p>
+<dl class="method">
+<dt id="complaint_search.throttling.ExportAnonRateThrottle.allow_request">
+<code class="descname">allow_request</code><span class="sig-paren">(</span><em>request</em>, <em>view</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.throttling.ExportAnonRateThrottle.allow_request" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.throttling.ExportAnonRateThrottle.rate">
+<code class="descname">rate</code><em class="property"> = '2/min'</em><a class="headerlink" href="#complaint_search.throttling.ExportAnonRateThrottle.rate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.throttling.ExportAnonRateThrottle.scope">
+<code class="descname">scope</code><em class="property"> = 'ccdb_anon_export'</em><a class="headerlink" href="#complaint_search.throttling.ExportAnonRateThrottle.scope" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="complaint_search.throttling.ExportUIRateThrottle">
+<em class="property">class </em><code class="descclassname">complaint_search.throttling.</code><code class="descname">ExportUIRateThrottle</code><a class="headerlink" href="#complaint_search.throttling.ExportUIRateThrottle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#complaint_search.throttling.CCDBUIRateThrottle" title="complaint_search.throttling.CCDBUIRateThrottle"><code class="xref py py-class docutils literal"><span class="pre">complaint_search.throttling.CCDBUIRateThrottle</span></code></a></p>
+<dl class="method">
+<dt id="complaint_search.throttling.ExportUIRateThrottle.allow_request">
+<code class="descname">allow_request</code><span class="sig-paren">(</span><em>request</em>, <em>view</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.throttling.ExportUIRateThrottle.allow_request" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.throttling.ExportUIRateThrottle.rate">
+<code class="descname">rate</code><em class="property"> = '6/min'</em><a class="headerlink" href="#complaint_search.throttling.ExportUIRateThrottle.rate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.throttling.ExportUIRateThrottle.scope">
+<code class="descname">scope</code><em class="property"> = 'ccdb_ui_export'</em><a class="headerlink" href="#complaint_search.throttling.ExportUIRateThrottle.scope" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="complaint_search.throttling.SearchAnonRateThrottle">
+<em class="property">class </em><code class="descclassname">complaint_search.throttling.</code><code class="descname">SearchAnonRateThrottle</code><a class="headerlink" href="#complaint_search.throttling.SearchAnonRateThrottle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#complaint_search.throttling.CCDBAnonRateThrottle" title="complaint_search.throttling.CCDBAnonRateThrottle"><code class="xref py py-class docutils literal"><span class="pre">complaint_search.throttling.CCDBAnonRateThrottle</span></code></a></p>
+<dl class="method">
+<dt id="complaint_search.throttling.SearchAnonRateThrottle.allow_request">
+<code class="descname">allow_request</code><span class="sig-paren">(</span><em>request</em>, <em>view</em><span class="sig-paren">)</span><a class="headerlink" href="#complaint_search.throttling.SearchAnonRateThrottle.allow_request" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.throttling.SearchAnonRateThrottle.rate">
+<code class="descname">rate</code><em class="property"> = '20/min'</em><a class="headerlink" href="#complaint_search.throttling.SearchAnonRateThrottle.rate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="complaint_search.throttling.SearchAnonRateThrottle.scope">
+<code class="descname">scope</code><em class="property"> = 'ccdb_anon_search'</em><a class="headerlink" href="#complaint_search.throttling.SearchAnonRateThrottle.scope" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-complaint_search.urls">
+<span id="complaint-search-urls-module"></span><h2>complaint_search.urls module<a class="headerlink" href="#module-complaint_search.urls" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-complaint_search.views">
+<span id="complaint-search-views-module"></span><h2>complaint_search.views module<a class="headerlink" href="#module-complaint_search.views" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-complaint_search">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-complaint_search" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Consumer Complaint API</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, CFPB.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/complaint_search.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

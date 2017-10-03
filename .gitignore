@@ -1,6 +1,7 @@
-# Django #
+# Python egg metadata
 #################
 *.egg-info
+.eggs
 
 # Coverage #
 ############
