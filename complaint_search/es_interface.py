@@ -58,7 +58,13 @@ def _get_meta():
         "aggs": {
             "max_date" : { "max" : { "field" : "date_received" }},
             "max_update": { "max" : { "field" : ":updated_at" }},
-            "max_created": { "max" : { "field" : ":created_at" }}
+            "max_created": { "max" : { "field" : ":created_at" }},
+            "max_narratives": {
+                "filter" : { "term" : { "has_narrative" : "true" }},
+                "aggs" : {
+                    "max_date" : { "max" : { "field" : "date_received" }}
+                }
+            }
         }
     }
     max_date_res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
@@ -68,6 +74,7 @@ def _get_meta():
     result = {
         "license": "CC0",
         "last_updated": max_date_res["aggregations"]["max_date"]["value_as_string"],
+        "last_updated_narratives": max_date_res["aggregations"]["max_narratives"]["max_date"]["value_as_string"],
         "total_record_count": count_res["count"],
         "is_data_stale": _is_data_stale(max_date_res["aggregations"]["max_date"]["value_as_string"]),
         "has_data_issue": flag_enabled('CCDB_TECHNICAL_ISSUES')
