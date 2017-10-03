@@ -20,7 +20,7 @@ import json
 import deep
 import mock
 
-class EsInterfaceTest(TestCase):
+class EsInterfaceTest_Search(TestCase):
     # -------------------------------------------------------------------------
     # Helper Attributes
     # -------------------------------------------------------------------------
@@ -909,6 +909,7 @@ class EsInterfaceTest(TestCase):
         mock_rget.assert_not_called()
         self.assertDictEqual(self.MOCK_SEARCH_RESULT, res)
 
+class EsInterfaceTest_Suggest(TestCase):
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'suggest')
     def test_suggest_with_no_param__valid(self, mock_suggest):
@@ -991,6 +992,7 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(mock_suggest.call_args[1]['index'], 'INDEX')
         self.assertEqual(['test 1', 'test 2'], res)
 
+class EsInterfaceTest_Document(TestCase):
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE", "DOC_TYPE")
     @mock.patch.object(Elasticsearch, 'search')
