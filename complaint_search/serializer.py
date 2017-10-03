@@ -127,3 +127,47 @@ class SearchInputSerializer(serializers.Serializer):
 class SuggestInputSerializer(serializers.Serializer):
     text = serializers.CharField(max_length=200, required=False)
     size = serializers.IntegerField(min_value=1, max_value=100000, required=False)
+
+class SuggestZipInputSerializer(serializers.Serializer):
+    ### Field Choices
+    FIELD_NARRATIVE = 'complaint_what_happened'
+    FIELD_COMPANY = 'company'
+    FIELD_ALL = 'all'
+
+    FIELD_CHOICES = (
+        (FIELD_NARRATIVE, 'complaint_what_happened field'),
+        (FIELD_COMPANY, 'company field'),
+        (FIELD_ALL, 'all fields'),
+    )
+
+    field = serializers.ChoiceField(FIELD_CHOICES, default='_all')
+    search_term = serializers.CharField(max_length=200, required=False)
+    date_received_min = serializers.DateField(required=False)
+    date_received_max = serializers.DateField(required=False)
+    company_received_min = serializers.DateField(required=False)
+    company_received_max = serializers.DateField(required=False)
+    company = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    product = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    issue = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    state = serializers.ListField(
+        child=serializers.ChoiceField(STATE_CHOICES), required=False)
+    timely = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    consumer_disputed = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    company_response = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    company_public_response = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    consumer_consent_provided = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    has_narrative = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    submitted_via = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    tags = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    zip_code = serializers.CharField(max_length=10, required=False)

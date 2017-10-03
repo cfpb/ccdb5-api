@@ -9,7 +9,9 @@ from elasticsearch import TransportError
 import es_interface
 from complaint_search.renderers import DefaultRenderer, CSVRenderer, XLSRenderer, XLSXRenderer
 from complaint_search.decorators import catch_es_error
-from complaint_search.serializer import SearchInputSerializer, SuggestInputSerializer
+from complaint_search.serializer import (
+    SearchInputSerializer, SuggestInputSerializer, SuggestZipInputSerializer
+)
 from complaint_search.throttling import (
     SearchAnonRateThrottle,
     ExportUIRateThrottle,
@@ -107,6 +109,51 @@ def suggest(request):
     serializer = SuggestInputSerializer(data=data)
     if serializer.is_valid():
         results = es_interface.suggest(**serializer.validated_data)
+        return Response(results, headers=_buildHeaders())
+    else:
+        return Response(serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@catch_es_error
+def suggest_zip(request):
+    QPARAMS_VARS = (
+        'company_received_max',
+        'company_received_min',
+        'date_received_max',
+        'date_received_min',
+        'field',
+        'search_term'
+    )
+
+    QPARAMS_LISTS = (
+        'company',
+        'company_public_response',
+        'company_response',
+        'consumer_consent_provided',
+        'consumer_disputed',
+        'has_narrative',
+        'issue',
+        'product',
+        'state',
+        'submitted_via',
+        'tags',
+        'timely'
+    )
+
+    zip_code = request.query_params.get('zip_code')
+    data = {}
+    for param in request.query_params:
+        if param in QPARAMS_VARS:
+            data[param] = request.query_params.get(param)
+        elif param in QPARAMS_LISTS:
+            data[param] = request.query_params.getlist(param)
+
+    serializer = SuggestZipInputSerializer(data=data)
+    if serializer.is_valid():
+        results = es_interface.suggest_zip(
+            zip_code, **serializer.validated_data
+        )
         return Response(results, headers=_buildHeaders())
     else:
         return Response(serializer.errors,
