@@ -36,6 +36,11 @@ class EsInterfaceTest(TestCase):
             "aggregations": {
                 "max_date": {
                     "value_as_string": "2017-01-01"
+                },
+                "max_narratives": {
+                    "max_date" : {
+                        "value": 1507011188.0
+                    }
                 }
             }
         }
@@ -104,7 +109,7 @@ class EsInterfaceTest(TestCase):
     def test_get_meta_data_stale(self, mock_count, mock_search, mock_now):
         mock_search.return_value = self.MOCK_SEARCH_SIDE_EFFECT[1]
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
-        mock_now.return_value = datetime(2017, 1, 10)
+        mock_now.return_value = datetime(2017, 11, 1)
 
         res = _get_meta()
         exp_res = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])

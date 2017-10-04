@@ -51,6 +51,10 @@ def _is_data_stale(last_updated_time):
 
     return False
 
+def from_timestamp(seconds):
+    fromtimestamp = datetime.fromtimestamp(seconds)
+    return fromtimestamp.strftime('%Y-%m-%d')
+
 def _get_meta():
     body = {
         # size: 0 here to prevent taking too long since we only needed max_date
@@ -58,7 +62,13 @@ def _get_meta():
         "aggs": {
             "max_date" : { "max" : { "field" : "date_received" }},
             "max_update": { "max" : { "field" : ":updated_at" }},
-            "max_created": { "max" : { "field" : ":created_at" }}
+            "max_created": { "max" : { "field" : ":created_at" }},
+            "max_narratives": {
+                "filter" : { "term" : { "has_narrative" : "true" }},
+                "aggs" : {
+                    "max_date" : { "max" : { "field" : ":updated_at" }}
+                }
+            }
         }
     }
     max_date_res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
@@ -69,7 +79,7 @@ def _get_meta():
         "license": "CC0",
         "last_updated": max_date_res["aggregations"]["max_date"]["value_as_string"],
         "total_record_count": count_res["count"],
-        "is_data_stale": _is_data_stale(max_date_res["aggregations"]["max_date"]["value_as_string"]),
+        "is_data_stale": _is_data_stale(from_timestamp(max_date_res["aggregations"]["max_narratives"]["max_date"]["value"])),
         "has_data_issue": flag_enabled('CCDB_TECHNICAL_ISSUES')
     }
 
