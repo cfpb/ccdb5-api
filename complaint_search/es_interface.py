@@ -157,14 +157,12 @@ def suggest(text=None, size=6):
     return candidates
 
 
-def suggest_zip(text, **kwargs):
-    params = {
-        "format": "default",
-        "field": "_all",
-        "size": 0,
-        "no_highlight": True
-    }
-    params.update(**kwargs)
+def filter_suggest(filterField, **kwargs):
+    params = dict(**kwargs)
+    params.update({
+        'size': 0,
+        'no_highlight': True
+    })
 
     search_builder = SearchBuilder()
     search_builder.add(**params)
@@ -172,30 +170,14 @@ def suggest_zip(text, **kwargs):
 
     aggregation_builder = AggregationBuilder()
     aggregation_builder.add(**params)
-    aggs = aggregation_builder.build()
-
-    # now remove all the other aggregations
-    other_filters = [
-        'company',
-        'company_public_response',
-        'company_response',
-        'consumer_consent_provided',
-        'consumer_disputed',
-        'has_narrative',
-        'issue',
-        'product',
-        'state',
-        'submitted_via',
-        'tags',
-        'timely'
-    ]
-    for other in other_filters:
-        del aggs[other]
+    aggs = {
+        filterField: aggregation_builder.buildOne(filterField)
+    }
 
     # add the input value as a must match
-    aggs['zip_code']['filter']['bool']['must'].append(
+    aggs[filterField]['filter']['bool']['must'].append(
         {
-            'prefix': {'zip_code': text}
+            'prefix': {filterField: params['text']}
         }
     )
 
@@ -212,7 +194,7 @@ def suggest_zip(text, **kwargs):
     # reformat the return
     candidates = [
         x['key']
-        for x in res['aggregations']['zip_code']['zip_code']['buckets'][:10]
+        for x in res['aggregations'][filterField][filterField]['buckets'][:10]
     ]
 
     return candidates

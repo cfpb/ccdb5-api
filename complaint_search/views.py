@@ -172,8 +172,8 @@ def suggest_zip(request):
 
     serializer = SuggestFilterInputSerializer(data=data)
     if serializer.is_valid():
-        results = es_interface.suggest_zip(
-            text, **serializer.validated_data
+        results = es_interface.filter_suggest(
+            'zip_code', **serializer.validated_data
         )
         return Response(results, headers=_buildHeaders())
     else:
