@@ -2,6 +2,7 @@ from rest_framework import serializers
 from localflavor.us.us_states import STATE_CHOICES
 from complaint_search.defaults import PARAMS
 
+
 class SearchInputSerializer(serializers.Serializer):
 
     ### Format Choices
