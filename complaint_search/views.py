@@ -23,6 +23,61 @@ from complaint_search.throttling import (
     DocumentAnonRateThrottle,
 )
 
+# -----------------------------------------------------------------------------
+# Query Parameters
+#
+# When you add a query parameter, make sure you add it to one of the
+# constant tuples below so it will be parse correctly
+
+QPARAMS_VARS = (
+    'company_received_max',
+    'company_received_min',
+    'date_received_max',
+    'date_received_min',
+    'field',
+    'frm',
+    'no_aggs',
+    'no_highlight',
+    'search_term',
+    'size',
+    'sort'
+)
+
+
+QPARAMS_LISTS = (
+    'company',
+    'company_public_response',
+    'company_response',
+    'consumer_consent_provided',
+    'consumer_disputed',
+    'has_narrative',
+    'issue',
+    'product',
+    'state',
+    'submitted_via',
+    'tags',
+    'timely',
+    'zip_code'
+)
+
+
+def _parseQueryParams(request, validVars=None):
+    if not validVars:
+        validVars = list(QPARAMS_VARS)
+
+    data = {}
+    for param in request.query_params:
+        if param in validVars:
+            data[param] = request.query_params.get(param)
+        elif param in QPARAMS_LISTS:
+            data[param] = request.query_params.getlist(param)
+          # TODO: else: Error if extra parameters? Or ignore?
+
+    return data
+
+
+# -----------------------------------------------------------------------------
+# Header methods
 
 def _buildHeaders():
     # Local development requires CORS support
@@ -35,6 +90,9 @@ def _buildHeaders():
         }
     return headers
 
+
+# -----------------------------------------------------------------------------
+# Request Handlers
 
 @api_view(['GET'])
 @renderer_classes((
@@ -55,29 +113,8 @@ def search(request):
 
     fixed_qparam = request.query_params
 
-    # When you add a query parameter, make sure you add it to one of the
-    # constant tuples below so it will be parse correctly
+    data = _parseQueryParams(request)
 
-    QPARAMS_VARS = (
-        'field', 'size', 'frm', 'sort', 'search_term',
-        'date_received_min', 'date_received_max', 'company_received_min',
-        'company_received_max', 'no_aggs', 'no_highlight'
-    )
-
-    QPARAMS_LISTS = (
-        'company', 'product', 'issue', 'state',
-        'zip_code', 'timely', 'consumer_disputed', 'company_response',
-        'company_public_response', 'consumer_consent_provided',
-        'has_narrative', 'submitted_via', 'tags'
-    )
-
-    # This works too but it may be harder to read
-    # data = { param: request.query_params.get(param)
-    #     if param in QPARAMS_VARS else request.query_params.getlist(param)
-    #     for param in request.query_params
-    #     if param in QPARAMS_VARS + QPARAMS_LISTS}
-
-    data = {}
     # Add format to data (only checking if it is csv, xls, xlsx, then specific
     # them)
     format = request.accepted_renderer.format
@@ -85,13 +122,6 @@ def search(request):
         data['format'] = format
     else:
         data['format'] = 'default'
-
-    for param in request.query_params:
-        if param in QPARAMS_VARS:
-            data[param] = request.query_params.get(param)
-        elif param in QPARAMS_LISTS:
-            data[param] = request.query_params.getlist(param)
-          # TODO: else: Error if extra parameters? Or ignore?
 
     serializer = SearchInputSerializer(data=data)
 
@@ -120,12 +150,8 @@ def search(request):
 @api_view(['GET'])
 @catch_es_error
 def suggest(request):
-    QPARAMS_VARS = ("text", "size")
-    data = {
-        k: v
-        for k, v in request.query_params.iteritems()
-        if k in QPARAMS_VARS
-    }
+    data = _parseQueryParams(request, ['text', 'size'])
+
     serializer = SuggestInputSerializer(data=data)
     if serializer.is_valid():
         results = es_interface.suggest(**serializer.validated_data)
@@ -139,38 +165,10 @@ def suggest(request):
 @api_view(['GET'])
 @catch_es_error
 def suggest_zip(request):
-    QPARAMS_VARS = (
-        'company_received_max',
-        'company_received_min',
-        'date_received_max',
-        'date_received_min',
-        'field',
-        'search_term'
-    )
+    validVars = list(QPARAMS_VARS)
+    validVars.append('text')
 
-    QPARAMS_LISTS = (
-        'company',
-        'company_public_response',
-        'company_response',
-        'consumer_consent_provided',
-        'consumer_disputed',
-        'has_narrative',
-        'issue',
-        'product',
-        'state',
-        'submitted_via',
-        'tags',
-        'timely',
-        'zip_code'
-    )
-
-    text = request.query_params.get('text')
-    data = {}
-    for param in request.query_params:
-        if param in QPARAMS_VARS:
-            data[param] = request.query_params.get(param)
-        elif param in QPARAMS_LISTS:
-            data[param] = request.query_params.getlist(param)
+    data = _parseQueryParams(request, validVars)
 
     serializer = SuggestFilterInputSerializer(data=data)
     if serializer.is_valid():
