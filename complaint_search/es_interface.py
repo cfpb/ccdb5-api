@@ -157,7 +157,7 @@ def suggest(text=None, size=6):
     return candidates
 
 
-def suggest_zip(zip_code, **kwargs):
+def suggest_zip(text, **kwargs):
     params = {
         "format": "default",
         "field": "_all",
@@ -195,7 +195,7 @@ def suggest_zip(zip_code, **kwargs):
     # add the input value as a must match
     aggs['zip_code']['filter']['bool']['must'].append(
         {
-            'prefix': {'zip_code': zip_code}
+            'prefix': {'zip_code': text}
         }
     )
 

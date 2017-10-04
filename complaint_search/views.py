@@ -10,7 +10,7 @@ import es_interface
 from complaint_search.renderers import DefaultRenderer, CSVRenderer, XLSRenderer, XLSXRenderer
 from complaint_search.decorators import catch_es_error
 from complaint_search.serializer import (
-    SearchInputSerializer, SuggestInputSerializer, SuggestZipInputSerializer
+    SearchInputSerializer, SuggestInputSerializer, SuggestFilterInputSerializer
 )
 from complaint_search.throttling import (
     SearchAnonRateThrottle,
@@ -138,10 +138,11 @@ def suggest_zip(request):
         'state',
         'submitted_via',
         'tags',
-        'timely'
+        'timely',
+        'zip_code'
     )
 
-    zip_code = request.query_params.get('zip_code')
+    text = request.query_params.get('text')
     data = {}
     for param in request.query_params:
         if param in QPARAMS_VARS:
@@ -149,10 +150,10 @@ def suggest_zip(request):
         elif param in QPARAMS_LISTS:
             data[param] = request.query_params.getlist(param)
 
-    serializer = SuggestZipInputSerializer(data=data)
+    serializer = SuggestFilterInputSerializer(data=data)
     if serializer.is_valid():
         results = es_interface.suggest_zip(
-            zip_code, **serializer.validated_data
+            text, **serializer.validated_data
         )
         return Response(results, headers=_buildHeaders())
     else:
