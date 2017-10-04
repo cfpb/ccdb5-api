@@ -8,7 +8,12 @@ from complaint_search.es_interface import (
     _get_meta,
     search,
     suggest,
+    filter_suggest,
     document
+)
+from complaint_search.es_builders import (
+    AggregationBuilder,
+    SearchBuilder
 )
 from datetime import datetime
 from elasticsearch import Elasticsearch
@@ -990,6 +995,72 @@ class EsInterfaceTest_Suggest(TestCase):
         self.assertDictEqual(mock_suggest.call_args[1]['body'], body)
         self.assertEqual(mock_suggest.call_args[1]['index'], 'INDEX')
         self.assertEqual(['test 1', 'test 2'], res)
+
+
+class EsInterfaceTest_FilterSuggest(TestCase):
+    def setUp(self):
+        self.body = {'foo': 'bar'}
+        self.oneAgg = {
+            'filter': {
+                'bool': {
+                    'must': []
+                }
+            }
+        }
+        self.result = {
+            "hits": {
+                "total": 99999,
+                "max_score": 0.0,
+                "hits": []
+            },
+            "aggregations": {
+                "zip_code": {
+                    "doc_count": 4954,
+                    "zip_code": {
+                        "doc_count_error_upper_bound": 0,
+                        "sum_other_doc_count": 360,
+                        "buckets": [
+                            {"key": "207XX", "doc_count": 1481},
+                            {"key": "200XX", "doc_count": 1123},
+                            {"key": "201XX", "doc_count": 810},
+                            {"key": "208XX", "doc_count": 775},
+                            {"key": "206XX", "doc_count": 405}
+                        ]}}}}
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch.object(AggregationBuilder, 'buildOne')
+    @mock.patch.object(SearchBuilder, 'build')
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_filter_suggest__valid(
+        self, mock_search, mock_builder1, mock_builder2
+    ):
+        mock_search.return_value = self.result
+        mock_builder1.return_value = self.body
+        mock_builder2.return_value = self.oneAgg
+
+        actual = filter_suggest('zip_code', text='20')
+
+        mock_search.assert_called_once_with(
+            body={
+                'foo': 'bar',
+                'aggs': {
+                    'zip_code': {
+                        'filter': {
+                            'bool': {
+                                'must': [
+                                    {
+                                        'prefix': {
+                                            'zip_code': '20'
+                                        }}]}}}
+               }
+            },
+            doc_type='complaint',
+            index='INDEX')
+        mock_builder2.assert_called_once_with('zip_code')
+        self.assertEqual(actual, [
+            '207XX', '200XX', '201XX', '208XX', '206XX'
+        ])
+
 
 class EsInterfaceTest_Document(TestCase):
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
