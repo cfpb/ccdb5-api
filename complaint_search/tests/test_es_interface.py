@@ -1028,6 +1028,7 @@ class EsInterfaceTest_FilterSuggest(TestCase):
                         ]}}}}
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE", "DOCTYPE")
     @mock.patch.object(AggregationBuilder, 'buildOne')
     @mock.patch.object(SearchBuilder, 'build')
     @mock.patch.object(Elasticsearch, 'search')
@@ -1054,7 +1055,7 @@ class EsInterfaceTest_FilterSuggest(TestCase):
                                         }}]}}}
                }
             },
-            doc_type='complaint',
+            doc_type='DOCTYPE',
             index='INDEX')
         mock_builder2.assert_called_once_with('zip_code')
         self.assertEqual(actual, [
