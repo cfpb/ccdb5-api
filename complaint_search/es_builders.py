@@ -5,13 +5,16 @@ import abc
 from collections import defaultdict, namedtuple
 from complaint_search.defaults import PARAMS, DELIMITER
 
+
 class BaseBuilder(object):
-    __metaclass__  = abc.ABCMeta
+    __metaclass__ = abc.ABCMeta
 
     # Filters for those with string type
-    _OPTIONAL_FILTERS = ("product", "issue", "company", "state", "zip_code", "timely",
+    _OPTIONAL_FILTERS = (
+        "product", "issue", "company", "state", "zip_code", "timely",
         "company_response", "company_public_response",
-        "consumer_consent_provided", "submitted_via", "consumer_disputed")
+        "consumer_consent_provided", "submitted_via", "consumer_disputed"
+    )
 
     _OPTIONAL_FILTERS_MUST = ("tags",)
 
@@ -53,7 +56,7 @@ class BaseBuilder(object):
 
     @abc.abstractmethod
     def build(self):
-         """Method that will build the body dictionary."""
+        """Method that will build the body dictionary."""
 
     ## This create all the bool should filter clauses for a field
     ## es_field_name: a field name (to be filtered in ES)
@@ -63,7 +66,7 @@ class BaseBuilder(object):
     ## name of the child used (to be filtered in ES)
     def _build_bool_clauses(self, field):
         es_field_name = self._get_es_name(field)
-        value_list = [ 0 if cd.lower() == "no" else 1 for cd in self.params[field] ] \
+        value_list = [0 if cd.lower() == "no" else 1 for cd in self.params[field]] \
             if field in self._OPTIONAL_FILTERS_STRING_TO_BOOL else self.params.get(field)
 
         if value_list:
@@ -71,13 +74,13 @@ class BaseBuilder(object):
             # MUST filters must be in parallel otherwise they will not execute as intended
             if field in self._OPTIONAL_FILTERS_MUST:
                 term_list_container = []
-                term_list = [ {"terms": {es_field_name: [value] }} for value in value_list]
+                term_list = [{"terms": {es_field_name: [value]}} for value in value_list]
 
                 return term_list
 
             # The most common property for data is to not have a child element
             if not self._has_child(field):
-                term_list_container = {"terms": {es_field_name: [] }}
+                term_list_container = {"terms": {es_field_name: []}}
 
                 term_list_container["terms"][es_field_name] = value_list
 
@@ -102,11 +105,10 @@ class BaseBuilder(object):
                     if not child:
                         f_list.append({"terms": {es_field_name: [item]}})
                     else:
-                        child_term = { "terms": {self._get_es_name(self._get_child(field)): child }}
+                        child_term = {"terms": {self._get_es_name(self._get_child(field)): child}}
                         f_list.append(child_term)
 
                 return f_list
-
 
     # This creates a dictionary of all filter_clauses, where the keys are the field name
     def _build_filter_clauses(self):
@@ -126,6 +128,7 @@ class BaseBuilder(object):
                 date_clause["range"][es_field_name]["to"] = str(date_max)
 
         return date_clause
+
 
 class SearchBuilder(BaseBuilder):
     def __init__(self):
@@ -161,7 +164,7 @@ class SearchBuilder(BaseBuilder):
             }
 
         else:
-            highlight["fields"] = { self.params.get("field"): {}}
+            highlight["fields"] = {self.params.get("field"): {}}
 
         return highlight
 
@@ -229,12 +232,13 @@ class SearchBuilder(BaseBuilder):
 
         return search
 
+
 class PostFilterBuilder(BaseBuilder):
 
     def build(self):
         filter_clauses = self._build_filter_clauses()
 
-        post_filter = {"bool": {"should": [], "must": [], "filter": [] }}
+        post_filter = {"bool": {"should": [], "must": [], "filter": []}}
 
         ## date_received
         date_received = self._build_date_range_filter(

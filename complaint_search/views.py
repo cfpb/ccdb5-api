@@ -157,9 +157,7 @@ def suggest(request):
         results = es_interface.suggest(**serializer.validated_data)
         return Response(results, headers=_buildHeaders())
     else:
-        return Response(
-            serializer.errors, status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -177,9 +175,7 @@ def suggest_zip(request):
         )
         return Response(results, headers=_buildHeaders())
     else:
-        return Response(
-            serializer.errors, status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
