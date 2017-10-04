@@ -52,11 +52,8 @@ def _is_data_stale(last_updated_time):
     return False
 
 def from_timestamp(seconds):
-    if seconds == 0:
-        return 'N/A'
-    else:
-        fromtimestamp = datetime.fromtimestamp(seconds)
-        return fromtimestamp.strftime('%Y-%m-%d')
+    fromtimestamp = datetime.fromtimestamp(seconds)
+    return fromtimestamp.strftime('%Y-%m-%d')
 
 def _get_meta():
     body = {
