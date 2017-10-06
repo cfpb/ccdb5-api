@@ -157,6 +157,7 @@ def search(**kwargs):
             res = response.content
     return res
 
+
 def suggest(text=None, size=6):
     if text is None:
         return []
@@ -164,6 +165,50 @@ def suggest(text=None, size=6):
     res = _get_es().suggest(index=_COMPLAINT_ES_INDEX, body=body)
     candidates = [ e['text'] for e in res['sgg'][0]['options'] ]
     return candidates
+
+
+def filter_suggest(filterField, **kwargs):
+    params = dict(**kwargs)
+    params.update({
+        'size': 0,
+        'no_highlight': True
+    })
+
+    search_builder = SearchBuilder()
+    search_builder.add(**params)
+    body = search_builder.build()
+
+    aggregation_builder = AggregationBuilder()
+    aggregation_builder.add(**params)
+    aggs = {
+        filterField: aggregation_builder.build_one(filterField)
+    }
+
+    # add the input value as a must match
+    aggs[filterField]['filter']['bool']['must'].append(
+        {
+            'prefix': {filterField: params['text']}
+        }
+    )
+
+    # add to the body
+    body['aggs'] = aggs
+
+    # format
+    res = _get_es().search(
+        index=_COMPLAINT_ES_INDEX,
+        doc_type=_COMPLAINT_DOC_TYPE,
+        body=body
+    )
+
+    # reformat the return
+    candidates = [
+        x['key']
+        for x in res['aggregations'][filterField][filterField]['buckets'][:10]
+    ]
+
+    return candidates
+
 
 def document(complaint_id):
     doc_query = {"query": {"term": {"_id": complaint_id}}}

@@ -8,7 +8,12 @@ from complaint_search.es_interface import (
     _get_meta,
     search,
     suggest,
+    filter_suggest,
     document
+)
+from complaint_search.es_builders import (
+    AggregationBuilder,
+    SearchBuilder
 )
 from datetime import datetime
 from elasticsearch import Elasticsearch
@@ -20,13 +25,32 @@ import json
 import deep
 import mock
 
-class EsInterfaceTest(TestCase):
+# -------------------------------------------------------------------------
+# Helper Methods
+# -------------------------------------------------------------------------
+
+
+def to_absolute(fileName):
+    import os.path
+    # where is this module?
+    thisDir = os.path.dirname(__file__)
+    return os.path.join(thisDir, "expected_results", fileName)
+
+
+def load(shortName):
+    import json
+    fileName = to_absolute(shortName + '.json')
+    with open(fileName, 'r') as f:
+        return json.load(f)
+
+
+class EsInterfaceTest_Search(TestCase):
     # -------------------------------------------------------------------------
     # Helper Attributes
     # -------------------------------------------------------------------------
     MOCK_SEARCH_SIDE_EFFECT = [
         {
-            "search" : "OK",
+            "search": "OK",
             "_scroll_id": "This_is_a_scroll_id",
             "hits": {
                 "hits": [0, 1, 2, 3]
@@ -46,7 +70,7 @@ class EsInterfaceTest(TestCase):
         }
     ]
 
-    MOCK_COUNT_RETURN_VALUE = { "count": 100 }
+    MOCK_COUNT_RETURN_VALUE = {"count": 100}
 
     MOCK_SEARCH_RESULT = {
         'search': 'OK',
@@ -75,21 +99,6 @@ class EsInterfaceTest(TestCase):
             }
         }
     ]
-    # -------------------------------------------------------------------------
-    # Helper Methods
-    # -------------------------------------------------------------------------
-
-    def to_absolute(self, fileName):
-        import os.path
-        # where is this module?
-        thisDir = os.path.dirname(__file__)
-        return os.path.join(thisDir, "expected_results", fileName)
-
-    def load(self, shortName):
-        import json
-        fileName = self.to_absolute(shortName + '.json')
-        with open(fileName, 'r') as f:
-            return json.load(f)
 
     @mock.patch("complaint_search.es_interface._get_now")
     @mock.patch.object(Elasticsearch, 'search')
@@ -101,7 +110,6 @@ class EsInterfaceTest(TestCase):
 
         res = _get_meta()
         self.assertDictEqual(self.MOCK_SEARCH_RESULT["_meta"], res)
-
 
     @mock.patch("complaint_search.es_interface._get_now")
     @mock.patch.object(Elasticsearch, 'search')
@@ -142,7 +150,7 @@ class EsInterfaceTest(TestCase):
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
         mock_scroll.return_value = self.MOCK_SEARCH_SIDE_EFFECT[0]
-        body = self.load("search_no_param__valid")
+        body = load("search_no_param__valid")
         res = search()
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -171,7 +179,7 @@ class EsInterfaceTest(TestCase):
     def test_search_with_format_nondefault__valid(self, mock_urlencode, mock_jdump, mock_rget, mock_search):
         mock_search.return_value = 'OK'
         mock_jdump.return_value = 'JDUMPS_OK'
-        body = self.load("search_with_format_nondefault__valid")
+        body = load("search_with_format_nondefault__valid")
         format_list = ["json", "csv", "xls", "xlsx"]
         for format in format_list:
             res = search(format=format)
@@ -205,7 +213,7 @@ class EsInterfaceTest(TestCase):
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
         mock_scroll.return_value = self.MOCK_SEARCH_SIDE_EFFECT[0]
-        body = self.load("search_with_field__valid")
+        body = load("search_with_field__valid")
         res = search(field="test_field")
         # print "MOCK CALL ARGS LIST: "
         # print json.dumps(mock_search.call_args_list)
@@ -224,7 +232,6 @@ class EsInterfaceTest(TestCase):
         mock_scroll.assert_not_called()
         self.assertDictEqual(self.MOCK_SEARCH_RESULT, res)
 
-
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._get_meta")
     @mock.patch.object(Elasticsearch, 'search')
@@ -235,7 +242,7 @@ class EsInterfaceTest(TestCase):
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
         mock_scroll.return_value = self.MOCK_SEARCH_SIDE_EFFECT[0]
-        body = self.load("search_with_field_all__valid")
+        body = load("search_with_field_all__valid")
         res = search(field="_all")
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -270,7 +277,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_size__valid")
+        body = load("search_with_size__valid")
         res = search(size=40)
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -292,7 +299,7 @@ class EsInterfaceTest(TestCase):
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
         mock_scroll.side_effect = copy.deepcopy(self.MOCK_SCROLL_SIDE_EFFECT)
-        body = self.load("search_with_frm__valid")
+        body = load("search_with_frm__valid")
         res = search(frm=20)
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -305,7 +312,6 @@ class EsInterfaceTest(TestCase):
         search_result = copy.deepcopy(self.MOCK_SEARCH_RESULT)
         search_result['hits']['hits'] = self.MOCK_SCROLL_SIDE_EFFECT[1]['hits']['hits']
         self.assertDictEqual(search_result, res)
-
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._get_meta")
@@ -333,7 +339,7 @@ class EsInterfaceTest(TestCase):
             for i in range(4) ]
         mock_get_meta.side_effect = [ copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
             for i in range(4) ]
-        body = self.load("search_with_sort__valid")
+        body = load("search_with_sort__valid")
 
         for s in sort_fields:
             res = search(sort=s[0])
@@ -353,7 +359,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_search_term_match__valid")
+        body = load("search_with_search_term_match__valid")
         res = search(search_term="test term")
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -378,7 +384,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_search_term_qsq_and__valid")
+        body = load("search_with_search_term_qsq_and__valid")
         res = search(search_term="test AND term")
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -403,7 +409,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_search_term_qsq_or__valid")
+        body = load("search_with_search_term_qsq_or__valid")
         res = search(search_term="test OR term")
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -428,7 +434,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_search_term_qsq_not__valid")
+        body = load("search_with_search_term_qsq_not__valid")
         res = search(search_term="test NOT term")
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -453,7 +459,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_search_term_qsq_to__valid")
+        body = load("search_with_search_term_qsq_to__valid")
         res = search(search_term="term TO test")
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -478,7 +484,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_date_received_min__valid")
+        body = load("search_with_date_received_min__valid")
         res = search(date_received_min="2014-04-14")
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -503,7 +509,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_date_received_max__valid")
+        body = load("search_with_date_received_max__valid")
         res = search(date_received_max="2017-04-14")
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -519,7 +525,6 @@ class EsInterfaceTest(TestCase):
         mock_scroll.assert_not_called()
         self.assertEqual(self.MOCK_SEARCH_RESULT, res)
 
-
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._get_meta")
     @mock.patch.object(Elasticsearch, 'search')
@@ -529,7 +534,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_company_received_min__valid")
+        body = load("search_with_company_received_min__valid")
         res = search(company_received_min="2014-04-14")
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -554,7 +559,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_company_received_max__valid")
+        body = load("search_with_company_received_max__valid")
         res = search(company_received_max="2017-04-14")
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -579,7 +584,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_company__valid")
+        body = load("search_with_company__valid")
         res = search(company=["Bank 1", "Second Bank"])
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -596,7 +601,6 @@ class EsInterfaceTest(TestCase):
         mock_scroll.assert_not_called()
         self.assertEqual(self.MOCK_SEARCH_RESULT, res)
 
-
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._get_meta")
     @mock.patch.object(Elasticsearch, 'search')
@@ -606,7 +610,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_product__valid")
+        body = load("search_with_product__valid")
         res = search(product=["Payday Loan", u"Mortgage\u2022FHA mortgage"])
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -632,7 +636,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_issue__valid")
+        body = load("search_with_issue__valid")
         res = search(issue=[u"Communication tactics\u2022Frequent or repeated calls",
         "Loan servicing, payments, escrow account"])
         self.assertEqual(1, len(mock_search.call_args_list))
@@ -659,7 +663,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_state__valid")
+        body = load("search_with_state__valid")
         res = search(state=["CA", "VA", "OR"])
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -685,7 +689,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_zip_code__valid")
+        body = load("search_with_zip_code__valid")
         res = search(zip_code=["12345", "23435", "03433"])
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -712,7 +716,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_timely__valid")
+        body = load("search_with_timely__valid")
         res = search(timely=["Yes", "No"])
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -738,7 +742,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_company_response__valid")
+        body = load("search_with_company_response__valid")
         res = search(company_response=["Closed", "Closed with non-monetary relief"])
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -764,7 +768,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_company_public_response__valid")
+        body = load("search_with_company_public_response__valid")
         res = search(company_public_response=["Company chooses not to provide a public response", "Company believes it acted appropriately as authorized by contract or law"])
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -790,7 +794,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_consumer_consent_provided__valid")
+        body = load("search_with_consumer_consent_provided__valid")
         res = search(consumer_consent_provided=["Consent provided"])
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -816,7 +820,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_submitted_via__valid")
+        body = load("search_with_submitted_via__valid")
         res = search(submitted_via=["Web"])
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -842,7 +846,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_tags__valid")
+        body = load("search_with_tags__valid")
         res = search(tags=["Older American", "Servicemember"])
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -868,7 +872,7 @@ class EsInterfaceTest(TestCase):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-        body = self.load("search_with_has_narrative__valid")
+        body = load("search_with_has_narrative__valid")
         res = search(has_narrative=["true"])
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -885,7 +889,6 @@ class EsInterfaceTest(TestCase):
         mock_scroll.assert_not_called()
         self.assertEqual(self.MOCK_SEARCH_RESULT, res)
 
-
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._get_meta")
     @mock.patch.object(Elasticsearch, 'search')
@@ -897,7 +900,7 @@ class EsInterfaceTest(TestCase):
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
         mock_scroll.return_value = self.MOCK_SEARCH_SIDE_EFFECT[0]
-        body = self.load("search_no_highlight__valid")
+        body = load("search_no_highlight__valid")
         res = search(no_highlight=True)
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -914,6 +917,8 @@ class EsInterfaceTest(TestCase):
         mock_rget.assert_not_called()
         self.assertDictEqual(self.MOCK_SEARCH_RESULT, res)
 
+
+class EsInterfaceTest_Suggest(TestCase):
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(Elasticsearch, 'suggest')
     def test_suggest_with_no_param__valid(self, mock_suggest):
@@ -996,6 +1001,74 @@ class EsInterfaceTest(TestCase):
         self.assertEqual(mock_suggest.call_args[1]['index'], 'INDEX')
         self.assertEqual(['test 1', 'test 2'], res)
 
+
+class EsInterfaceTest_FilterSuggest(TestCase):
+    def setUp(self):
+        self.body = {'foo': 'bar'}
+        self.oneAgg = {
+            'filter': {
+                'bool': {
+                    'must': []
+                }
+            }
+        }
+        self.result = {
+            "hits": {
+                "total": 99999,
+                "max_score": 0.0,
+                "hits": []
+            },
+            "aggregations": {
+                "zip_code": {
+                    "doc_count": 4954,
+                    "zip_code": {
+                        "doc_count_error_upper_bound": 0,
+                        "sum_other_doc_count": 360,
+                        "buckets": [
+                            {"key": "207XX", "doc_count": 1481},
+                            {"key": "200XX", "doc_count": 1123},
+                            {"key": "201XX", "doc_count": 810},
+                            {"key": "208XX", "doc_count": 775},
+                            {"key": "206XX", "doc_count": 405}
+                        ]}}}}
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE", "DOCTYPE")
+    @mock.patch.object(AggregationBuilder, 'build_one')
+    @mock.patch.object(SearchBuilder, 'build')
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_filter_suggest__valid(
+        self, mock_search, mock_builder1, mock_builder2
+    ):
+        mock_search.return_value = self.result
+        mock_builder1.return_value = self.body
+        mock_builder2.return_value = self.oneAgg
+
+        actual = filter_suggest('zip_code', text='20')
+
+        mock_search.assert_called_once_with(
+            body={
+                'foo': 'bar',
+                'aggs': {
+                    'zip_code': {
+                        'filter': {
+                            'bool': {
+                                'must': [
+                                    {
+                                        'prefix': {
+                                            'zip_code': '20'
+                                        }}]}}}
+               }
+            },
+            doc_type='DOCTYPE',
+            index='INDEX')
+        mock_builder2.assert_called_once_with('zip_code')
+        self.assertEqual(actual, [
+            '207XX', '200XX', '201XX', '208XX', '206XX'
+        ])
+
+
+class EsInterfaceTest_Document(TestCase):
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE", "DOC_TYPE")
     @mock.patch.object(Elasticsearch, 'search')

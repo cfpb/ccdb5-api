@@ -2,6 +2,7 @@ from rest_framework import serializers
 from localflavor.us.us_states import STATE_CHOICES
 from complaint_search.defaults import PARAMS
 
+
 class SearchInputSerializer(serializers.Serializer):
 
     ### Format Choices
@@ -124,6 +125,11 @@ class SearchInputSerializer(serializers.Serializer):
             raise serializers.ValidationError("frm is not zero or a multiple of size")
         return data
 
+
 class SuggestInputSerializer(serializers.Serializer):
     text = serializers.CharField(max_length=200, required=False)
     size = serializers.IntegerField(min_value=1, max_value=100000, required=False)
+
+
+class SuggestFilterInputSerializer(SearchInputSerializer):
+    text = serializers.CharField(max_length=10, required=True)

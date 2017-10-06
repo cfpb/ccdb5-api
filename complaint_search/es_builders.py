@@ -5,13 +5,16 @@ import abc
 from collections import defaultdict, namedtuple
 from complaint_search.defaults import PARAMS, DELIMITER
 
+
 class BaseBuilder(object):
-    __metaclass__  = abc.ABCMeta
+    __metaclass__ = abc.ABCMeta
 
     # Filters for those with string type
-    _OPTIONAL_FILTERS = ("product", "issue", "company", "state", "zip_code", "timely",
+    _OPTIONAL_FILTERS = (
+        "product", "issue", "company", "state", "zip_code", "timely",
         "company_response", "company_public_response",
-        "consumer_consent_provided", "submitted_via", "consumer_disputed")
+        "consumer_consent_provided", "submitted_via", "consumer_disputed"
+    )
 
     _OPTIONAL_FILTERS_MUST = ("tags",)
 
@@ -53,7 +56,7 @@ class BaseBuilder(object):
 
     @abc.abstractmethod
     def build(self):
-         """Method that will build the body dictionary."""
+        """Method that will build the body dictionary."""
 
     ## This create all the bool should filter clauses for a field
     ## es_field_name: a field name (to be filtered in ES)
@@ -63,7 +66,7 @@ class BaseBuilder(object):
     ## name of the child used (to be filtered in ES)
     def _build_bool_clauses(self, field):
         es_field_name = self._get_es_name(field)
-        value_list = [ 0 if cd.lower() == "no" else 1 for cd in self.params[field] ] \
+        value_list = [0 if cd.lower() == "no" else 1 for cd in self.params[field]] \
             if field in self._OPTIONAL_FILTERS_STRING_TO_BOOL else self.params.get(field)
 
         if value_list:
@@ -71,13 +74,13 @@ class BaseBuilder(object):
             # MUST filters must be in parallel otherwise they will not execute as intended
             if field in self._OPTIONAL_FILTERS_MUST:
                 term_list_container = []
-                term_list = [ {"terms": {es_field_name: [value] }} for value in value_list]
+                term_list = [{"terms": {es_field_name: [value]}} for value in value_list]
 
                 return term_list
 
             # The most common property for data is to not have a child element
             if not self._has_child(field):
-                term_list_container = {"terms": {es_field_name: [] }}
+                term_list_container = {"terms": {es_field_name: []}}
 
                 term_list_container["terms"][es_field_name] = value_list
 
@@ -102,11 +105,10 @@ class BaseBuilder(object):
                     if not child:
                         f_list.append({"terms": {es_field_name: [item]}})
                     else:
-                        child_term = { "terms": {self._get_es_name(self._get_child(field)): child }}
+                        child_term = {"terms": {self._get_es_name(self._get_child(field)): child}}
                         f_list.append(child_term)
 
                 return f_list
-
 
     # This creates a dictionary of all filter_clauses, where the keys are the field name
     def _build_filter_clauses(self):
@@ -126,6 +128,7 @@ class BaseBuilder(object):
                 date_clause["range"][es_field_name]["to"] = str(date_max)
 
         return date_clause
+
 
 class SearchBuilder(BaseBuilder):
     def __init__(self):
@@ -161,7 +164,7 @@ class SearchBuilder(BaseBuilder):
             }
 
         else:
-            highlight["fields"] = { self.params.get("field"): {}}
+            highlight["fields"] = {self.params.get("field"): {}}
 
         return highlight
 
@@ -229,12 +232,13 @@ class SearchBuilder(BaseBuilder):
 
         return search
 
+
 class PostFilterBuilder(BaseBuilder):
 
     def build(self):
         filter_clauses = self._build_filter_clauses()
 
-        post_filter = {"bool": {"should": [], "must": [], "filter": [] }}
+        post_filter = {"bool": {"should": [], "must": [], "filter": []}}
 
         ## date_received
         date_received = self._build_date_range_filter(
@@ -266,86 +270,114 @@ class PostFilterBuilder(BaseBuilder):
 
         return post_filter
 
+
 class AggregationBuilder(BaseBuilder):
+    _AGG_FIELDS = (
+        'company',
+        'company_public_response',
+        'company_response',
+        'consumer_consent_provided',
+        'consumer_disputed',
+        'has_narrative',
+        'issue',
+        'product',
+        'state',
+        'submitted_via',
+        'tags',
+        'timely',
+        'zip_code'
+    )
 
-    _AGG_FIELDS = ('has_narrative', 'company', 'product', 'issue', 'state',
-        'zip_code', 'timely', 'company_response', 'company_public_response',
-        'consumer_disputed', 'consumer_consent_provided', 'tags', 'submitted_via')
+    def __init__(self):
+        BaseBuilder.__init__(self)
+        self.filter_clauses = None
 
+    def build_one(self, field_name):
+        # Lazy initialization
+        if not self.filter_clauses:
+            self.filter_clauses = self._build_filter_clauses()
 
-    def build(self):
-
-        # Build filter clauses for use later
-        filter_clauses = self._build_filter_clauses()
-        aggs = {}
-
-        # Creating aggregation object for each field above
-        for field_name in self._AGG_FIELDS:
-            field_aggs = {
-                "filter": {
-                    "bool": {
-                        "must": [],
-                        "should": [],
-                        "filter": [],
-                    }
+        field_aggs = {
+            "filter": {
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [],
                 }
             }
+        }
 
-            es_field_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(field_name, field_name)
-            es_child_name = None
-            if field_name in self._OPTIONAL_FILTERS_CHILD_MAP:
-                es_child_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
-                    self._OPTIONAL_FILTERS_CHILD_MAP.get(field_name))
-                field_aggs["aggs"] = {
-                    field_name: {
-                        "terms": {
-                            "field": es_field_name,
-                            "size": 0
-                        },
-                        "aggs": {
-                            es_child_name: {
-                                "terms": {
-                                    "field": es_child_name,
-                                    "size": 0
-                                }
+        es_field_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
+            field_name, field_name
+        )
+        es_child_name = None
+        if field_name in self._OPTIONAL_FILTERS_CHILD_MAP:
+            es_child_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
+                self._OPTIONAL_FILTERS_CHILD_MAP.get(field_name))
+            field_aggs["aggs"] = {
+                field_name: {
+                    "terms": {
+                        "field": es_field_name,
+                        "size": 0
+                    },
+                    "aggs": {
+                        es_child_name: {
+                            "terms": {
+                                "field": es_child_name,
+                                "size": 0
                             }
                         }
                     }
                 }
-            else:
-                field_aggs["aggs"] = {
-                    field_name: {
-                        "terms": {
-                            "field": es_field_name,
-                            "size": 0
-                        }
+            }
+        else:
+            field_aggs["aggs"] = {
+                field_name: {
+                    "terms": {
+                        "field": es_field_name,
+                        "size": 0
                     }
                 }
+            }
 
-            date_filter = self._build_date_range_filter(
-                self.params.get("date_received_min"),
-                self.params.get("date_received_max"), "date_received")
+        date_filter = self._build_date_range_filter(
+            self.params.get("date_received_min"),
+            self.params.get("date_received_max"), "date_received")
 
-            if date_filter:
-                field_aggs["filter"]["bool"]["filter"].append(date_filter)
+        if date_filter:
+            field_aggs["filter"]["bool"]["filter"].append(date_filter)
 
-            company_filter = self._build_date_range_filter(
-                self.params.get("company_received_min"),
-                self.params.get("company_received_max"), "date_sent_to_company")
+        company_filter = self._build_date_range_filter(
+            self.params.get("company_received_min"),
+            self.params.get("company_received_max"), "date_sent_to_company")
 
-            if company_filter:
-                field_aggs["filter"]["bool"]["filter"].append(company_filter)
+        if company_filter:
+            field_aggs["filter"]["bool"]["filter"].append(company_filter)
 
-            # Add filter clauses to aggregation entries (only those that are not the same as field name)
-            for item in self.params:
-                if item != field_name and item in self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL:
-                    field_level_should = {"bool": {"should":filter_clauses[item]}}
-                    field_aggs["filter"]["bool"]["filter"].append(field_level_should)
+        # Add filter clauses to aggregation entries (only those that are not
+        # the same as field name)
+        for item in self.params:
+            if item != field_name and item in self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL:
+                field_level_should = {
+                    "bool": {"should": self.filter_clauses[item]}
+                }
+                field_aggs["filter"]["bool"]["filter"].append(
+                    field_level_should
+                )
 
-                if item != field_name and item in self._OPTIONAL_FILTERS_MUST:
-                    field_aggs["filter"]["bool"]["filter"].append(filter_clauses[item])
+            if item != field_name and item in self._OPTIONAL_FILTERS_MUST:
+                field_aggs["filter"]["bool"]["filter"].append(
+                    self.filter_clauses[item]
+                )
 
-            aggs[field_name] = field_aggs
+        return field_aggs
+
+    def build(self):
+        aggs = {}
+
+        # Creating aggregation object for each field above
+        for field_name in self._AGG_FIELDS:
+            aggs[field_name] = self.build_one(field_name)
 
         return aggs
 
