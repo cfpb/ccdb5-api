@@ -61,7 +61,7 @@ QPARAMS_LISTS = (
 )
 
 
-def _parseQueryParams(request, validVars=None):
+def _parse_query_params(request, validVars=None):
     if not validVars:
         validVars = list(QPARAMS_VARS)
 
@@ -113,7 +113,7 @@ def search(request):
 
     fixed_qparam = request.query_params
 
-    data = _parseQueryParams(request)
+    data = _parse_query_params(request)
 
     # Add format to data (only checking if it is csv, xls, xlsx, then specific
     # them)
@@ -150,7 +150,7 @@ def search(request):
 @api_view(['GET'])
 @catch_es_error
 def suggest(request):
-    data = _parseQueryParams(request, ['text', 'size'])
+    data = _parse_query_params(request, ['text', 'size'])
 
     serializer = SuggestInputSerializer(data=data)
     if serializer.is_valid():
@@ -166,7 +166,7 @@ def suggest_zip(request):
     validVars = list(QPARAMS_VARS)
     validVars.append('text')
 
-    data = _parseQueryParams(request, validVars)
+    data = _parse_query_params(request, validVars)
 
     serializer = SuggestFilterInputSerializer(data=data)
     if serializer.is_valid():

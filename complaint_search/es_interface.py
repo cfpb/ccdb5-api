@@ -171,7 +171,7 @@ def filter_suggest(filterField, **kwargs):
     aggregation_builder = AggregationBuilder()
     aggregation_builder.add(**params)
     aggs = {
-        filterField: aggregation_builder.buildOne(filterField)
+        filterField: aggregation_builder.build_one(filterField)
     }
 
     # add the input value as a must match

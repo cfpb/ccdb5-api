@@ -1029,7 +1029,7 @@ class EsInterfaceTest_FilterSuggest(TestCase):
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE", "DOCTYPE")
-    @mock.patch.object(AggregationBuilder, 'buildOne')
+    @mock.patch.object(AggregationBuilder, 'build_one')
     @mock.patch.object(SearchBuilder, 'build')
     @mock.patch.object(Elasticsearch, 'search')
     def test_filter_suggest__valid(

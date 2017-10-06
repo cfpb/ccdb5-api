@@ -292,7 +292,7 @@ class AggregationBuilder(BaseBuilder):
         BaseBuilder.__init__(self)
         self.filter_clauses = None
 
-    def buildOne(self, field_name):
+    def build_one(self, field_name):
         # Lazy initialization
         if not self.filter_clauses:
             self.filter_clauses = self._build_filter_clauses()
@@ -377,7 +377,7 @@ class AggregationBuilder(BaseBuilder):
 
         # Creating aggregation object for each field above
         for field_name in self._AGG_FIELDS:
-            aggs[field_name] = self.buildOne(field_name)
+            aggs[field_name] = self.build_one(field_name)
 
         return aggs
 
