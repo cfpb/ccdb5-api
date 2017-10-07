@@ -291,6 +291,10 @@ class AggregationBuilder(BaseBuilder):
     def __init__(self):
         BaseBuilder.__init__(self)
         self.filter_clauses = None
+        self.exclude = []
+
+    def add_exclude(self, field_name_list):
+        self.exclude += field_name_list
 
     def build_one(self, field_name):
         # Lazy initialization
@@ -355,9 +359,12 @@ class AggregationBuilder(BaseBuilder):
             field_aggs["filter"]["bool"]["filter"].append(company_filter)
 
         # Add filter clauses to aggregation entries (only those that are not
-        # the same as field name)
+        # the same as field name or part of the exclude list, which means we 
+        # want to list all matched aggregation)
         for item in self.params:
-            if item != field_name and item in self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL:
+            include_filter = item != field_name or (item == field_name and item in self.exclude)
+
+            if include_filter and item in self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL:
                 field_level_should = {
                     "bool": {"should": self.filter_clauses[item]}
                 }
@@ -365,7 +372,7 @@ class AggregationBuilder(BaseBuilder):
                     field_level_should
                 )
 
-            if item != field_name and item in self._OPTIONAL_FILTERS_MUST:
+            if include_filter and item in self._OPTIONAL_FILTERS_MUST:
                 field_aggs["filter"]["bool"]["filter"].append(
                     self.filter_clauses[item]
                 )
@@ -375,8 +382,11 @@ class AggregationBuilder(BaseBuilder):
     def build(self):
         aggs = {}
 
-        # Creating aggregation object for each field above
-        for field_name in self._AGG_FIELDS:
+        agg_fields = self._AGG_FIELDS
+        if self.exclude:
+            agg_fields = [ field_name for field_name in self._AGG_FIELDS
+                if field_name not in self.exclude or field_name in self.params ]
+        for field_name in agg_fields:
             aggs[field_name] = self.build_one(field_name)
 
         return aggs

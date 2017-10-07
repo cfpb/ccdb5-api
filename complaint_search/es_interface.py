@@ -109,7 +109,7 @@ def _get_meta():
 # - has_narrative: filters a list of whether complaint has narratives or not
 # - submitted_via: filters a list of ways the complaint was submitted
 # - tags - filters a list of tags
-def search(**kwargs):
+def search(agg_exclude=None, **kwargs):
     params = copy.deepcopy(PARAMS)
     params.update(**kwargs)
     search_builder = SearchBuilder()
@@ -126,6 +126,8 @@ def search(**kwargs):
         if not params.get("no_aggs"):
             aggregation_builder = AggregationBuilder()
             aggregation_builder.add(**params)
+            if agg_exclude:
+                aggregation_builder.add_exclude(agg_exclude)
             body["aggs"] = aggregation_builder.build()
 
         res = _get_es().search(index=_COMPLAINT_ES_INDEX,

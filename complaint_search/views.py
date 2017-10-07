@@ -126,7 +126,10 @@ def search(request):
     serializer = SearchInputSerializer(data=data)
 
     if serializer.is_valid():
-        results = es_interface.search(**serializer.validated_data)
+        agg_exclude = []
+        agg_exclude.append('zip_code')
+
+        results = es_interface.search(agg_exclude=agg_exclude, **serializer.validated_data)
 
         headers = _buildHeaders()
 
