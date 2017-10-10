@@ -40,6 +40,10 @@ class SearchTests(APITestCase):
         params.update(overrides)
         return params
 
+    def buildDefaultAggExclude(self, addl_exclude_list=[]):
+        agg_exclude = set(['zip_code'] + addl_exclude_list)
+        return list(agg_exclude)
+
     @mock.patch('complaint_search.es_interface.search')
     def test_search_no_param(self, mock_essearch):
         """
@@ -49,7 +53,8 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({}))
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -103,7 +108,8 @@ class SearchTests(APITestCase):
             self.assertEqual(status.HTTP_200_OK, response.status_code)
             self.assertEqual('OK', response.data)
 
-        calls = [ mock.call(**self.buildDefaultParams({
+        calls = [ mock.call(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({
             "field": SearchInputSerializer.FIELD_MAP.get(field_pair[0],
                 field_pair[0])}))
             for field_pair in SearchInputSerializer.FIELD_CHOICES ]
@@ -127,7 +133,8 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams(params))
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams(params))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -137,7 +144,8 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams(params))
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams(params))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -182,7 +190,8 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams(params))
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams(params))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -242,7 +251,8 @@ class SearchTests(APITestCase):
             self.assertEqual(status.HTTP_200_OK, response.status_code)
             self.assertEqual('OK', response.data)
 
-        calls = [ mock.call(**self.buildDefaultParams({"sort": sort_pair[0]}))
+        calls = [ mock.call(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({"sort": sort_pair[0]}))
             for sort_pair in SearchInputSerializer.SORT_CHOICES ]
         mock_essearch.assert_has_calls(calls)
 
@@ -264,7 +274,8 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams(params))
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams(params))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -274,7 +285,8 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({
             "date_received_min": date(2017, 4, 11)}))
         self.assertEqual('OK', response.data)
 
@@ -296,7 +308,8 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({
             "date_received_max": date(2017, 4, 11)}))
         self.assertEqual('OK', response.data)
 
@@ -318,7 +331,8 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({
             "company_received_min": date(2017, 4, 11)}))
         self.assertEqual('OK', response.data)
 
@@ -340,7 +354,8 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({
             "company_received_max": date(2017, 4, 11)}))
         self.assertEqual('OK', response.data)
 
@@ -362,7 +377,8 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({
             "company": ["One Bank", "Bank 2"]}))
         self.assertEqual('OK', response.data)
 
@@ -376,7 +392,8 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({
             "product": ["Mortgage-FHA Mortgage", "Payday Loan"]}))
         self.assertEqual('OK', response.data)
 
@@ -392,7 +409,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({
                 "issue": ["Communication tactics-Frequent or repeated calls",
             "Loan servicing, payments, escrow account"]}))
         self.assertEqual('OK', response.data)
@@ -405,7 +423,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({
                 "state": ["CA", "FL", "VA"]}))
         self.assertEqual('OK', response.data)
 
@@ -417,7 +436,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({
                 "zip_code": ["94XXX", "24236", "23456"]}))
         self.assertEqual('OK', response.data)
 
@@ -429,7 +449,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({
                 "timely": ["YES", "NO"]}))
         self.assertEqual('OK', response.data)
 
@@ -441,7 +462,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({
                 "consumer_disputed": ["yes", "no"]}))
         self.assertEqual('OK', response.data)
 
@@ -453,7 +475,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({
                 "company_response": ["Closed", "No response"]}))
         self.assertEqual('OK', response.data)
 
@@ -465,7 +488,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({
                 "company_public_response": ["Closed", "No response"]}))
         self.assertEqual('OK', response.data)
 
@@ -477,7 +501,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({
                 "consumer_consent_provided": ["Yes", "No"]}))
         self.assertEqual('OK', response.data)
 
@@ -489,7 +514,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({
                 "has_narrative": ["Yes", "No"]}))
         self.assertEqual('OK', response.data)
 
@@ -501,7 +527,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({
                 "submitted_via": ["Web", "Phone"]}))
         self.assertEqual('OK', response.data)
 
@@ -513,7 +540,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({
                 "tags": ["Older American", "Servicemember"]}))
         self.assertEqual('OK', response.data)
 
@@ -524,7 +552,8 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({
                 "no_aggs": True}))
         self.assertEqual('OK', response.data)
 
@@ -546,7 +575,8 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(**self.buildDefaultParams({
+        mock_essearch.assert_called_once_with(agg_exclude=self.buildDefaultAggExclude(), 
+            **self.buildDefaultParams({
                 "no_highlight": True}))
         self.assertEqual('OK', response.data)
 
