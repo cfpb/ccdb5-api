@@ -3,7 +3,7 @@ import copy
 import json
 import abc
 from collections import defaultdict, namedtuple
-from complaint_search.defaults import PARAMS, DELIMITER
+from complaint_search.defaults import PARAMS, DELIMITER, SOURCE_FIELDS
 
 
 class BaseBuilder(object):
@@ -141,28 +141,7 @@ class SearchBuilder(BaseBuilder):
             "fragment_size": 500
         }
         if self.params.get("field") == "_all":
-            highlight["fields"] = {
-                "sub_product": {},
-                "date_sent_to_company": {},
-                "complaint_id": {},
-                "consumer_consent_provided": {},
-                "date_received": {},
-                "state": {},
-                "issue": {},
-                "company_response": {},
-                "zip_code": {},
-                "timely": {},
-                "product": {},
-                "complaint_what_happened": {},
-                "company": {},
-                "sub_issue": {},
-                "tags": {},
-                "company_public_response": {},
-                "consumer_disputed": {},
-                "has_narrative": {},
-                "submitted_via": {}
-            }
-
+            highlight["fields"] = { source: {} for source in SOURCE_FIELDS }
         else:
             highlight["fields"] = {self.params.get("field"): {}}
 
@@ -178,10 +157,17 @@ class SearchBuilder(BaseBuilder):
         sort_field = sort_field_mapping.get(sort_field, "_score")
         return [{sort_field: {"order": sort_order}}]
 
+    def _build_source(self):
+        source = list(SOURCE_FIELDS)
+        if self.params.get("format") in ('json', 'csv'):
+            source.remove('has_narrative')
+        return source
+
     def build(self):
         search = {
             "from": self.params.get("frm"),
             "size": self.params.get("size"),
+            "_source": self._build_source(),
             "query": {
                 "query_string": {
                     "query": "*",

@@ -61,8 +61,6 @@ def _get_meta():
         "size": 0,
         "aggs": {
             "max_date" : { "max" : { "field" : "date_received" }},
-            "max_update": { "max" : { "field" : ":updated_at" }},
-            "max_created": { "max" : { "field" : ":created_at" }},
             "max_narratives": {
                 "filter" : { "term" : { "has_narrative" : "true" }},
                 "aggs" : {
