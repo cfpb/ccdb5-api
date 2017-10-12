@@ -62,16 +62,16 @@ QPARAMS_LISTS = (
 )
 
 
-def _parse_query_params(request, validVars=None):
+def _parse_query_params(query_params, validVars=None):
     if not validVars:
         validVars = list(QPARAMS_VARS)
 
     data = {}
-    for param in request.query_params:
+    for param in query_params:
         if param in validVars:
-            data[param] = request.query_params.get(param)
+            data[param] = query_params.get(param)
         elif param in QPARAMS_LISTS:
-            data[param] = request.query_params.getlist(param)
+            data[param] = query_params.getlist(param)
           # TODO: else: Error if extra parameters? Or ignore?
 
     return data
@@ -112,7 +112,7 @@ def search(request):
 
     fixed_qparam = request.query_params
 
-    data = _parse_query_params(request)
+    data = _parse_query_params(request.query_params)
 
     # Add format to data
     format = request.accepted_renderer.format
@@ -151,7 +151,7 @@ def search(request):
 @api_view(['GET'])
 @catch_es_error
 def suggest(request):
-    data = _parse_query_params(request, ['text', 'size'])
+    data = _parse_query_params(request.query_params, ['text', 'size'])
 
     serializer = SuggestInputSerializer(data=data)
     if serializer.is_valid():
@@ -160,6 +160,15 @@ def suggest(request):
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+def _suggest_field(data, field):
+    serializer = SuggestFilterInputSerializer(data=data)
+    if serializer.is_valid():
+        results = es_interface.filter_suggest(
+            field, **serializer.validated_data
+        )
+        return Response(results, headers=_buildHeaders())
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @catch_es_error
@@ -167,17 +176,19 @@ def suggest_zip(request):
     validVars = list(QPARAMS_VARS)
     validVars.append('text')
 
-    data = _parse_query_params(request, validVars)
+    data = _parse_query_params(request.query_params, validVars)
+    return _suggest_field(data, 'zip_code')
 
-    serializer = SuggestFilterInputSerializer(data=data)
-    if serializer.is_valid():
-        results = es_interface.filter_suggest(
-            'zip_code', **serializer.validated_data
-        )
-        return Response(results, headers=_buildHeaders())
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['GET'])
+@catch_es_error
+def suggest_company(request):
+    validVars = list(QPARAMS_VARS)
+    validVars.append('text')
 
+    data = _parse_query_params(request.query_params, validVars)
+    if data.get('text'):
+        data['text'] = data['text'].upper()
+    return _suggest_field(data, 'company.raw')
 
 @api_view(['GET'])
 @throttle_classes([DocumentAnonRateThrottle, ])

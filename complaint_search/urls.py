@@ -3,6 +3,11 @@ import complaint_search.views
 
 urlpatterns = [
     url(
+        r'^_suggest_company',
+        complaint_search.views.suggest_company,
+        name="suggest_company"
+    ),
+    url(
         r'^_suggest_zip',
         complaint_search.views.suggest_zip,
         name="suggest_zip"
