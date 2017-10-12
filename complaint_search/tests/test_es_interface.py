@@ -15,6 +15,7 @@ from complaint_search.es_builders import (
     AggregationBuilder,
     SearchBuilder
 )
+from complaint_search.defaults import EXPORT_FORMATS
 from datetime import datetime
 from elasticsearch import Elasticsearch
 import requests
@@ -208,7 +209,7 @@ class EsInterfaceTest_Search(TestCase):
         mock_search.return_value = 'OK'
         mock_jdump.return_value = 'JDUMPS_OK'
         body = load("search_with_format_nondefault__valid")
-        format_list = ["json", "csv", "xls", "xlsx"]
+        format_list = EXPORT_FORMATS
         for format in format_list:
             res = search(format=format)
             self.assertEqual(len(mock_jdump.call_args), 2)

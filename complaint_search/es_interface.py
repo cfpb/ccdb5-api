@@ -12,7 +12,7 @@ from complaint_search.es_builders import (
     PostFilterBuilder,
     AggregationBuilder
 )
-from complaint_search.defaults import PARAMS
+from complaint_search.defaults import PARAMS, EXPORT_FORMATS
 
 _ES_URL = "{}://{}:{}".format("http", os.environ.get('ES_HOST', 'localhost'),
     os.environ.get('ES_PORT', '9200'))
@@ -84,7 +84,7 @@ def _get_meta():
     return result
 
 # List of possible arguments:
-# - format: format to be returned: "json", "csv", "xls", or "xlsx"
+# - format: format to be returned: "json", "csv"
 # - field: field you want to search in: "complaint_what_happened", "company_public_response", "_all"
 # - size: number of complaints to return
 # - frm: from which index to start returning
@@ -142,7 +142,7 @@ def search(agg_exclude=None, **kwargs):
                 num_of_scroll -= 1
         res["_meta"] = _get_meta()
 
-    elif format in ("json", "csv", "xls", "xlsx"):
+    elif format in EXPORT_FORMATS:
         # Deleting from field and this will force data format plugin to use
         # scan/scroll query to create the content,
         # Size also doesn't seem to be relevant anymore

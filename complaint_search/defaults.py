@@ -32,3 +32,8 @@ SOURCE_FIELDS = (
     "has_narrative",
     "submitted_via",
 )
+
+EXPORT_FORMATS = (
+    'json',
+    'csv',
+)

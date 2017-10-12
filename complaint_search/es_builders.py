@@ -3,7 +3,12 @@ import copy
 import json
 import abc
 from collections import defaultdict, namedtuple
-from complaint_search.defaults import PARAMS, DELIMITER, SOURCE_FIELDS
+from complaint_search.defaults import (
+    PARAMS, 
+    DELIMITER, 
+    SOURCE_FIELDS,
+    EXPORT_FORMATS
+)
 
 
 class BaseBuilder(object):
@@ -159,7 +164,7 @@ class SearchBuilder(BaseBuilder):
 
     def _build_source(self):
         source = list(SOURCE_FIELDS)
-        if self.params.get("format") in ('json', 'csv'):
+        if self.params.get("format") in EXPORT_FORMATS:
             source.remove('has_narrative')
         return source
 
