@@ -9,15 +9,12 @@ class SearchInputSerializer(serializers.Serializer):
     FORMAT_DEFAULT = 'default'
     FORMAT_JSON = 'json'
     FORMAT_CSV = 'csv'
-    FORMAT_XLS = 'xls'
-    FORMAT_XLSX = 'xlsx'
 
     FORMAT_CHOICES = (
         (FORMAT_DEFAULT, 'DEFAULT'),
         (FORMAT_JSON, 'JSON'),
         (FORMAT_CSV, 'CSV'),
-        (FORMAT_XLS, 'XLS'),
-        (FORMAT_XLSX, 'XLSX'), )
+    )
 
     ### Field Choices
     FIELD_NARRATIVE = 'complaint_what_happened'

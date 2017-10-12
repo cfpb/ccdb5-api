@@ -3,7 +3,12 @@ import copy
 import json
 import abc
 from collections import defaultdict, namedtuple
-from complaint_search.defaults import PARAMS, DELIMITER
+from complaint_search.defaults import (
+    PARAMS, 
+    DELIMITER, 
+    SOURCE_FIELDS,
+    EXPORT_FORMATS
+)
 
 
 class BaseBuilder(object):
@@ -11,9 +16,17 @@ class BaseBuilder(object):
 
     # Filters for those with string type
     _OPTIONAL_FILTERS = (
-        "product", "issue", "company", "state", "zip_code", "timely",
-        "company_response", "company_public_response",
-        "consumer_consent_provided", "submitted_via", "consumer_disputed"
+        "company",
+        "company_public_response",
+        "company_response",
+        "consumer_consent_provided",
+        "consumer_disputed",
+        "issue",
+        "product",
+        "state",
+        "submitted_via",
+        "timely",
+        "zip_code",
     )
 
     _OPTIONAL_FILTERS_MUST = ("tags",)
@@ -23,20 +36,20 @@ class BaseBuilder(object):
 
     # Filters that use different names in Elasticsearch
     _OPTIONAL_FILTERS_PARAM_TO_ES_MAP = {
-        "product": "product.raw",
-        "sub_product": "sub_product.raw",
-        "issue": "issue.raw",
-        "sub_issue": "sub_issue.raw",
-        "company": "company.raw",
         "company_public_response": "company_public_response.raw",
+        "company": "company.raw",
         "consumer_consent_provided": "consumer_consent_provided.raw",
-        "consumer_disputed": "consumer_disputed.raw"
+        "consumer_disputed": "consumer_disputed.raw",
+        "issue": "issue.raw",
+        "product": "product.raw",
+        "sub_issue": "sub_issue.raw",
+        "sub_product": "sub_product.raw",
     }
 
     # Filters that have a child and this maps to their child's name
     _OPTIONAL_FILTERS_CHILD_MAP = {
+        "issue": "sub_issue",
         "product": "sub_product",
-        "issue": "sub_issue"
     }
 
     def _get_es_name(self, field):
@@ -141,28 +154,7 @@ class SearchBuilder(BaseBuilder):
             "fragment_size": 500
         }
         if self.params.get("field") == "_all":
-            highlight["fields"] = {
-                "sub_product": {},
-                "date_sent_to_company": {},
-                "complaint_id": {},
-                "consumer_consent_provided": {},
-                "date_received": {},
-                "state": {},
-                "issue": {},
-                "company_response": {},
-                "zip_code": {},
-                "timely": {},
-                "product": {},
-                "complaint_what_happened": {},
-                "company": {},
-                "sub_issue": {},
-                "tags": {},
-                "company_public_response": {},
-                "consumer_disputed": {},
-                "has_narrative": {},
-                "submitted_via": {}
-            }
-
+            highlight["fields"] = { source: {} for source in SOURCE_FIELDS }
         else:
             highlight["fields"] = {self.params.get("field"): {}}
 
@@ -178,10 +170,17 @@ class SearchBuilder(BaseBuilder):
         sort_field = sort_field_mapping.get(sort_field, "_score")
         return [{sort_field: {"order": sort_order}}]
 
+    def _build_source(self):
+        source = list(SOURCE_FIELDS)
+        if self.params.get("format") in EXPORT_FORMATS:
+            source.remove('has_narrative')
+        return source
+
     def build(self):
         search = {
             "from": self.params.get("frm"),
             "size": self.params.get("size"),
+            "_source": self._build_source(),
             "query": {
                 "query_string": {
                     "query": "*",

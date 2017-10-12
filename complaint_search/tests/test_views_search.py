@@ -78,8 +78,6 @@ class SearchTests(APITestCase):
         FORMAT_CONTENT_TYPE_MAP = {
             "json": "application/json",
             "csv": "text/csv",
-            "xls": "application/vnd.ms-excel",
-            "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         }
 
         for k, v in FORMAT_CONTENT_TYPE_MAP.iteritems():

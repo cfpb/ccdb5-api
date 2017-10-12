@@ -9,8 +9,9 @@ from django.conf import settings
 from datetime import datetime
 from elasticsearch import TransportError
 import es_interface
+from complaint_search.defaults import EXPORT_FORMATS
 from complaint_search.renderers import (
-    DefaultRenderer, CSVRenderer, XLSRenderer, XLSXRenderer
+    DefaultRenderer, CSVRenderer
 )
 from complaint_search.decorators import catch_es_error
 from complaint_search.serializer import (
@@ -99,8 +100,6 @@ def _buildHeaders():
     DefaultRenderer,
     JSONRenderer,
     CSVRenderer,
-    XLSRenderer,
-    XLSXRenderer,
     BrowsableAPIRenderer,
 ))
 @throttle_classes([
@@ -115,10 +114,9 @@ def search(request):
 
     data = _parse_query_params(request)
 
-    # Add format to data (only checking if it is csv, xls, xlsx, then specific
-    # them)
+    # Add format to data
     format = request.accepted_renderer.format
-    if format and format in ('json', 'csv', 'xls', 'xlsx'):
+    if format and format in EXPORT_FORMATS:
         data['format'] = format
     else:
         data['format'] = 'default'
@@ -133,9 +131,9 @@ def search(request):
 
         headers = _buildHeaders()
 
-        # If format is in json, csv, xls, xlsx, update its attachment response
+        # If format is in export formats, update its attachment response
         # with a filename
-        if format in ('json', 'csv', 'xls', 'xlsx'):
+        if format in EXPORT_FORMATS:
             filename = 'complaints-{}.{}'.format(
                 datetime.now().strftime('%Y-%m-%d_%H_%M'), format
             )
