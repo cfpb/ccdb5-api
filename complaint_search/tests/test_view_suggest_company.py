@@ -7,7 +7,7 @@ import mock
 from complaint_search.es_interface import filter_suggest
 
 
-class SuggestZipTests(APITestCase):
+class SuggestCompanyTests(APITestCase):
 
     def setUp(self):
         pass
@@ -17,7 +17,7 @@ class SuggestZipTests(APITestCase):
         """
         Suggesting with no parameters
         """
-        url = reverse('complaint_search:suggest_zip')
+        url = reverse('complaint_search:suggest_company')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         mock_essuggest.assert_not_called()
@@ -30,14 +30,14 @@ class SuggestZipTests(APITestCase):
         """
         Suggesting with text
         """
-        url = reverse('complaint_search:suggest_zip')
-        param = {"text": "20x"}
+        url = reverse('complaint_search:suggest_company')
+        param = {"text": "Ba"}
         mock_essuggest.return_value = 'OK'
         response = self.client.get(url, param)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         mock_essuggest.assert_called_once_with(
-            'zip_code',
-            None,
+            'company.suggest',
+            'company.raw',
             field='complaint_what_happened',
             format='default',
             frm=0,
@@ -45,7 +45,7 @@ class SuggestZipTests(APITestCase):
             no_highlight=False,
             size=10,
             sort='relevance_desc',
-            text=u'20X'
+            text=u'BA'
         )
         self.assertEqual('OK', response.data)
 
@@ -55,7 +55,7 @@ class SuggestZipTests(APITestCase):
         Make sure the response has CORS headers in debug mode
         """
         settings.DEBUG = True
-        url = reverse('complaint_search:suggest_zip')
+        url = reverse('complaint_search:suggest_company')
         param = {"text": "20"}
         mock_essuggest.return_value = 'OK'
         response = self.client.get(url, param)
@@ -67,7 +67,7 @@ class SuggestZipTests(APITestCase):
         mock_essuggest.side_effect = TransportError(
             status.HTTP_404_NOT_FOUND, "Error"
         )
-        url = reverse('complaint_search:suggest_zip')
+        url = reverse('complaint_search:suggest_company')
         param = {"text": "test"}
         response = self.client.get(url, param)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -80,7 +80,7 @@ class SuggestZipTests(APITestCase):
         self, mock_essuggest
     ):
         mock_essuggest.side_effect = TransportError('N/A', "Error")
-        url = reverse('complaint_search:suggest_zip')
+        url = reverse('complaint_search:suggest_company')
         param = {"text": "test"}
         response = self.client.get(url, param)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

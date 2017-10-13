@@ -199,6 +199,7 @@ def filter_suggest(filterField, display_field=None, **kwargs):
             'prefix': {filterField: params['text']}
         }
     )
+    # choose which field to actually display
     aggs[filterField]['aggs'][filterField]['terms'][
         'field'] = filterField if display_field is None else display_field
     # add to the body
