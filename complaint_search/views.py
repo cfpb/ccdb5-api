@@ -188,7 +188,7 @@ def suggest_company(request):
     data = _parse_query_params(request.query_params, validVars)
     if data.get('text'):
         data['text'] = data['text'].upper()
-    return _suggest_field(data, 'company.raw')
+    return _suggest_field(data, 'company.suggest')
 
 @api_view(['GET'])
 @throttle_classes([DocumentAnonRateThrottle, ])
