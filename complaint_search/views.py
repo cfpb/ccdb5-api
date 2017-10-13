@@ -124,8 +124,7 @@ def search(request):
     serializer = SearchInputSerializer(data=data)
 
     if serializer.is_valid():
-        agg_exclude = []
-        agg_exclude.append('zip_code')
+        agg_exclude = ['company', 'zip_code']
 
         results = es_interface.search(agg_exclude=agg_exclude, **serializer.validated_data)
 
