@@ -630,6 +630,34 @@ class EsInterfaceTest_Search(TestCase):
         mock_scroll.assert_not_called()
         self.assertEqual(self.MOCK_SEARCH_RESULT, res)
 
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch("complaint_search.es_interface._get_meta")
+    @mock.patch.object(Elasticsearch, 'search')
+    @mock.patch.object(Elasticsearch, 'count')
+    @mock.patch.object(Elasticsearch, 'scroll')
+    def test_search_with_company_agg_exclude__valid(self, mock_scroll, mock_count, mock_search, mock_get_meta):
+        mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
+        mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
+        mock_get_meta.return_value = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
+        body = load("search_with_company_agg_exclude__valid")
+        res = search(agg_exclude=['company'], company=["Bank 1", "Second Bank"])
+        self.assertEqual(1, len(mock_search.call_args_list))
+        self.assertEqual(2, len(mock_search.call_args_list[0]))
+        self.assertEqual(0, len(mock_search.call_args_list[0][0]))
+        self.assertEqual(4, len(mock_search.call_args_list[0][1]))
+        act_body = mock_search.call_args_list[0][1]['body']
+        diff = deep.diff(act_body, body)
+        if diff:
+            print "company agg exclude"
+            diff.print_full()
+
+        self.assertIsNone(deep.diff(act_body, body))
+        self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
+        self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
+        mock_scroll.assert_not_called()
+        self.assertDictEqual(self.MOCK_SEARCH_RESULT, res)
+
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._get_meta")
     @mock.patch.object(Elasticsearch, 'search')
@@ -1075,31 +1103,110 @@ class EsInterfaceTest_FilterSuggest(TestCase):
                 "max_score": 0.0,
                 "hits": []
             },
-            "aggregations": {
-                "zip_code": {
-                    "doc_count": 4954,
-                    "zip_code": {
-                        "doc_count_error_upper_bound": 0,
-                        "sum_other_doc_count": 360,
-                        "buckets": [
-                            {"key": "207XX", "doc_count": 1481},
-                            {"key": "200XX", "doc_count": 1123},
-                            {"key": "201XX", "doc_count": 810},
-                            {"key": "208XX", "doc_count": 775},
-                            {"key": "206XX", "doc_count": 405}
-                        ]}}}}
+            "aggregations": {}}
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE", "DOCTYPE")
     @mock.patch.object(AggregationBuilder, 'build_one')
     @mock.patch.object(SearchBuilder, 'build')
     @mock.patch.object(Elasticsearch, 'search')
-    def test_filter_suggest__valid(
+    def test_filter_suggest_company__valid(
         self, mock_search, mock_builder1, mock_builder2
     ):
-        mock_search.return_value = self.result
+
+        result = copy.deepcopy(self.result)
+        result["aggregations"]["company.suggest"] = {
+            "doc_count": 4954,
+            "company.suggest": {
+                "doc_count_error_upper_bound": 0,
+                "sum_other_doc_count": 360,
+                "buckets": [
+                    {"key": "bank 1", "doc_count": 1481},
+                    {"key": "Bank 2", "doc_count": 1123},
+                    {"key": "BANK 3rd", "doc_count": 810},
+                    {"key": "bank 4", "doc_count": 775},
+                    {"key": "BANK 5th", "doc_count": 405}
+                ]}}
+        mock_search.return_value = result
         mock_builder1.return_value = self.body
-        mock_builder2.return_value = self.oneAgg
+        agg = copy.deepcopy(self.oneAgg)
+        agg['aggs'] = {
+            "company.suggest": {
+                "terms": {
+                    "field": "company.suggest",
+                    "size": 0
+                }
+            }
+        }
+        mock_builder2.return_value = agg
+
+        actual = filter_suggest('company.suggest', display_field='company.raw', text='BA')
+
+        mock_search.assert_called_once_with(
+            body={
+                'foo': 'bar',
+                'aggs': {
+                    'company.suggest': {
+                        'filter': {
+                            'bool': {
+                                'must': [
+                                    {
+                                        'prefix': {
+                                            'company.suggest': 'BA'
+                                        }}]}
+                        },
+                        "aggs": {
+                            "company.suggest": {
+                                "terms": {
+                                    "field": "company.raw",
+                                    "size": 0
+                                }
+                            }
+                        }
+                    }
+               }
+            },
+            doc_type='DOCTYPE',
+            index='INDEX')
+        mock_builder2.assert_called_once_with('company.suggest')
+        self.assertEqual(actual, [
+            'bank 1', 'Bank 2', 'BANK 3rd', 'bank 4', 'BANK 5th'
+        ])
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE", "DOCTYPE")
+    @mock.patch.object(AggregationBuilder, 'build_one')
+    @mock.patch.object(SearchBuilder, 'build')
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_filter_suggest_zip_code__valid(
+        self, mock_search, mock_builder1, mock_builder2
+    ):
+        result = copy.deepcopy(self.result)
+        result["aggregations"]["zip_code"] = {
+            "doc_count": 4954,
+            "zip_code": {
+                "doc_count_error_upper_bound": 0,
+                "sum_other_doc_count": 360,
+                "buckets": [
+                    {"key": "207XX", "doc_count": 1481},
+                    {"key": "200XX", "doc_count": 1123},
+                    {"key": "201XX", "doc_count": 810},
+                    {"key": "208XX", "doc_count": 775},
+                    {"key": "206XX", "doc_count": 405}
+                ]}}
+ 
+        mock_search.return_value = result
+        mock_builder1.return_value = self.body
+        agg = copy.deepcopy(self.oneAgg)
+        agg['aggs'] = {
+            "zip_code": {
+                "terms": {
+                    "field": "zip_code",
+                    "size": 0
+                }
+            }
+        }
+        mock_builder2.return_value = agg
 
         actual = filter_suggest('zip_code', text='20')
 
@@ -1114,7 +1221,17 @@ class EsInterfaceTest_FilterSuggest(TestCase):
                                     {
                                         'prefix': {
                                             'zip_code': '20'
-                                        }}]}}}
+                                        }}]}
+                        },
+                        "aggs": {
+                            "zip_code": {
+                                "terms": {
+                                    "field": "zip_code",
+                                    "size": 0
+                                }
+                            }
+                        }
+                    }
                }
             },
             doc_type='DOCTYPE',
@@ -1123,8 +1240,6 @@ class EsInterfaceTest_FilterSuggest(TestCase):
         self.assertEqual(actual, [
             '207XX', '200XX', '201XX', '208XX', '206XX'
         ])
-
-
 class EsInterfaceTest_Document(TestCase):
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE", "DOC_TYPE")

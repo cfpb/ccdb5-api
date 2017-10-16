@@ -15,7 +15,7 @@ from complaint_search.es_builders import (
 from complaint_search.defaults import PARAMS, EXPORT_FORMATS
 
 _ES_URL = "{}://{}:{}".format("http", os.environ.get('ES_HOST', 'localhost'),
-    os.environ.get('ES_PORT', '9200'))
+                              os.environ.get('ES_PORT', '9200'))
 _ES_USER = os.environ.get('ES_USER', '')
 _ES_PASSWORD = os.environ.get('ES_PASSWORD', '')
 
@@ -24,15 +24,18 @@ _ES_INSTANCE = None
 _COMPLAINT_ES_INDEX = os.environ.get('COMPLAINT_ES_INDEX', 'complaint-index')
 _COMPLAINT_DOC_TYPE = os.environ.get('COMPLAINT_DOC_TYPE', 'complaint-doctype')
 
+
 def _get_es():
     global _ES_INSTANCE
     if _ES_INSTANCE is None:
         _ES_INSTANCE = Elasticsearch([_ES_URL], http_auth=(_ES_USER, _ES_PASSWORD),
-            timeout=100)
+                                     timeout=100)
     return _ES_INSTANCE
+
 
 def _get_now():
     return datetime.now()
+
 
 def _min_valid_time():
     # show notification starting fifth business day data has not been updated
@@ -45,33 +48,37 @@ def _min_valid_time():
     delta = weekday if weekday > 3 else 6
     return (now - timedelta(delta)).strftime("%Y-%m-%d")
 
+
 def _is_data_stale(last_updated_time):
     if (last_updated_time < _min_valid_time()):
         return True
 
     return False
 
+
 def from_timestamp(seconds):
     fromtimestamp = datetime.fromtimestamp(seconds)
     return fromtimestamp.strftime('%Y-%m-%d')
+
 
 def _get_meta():
     body = {
         # size: 0 here to prevent taking too long since we only needed max_date
         "size": 0,
         "aggs": {
-            "max_date" : { "max" : { "field" : "date_received" }},
+            "max_date": {"max": {"field": "date_received"}},
             "max_narratives": {
-                "filter" : { "term" : { "has_narrative" : "true" }},
-                "aggs" : {
-                    "max_date" : { "max" : { "field" : ":updated_at" }}
+                "filter": {"term": {"has_narrative": "true"}},
+                "aggs": {
+                    "max_date": {"max": {"field": ":updated_at"}}
                 }
             }
         }
     }
     max_date_res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
     count_res = _get_es().count(index=_COMPLAINT_ES_INDEX, doc_type=_COMPLAINT_DOC_TYPE)
-    down_res = _is_data_stale(max_date_res["aggregations"]["max_date"]["value_as_string"])
+    down_res = _is_data_stale(max_date_res["aggregations"][
+                              "max_date"]["value_as_string"])
 
     result = {
         "license": "CC0",
@@ -107,6 +114,8 @@ def _get_meta():
 # - has_narrative: filters a list of whether complaint has narratives or not
 # - submitted_via: filters a list of ways the complaint was submitted
 # - tags - filters a list of tags
+
+
 def search(agg_exclude=None, **kwargs):
     params = copy.deepcopy(PARAMS)
     params.update(**kwargs)
@@ -129,16 +138,16 @@ def search(agg_exclude=None, **kwargs):
             body["aggs"] = aggregation_builder.build()
 
         res = _get_es().search(index=_COMPLAINT_ES_INDEX,
-            doc_type=_COMPLAINT_DOC_TYPE,
-            body=body,
-            scroll="10m")
+                               doc_type=_COMPLAINT_DOC_TYPE,
+                               body=body,
+                               scroll="10m")
 
         num_of_scroll = params.get("frm") / params.get("size")
         scroll_id = res['_scroll_id']
         if num_of_scroll > 0:
             while num_of_scroll > 0:
                 res['hits']['hits'] = _get_es().scroll(scroll_id=scroll_id,
-                    scroll="10m")['hits']['hits']
+                                                       scroll="10m")['hits']['hits']
                 num_of_scroll -= 1
         res["_meta"] = _get_meta()
 
@@ -151,7 +160,7 @@ def search(agg_exclude=None, **kwargs):
         p = {"format": format, "source": json.dumps(body)}
         p = urllib.urlencode(p)
         url = "{}/{}/{}/_data?{}".format(_ES_URL, _COMPLAINT_ES_INDEX,
-            _COMPLAINT_DOC_TYPE, p)
+                                         _COMPLAINT_DOC_TYPE, p)
         response = requests.get(url, auth=(_ES_USER, _ES_PASSWORD))
         if response.ok:
             res = response.content
@@ -161,13 +170,14 @@ def search(agg_exclude=None, **kwargs):
 def suggest(text=None, size=6):
     if text is None:
         return []
-    body = {"sgg": {"text": text, "completion": {"field": "suggest", "size": size}}}
+    body = {"sgg": {"text": text, "completion": {
+        "field": "suggest", "size": size}}}
     res = _get_es().suggest(index=_COMPLAINT_ES_INDEX, body=body)
-    candidates = [ e['text'] for e in res['sgg'][0]['options'] ]
+    candidates = [e['text'] for e in res['sgg'][0]['options']]
     return candidates
 
 
-def filter_suggest(filterField, **kwargs):
+def filter_suggest(filterField, display_field=None, **kwargs):
     params = dict(**kwargs)
     params.update({
         'size': 0,
@@ -183,14 +193,15 @@ def filter_suggest(filterField, **kwargs):
     aggs = {
         filterField: aggregation_builder.build_one(filterField)
     }
-
     # add the input value as a must match
     aggs[filterField]['filter']['bool']['must'].append(
         {
             'prefix': {filterField: params['text']}
         }
     )
-
+    # choose which field to actually display
+    aggs[filterField]['aggs'][filterField]['terms'][
+        'field'] = filterField if display_field is None else display_field
     # add to the body
     body['aggs'] = aggs
 
@@ -200,7 +211,6 @@ def filter_suggest(filterField, **kwargs):
         doc_type=_COMPLAINT_DOC_TYPE,
         body=body
     )
-
     # reformat the return
     candidates = [
         x['key']
@@ -213,5 +223,5 @@ def filter_suggest(filterField, **kwargs):
 def document(complaint_id):
     doc_query = {"query": {"term": {"_id": complaint_id}}}
     res = _get_es().search(index=_COMPLAINT_ES_INDEX,
-        doc_type=_COMPLAINT_DOC_TYPE, body=doc_query)
+                           doc_type=_COMPLAINT_DOC_TYPE, body=doc_query)
     return res

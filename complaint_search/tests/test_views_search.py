@@ -41,7 +41,7 @@ class SearchTests(APITestCase):
         return params
 
     def buildDefaultAggExclude(self, addl_exclude_list=[]):
-        agg_exclude = set(['zip_code'] + addl_exclude_list)
+        agg_exclude = set(['company', 'zip_code'] + addl_exclude_list)
         return list(agg_exclude)
 
     @mock.patch('complaint_search.es_interface.search')
