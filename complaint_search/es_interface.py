@@ -2,6 +2,7 @@ import os
 import urllib
 import json
 import copy
+import time
 from datetime import datetime, date, timedelta
 from collections import defaultdict, namedtuple
 import requests
@@ -12,8 +13,11 @@ from complaint_search.es_builders import (
     PostFilterBuilder,
     AggregationBuilder
 )
-from complaint_search.defaults import PARAMS, EXPORT_FORMATS
-import csv_helper
+from complaint_search.defaults import (
+    PARAMS, 
+    EXPORT_FORMATS,
+    CSV_ORDERED_HEADERS
+)
 
 _ES_URL = "{}://{}:{}".format("http", os.environ.get('ES_HOST', 'localhost'),
                               os.environ.get('ES_PORT', '9200'))
@@ -158,7 +162,12 @@ def search(agg_exclude=None, **kwargs):
         # Size also doesn't seem to be relevant anymore
         del(body["from"])
 
-        p = {"format": format, "source": json.dumps(body), "fl": "complaint_id,date_received,company,product,sub_product,issue,sub_issue,complaint_what_happened,date_sent_to_company,company_response,company_public_response,state,zip_code,consumer_consent_provided,consumer_disputed,submitted_via,tags,timely"}
+        p = {
+            "format": format, 
+            "source": json.dumps(body), 
+            "fl": ",".join(field for field in CSV_ORDERED_HEADERS.keys()),
+            "append.header": "false"
+        }
         p = urllib.urlencode(p)
 
         url = "{}/{}/{}/_data?{}".format(_ES_URL, _COMPLAINT_ES_INDEX,
@@ -167,27 +176,9 @@ def search(agg_exclude=None, **kwargs):
         if response.ok:
             res = response.content
             if format == "csv":
-                header_dict = {
-                    "complaint_id": "Complaint ID",
-                    "date_received": "Date Received",
-                    "company": "Company",
-                    "product": "Product",
-                    "sub_product": "Sub-product",
-                    "issue": "Issue",
-                    "sub_issue": "Sub-issue",
-                    "complaint_what_happened": "Complaint Narrative",
-                    "date_sent_to_company": "Date Sent to Company",
-                    "company_response": "Response from Company",
-                    "company_public_response": "Public Response from Company",
-                    "state": "State",
-                    "zip_code": "Zip Code",
-                    "consumer_consent_provided": "Consumer Consent Provided?",
-                    "consumer_disputed": "Consumer Disputed?",
-                    "submitted_via": "Submitted Via",
-                    "tags": "Tags",
-                    "timely": "Timely Response?"
-                }
-                res = csv_helper.update_headers(header_dict, res)
+                readable_header = ",".join('"' + rfield + '"' 
+                    for rfield in CSV_ORDERED_HEADERS.values()) + "\n"
+                res =  readable_header + res
     return res
 
 
