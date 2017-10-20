@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 PARAMS = {
     "format": "default",
     "field": "complaint_what_happened",
@@ -37,3 +39,24 @@ EXPORT_FORMATS = (
     'csv',
     'json',
 )
+
+CSV_ORDERED_HEADERS = OrderedDict([
+    ("date_received", "Date received"), 
+    ("product", "Product"), 
+    ("sub_product", "Sub-product"),
+    ("issue", "Issue"),
+    ("sub_issue", "Sub-issue"),
+    ("complaint_what_happened", "Consumer complaint narrative"),
+    ("company_public_response", "Company public response"),
+    ("company", "Company"),
+    ("state", "State"),
+    ("zip_code", "ZIP code"),
+    ("tags", "Tags"),
+    ("consumer_consent_provided", "Consumer consent provided?"),
+    ("submitted_via", "Submitted via"),
+    ("date_sent_to_company", "Date sent to company"),
+    ("company_response", "Company response to consumer"),
+    ("timely", "Timely response?"),
+    ("consumer_disputed", "Consumer disputed?"),
+    ("complaint_id", "Complaint ID")
+])

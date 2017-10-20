@@ -15,9 +15,13 @@ from complaint_search.es_builders import (
     AggregationBuilder,
     SearchBuilder
 )
-from complaint_search.defaults import EXPORT_FORMATS
+from complaint_search.defaults import (
+    CSV_ORDERED_HEADERS,
+    EXPORT_FORMATS
+)
 from datetime import datetime
 from elasticsearch import Elasticsearch
+from collections import namedtuple
 import requests
 import os
 import copy
@@ -202,16 +206,24 @@ class EsInterfaceTest_Search(TestCase):
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE", "DOC_TYPE")
     @mock.patch.object(Elasticsearch, 'search')
-    @mock.patch('requests.get', ok=True, content="RGET_OK")
+    @mock.patch('requests.get')
     @mock.patch('json.dumps')
     @mock.patch('urllib.urlencode')
-    def test_search_with_format_nondefault__valid(self, mock_urlencode, mock_jdump, mock_rget, mock_search):
+    def test_search_with_format_nondefault__valid(self, mock_urlencode,
+        mock_jdump, mock_rget, mock_search):
         mock_search.return_value = 'OK'
         mock_jdump.return_value = 'JDUMPS_OK'
+        RGet = namedtuple('RGet', 'ok, content')
+        mock_rget.return_value = RGet(ok=True, content='RGET_OK')
         body = load("search_with_format_nondefault__valid")
         format_list = EXPORT_FORMATS
         for format in format_list:
             res = search(format=format)
+            expected_res = 'RGET_OK'
+            if format == 'csv':
+                expected_res = ",".join('"' + header + '"'
+                    for header in CSV_ORDERED_HEADERS.values()) + "\nRGET_OK"
+            self.assertEqual(res, expected_res)
             self.assertEqual(len(mock_jdump.call_args), 2)
             self.assertEqual(1, len(mock_jdump.call_args[0]))
             act_body = mock_jdump.call_args[0][0]
@@ -222,7 +234,12 @@ class EsInterfaceTest_Search(TestCase):
             self.assertIsNone(deep.diff(act_body, body))
             self.assertEqual(len(mock_urlencode.call_args), 2)
             self.assertEqual(1, len(mock_urlencode.call_args[0]))
-            param = {"format": format, "source": "JDUMPS_OK"}
+            param = {
+                "format": format,
+                "source": "JDUMPS_OK",
+                "append.header": "false",
+                "fl": ",".join(header for header in CSV_ORDERED_HEADERS.keys())
+            }
             act_param = mock_urlencode.call_args[0][0]
             self.assertEqual(param, act_param)
 
@@ -231,7 +248,6 @@ class EsInterfaceTest_Search(TestCase):
 
         mock_search.assert_not_called()
         self.assertEqual(len(format_list), mock_rget.call_count)
-
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._get_meta")
     @mock.patch.object(Elasticsearch, 'search')

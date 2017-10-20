@@ -2,6 +2,7 @@ import os
 import urllib
 import json
 import copy
+import time
 from datetime import datetime, date, timedelta
 from collections import defaultdict, namedtuple
 import requests
@@ -12,7 +13,11 @@ from complaint_search.es_builders import (
     PostFilterBuilder,
     AggregationBuilder
 )
-from complaint_search.defaults import PARAMS, EXPORT_FORMATS
+from complaint_search.defaults import (
+    PARAMS, 
+    EXPORT_FORMATS,
+    CSV_ORDERED_HEADERS
+)
 
 _ES_URL = "{}://{}:{}".format("http", os.environ.get('ES_HOST', 'localhost'),
                               os.environ.get('ES_PORT', '9200'))
@@ -157,13 +162,23 @@ def search(agg_exclude=None, **kwargs):
         # Size also doesn't seem to be relevant anymore
         del(body["from"])
 
-        p = {"format": format, "source": json.dumps(body)}
+        p = {
+            "format": format, 
+            "source": json.dumps(body), 
+            "fl": ",".join(field for field in CSV_ORDERED_HEADERS.keys()),
+            "append.header": "false"
+        }
         p = urllib.urlencode(p)
+
         url = "{}/{}/{}/_data?{}".format(_ES_URL, _COMPLAINT_ES_INDEX,
                                          _COMPLAINT_DOC_TYPE, p)
         response = requests.get(url, auth=(_ES_USER, _ES_PASSWORD))
         if response.ok:
             res = response.content
+            if format == "csv":
+                readable_header = ",".join('"' + rfield + '"' 
+                    for rfield in CSV_ORDERED_HEADERS.values()) + "\n"
+                res =  readable_header + res
     return res
 
 
