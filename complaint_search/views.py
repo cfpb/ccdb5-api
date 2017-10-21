@@ -4,7 +4,7 @@ from rest_framework.decorators import (
 )
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
 from rest_framework.response import Response
-from django.http import HttpResponse
+from django.http import HttpResponse, StreamingHttpResponse
 from django.conf import settings
 from datetime import datetime
 from elasticsearch import TransportError
@@ -133,11 +133,27 @@ def search(request):
         # If format is in export formats, update its attachment response
         # with a filename
         if format in EXPORT_FORMATS:
+
+            FORMAT_CONTENT_TYPE_MAP = {
+                "json": "application/json",
+                "csv": "text/csv",
+            }
+
+            response = StreamingHttpResponse(
+                streaming_content=results,
+                content_type=FORMAT_CONTENT_TYPE_MAP[format]
+            )
             filename = 'complaints-{}.{}'.format(
                 datetime.now().strftime('%Y-%m-%d_%H_%M'), format
             )
             headerTemplate = 'attachment; filename="{}"'
-            headers['Content-Disposition'] = headerTemplate.format(filename)
+            response['Content-Disposition'] = headerTemplate.format(filename)
+            for header in headers:
+                response[header] = headers[header]
+
+            return response
+
+        else:
 
         return Response(results, headers=headers)
 

@@ -18,6 +18,7 @@ from complaint_search.defaults import (
     EXPORT_FORMATS,
     CSV_ORDERED_HEADERS
 )
+from stream_content import StreamContent
 
 _ES_URL = "{}://{}:{}".format("http", os.environ.get('ES_HOST', 'localhost'),
                               os.environ.get('ES_PORT', '9200'))
@@ -172,13 +173,14 @@ def search(agg_exclude=None, **kwargs):
 
         url = "{}/{}/{}/_data?{}".format(_ES_URL, _COMPLAINT_ES_INDEX,
                                          _COMPLAINT_DOC_TYPE, p)
-        response = requests.get(url, auth=(_ES_USER, _ES_PASSWORD))
+        response = requests.get(url, auth=(_ES_USER, _ES_PASSWORD), stream=True)
         if response.ok:
-            res = response.content
+            print response.headers['content-length']
+            res = response.iter_content(chunk_size=512)
             if format == "csv":
                 readable_header = ",".join('"' + rfield + '"' 
                     for rfield in CSV_ORDERED_HEADERS.values()) + "\n"
-                res =  readable_header + res
+                res = StreamContent(readable_header, res)
     return res
 
 
