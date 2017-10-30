@@ -4,10 +4,10 @@ import json
 import abc
 from collections import defaultdict, namedtuple
 from complaint_search.defaults import (
-    PARAMS, 
-    DELIMITER, 
-    SOURCE_FIELDS,
-    EXPORT_FORMATS
+    DELIMITER,
+    EXPORT_FORMATS,
+    PARAMS,
+    SOURCE_FIELDS
 )
 
 

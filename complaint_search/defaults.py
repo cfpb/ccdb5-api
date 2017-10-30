@@ -60,3 +60,12 @@ CSV_ORDERED_HEADERS = OrderedDict([
     ("consumer_disputed", "Consumer disputed?"),
     ("complaint_id", "Complaint ID")
 ])
+
+AGG_EXCLUDE_FIELDS = ['company', 'zip_code']
+
+CHUNK_SIZE = 512
+
+FORMAT_CONTENT_TYPE_MAP = {
+    "json": "application/json",
+    "csv": "text/csv",
+}

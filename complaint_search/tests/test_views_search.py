@@ -1,6 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.core.cache import cache
+from django.http import HttpResponse, StreamingHttpResponse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from unittest import skip
@@ -8,7 +9,10 @@ import copy
 import mock
 from datetime import date, datetime
 from elasticsearch import TransportError
-from complaint_search.defaults import PARAMS
+from complaint_search.defaults import (
+    FORMAT_CONTENT_TYPE_MAP, 
+    PARAMS,
+)
 from complaint_search.es_interface import search
 from complaint_search.serializer import SearchInputSerializer
 from complaint_search.throttling import (
@@ -75,11 +79,6 @@ class SearchTests(APITestCase):
         """
         Searching with format
         """
-        FORMAT_CONTENT_TYPE_MAP = {
-            "json": "application/json",
-            "csv": "text/csv",
-        }
-
         for k, v in FORMAT_CONTENT_TYPE_MAP.iteritems():
             url = reverse('complaint_search:search')
             params = {"format": k}
@@ -89,10 +88,7 @@ class SearchTests(APITestCase):
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertIn(v, response.get('Content-Type'))
             self.assertEqual(response.get('Content-Disposition'), 'attachment; filename="complaints-2017-01-01_12_00.{}"'.format(k))
-            if k == "json":
-                self.assertEqual('"OK"', response.content)
-            else:
-                self.assertEqual('OK', response.content)
+            self.assertTrue(isinstance(response, StreamingHttpResponse))
         mock_essearch.has_calls([ mock.call(format=k) for k in FORMAT_CONTENT_TYPE_MAP ], any_order=True)
         self.assertEqual(len(FORMAT_CONTENT_TYPE_MAP), mock_essearch.call_count)
 
@@ -640,7 +636,7 @@ class SearchTests(APITestCase):
         for i in range(limit):
             response = self.client.get(url, {"format": "csv"})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertEqual('OK', response.data)
+            self.assertTrue(isinstance(response, StreamingHttpResponse))
 
         response = self.client.get(url, {"format": "csv"})
         self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
@@ -660,7 +656,7 @@ class SearchTests(APITestCase):
         for _ in range(limit):
             response = self.client.get(url, {"format": "csv"}, HTTP_REFERER=_CCDB_UI_URL)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertEqual('OK', response.data)
+            self.assertTrue(isinstance(response, StreamingHttpResponse))
 
         response = self.client.get(url, {"format": "csv"}, HTTP_REFERER=_CCDB_UI_URL)
         self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
