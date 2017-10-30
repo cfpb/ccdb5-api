@@ -14,9 +14,10 @@ from complaint_search.es_builders import (
     AggregationBuilder
 )
 from complaint_search.defaults import (
-    PARAMS, 
+    CHUNK_SIZE,
+    CSV_ORDERED_HEADERS,
     EXPORT_FORMATS,
-    CSV_ORDERED_HEADERS
+    PARAMS,
 )
 from stream_content import StreamContent
 
@@ -175,8 +176,7 @@ def search(agg_exclude=None, **kwargs):
                                          _COMPLAINT_DOC_TYPE, p)
         response = requests.get(url, auth=(_ES_USER, _ES_PASSWORD), stream=True)
         if response.ok:
-            print response.headers['content-length']
-            res = response.iter_content(chunk_size=512)
+            res = response.iter_content(chunk_size=CHUNK_SIZE)
             if format == "csv":
                 readable_header = ",".join('"' + rfield + '"' 
                     for rfield in CSV_ORDERED_HEADERS.values()) + "\n"

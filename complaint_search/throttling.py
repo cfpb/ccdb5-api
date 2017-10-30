@@ -1,5 +1,6 @@
 import os
 from rest_framework.throttling import AnonRateThrottle
+from complaint_search.defaults import EXPORT_FORMATS
 
 _CCDB_UI_URL = os.environ.get('CCDB_UI_URL', 
     'http://localhost:8000/data-research/consumer-complaints/search')
@@ -13,7 +14,7 @@ class CCDBRateThrottle(AnonRateThrottle):
 
     def is_export(self, request): # otherwise it is a search
         return request.query_params.get("format") and \
-            request.query_params.get("format") in ('json', 'csv', 'xls', 'xlsx')
+            request.query_params.get("format") in EXPORT_FORMATS
   
 class CCDBAnonRateThrottle(CCDBRateThrottle):
     scope = 'ccdb_anon'
