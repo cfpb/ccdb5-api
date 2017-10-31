@@ -11,7 +11,7 @@ from flags.state import flag_enabled
 from complaint_search.es_builders import (
     SearchBuilder,
     PostFilterBuilder,
-    AggregationBuilder
+    AggregationBuilder,
 )
 from complaint_search.defaults import (
     CHUNK_SIZE,
@@ -19,7 +19,10 @@ from complaint_search.defaults import (
     EXPORT_FORMATS,
     PARAMS,
 )
-from stream_content import StreamContent
+from stream_content import (
+    StreamCSVContent,
+    StreamJSONContent,
+)
 
 _ES_URL = "{}://{}:{}".format("http", os.environ.get('ES_HOST', 'localhost'),
                               os.environ.get('ES_PORT', '9200'))
@@ -177,10 +180,12 @@ def search(agg_exclude=None, **kwargs):
         response = requests.get(url, auth=(_ES_USER, _ES_PASSWORD), stream=True)
         if response.ok:
             res = response.iter_content(chunk_size=CHUNK_SIZE)
-            if format == "csv":
+            if format == "json":
+                res = StreamJSONContent(res)
+            elif format == "csv":
                 readable_header = ",".join('"' + rfield + '"' 
                     for rfield in CSV_ORDERED_HEADERS.values()) + "\n"
-                res = StreamContent(readable_header, res)
+                res = StreamCSVContent(readable_header, res)
     return res
 
 

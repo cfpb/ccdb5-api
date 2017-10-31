@@ -19,7 +19,7 @@ from complaint_search.defaults import (
     CSV_ORDERED_HEADERS,
     EXPORT_FORMATS
 )
-from complaint_search.stream_content import StreamContent
+from complaint_search.stream_content import StreamCSVContent
 from datetime import datetime
 from elasticsearch import Elasticsearch
 from collections import namedtuple
@@ -225,7 +225,7 @@ class EsInterfaceTest_Search(TestCase):
 
                 expected_header = ",".join('"' + header + '"'
                     for header in CSV_ORDERED_HEADERS.values()) + "\n"
-                self.assertTrue(isinstance(res, StreamContent))
+                self.assertTrue(isinstance(res, StreamCSVContent))
                 self.assertEqual(res.header, expected_header)
                 self.assertEqual(res.content, 'RGET_OK')
             else:
