@@ -130,7 +130,7 @@ def search(request):
         return Response(
             serializer.errors, status=status.HTTP_400_BAD_REQUEST
         )
- 
+
     results = es_interface.search(
         agg_exclude=AGG_EXCLUDE_FIELDS, **serializer.validated_data)
     headers = _buildHeaders()
@@ -155,6 +155,7 @@ def search(request):
 
     return response
 
+
 @api_view(['GET'])
 @catch_es_error
 def suggest(request):
@@ -167,6 +168,7 @@ def suggest(request):
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 def _suggest_field(data, field, display_field=None):
     serializer = SuggestFilterInputSerializer(data=data)
     if serializer.is_valid():
@@ -176,6 +178,7 @@ def _suggest_field(data, field, display_field=None):
         return Response(results, headers=_buildHeaders())
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET'])
 @catch_es_error
@@ -188,6 +191,7 @@ def suggest_zip(request):
         data['text'] = data['text'].upper()
     return _suggest_field(data, 'zip_code')
 
+
 @api_view(['GET'])
 @catch_es_error
 def suggest_company(request):
@@ -198,6 +202,7 @@ def suggest_company(request):
     if data.get('text'):
         data['text'] = data['text'].upper()
     return _suggest_field(data, 'company.suggest', 'company.raw')
+
 
 @api_view(['GET'])
 @throttle_classes([DocumentAnonRateThrottle, ])
