@@ -19,7 +19,10 @@ from complaint_search.defaults import (
     CSV_ORDERED_HEADERS,
     EXPORT_FORMATS
 )
-from complaint_search.stream_content import StreamCSVContent
+from complaint_search.stream_content import (
+    StreamCSVContent,
+    StreamJSONContent,
+)
 from datetime import datetime
 from elasticsearch import Elasticsearch
 from collections import namedtuple
@@ -221,7 +224,7 @@ class EsInterfaceTest_Search(TestCase):
         for format in format_list:
             res = search(format=format)
             expected_res = 'RGET_OK'
-            if format == 'csv':
+            if format =='csv':
 
                 expected_header = ",".join('"' + header + '"'
                     for header in CSV_ORDERED_HEADERS.values()) + "\n"
@@ -229,7 +232,8 @@ class EsInterfaceTest_Search(TestCase):
                 self.assertEqual(res.header, expected_header)
                 self.assertEqual(res.content, 'RGET_OK')
             else:
-                self.assertEqual(res, 'RGET_OK')
+                self.assertTrue(isinstance(res, StreamJSONContent))
+                self.assertEqual(res.content, 'RGET_OK')
 
             self.assertEqual(len(mock_jdump.call_args), 2)
             self.assertEqual(1, len(mock_jdump.call_args[0]))
