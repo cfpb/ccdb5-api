@@ -168,8 +168,8 @@ def search(agg_exclude=None, **kwargs):
         del(body["from"])
 
         p = {
-            "format": format, 
-            "source": json.dumps(body), 
+            "format": format,
+            "source": json.dumps(body),
             "fl": ",".join(field for field in CSV_ORDERED_HEADERS.keys()),
             "append.header": "false"
         }
@@ -177,14 +177,15 @@ def search(agg_exclude=None, **kwargs):
 
         url = "{}/{}/{}/_data?{}".format(_ES_URL, _COMPLAINT_ES_INDEX,
                                          _COMPLAINT_DOC_TYPE, p)
-        response = requests.get(url, auth=(_ES_USER, _ES_PASSWORD), stream=True)
+        response = requests.get(url, auth=(
+            _ES_USER, _ES_PASSWORD), stream=True)
         if response.ok:
             res = response.iter_content(chunk_size=CHUNK_SIZE)
             if format == "json":
                 res = StreamJSONContent(res)
             elif format == "csv":
-                readable_header = ",".join('"' + rfield + '"' 
-                    for rfield in CSV_ORDERED_HEADERS.values()) + "\n"
+                readable_header = ",".join('"' + rfield + '"'
+                                           for rfield in CSV_ORDERED_HEADERS.values()) + "\n"
                 res = StreamCSVContent(readable_header, res)
     return res
 

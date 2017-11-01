@@ -1,6 +1,5 @@
-import re
-
 class StreamCSVContent(object):
+
     def __init__(self, header, content):
         self.header = header
         self.content = content
@@ -16,7 +15,9 @@ class StreamCSVContent(object):
         else:
             return next(self.content)
 
+
 class StreamJSONContent(object):
+
     def __init__(self, content):
         self.content = content
         self.complaint_in_progress = ""
@@ -28,17 +29,22 @@ class StreamJSONContent(object):
         # see if first line is reached
         try:
             first_eol_index = self.complaint_in_progress.index('\n')
-            
-            # see if we have 2nd completed line, and that's the complaint we want to return
-            # assuming at the EOF there's also a '\n' as seen from data format plugin so far
-            second_eol_index = self.complaint_in_progress.index('\n', first_eol_index + 1)
 
-            complaint = self.complaint_in_progress[first_eol_index + 1:second_eol_index + 1].strip()
+            # see if we have 2nd completed line, and that's the complaint we want to return
+            # assuming at the EOF there's also a '\n' as seen from data format
+            # plugin so far
+            second_eol_index = self.complaint_in_progress.index(
+                '\n', first_eol_index + 1)
+
+            complaint = self.complaint_in_progress[
+                first_eol_index + 1:second_eol_index + 1].strip()
             # save the rest for next iteration
-            self.complaint_in_progress = self.complaint_in_progress[second_eol_index + 1:]
+            self.complaint_in_progress = self.complaint_in_progress[
+                second_eol_index + 1:]
             return complaint
         except ValueError:
-            # This means cannot find two \n, complaint is not ready, need more data
+            # This means cannot find two \n, complaint is not ready, need more
+            # data
             return None
 
     def __iter__(self):
@@ -73,4 +79,3 @@ class StreamJSONContent(object):
                     return "]"
                 else:
                     raise StopIteration
-
