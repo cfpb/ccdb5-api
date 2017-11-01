@@ -30,6 +30,7 @@ class StreamJSONContent(object):
             first_eol_index = self.complaint_in_progress.index('\n')
             
             # see if we have 2nd completed line, and that's the complaint we want to return
+            # assuming at the EOF there's also a '\n' as seen from data format plugin so far
             second_eol_index = self.complaint_in_progress.index('\n', first_eol_index + 1)
 
             complaint = self.complaint_in_progress[first_eol_index + 1:second_eol_index + 1].strip()
