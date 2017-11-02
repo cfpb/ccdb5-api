@@ -216,7 +216,7 @@ class EsInterfaceTest_Search(TestCase):
     @mock.patch('json.dumps')
     @mock.patch('urllib.urlencode')
     def test_search_with_format_json__valid(self, mock_urlencode,
-                                                  mock_jdump, mock_rget, mock_search):
+                                            mock_jdump, mock_rget, mock_search):
         mock_search.return_value = 'OK'
         mock_jdump.return_value = 'JDUMPS_OK'
         RGet = namedtuple('RGet', 'ok, iter_content')
