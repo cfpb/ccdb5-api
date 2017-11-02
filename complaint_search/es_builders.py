@@ -174,6 +174,11 @@ class SearchBuilder(BaseBuilder):
         source = list(SOURCE_FIELDS)
         if self.params.get("format") in EXPORT_FORMATS:
             source.remove('has_narrative')
+        if self.params.get("format") == 'csv':
+            source.remove('date_received')
+            source.remove('date_sent_to_company')
+            source.append('date_received_formatted')
+            source.append('date_sent_to_company_formatted')
         return source
 
     def build(self):

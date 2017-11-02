@@ -41,7 +41,7 @@ EXPORT_FORMATS = (
 )
 
 CSV_ORDERED_HEADERS = OrderedDict([
-    ("date_received", "Date received"), 
+    ("date_received_formatted", "Date received"),
     ("product", "Product"), 
     ("sub_product", "Sub-product"),
     ("issue", "Issue"),
@@ -54,7 +54,7 @@ CSV_ORDERED_HEADERS = OrderedDict([
     ("tags", "Tags"),
     ("consumer_consent_provided", "Consumer consent provided?"),
     ("submitted_via", "Submitted via"),
-    ("date_sent_to_company", "Date sent to company"),
+    ("date_sent_to_company_formatted", "Date sent to company"),
     ("company_response", "Company response to consumer"),
     ("timely", "Timely response?"),
     ("consumer_disputed", "Consumer disputed?"),
