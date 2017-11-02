@@ -215,53 +215,95 @@ class EsInterfaceTest_Search(TestCase):
     @mock.patch('requests.get')
     @mock.patch('json.dumps')
     @mock.patch('urllib.urlencode')
-    def test_search_with_format_nondefault__valid(self, mock_urlencode,
+    def test_search_with_format_json__valid(self, mock_urlencode,
                                                   mock_jdump, mock_rget, mock_search):
         mock_search.return_value = 'OK'
         mock_jdump.return_value = 'JDUMPS_OK'
         RGet = namedtuple('RGet', 'ok, iter_content')
         mock_rget.return_value = RGet(
             ok=True, iter_content=mock.MagicMock(return_value='RGET_OK'))
-        body = load("search_with_format_nondefault__valid")
-        format_list = EXPORT_FORMATS
-        for format in format_list:
-            res = search(format=format)
-            expected_res = 'RGET_OK'
-            if format == 'csv':
+        body = load("search_with_format_json__valid")
+        format = 'json'
+        res = search(format=format)
+        expected_res = 'RGET_OK'
+        self.assertTrue(isinstance(res, StreamJSONContent))
+        self.assertEqual(res.content, 'RGET_OK')
 
-                expected_header = ",".join('"' + header + '"'
-                                           for header in CSV_ORDERED_HEADERS.values()) + "\n"
-                self.assertTrue(isinstance(res, StreamCSVContent))
-                self.assertEqual(res.header, expected_header)
-                self.assertEqual(res.content, 'RGET_OK')
-            else:
-                self.assertTrue(isinstance(res, StreamJSONContent))
-                self.assertEqual(res.content, 'RGET_OK')
+        self.assertEqual(len(mock_jdump.call_args), 2)
+        self.assertEqual(1, len(mock_jdump.call_args[0]))
+        act_body = mock_jdump.call_args[0][0]
+        diff = deep.diff(act_body, body)
+        if diff:
+            print "format={}".format(format)
+            diff.print_full()
+        self.assertIsNone(deep.diff(act_body, body))
+        self.assertEqual(len(mock_urlencode.call_args), 2)
+        self.assertEqual(1, len(mock_urlencode.call_args[0]))
+        param = {
+            "format": format,
+            "source": "JDUMPS_OK",
+            "append.header": "false",
+            "fl": ",".join(header for header in CSV_ORDERED_HEADERS.keys())
+        }
+        act_param = mock_urlencode.call_args[0][0]
+        self.assertEqual(param, act_param)
 
-            self.assertEqual(len(mock_jdump.call_args), 2)
-            self.assertEqual(1, len(mock_jdump.call_args[0]))
-            act_body = mock_jdump.call_args[0][0]
-            diff = deep.diff(act_body, body)
-            if diff:
-                print "format={}".format(format)
-                diff.print_full()
-            self.assertIsNone(deep.diff(act_body, body))
-            self.assertEqual(len(mock_urlencode.call_args), 2)
-            self.assertEqual(1, len(mock_urlencode.call_args[0]))
-            param = {
-                "format": format,
-                "source": "JDUMPS_OK",
-                "append.header": "false",
-                "fl": ",".join(header for header in CSV_ORDERED_HEADERS.keys())
-            }
-            act_param = mock_urlencode.call_args[0][0]
-            self.assertEqual(param, act_param)
-
-        self.assertEqual(mock_jdump.call_count, len(format_list))
-        self.assertEqual(mock_urlencode.call_count, len(format_list))
+        self.assertEqual(mock_jdump.call_count, 1)
+        self.assertEqual(mock_urlencode.call_count, 1)
 
         mock_search.assert_not_called()
-        self.assertEqual(len(format_list), mock_rget.call_count)
+        self.assertEqual(1, mock_rget.call_count)
+
+    @mock.patch("complaint_search.es_interface._ES_URL", "ES_URL")
+    @mock.patch("complaint_search.es_interface._ES_USER", "ES_USER")
+    @mock.patch("complaint_search.es_interface._ES_PASSWORD", "ES_PASSWORD")
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE", "DOC_TYPE")
+    @mock.patch.object(Elasticsearch, 'search')
+    @mock.patch('requests.get')
+    @mock.patch('json.dumps')
+    @mock.patch('urllib.urlencode')
+    def test_search_with_format_csv__valid(self, mock_urlencode, mock_jdump, mock_rget, mock_search):
+        mock_search.return_value = 'OK'
+        mock_jdump.return_value = 'JDUMPS_OK'
+        RGet = namedtuple('RGet', 'ok, iter_content')
+        mock_rget.return_value = RGet(
+            ok=True, iter_content=mock.MagicMock(return_value='RGET_OK'))
+        body = load("search_with_format_csv__valid")
+        format = 'csv'
+        res = search(format=format)
+        expected_res = 'RGET_OK'
+
+        expected_header = ",".join('"' + header + '"'
+                                   for header in CSV_ORDERED_HEADERS.values()) + "\n"
+        self.assertTrue(isinstance(res, StreamCSVContent))
+        self.assertEqual(res.header, expected_header)
+        self.assertEqual(res.content, 'RGET_OK')
+
+        self.assertEqual(len(mock_jdump.call_args), 2)
+        self.assertEqual(1, len(mock_jdump.call_args[0]))
+        act_body = mock_jdump.call_args[0][0]
+        diff = deep.diff(act_body, body)
+        if diff:
+            print "format={}".format(format)
+            diff.print_full()
+        self.assertIsNone(deep.diff(act_body, body))
+        self.assertEqual(len(mock_urlencode.call_args), 2)
+        self.assertEqual(1, len(mock_urlencode.call_args[0]))
+        param = {
+            "format": format,
+            "source": "JDUMPS_OK",
+            "append.header": "false",
+            "fl": ",".join(header for header in CSV_ORDERED_HEADERS.keys())
+        }
+        act_param = mock_urlencode.call_args[0][0]
+        self.assertEqual(param, act_param)
+
+        self.assertEqual(mock_jdump.call_count, 1)
+        self.assertEqual(mock_urlencode.call_count, 1)
+
+        mock_search.assert_not_called()
+        self.assertEqual(1, mock_rget.call_count)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._get_meta")
