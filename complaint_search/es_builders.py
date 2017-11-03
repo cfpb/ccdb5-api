@@ -115,12 +115,16 @@ class BaseBuilder(object):
                 f_list = []
                 for item, child in item_dict.iteritems():
                     # Always append the item to list
+                    parent_term = {"terms": {es_field_name: [item]}}
                     if not child:
                         f_list.append({"terms": {es_field_name: [item]}})
                     else:
                         child_term = {"terms": {self._get_es_name(self._get_child(field)): child}}
-                        f_list.append(child_term)
-
+                        parent_child_bool_structure = {"bool": {"must": [], "should": []}}
+                        parent_child_bool_structure["bool"]["must"].append(parent_term)
+                        parent_child_bool_structure["bool"]["should"].append(child_term)
+                        f_list.append(parent_child_bool_structure)
+                
                 return f_list
 
     # This creates a dictionary of all filter_clauses, where the keys are the field name
