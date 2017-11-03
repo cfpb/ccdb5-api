@@ -76,11 +76,21 @@ def _get_meta():
         # size: 0 here to prevent taking too long since we only needed max_date
         "size": 0,
         "aggs": {
-            "max_date": {"max": {"field": "date_received"}},
+            "max_date": {
+                "max": {
+                    "field": "date_received",
+                    "format": "yyyy-MM-dd'T'HH:mm:ss"
+                }
+            },
             "max_narratives": {
                 "filter": {"term": {"has_narrative": "true"}},
                 "aggs": {
-                    "max_date": {"max": {"field": ":updated_at"}}
+                    "max_date": {
+                        "max": {
+                            "field": ":updated_at",
+                            "format": "yyyy-MM-dd'T'HH:mm:ss"
+                        }
+                    }
                 }
             }
         }
