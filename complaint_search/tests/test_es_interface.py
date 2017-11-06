@@ -759,7 +759,7 @@ class EsInterfaceTest_Search(TestCase):
         mock_get_meta.return_value = copy.deepcopy(
             self.MOCK_SEARCH_RESULT["_meta"])
         body = load("search_with_product__valid")
-        res = search(product=["Payday Loan", u"Mortgage\u2022FHA mortgage"])
+        res = search([u"zip_code", u"company"], product=["Payday loan", u"Mortgage\u2022FHA mortgage"])
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
@@ -786,7 +786,7 @@ class EsInterfaceTest_Search(TestCase):
         mock_get_meta.return_value = copy.deepcopy(
             self.MOCK_SEARCH_RESULT["_meta"])
         body = load("search_with_issue__valid")
-        res = search(issue=[u"Communication tactics\u2022Frequent or repeated calls",
+        res = search([u"zip_code", u"company"], issue=[u"Communication tactics\u2022Frequent or repeated calls",
                             "Loan servicing, payments, escrow account"])
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
