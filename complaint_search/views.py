@@ -195,12 +195,25 @@ def suggest_zip(request):
 @api_view(['GET'])
 @catch_es_error
 def suggest_company(request):
+    
+    # Key removal that takes mutation into account in case of other reference
+    def removekey(d, key):
+        r = dict(d)
+        del r[key]
+        return r
+
     validVars = list(QPARAMS_VARS)
     validVars.append('text')
 
     data = _parse_query_params(request.query_params, validVars)
+    
+    # Company filters should not be applied to their own aggregation filter
+    if 'company' in data:
+        data = removekey(data, 'company')
+
     if data.get('text'):
         data['text'] = data['text'].upper()
+    
     return _suggest_field(data, 'company.suggest', 'company.raw')
 
 
