@@ -212,7 +212,7 @@ class EsInterfaceTest_Search(TestCase):
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE", "DOC_TYPE")
     @mock.patch.object(Elasticsearch, 'search')
-    @mock.patch('requests.get')
+    @mock.patch('requests.Session.get')
     @mock.patch('json.dumps')
     @mock.patch('urllib.urlencode')
     def test_search_with_format_json__valid(self, mock_urlencode,
@@ -260,7 +260,7 @@ class EsInterfaceTest_Search(TestCase):
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE", "DOC_TYPE")
     @mock.patch.object(Elasticsearch, 'search')
-    @mock.patch('requests.get')
+    @mock.patch('requests.Session.get')
     @mock.patch('json.dumps')
     @mock.patch('urllib.urlencode')
     def test_search_with_format_csv__valid(self, mock_urlencode, mock_jdump, mock_rget, mock_search):
