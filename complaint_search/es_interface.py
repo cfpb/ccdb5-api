@@ -188,7 +188,13 @@ def search(agg_exclude=None, **kwargs):
 
         url = "{}/{}/{}/_data?{}".format(_ES_URL, _COMPLAINT_ES_INDEX,
                                          _COMPLAINT_DOC_TYPE, p)
-        response = requests.get(url, auth=(
+
+        # requests.get does not seem to respect an IP address in NO_PROXY.
+        # This is a workaround based on:
+        # https://stackoverflow.com/questions/28521535/requests-how-to-disable-bypass-proxy/28521696#28521696  # noqa
+        session = requests.Session()
+        session.trust_env = False
+        response = session.get(url, auth=(
             _ES_USER, _ES_PASSWORD), stream=True)
         if response.ok:
             res = response.iter_content(chunk_size=CHUNK_SIZE)
