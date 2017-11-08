@@ -1234,7 +1234,8 @@ class EsInterfaceTest_FilterSuggest(TestCase):
                     {"key": "Bank 2", "doc_count": 1123},
                     {"key": "BANK 3rd", "doc_count": 810},
                     {"key": "bank 4", "doc_count": 775},
-                    {"key": "BANK 5th", "doc_count": 405}
+                    {"key": "BANK 5th", "doc_count": 405},
+                    {"key": "company 1", "doc_count": 12}
                 ]}}
         mock_search.return_value = result
         mock_builder1.return_value = self.body
@@ -1250,7 +1251,7 @@ class EsInterfaceTest_FilterSuggest(TestCase):
         mock_builder2.return_value = agg
 
         actual = filter_suggest(
-            'company.suggest', display_field='company.raw', text='BA')
+            'company.suggest', display_field='company.raw', text='BA', company='company 1')
 
         mock_search.assert_called_once_with(
             body={
@@ -1280,7 +1281,7 @@ class EsInterfaceTest_FilterSuggest(TestCase):
             index='INDEX')
         mock_builder2.assert_called_once_with('company.suggest')
         self.assertEqual(actual, [
-            'bank 1', 'Bank 2', 'BANK 3rd', 'bank 4', 'BANK 5th'
+            'bank 1', 'Bank 2', 'BANK 3rd', 'bank 4', 'BANK 5th', 'company 1'
         ])
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")

@@ -196,6 +196,7 @@ def suggest_zip(request):
 @catch_es_error
 def suggest_company(request):
     
+    # Key removal that takes mutation into account in case of other reference
     def removekey(d, key):
         r = dict(d)
         del r[key]
@@ -206,7 +207,7 @@ def suggest_company(request):
 
     data = _parse_query_params(request.query_params, validVars)
     
-    # Company filters to date should not be applied to return params
+    # Company filters should not be applied to their own aggregation filter
     if 'company' in data:
         data = removekey(data, 'company')
 
