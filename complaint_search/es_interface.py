@@ -72,6 +72,7 @@ def from_timestamp(seconds):
 
 
 def _get_meta():
+    # Hard code noon Eastern Time zone since that is where it is built
     body = {
         # size: 0 here to prevent taking too long since we only needed max_date
         "size": 0,
@@ -79,7 +80,7 @@ def _get_meta():
             "max_date": {
                 "max": {
                     "field": "date_received",
-                    "format": "yyyy-MM-dd'T'HH:mm:ss"
+                    "format": "yyyy-MM-dd'T'12:00:00-05:00"
                 }
             },
             "max_narratives": {
@@ -88,7 +89,7 @@ def _get_meta():
                     "max_date": {
                         "max": {
                             "field": ":updated_at",
-                            "format": "yyyy-MM-dd'T'HH:mm:ss"
+                            "format": "yyyy-MM-dd'T'12:00:00-05:00"
                         }
                     }
                 }
