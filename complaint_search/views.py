@@ -195,12 +195,24 @@ def suggest_zip(request):
 @api_view(['GET'])
 @catch_es_error
 def suggest_company(request):
+    
+    def removekey(d, key):
+        r = dict(d)
+        del r[key]
+        return r
+
     validVars = list(QPARAMS_VARS)
     validVars.append('text')
 
     data = _parse_query_params(request.query_params, validVars)
+    
+    # Company filters to date should not be applied to return params
+    if 'company' in data:
+        data = removekey(data, 'company')
+
     if data.get('text'):
         data['text'] = data['text'].upper()
+    
     return _suggest_field(data, 'company.suggest', 'company.raw')
 
 
