@@ -129,4 +129,4 @@ class SuggestInputSerializer(serializers.Serializer):
 
 
 class SuggestFilterInputSerializer(SearchInputSerializer):
-    text = serializers.CharField(max_length=10, required=True)
+    text = serializers.CharField(max_length=100, required=True)
