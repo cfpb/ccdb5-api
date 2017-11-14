@@ -6,6 +6,7 @@ import time
 from datetime import datetime, date, timedelta
 from collections import defaultdict, namedtuple
 import requests
+import logging
 from elasticsearch import Elasticsearch
 from flags.state import flag_enabled
 from complaint_search.es_builders import (
@@ -146,6 +147,12 @@ def search(agg_exclude=None, **kwargs):
     post_filter_builder = PostFilterBuilder()
     post_filter_builder.add(**params)
     body["post_filter"] = post_filter_builder.build()
+
+    log = logging.getLogger(__name__)
+    log.info(
+        'Calling %s/%s/%s/_search with %s',
+        _ES_URL, _COMPLAINT_ES_INDEX, _COMPLAINT_DOC_TYPE, body
+    )
 
     # format
     res = None
