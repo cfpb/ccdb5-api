@@ -138,12 +138,15 @@ class BaseBuilder(object):
 
     def _build_date_range_filter(self, date_min, date_max, es_field_name):
         date_clause = {}
+        timeSuffix = u'T12:00:00-05:00'
         if date_min or date_max:
             date_clause = {"range": {es_field_name: {}}}
             if date_min:
-                date_clause["range"][es_field_name]["from"] = str(date_min)
+                d = str(date_min) + timeSuffix
+                date_clause["range"][es_field_name]["from"] = d
             if date_max:
-                date_clause["range"][es_field_name]["to"] = str(date_max)
+                d =  str(date_max) + timeSuffix
+                date_clause["range"][es_field_name]["to"] = d
 
         return date_clause
 
