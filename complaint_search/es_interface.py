@@ -84,6 +84,12 @@ def _get_meta():
                     "format": "yyyy-MM-dd'T'12:00:00-05:00"
                 }
             },
+            "max_indexed_date": {
+                "max": {
+                    "field": "date_indexed",
+                    "format": "yyyy-MM-dd'T'12:00:00-05:00"
+                }
+            },
             "max_narratives": {
                 "filter": {"term": {"has_narrative": "true"}},
                 "aggs": {
@@ -105,6 +111,7 @@ def _get_meta():
     result = {
         "license": "CC0",
         "last_updated": max_date_res["aggregations"]["max_date"]["value_as_string"],
+        "last_indexed": max_date_res["aggregations"]["max_indexed_date"]["value_as_string"],
         "total_record_count": count_res["count"],
         "is_data_stale": _is_data_stale(from_timestamp(max_date_res["aggregations"]["max_narratives"]["max_date"]["value"])),
         "has_data_issue": flag_enabled('CCDB_TECHNICAL_ISSUES')

@@ -70,6 +70,9 @@ class EsInterfaceTest_Search(TestCase):
                 "max_date": {
                     "value_as_string": "2017-01-01"
                 },
+                "max_indexed_date": {
+                    "value_as_string": "2017-01-02"
+                },
                 "max_narratives": {
                     "max_date": {
                         "value": 1507011188.0
@@ -89,6 +92,7 @@ class EsInterfaceTest_Search(TestCase):
         },
         '_meta': {
             'total_record_count': 100,
+            'last_indexed': '2017-01-02',
             'last_updated': '2017-01-01',
             'license': 'CC0',
             'is_data_stale': False,
