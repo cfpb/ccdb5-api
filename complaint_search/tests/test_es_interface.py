@@ -6,6 +6,7 @@ from complaint_search.es_interface import (
     _ES_USER,
     _ES_PASSWORD,
     _get_meta,
+    _get_now,
     search,
     suggest,
     filter_suggest,
@@ -68,14 +69,16 @@ class EsInterfaceTest_Search(TestCase):
         {
             "aggregations": {
                 "max_date": {
-                    "value_as_string": "2017-01-01"
+                    "value_as_string": "2017-01-01",
+                    "value": 1483280000000.0
                 },
                 "max_indexed_date": {
                     "value_as_string": "2017-01-02"
                 },
                 "max_narratives": {
                     "max_date": {
-                        "value": 1507011188.0
+                        "value": 1483400000.0
+                        # 150970000.0 for November 3rd 2017
                     }
                 }
             }
@@ -96,6 +99,7 @@ class EsInterfaceTest_Search(TestCase):
             'last_updated': '2017-01-01',
             'license': 'CC0',
             'is_data_stale': False,
+            'is_narrative_stale': False,
             'has_data_issue': False,
         }
     }
@@ -135,6 +139,7 @@ class EsInterfaceTest_Search(TestCase):
         res = _get_meta()
         exp_res = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
         exp_res['is_data_stale'] = True
+        exp_res['is_narrative_stale'] = True
         self.assertDictEqual(exp_res, res)
 
     @mock.patch("complaint_search.es_interface._get_now")
