@@ -69,8 +69,7 @@ class EsInterfaceTest_Search(TestCase):
         {
             "aggregations": {
                 "max_date": {
-                    "value_as_string": "2017-01-01",
-                    "value": 1483280000000.0
+                    "value_as_string": "2017-01-01"
                 },
                 "max_indexed_date": {
                     "value_as_string": "2017-01-02"
