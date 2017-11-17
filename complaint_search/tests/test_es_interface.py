@@ -6,7 +6,6 @@ from complaint_search.es_interface import (
     _ES_USER,
     _ES_PASSWORD,
     _get_meta,
-    _get_now,
     search,
     suggest,
     filter_suggest,
