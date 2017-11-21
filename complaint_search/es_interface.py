@@ -68,6 +68,7 @@ def _is_data_stale(last_updated_time):
 
 
 def from_timestamp(seconds):
+    # Socrata fields (:field_name) are indexed in seconds, not the usual milliseconds
     fromtimestamp = datetime.fromtimestamp(seconds)
     return fromtimestamp.strftime('%Y-%m-%d')
 
@@ -96,7 +97,6 @@ def _get_meta():
                     "max_date": {
                         "max": {
                             "field": ":updated_at",
-                            "format": "yyyy-MM-dd'T'12:00:00-05:00"
                         }
                     }
                 }
@@ -104,16 +104,16 @@ def _get_meta():
         }
     }
     max_date_res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
-    count_res = _get_es().count(index=_COMPLAINT_ES_INDEX, doc_type=_COMPLAINT_DOC_TYPE)
-    down_res = _is_data_stale(max_date_res["aggregations"][
-                              "max_date"]["value_as_string"])
+    count_res = _get_es().count(index=_COMPLAINT_ES_INDEX, 
+        doc_type=_COMPLAINT_DOC_TYPE)
 
     result = {
         "license": "CC0",
         "last_updated": max_date_res["aggregations"]["max_date"]["value_as_string"],
         "last_indexed": max_date_res["aggregations"]["max_indexed_date"]["value_as_string"],
         "total_record_count": count_res["count"],
-        "is_data_stale": _is_data_stale(from_timestamp(max_date_res["aggregations"]["max_narratives"]["max_date"]["value"])),
+        "is_data_stale": _is_data_stale(max_date_res["aggregations"]["max_date"]["value_as_string"]),
+        "is_narrative_stale": _is_data_stale(from_timestamp(max_date_res["aggregations"]["max_narratives"]["max_date"]["value"])),
         "has_data_issue": flag_enabled('CCDB_TECHNICAL_ISSUES')
     }
 
