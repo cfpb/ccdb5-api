@@ -94,7 +94,20 @@
         "company": {
             "filter": {
                 "bool": {
-                    "filter": [],
+                    "filter": [
+                {
+                  "bool": {
+                    "should": {
+                      "terms": {
+                        "company.raw": [
+                          "Bank 1",
+                          "Second Bank"
+                        ]
+                      }
+                    }
+                  }
+                }
+              ],
                     "should": [],
                     "must": []
                 }

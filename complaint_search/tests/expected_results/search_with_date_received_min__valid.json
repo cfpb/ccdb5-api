@@ -1,6 +1,27 @@
 {
-    "from": 0, 
-    "size": 10, 
+    "from": 0,
+  "_source": [
+    "company",
+    "company_public_response",
+    "company_response",
+    "complaint_id",
+    "complaint_what_happened",
+    "consumer_consent_provided",
+    "consumer_disputed",
+    "date_received",
+    "date_sent_to_company",
+    "has_narrative",
+    "issue",
+    "product",
+    "state",
+    "submitted_via",
+    "sub_issue",
+    "sub_product",
+    "tags",
+    "timely",
+    "zip_code"
+  ],
+    "size": 10,
     "query": {
         "query_string": {
             "query": "*",
@@ -11,6 +32,7 @@
         }
     },
     "highlight": {
+        "require_field_match": false,
         "fields": {
             "complaint_what_happened": {}
         },
@@ -19,27 +41,31 @@
     },
     "sort": [{"_score": {"order": "desc"}}],
     "post_filter": {
-        "and": {
-            "filters": [
+        "bool": {
+            "filter": [
                 {
                     "range": {
                         "date_received": {
-                            "from": "2014-04-14"
+                            "from": "2014-04-14T12:00:00-05:00"
                         }
                     }
                 }
-            ]
+            ],
+            "must": [],
+            "should": []
         }
     },
     "aggs": {
-        "has_narratives": {
+        "has_narrative": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -47,9 +73,9 @@
                 }
             },
             "aggs": {
-                "has_narratives": {
+                "has_narrative": {
                     "terms": {
-                        "field": "has_narratives",
+                        "field": "has_narrative",
                         "size": 0
                     }
                 }
@@ -57,12 +83,14 @@
         },
         "company": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -72,7 +100,7 @@
             "aggs": {
                 "company": {
                     "terms": {
-                        "field": "company",
+                        "field": "company.raw",
                         "size": 0
                     }
                 }
@@ -80,12 +108,14 @@
         },
         "product": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -111,12 +141,14 @@
         },
         "issue": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -142,12 +174,14 @@
         },
         "state": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -165,12 +199,14 @@
         },
         "zip_code": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -188,12 +224,14 @@
         },
         "timely": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -211,12 +249,14 @@
         },
         "company_response": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -234,12 +274,14 @@
         },
         "company_public_response": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -257,12 +299,14 @@
         },
         "consumer_disputed": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -280,12 +324,14 @@
         },
         "consumer_consent_provided": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -301,14 +347,16 @@
                 }
             }
         },
-        "tag": {
+        "tags": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -316,9 +364,9 @@
                 }
             },
             "aggs": {
-                "tag": {
+                "tags": {
                     "terms": {
-                        "field": "tag",
+                        "field": "tags",
                         "size": 0
                     }
                 }
@@ -326,12 +374,14 @@
         },
         "submitted_via": {
             "filter": {
-                "and": {
-                    "filters": [
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }

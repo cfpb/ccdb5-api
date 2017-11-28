@@ -33,17 +33,22 @@
       "filter": {
         "bool": {
           "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
+            [
+              {
+                "terms": {
+                  "tags": [
+                    "Older American"
+                  ]
+                }
+              },
+              {
+                "terms": {
+                  "tags": [
+                    "Servicemember"
+                  ]
                 }
               }
-            }
+            ]
           ],
           "should": [],
           "must": []
@@ -62,17 +67,22 @@
       "filter": {
         "bool": {
           "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
+            [
+              {
+                "terms": {
+                  "tags": [
+                    "Older American"
+                  ]
+                }
+              },
+              {
+                "terms": {
+                  "tags": [
+                    "Servicemember"
+                  ]
                 }
               }
-            }
+            ]
           ],
           "should": [],
           "must": []
@@ -91,17 +101,22 @@
       "filter": {
         "bool": {
           "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
+            [
+              {
+                "terms": {
+                  "tags": [
+                    "Older American"
+                  ]
+                }
+              },
+              {
+                "terms": {
+                  "tags": [
+                    "Servicemember"
+                  ]
                 }
               }
-            }
+            ]
           ],
           "should": [],
           "must": []
@@ -127,19 +142,7 @@
     "tags": {
       "filter": {
         "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
+          "filter": [],
           "should": [],
           "must": []
         }
@@ -157,17 +160,22 @@
       "filter": {
         "bool": {
           "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
+            [
+              {
+                "terms": {
+                  "tags": [
+                    "Older American"
+                  ]
+                }
+              },
+              {
+                "terms": {
+                  "tags": [
+                    "Servicemember"
+                  ]
                 }
               }
-            }
+            ]
           ],
           "should": [],
           "must": []
@@ -186,17 +194,22 @@
       "filter": {
         "bool": {
           "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
+            [
+              {
+                "terms": {
+                  "tags": [
+                    "Older American"
+                  ]
+                }
+              },
+              {
+                "terms": {
+                  "tags": [
+                    "Servicemember"
+                  ]
                 }
               }
-            }
+            ]
           ],
           "should": [],
           "must": []
@@ -214,7 +227,24 @@
     "consumer_consent_provided": {
       "filter": {
         "bool": {
-          "filter": [],
+          "filter": [
+            [
+              {
+                "terms": {
+                  "tags": [
+                    "Older American"
+                  ]
+                }
+              },
+              {
+                "terms": {
+                  "tags": [
+                    "Servicemember"
+                  ]
+                }
+              }
+            ]
+          ],
           "should": [],
           "must": []
         }
@@ -232,17 +262,22 @@
       "filter": {
         "bool": {
           "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
+            [
+              {
+                "terms": {
+                  "tags": [
+                    "Older American"
+                  ]
+                }
+              },
+              {
+                "terms": {
+                  "tags": [
+                    "Servicemember"
+                  ]
                 }
               }
-            }
+            ]
           ],
           "should": [],
           "must": []
@@ -261,17 +296,22 @@
       "filter": {
         "bool": {
           "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
+            [
+              {
+                "terms": {
+                  "tags": [
+                    "Older American"
+                  ]
+                }
+              },
+              {
+                "terms": {
+                  "tags": [
+                    "Servicemember"
+                  ]
                 }
               }
-            }
+            ]
           ],
           "should": [],
           "must": []
@@ -290,17 +330,22 @@
       "filter": {
         "bool": {
           "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
+            [
+              {
+                "terms": {
+                  "tags": [
+                    "Older American"
+                  ]
+                }
+              },
+              {
+                "terms": {
+                  "tags": [
+                    "Servicemember"
+                  ]
                 }
               }
-            }
+            ]
           ],
           "should": [],
           "must": []
@@ -319,17 +364,22 @@
       "filter": {
         "bool": {
           "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
+            [
+              {
+                "terms": {
+                  "tags": [
+                    "Older American"
+                  ]
+                }
+              },
+              {
+                "terms": {
+                  "tags": [
+                    "Servicemember"
+                  ]
                 }
               }
-            }
+            ]
           ],
           "should": [],
           "must": []
@@ -356,17 +406,22 @@
       "filter": {
         "bool": {
           "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
+            [
+              {
+                "terms": {
+                  "tags": [
+                    "Older American"
+                  ]
+                }
+              },
+              {
+                "terms": {
+                  "tags": [
+                    "Servicemember"
+                  ]
                 }
               }
-            }
+            ]
           ],
           "should": [],
           "must": []
@@ -385,17 +440,22 @@
       "filter": {
         "bool": {
           "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
+            [
+              {
+                "terms": {
+                  "tags": [
+                    "Older American"
+                  ]
+                }
+              },
+              {
+                "terms": {
+                  "tags": [
+                    "Servicemember"
+                  ]
                 }
               }
-            }
+            ]
           ],
           "should": [],
           "must": []
@@ -423,17 +483,22 @@
   "post_filter": {
     "bool": {
       "filter": [
-        {
-          "bool": {
-            "should": {
-              "terms": {
-                "consumer_consent_provided.raw": [
-                  "Consent provided"
-                ]
-              }
+        [
+          {
+            "terms": {
+              "tags": [
+                "Older American"
+              ]
+            }
+          },
+          {
+            "terms": {
+              "tags": [
+                "Servicemember"
+              ]
             }
           }
-        }
+        ]
       ],
       "must": [],
       "should": []

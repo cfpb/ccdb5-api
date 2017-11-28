@@ -1,0 +1,42 @@
+{
+    "size": 10,
+  "_source": [
+    "company",
+    "company_public_response",
+    "company_response",
+    "complaint_id",
+    "complaint_what_happened",
+    "consumer_consent_provided",
+    "consumer_disputed",
+    "date_received",
+    "date_sent_to_company",
+    "issue",
+    "product",
+    "state",
+    "submitted_via",
+    "sub_issue",
+    "sub_product",
+    "tags",
+    "timely",
+    "zip_code"
+  ],
+    "query": {
+        "query_string": {
+            "query": "*",
+            "fields": [
+                "complaint_what_happened"
+            ],
+            "default_operator": "AND"
+        }
+    },
+    "highlight": {
+        "require_field_match": false,
+        "fields": {
+            "complaint_what_happened": {}
+        },
+        "number_of_fragments": 1,
+        "fragment_size": 500
+    },
+    "sort": [{"_score": {"order": "desc"}}],
+    "post_filter": {"bool": {"filter": [], "should": [], "must": []}}
+}

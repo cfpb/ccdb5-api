@@ -37,8 +37,10 @@
               "bool": {
                 "should": {
                   "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
                     ]
                   }
                 }
@@ -66,8 +68,10 @@
               "bool": {
                 "should": {
                   "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
                     ]
                   }
                 }
@@ -95,8 +99,10 @@
               "bool": {
                 "should": {
                   "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
                     ]
                   }
                 }
@@ -132,8 +138,10 @@
               "bool": {
                 "should": {
                   "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
                     ]
                   }
                 }
@@ -161,8 +169,10 @@
               "bool": {
                 "should": {
                   "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
                     ]
                   }
                 }
@@ -190,8 +200,10 @@
               "bool": {
                 "should": {
                   "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
                     ]
                   }
                 }
@@ -214,7 +226,21 @@
     "consumer_consent_provided": {
       "filter": {
         "bool": {
-          "filter": [],
+          "filter": [
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
+                    ]
+                  }
+                }
+              }
+            }
+          ],
           "should": [],
           "must": []
         }
@@ -236,8 +262,10 @@
               "bool": {
                 "should": {
                   "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
                     ]
                   }
                 }
@@ -265,8 +293,10 @@
               "bool": {
                 "should": {
                   "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
                     ]
                   }
                 }
@@ -294,8 +324,10 @@
               "bool": {
                 "should": {
                   "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
                     ]
                   }
                 }
@@ -323,8 +355,10 @@
               "bool": {
                 "should": {
                   "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
                     ]
                   }
                 }
@@ -360,8 +394,10 @@
               "bool": {
                 "should": {
                   "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
                     ]
                   }
                 }
@@ -389,8 +425,10 @@
               "bool": {
                 "should": {
                   "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
+                    "zip_code": [
+                      "12345",
+                      "23435",
+                      "03433"
                     ]
                   }
                 }
@@ -427,8 +465,10 @@
           "bool": {
             "should": {
               "terms": {
-                "consumer_consent_provided.raw": [
-                  "Consent provided"
+                "zip_code": [
+                  "12345",
+                  "23435",
+                  "03433"
                 ]
               }
             }

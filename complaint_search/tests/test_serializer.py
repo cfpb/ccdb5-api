@@ -1,5 +1,7 @@
 # Most of the serializer code has been tested through the views
+import copy
 from django.test import TestCase
+from complaint_search.defaults import PARAMS
 from complaint_search.serializer import SearchInputSerializer
 
 class SearchInputSerializerTests(TestCase):
@@ -11,7 +13,14 @@ class SearchInputSerializerTests(TestCase):
     def test_is_valid__no_args(self):
         serializer = SearchInputSerializer(data={})
         self.assertTrue(serializer.is_valid())
-        self.assertEqual({}, serializer.validated_data)
+
+        exp_dict = copy.deepcopy(PARAMS)
+
+        # This is an OrderedDict
+        for k, v in serializer.validated_data.iteritems():
+
+            self.assertIn(k, exp_dict)
+            self.assertEqual(v, exp_dict[k])
 
     def test_is_valid__valid_product(self):
         self.data['product'] = [u"Mortgage\u2022FHA Mortgage", "Payday Loan"]

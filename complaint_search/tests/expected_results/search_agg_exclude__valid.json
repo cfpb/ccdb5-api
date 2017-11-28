@@ -32,19 +32,7 @@
     "timely": {
       "filter": {
         "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
+          "filter": [],
           "should": [],
           "must": []
         }
@@ -61,19 +49,7 @@
     "company_public_response": {
       "filter": {
         "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
+          "filter": [],
           "should": [],
           "must": []
         }
@@ -90,19 +66,7 @@
     "product": {
       "filter": {
         "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
+          "filter": [],
           "should": [],
           "must": []
         }
@@ -127,19 +91,7 @@
     "tags": {
       "filter": {
         "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
+          "filter": [],
           "should": [],
           "must": []
         }
@@ -156,19 +108,7 @@
     "company": {
       "filter": {
         "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
+          "filter": [],
           "should": [],
           "must": []
         }
@@ -185,19 +125,7 @@
     "consumer_disputed": {
       "filter": {
         "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
+          "filter": [],
           "should": [],
           "must": []
         }
@@ -231,19 +159,7 @@
     "state": {
       "filter": {
         "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
+          "filter": [],
           "should": [],
           "must": []
         }
@@ -260,19 +176,7 @@
     "has_narrative": {
       "filter": {
         "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
+          "filter": [],
           "should": [],
           "must": []
         }
@@ -289,19 +193,7 @@
     "submitted_via": {
       "filter": {
         "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
+          "filter": [],
           "should": [],
           "must": []
         }
@@ -318,19 +210,7 @@
     "issue": {
       "filter": {
         "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
+          "filter": [],
           "should": [],
           "must": []
         }
@@ -355,19 +235,7 @@
     "company_response": {
       "filter": {
         "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
+          "filter": [],
           "should": [],
           "must": []
         }
@@ -376,35 +244,6 @@
         "company_response": {
           "terms": {
             "field": "company_response",
-            "size": 0
-          }
-        }
-      }
-    },
-    "zip_code": {
-      "filter": {
-        "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
-          "should": [],
-          "must": []
-        }
-      },
-      "aggs": {
-        "zip_code": {
-          "terms": {
-            "field": "zip_code",
             "size": 0
           }
         }
@@ -422,19 +261,7 @@
   },
   "post_filter": {
     "bool": {
-      "filter": [
-        {
-          "bool": {
-            "should": {
-              "terms": {
-                "consumer_consent_provided.raw": [
-                  "Consent provided"
-                ]
-              }
-            }
-          }
-        }
-      ],
+      "filter": [],
       "must": [],
       "should": []
     }

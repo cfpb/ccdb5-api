@@ -1,6 +1,5 @@
 import os
 import pip
-import sys
 from setuptools import setup, find_packages
 from codecs import open
 
@@ -8,6 +7,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
+
 
 def parse_requirements():
     """Return abstract requirements (without version numbers)
@@ -28,12 +28,12 @@ def parse_requirements():
     ]
     return requirements
 
+
 install_requires = parse_requirements()
 
 setup(
     name='ccdb5-api',
-    version='1.0.0',
-
+    version_format='{tag}.dev{commitcount}+{gitsha}',
     description='Complaint Search API',
     long_description=long_description,
     url='https://github.com/cfpb/ccdb5-api',
@@ -51,5 +51,6 @@ setup(
     ],
     keywords='complaint search api',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+    setup_requires=['setuptools-git-version==1.0.3'],
     install_requires=install_requires,
 )

@@ -1,5 +1,5 @@
 {
-    "from": 20,
+    "from": 0,
   "_source": [
     "company",
     "company_public_response",
@@ -24,9 +24,9 @@
     "size": 10,
     "query": {
         "query_string": {
-            "query": "*",
+            "query": "term TO test",
             "fields": [
-                "complaint_what_happened"
+                    "complaint_what_happened"
             ],
             "default_operator": "AND"
         }

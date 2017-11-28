@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -49,14 +50,14 @@ class SuggestTests(APITestCase):
         mock_essuggest.assert_called_once_with(**param)
         self.assertEqual('OK', response.data)
 
-    @mock.patch('complaint_search.es_interface.search')
-    def test_search_with_size__invalid_smaller_than_min_number(self, mock_essearch):
-        url = reverse('complaint_search:search')
+    @mock.patch('complaint_search.es_interface.suggest')
+    def test_suggest_with_size__invalid_smaller_than_min_number(self, mock_essuggest):
+        url = reverse('complaint_search:suggest')
         params = {"size": 0}
-        mock_essearch.return_value = 'OK'
+        mock_essuggest.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
-        mock_essearch.assert_not_called()
+        mock_essuggest.assert_not_called()
         self.assertDictEqual(
             {"size": ["Ensure this value is greater than or equal to 1."]}, 
             response.data)
@@ -75,6 +76,18 @@ class SuggestTests(APITestCase):
         self.assertDictEqual(
             {"size": ["Ensure this value is less than or equal to 100000."]}, 
             response.data)
+
+    @mock.patch('complaint_search.es_interface.suggest')
+    def test_suggest_cors_headers(self, mock_essuggest):
+        """
+        Make sure the response has CORS headers in debug mode
+        """
+        settings.DEBUG = True
+        url = reverse('complaint_search:suggest')
+        mock_essuggest.return_value = 'OK'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.has_header('Access-Control-Allow-Origin'))
 
     @mock.patch('complaint_search.es_interface.suggest')
     def test_suggest__transport_error_with_status_code(self, mock_essuggest):
