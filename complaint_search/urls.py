@@ -2,6 +2,7 @@ from django.conf.urls import include, url
 import complaint_search.views
 
 urlpatterns = [
+	  url(r'^docs/', include('rest_framework_swagger.urls')),
     url(
         r'^_suggest_company',
         complaint_search.views.suggest_company,
