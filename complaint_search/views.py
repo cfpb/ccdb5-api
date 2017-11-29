@@ -157,6 +157,25 @@ def search(request):
 
 
 @api_view(['GET'])
+def swagger(request):
+    from django.http import FileResponse
+    import os
+
+    swagger_yml_path = os.path.join(
+        settings.BASE_DIR,
+        'complaint_search',
+        'swagger.yml',
+    )
+
+    swagger_yml = open(swagger_yml_path, 'rb')
+
+    return FileResponse(
+        swagger_yml,
+        content_type='text/yaml'
+    )
+
+
+@api_view(['GET'])
 @catch_es_error
 def suggest(request):
     data = _parse_query_params(request.query_params, ['text', 'size'])
@@ -195,7 +214,7 @@ def suggest_zip(request):
 @api_view(['GET'])
 @catch_es_error
 def suggest_company(request):
-    
+
     # Key removal that takes mutation into account in case of other reference
     def removekey(d, key):
         r = dict(d)
@@ -206,14 +225,14 @@ def suggest_company(request):
     validVars.append('text')
 
     data = _parse_query_params(request.query_params, validVars)
-    
+
     # Company filters should not be applied to their own aggregation filter
     if 'company' in data:
         data = removekey(data, 'company')
 
     if data.get('text'):
         data['text'] = data['text'].upper()
-    
+
     return _suggest_field(data, 'company.suggest', 'company.raw')
 
 
