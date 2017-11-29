@@ -161,9 +161,10 @@ def swagger(request):
     from django.http import FileResponse
     import os
 
+    thisDir = os.path.dirname(os.path.abspath(__file__))
+
     swagger_yml_path = os.path.join(
-        settings.BASE_DIR,
-        'complaint_search',
+        thisDir,
         'swagger.yml',
     )
 
