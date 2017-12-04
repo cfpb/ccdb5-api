@@ -27,7 +27,7 @@ class DocumentTests(APITestCase):
         """
         documenting with an ID
         """
-        url = reverse('complaint_search:document', kwargs={"id": "123456"})
+        url = reverse('complaint_search:complaint', kwargs={"id": "123456"})
         mock_esdocument.return_value = 'OK'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -37,7 +37,7 @@ class DocumentTests(APITestCase):
 
     @mock.patch('complaint_search.es_interface.document')
     def test_document_with_document_anon_rate_throttle(self, mock_esdocument):
-        url = reverse('complaint_search:document', kwargs={"id": "123456"})
+        url = reverse('complaint_search:complaint', kwargs={"id": "123456"})
         mock_esdocument.return_value = 'OK'
         DocumentAnonRateThrottle.rate = self.orig_document_anon_rate
         limit = int(self.orig_document_anon_rate.split('/')[0])
@@ -55,7 +55,7 @@ class DocumentTests(APITestCase):
 
     @mock.patch('complaint_search.es_interface.document')
     def test_document_with_document_ui_rate_throttle(self, mock_esdocument):
-        url = reverse('complaint_search:document', kwargs={"id": "123456"})
+        url = reverse('complaint_search:complaint', kwargs={"id": "123456"})
         mock_esdocument.return_value = 'OK'
 
         DocumentAnonRateThrottle.rate = self.orig_document_anon_rate
@@ -74,7 +74,7 @@ class DocumentTests(APITestCase):
     @mock.patch('complaint_search.es_interface.document')
     def test_document__transport_error_with_status_code(self, mock_esdocument):
         mock_esdocument.side_effect = TransportError(status.HTTP_404_NOT_FOUND, "Error")
-        url = reverse('complaint_search:document', kwargs={"id": "123456"})
+        url = reverse('complaint_search:complaint', kwargs={"id": "123456"})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertDictEqual({"error": "Elasticsearch error: Error"}, response.data)
@@ -82,7 +82,7 @@ class DocumentTests(APITestCase):
     @mock.patch('complaint_search.es_interface.document')
     def test_document__transport_error_without_status_code(self, mock_esdocument):
         mock_esdocument.side_effect = TransportError('N/A', "Error")
-        url = reverse('complaint_search:document', kwargs={"id": "123456"})
+        url = reverse('complaint_search:complaint', kwargs={"id": "123456"})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertDictEqual({"error": "Elasticsearch error: Error"}, response.data)
