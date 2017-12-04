@@ -22,7 +22,7 @@ paths:
       tags:
         - Complaints
       summary: "Search consumer complaints"
-      description: "Search through everything in consumer complaints"
+      description: "Search the contents of the consumer complaint database"
       produces:
       - "application/json"
       - "text/csv"
