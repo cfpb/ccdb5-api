@@ -156,26 +156,6 @@ def search(request):
 
 
 @api_view(['GET'])
-def swagger(request):
-    from django.http import FileResponse
-    import os
-
-    thisDir = os.path.dirname(os.path.abspath(__file__))
-
-    swagger_yaml_path = os.path.join(
-        thisDir,
-        'swagger.yaml',
-    )
-
-    swagger_yaml = open(swagger_yaml_path, 'rb')
-
-    return FileResponse(
-        swagger_yaml,
-        content_type='text/yaml'
-    )
-
-
-@api_view(['GET'])
 @catch_es_error
 def suggest(request):
     data = _parse_query_params(request.query_params, ['text', 'size'])

@@ -1,4 +1,4 @@
-from django.conf.urls import include, url
+from django.conf.urls import url
 import complaint_search.views
 
 urlpatterns = [
@@ -13,7 +13,6 @@ urlpatterns = [
         name="suggest_zip"
     ),
     url(r'^_suggest', complaint_search.views.suggest, name="suggest"),
-    url(r'^docs', complaint_search.views.swagger, name="swagger"),
     url(r'^(?P<id>[0-9]+)$', complaint_search.views.document, name="complaint"),
     url(r'^$', complaint_search.views.search, name="search"),
 ]
