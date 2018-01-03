@@ -14,3 +14,7 @@ htmlcov/
 .env
 *.pyc
 db.sqlite3
+
+# Documentation files *
+
+site/
