@@ -1,6 +1,6 @@
 site_name: ccdb5-api
 pages:
-- Introduction: index.md
+- Documentation: index.md
 
 theme: mkDOCter
 extra:
