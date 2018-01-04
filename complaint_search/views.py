@@ -4,10 +4,9 @@ from rest_framework.decorators import (
 )
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
 from rest_framework.response import Response
-from django.http import HttpResponse, StreamingHttpResponse
+from django.http import StreamingHttpResponse
 from django.conf import settings
 from datetime import datetime
-from elasticsearch import TransportError
 import es_interface
 from complaint_search.defaults import (
     AGG_EXCLUDE_FIELDS,
@@ -76,7 +75,7 @@ def _parse_query_params(query_params, validVars=None):
             data[param] = query_params.get(param)
         elif param in QPARAMS_LISTS:
             data[param] = query_params.getlist(param)
-          # TODO: else: Error if extra parameters? Or ignore?
+        # TODO: else: Error if extra parameters? Or ignore?
 
     return data
 
@@ -154,26 +153,6 @@ def search(request):
         response[header] = headers[header]
 
     return response
-
-
-@api_view(['GET'])
-def swagger(request):
-    from django.http import FileResponse
-    import os
-
-    thisDir = os.path.dirname(os.path.abspath(__file__))
-
-    swagger_yml_path = os.path.join(
-        thisDir,
-        'swagger.yml',
-    )
-
-    swagger_yml = open(swagger_yml_path, 'rb')
-
-    return FileResponse(
-        swagger_yml,
-        content_type='text/yaml'
-    )
 
 
 @api_view(['GET'])
