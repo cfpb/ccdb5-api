@@ -26,8 +26,6 @@ paths:
       produces:
       - "application/json"
       - "text/csv"
-      - "application/vnd.ms-excel"
-      - "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       parameters:
       - $ref: "#/parameters/search_term"
       - $ref: "#/parameters/field"
@@ -458,8 +456,6 @@ parameters:
     enum:
     - "json"
     - "csv"
-    - "xls"
-    - "xlsx"
     default: "json"
   from:
     name: frm
