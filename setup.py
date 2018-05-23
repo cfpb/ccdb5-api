@@ -9,27 +9,16 @@ with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 
-def parse_requirements():
-    """Return abstract requirements (without version numbers)
-    from requirements.txt.
-    As an exception, requirements that are URLs are used as-is.
-    This is tested to be compatible with pip 9.0.1.
-    Background: https://stackoverflow.com/a/42033122/
-    """
+install_requires = [
+    'Django>=1.8,<1.9',
+    'djangorestframework>=3.1,<3.2',
+    'elasticsearch>=2.4.1,<3',
+    'requests>=2.14,<2.15',
+    'urllib3>=1.21,<1.22',
+    'django-localflavor>=1.5,<1.6',
+    'wagtail-flags>=2.0.5,<2.2'
+]
 
-    path = os.path.join(os.path.dirname(__file__), 'requirements.txt')
-    requirements = pip.req.parse_requirements(
-        path, session=pip.download.PipSession()
-    )
-    requirements = [
-        req.name or req.link.url
-        for req in requirements
-        if 'git+' not in (req.name or req.link.url)
-    ]
-    return requirements
-
-
-install_requires = parse_requirements()
 
 setup(
     name='ccdb5-api',
