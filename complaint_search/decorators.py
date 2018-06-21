@@ -2,15 +2,15 @@ from rest_framework import status
 from rest_framework.response import Response
 from elasticsearch import TransportError
 
+
 def catch_es_error(function):
     def wrap(request, *args, **kwargs):
         try:
             return function(request, *args, **kwargs)
         except TransportError as e:
-            status_code = e.status_code if isinstance(e.status_code, int) \
-                else status.HTTP_400_BAD_REQUEST
+            status_code = 424  # HTTP_424_FAILED_DEPENDENCY
             res = {
-                "error": 'Elasticsearch error: ' + e.error
+                "error": 'There was an error searching Elasticsearch'
             }
             return Response(res, status=status_code)
     wrap.__doc__ = function.__doc__

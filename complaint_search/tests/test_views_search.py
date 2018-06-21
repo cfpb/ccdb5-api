@@ -666,17 +666,9 @@ class SearchTests(APITestCase):
         self.assertEqual(6, limit)
 
     @mock.patch('complaint_search.es_interface.search')
-    def test_search__transport_error_with_status_code(self, mock_essearch):
-        mock_essearch.side_effect = TransportError(status.HTTP_404_NOT_FOUND, "Error")
-        url = reverse('complaint_search:search')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertDictEqual({"error": "Elasticsearch error: Error"}, response.data)
-
-    @mock.patch('complaint_search.es_interface.search')
-    def test_search__transport_error_without_status_code(self, mock_essearch):
+    def test_search__transport_error(self, mock_essearch):
         mock_essearch.side_effect = TransportError('N/A', "Error")
         url = reverse('complaint_search:search')
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertDictEqual({"error": "Elasticsearch error: Error"}, response.data)
+        self.assertEqual(response.status_code, 424)
+        self.assertDictEqual({"error": "There was an error searching Elasticsearch"}, response.data)
