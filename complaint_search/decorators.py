@@ -1,16 +1,29 @@
+import logging
 from rest_framework import status
 from rest_framework.response import Response
 from elasticsearch import TransportError
+
+log = logging.getLogger(__name__)
+
 
 def catch_es_error(function):
     def wrap(request, *args, **kwargs):
         try:
             return function(request, *args, **kwargs)
-        except TransportError as e:
-            status_code = e.status_code if isinstance(e.status_code, int) \
-                else status.HTTP_400_BAD_REQUEST
+        except TransportError as te:
+            log.error(te)
+
+            status_code = 424  # HTTP_424_FAILED_DEPENDENCY
             res = {
-                "error": 'Elasticsearch error: ' + e.error
+                "error": 'There was an error calling Elasticsearch'
+            }
+            return Response(res, status=status_code)
+        except Exception as e:
+            log.error(e)
+
+            status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+            res = {
+                "error": 'There was a problem retrieving your request'
             }
             return Response(res, status=status_code)
     wrap.__doc__ = function.__doc__

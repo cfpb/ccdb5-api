@@ -63,27 +63,15 @@ class SuggestZipTests(APITestCase):
         self.assertTrue(response.has_header('Access-Control-Allow-Origin'))
 
     @mock.patch('complaint_search.es_interface.filter_suggest')
-    def test_suggest__transport_error_with_status_code(self, mock_essuggest):
-        mock_essuggest.side_effect = TransportError(
-            status.HTTP_404_NOT_FOUND, "Error"
-        )
-        url = reverse('complaint_search:suggest_zip')
-        param = {"text": "test"}
-        response = self.client.get(url, param)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertDictEqual(
-            {"error": "Elasticsearch error: Error"}, response.data
-        )
-
-    @mock.patch('complaint_search.es_interface.filter_suggest')
-    def test_suggest__transport_error_without_status_code(
+    def test_suggest__transport_error(
         self, mock_essuggest
     ):
         mock_essuggest.side_effect = TransportError('N/A', "Error")
         url = reverse('complaint_search:suggest_zip')
         param = {"text": "test"}
         response = self.client.get(url, param)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, 424)
         self.assertDictEqual(
-            {"error": "Elasticsearch error: Error"}, response.data
+            {"error": "There was an error calling Elasticsearch"},
+            response.data
         )
