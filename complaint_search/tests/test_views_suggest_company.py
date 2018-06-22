@@ -62,7 +62,6 @@ class SuggestCompanyTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response.has_header('Access-Control-Allow-Origin'))
 
-
     @mock.patch('complaint_search.es_interface.filter_suggest')
     def test_suggest__transport_error(
         self, mock_essuggest
@@ -73,6 +72,6 @@ class SuggestCompanyTests(APITestCase):
         response = self.client.get(url, param)
         self.assertEqual(response.status_code, 424)
         self.assertDictEqual(
-            {"error": "There was an error searching Elasticsearch"}, response.data
+            {"error": "There was an error calling Elasticsearch"},
+            response.data
         )
-

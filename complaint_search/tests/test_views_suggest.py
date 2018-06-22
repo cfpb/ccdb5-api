@@ -7,6 +7,7 @@ from elasticsearch import TransportError
 import mock
 from complaint_search.es_interface import suggest
 
+
 class SuggestTests(APITestCase):
 
     def setUp(self):
@@ -51,7 +52,9 @@ class SuggestTests(APITestCase):
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.suggest')
-    def test_suggest_with_size__invalid_smaller_than_min_number(self, mock_essuggest):
+    def test_suggest_with_size__invalid_smaller_than_min_number(
+        self, mock_essuggest
+    ):
         url = reverse('complaint_search:suggest')
         params = {"size": 0}
         mock_essuggest.return_value = 'OK'
@@ -59,7 +62,7 @@ class SuggestTests(APITestCase):
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essuggest.assert_not_called()
         self.assertDictEqual(
-            {"size": ["Ensure this value is greater than or equal to 1."]}, 
+            {"size": ["Ensure this value is greater than or equal to 1."]},
             response.data)
 
     @mock.patch('complaint_search.es_interface.suggest')
@@ -96,4 +99,7 @@ class SuggestTests(APITestCase):
         param = {"text": "test"}
         response = self.client.get(url, param)
         self.assertEqual(response.status_code, 424)
-        self.assertDictEqual({"error": "There was an error searching Elasticsearch"}, response.data)
+        self.assertDictEqual(
+            {"error": "There was an error calling Elasticsearch"},
+            response.data
+        )

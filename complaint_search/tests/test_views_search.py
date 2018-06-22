@@ -671,4 +671,7 @@ class SearchTests(APITestCase):
         url = reverse('complaint_search:search')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 424)
-        self.assertDictEqual({"error": "There was an error searching Elasticsearch"}, response.data)
+        self.assertDictEqual(
+            {"error": "There was an error calling Elasticsearch"},
+            response.data
+        )

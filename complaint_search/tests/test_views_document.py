@@ -11,6 +11,7 @@ from complaint_search.throttling import (
     _CCDB_UI_URL,
 )
 
+
 class DocumentTests(APITestCase):
 
     def setUp(self):
@@ -34,7 +35,6 @@ class DocumentTests(APITestCase):
         mock_esdocument.assert_called_once_with("123456")
         self.assertEqual('OK', response.data)
 
-
     @mock.patch('complaint_search.es_interface.document')
     def test_document_with_document_anon_rate_throttle(self, mock_esdocument):
         url = reverse('complaint_search:complaint', kwargs={"id": "123456"})
@@ -47,7 +47,9 @@ class DocumentTests(APITestCase):
             self.assertEqual('OK', response.data)
 
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
+        self.assertEqual(
+            response.status_code, status.HTTP_429_TOO_MANY_REQUESTS
+        )
         self.assertIsNotNone(response.data.get('detail'))
         self.assertIn("Request was throttled", response.data.get('detail'))
         self.assertEqual(limit, mock_esdocument.call_count)
@@ -77,4 +79,7 @@ class DocumentTests(APITestCase):
         url = reverse('complaint_search:complaint', kwargs={"id": "123456"})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 424)
-        self.assertDictEqual({"error": "There was an error searching Elasticsearch"}, response.data)
+        self.assertDictEqual(
+            {"error": "There was an error calling Elasticsearch"},
+            response.data
+        )

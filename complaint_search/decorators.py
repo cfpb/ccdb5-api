@@ -10,7 +10,7 @@ def catch_es_error(function):
         except TransportError as e:
             status_code = 424  # HTTP_424_FAILED_DEPENDENCY
             res = {
-                "error": 'There was an error searching Elasticsearch'
+                "error": 'There was an error calling Elasticsearch'
             }
             return Response(res, status=status_code)
     wrap.__doc__ = function.__doc__
