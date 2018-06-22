@@ -162,7 +162,7 @@ def search(agg_exclude=None, **kwargs):
     )
 
     # format
-    res = None
+    res = {}
     format = params.get("format")
     if format == "default":
         if not params.get("no_aggs"):
