@@ -375,7 +375,7 @@ class EsInterfaceTest_Search(TestCase):
     def test_search_with_format__invalid(self, mock_rget, mock_search):
         mock_search.return_value = 'OK'
         res = search(format="pdf")
-        self.assertIsNone(res)
+        self.assertEqual(res, {})
         mock_search.assert_not_called()
         mock_rget.assert_not_called()
 
