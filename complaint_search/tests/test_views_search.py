@@ -675,3 +675,14 @@ class SearchTests(APITestCase):
             {"error": "There was an error calling Elasticsearch"},
             response.data
         )
+
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search__big_error(self, mock_essearch):
+        mock_essearch.side_effect = MemoryError("Out of memory")
+        url = reverse('complaint_search:search')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 500)
+        self.assertDictEqual(
+            {"error": "There was a problem retrieving your request"},
+            response.data
+        )
