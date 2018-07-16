@@ -1,8 +1,7 @@
 import re
 import copy
-import json
 import abc
-from collections import OrderedDict, namedtuple
+from collections import OrderedDict
 from complaint_search.defaults import (
     DELIMITER,
     EXPORT_FORMATS,

@@ -17,7 +17,6 @@ from complaint_search.es_builders import (
 )
 from complaint_search.defaults import (
     CSV_ORDERED_HEADERS,
-    EXPORT_FORMATS
 )
 from complaint_search.stream_content import (
     StreamCSVContent,
@@ -26,11 +25,7 @@ from complaint_search.stream_content import (
 from datetime import datetime
 from elasticsearch import Elasticsearch
 from collections import namedtuple
-import requests
-import os
 import copy
-import urllib
-import json
 import deep
 import mock
 
