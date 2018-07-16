@@ -2,7 +2,7 @@ import re
 import copy
 import json
 import abc
-from collections import defaultdict, namedtuple
+from collections import OrderedDict, namedtuple
 from complaint_search.defaults import (
     DELIMITER,
     EXPORT_FORMATS,
@@ -99,15 +99,11 @@ class BaseBuilder(object):
 
                 return term_list_container
             else:
-                item_dict = defaultdict(list)
+                item_dict = OrderedDict()
                 for v in value_list:
                     v_pair = v.split(DELIMITER)
-                    # No child specified
-                    if len(v_pair) == 1:
-                        # This will initialize empty list for item if not in
-                        # item_dict yet
-                        item_dict[v_pair[0]]
-                    elif len(v_pair) == 2:
+                    item_dict.setdefault(v_pair[0], [])
+                    if len(v_pair) == 2:
                         # put subproduct into list
                         item_dict[v_pair[0]].append(v_pair[1])
 
