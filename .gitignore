@@ -1,11 +1,13 @@
 # Django #
 #################
 *.egg-info
+.eggs/
 
-# Coverage #
-############
+# Testing #
+###########
 .coverage
 htmlcov/
+.tox/
 
 # OS Files #
 ############
