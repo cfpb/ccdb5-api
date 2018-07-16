@@ -53,11 +53,10 @@ brew info autoenv
 You can then copy the `.env_SAMPLE` file to `.env`, then update any environment variables accordingly.
 
 ### Dependencies
-This project uses `requirements.txt` files for defining dependencies, so you
-can get up and running with `pip`:
+This project uses `setup.py` for defining dependencies. You can get up and running with `pip`:
 
 ```shell
-$ pip install -r requirements.txt       # modules required for execution
+$ pip install .                         # modules required for execution
 ```
 
 With that, you just need a few additional commands to get up and running:

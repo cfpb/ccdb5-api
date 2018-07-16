@@ -16,7 +16,13 @@ install_requires = [
     'requests>=2.14,<2.15',
     'urllib3>=1.21,<1.22',
     'django-localflavor>=1.5,<1.6',
-    'wagtail-flags>=2.0.5,<2.2'
+    'wagtail-flags>=2.0.5,<2.2',
+]
+
+testing_extras = [
+    'coverage==4.5.1',
+    'mock==2.0.0',
+    'deep==0.10',
 ]
 
 
@@ -42,4 +48,7 @@ setup(
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     setup_requires=['setuptools-git-version==1.0.3'],
     install_requires=install_requires,
+    extras_require={
+        'testing': testing_extras,
+    }
 )
