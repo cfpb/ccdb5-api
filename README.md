@@ -53,15 +53,19 @@ brew info autoenv
 You can then copy the `.env_SAMPLE` file to `.env`, then update any environment variables accordingly.
 
 ### Dependencies
-This project uses `setup.py` for defining dependencies. You can get up and running with `pip`:
+First, create a virtual environment for Python dependencies:
+```
+mkvirtualenv ccdb5-api
+```
 
-```shell
-$ pip install .                         # modules required for execution
+Next, use `pip` to install dependencies, which are defined in `setup.py`:
+```
+pip install -e '.[testing]'
 ```
 
 With that, you just need a few additional commands to get up and running:
-```shell
-$ python manage.py runserver
+```
+python manage.py runserver
 ```
 
 ## API Docs
