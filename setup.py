@@ -1,5 +1,4 @@
 import os
-import pip
 from setuptools import setup, find_packages
 from codecs import open
 
@@ -10,13 +9,19 @@ with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
 
 
 install_requires = [
-    'Django>=1.8,<1.9',
+    'Django>=1.8,<1.12',
     'djangorestframework>=3.1,<3.2',
     'elasticsearch>=2.4.1,<3',
     'requests>=2.14,<2.15',
     'urllib3>=1.21,<1.22',
     'django-localflavor>=1.5,<1.6',
-    'wagtail-flags>=2.0.5,<2.2'
+    'wagtail-flags>=2.0.5,<2.2',
+]
+
+testing_extras = [
+    'coverage==4.5.1',
+    'mock==2.0.0',
+    'deep==0.10',
 ]
 
 
@@ -42,4 +47,7 @@ setup(
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     setup_requires=['setuptools-git-version==1.0.3'],
     install_requires=install_requires,
+    extras_require={
+        'testing': testing_extras,
+    }
 )

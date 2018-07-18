@@ -2,12 +2,10 @@ language: python
 python:
 - '2.7'
 install:
-- pip install -r requirements.txt
-- pip install -r requirements_test.txt
+- pip install tox
 - pip install coveralls
 script:
-- ./manage.py migrate
-- coverage run --source='.' manage.py test
+- tox
 - python setup.py bdist_wheel
 after_success:
 - coveralls

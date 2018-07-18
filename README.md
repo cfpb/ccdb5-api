@@ -53,16 +53,19 @@ brew info autoenv
 You can then copy the `.env_SAMPLE` file to `.env`, then update any environment variables accordingly.
 
 ### Dependencies
-This project uses `requirements.txt` files for defining dependencies, so you
-can get up and running with `pip`:
+First, create a virtual environment for Python dependencies:
+```
+mkvirtualenv ccdb5-api
+```
 
-```shell
-$ pip install -r requirements.txt       # modules required for execution
+Next, use `pip` to install dependencies, which are defined in `setup.py`:
+```
+pip install -e '.[testing]'
 ```
 
 With that, you just need a few additional commands to get up and running:
-```shell
-$ python manage.py runserver
+```
+python manage.py runserver
 ```
 
 ## API Docs
@@ -91,6 +94,18 @@ That pushes the necessary files to the `gh-pages` branch.
 
 ##  Running Tests
 
-```shell
-$ python manage.py test
+If you have [Tox](https://tox.readthedocs.io/en/latest/) installed (recommended),
+you can run the specs for this project with the `tox` command.
+
+If not, this command will run the specs on the python version your local
+environment has installed: `./manage.py test`.
+
+If you run the tests via Tox, it will automatically display spec coverage information.
+To get test coverage information outside of Tox, install [Coverage.py](https://coverage.readthedocs.io/en/coverage-4.5.1a/)
+and run these commands:
+
+```
+coverage erase
+coverage run manage.py test
+coverage report
 ```
