@@ -10,7 +10,7 @@ with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
 
 install_requires = [
     'Django>=1.8,<1.12',
-    'djangorestframework>=3.1,<3.2',
+    'djangorestframework==3.6.4', # Latest version that supports both Django 1.8 and 1.11
     'elasticsearch>=2.4.1,<3',
     'requests>=2.14,<2.15',
     'urllib3>=1.21,<1.22',
