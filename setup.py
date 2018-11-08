@@ -12,7 +12,7 @@ install_requires = [
     'Django>=1.11,<1.12',
     'djangorestframework>=3.6,<3.9',
     'elasticsearch>=2.4.1,<3',
-    'requests>=2.18.4,<2.20',
+    'requests==2.20.1',
     'django-localflavor>=1.1,<2',
     'django-flags>=3.0.2,<4',
 ]
