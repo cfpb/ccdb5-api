@@ -7,7 +7,7 @@ from django.http import StreamingHttpResponse
 from django.test import TestCase
 from nose_parameterized import parameterized
 
-from v2.export import ElasticSearchExporter
+from complaint_search.export import ElasticSearchExporter
 
 
 TEST_HEADERS = OrderedDict([
