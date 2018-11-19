@@ -25,7 +25,7 @@ from stream_content import (
     StreamJSONContent,
 )
 
-from export_csv import ElasticSearchExporter
+from export import ElasticSearchExporter
 
 _ES_URL = "{}://{}:{}".format("http", os.environ.get('ES_HOST', 'localhost'),
                               os.environ.get('ES_PORT', '9200'))
@@ -189,47 +189,18 @@ def search(agg_exclude=None, **kwargs):
         res["_meta"] = _get_meta()
 
     elif format in EXPORT_FORMATS:
-        # # Deleting from field and this will force data format plugin to use
-        # # scan/scroll query to create the content,
-        # # Size also doesn't seem to be relevant anymore
-        # del(body["from"])
-
-        # p = {
-        #     "format": format,
-        #     "source": json.dumps(body),
-        #     "fl": ",".join(field for field in CSV_ORDERED_HEADERS.keys()),
-        #     "append.header": "false"
-        # }
-        # p = urllib.urlencode(p)
-
-        # url = "{}/{}/{}/_data?{}".format(_ES_URL, _COMPLAINT_ES_INDEX,
-        #                                  _COMPLAINT_DOC_TYPE, p)
-
-        # # requests.get does not seem to respect an IP address in NO_PROXY.
-        # # This is a workaround based on:
-        # # https://stackoverflow.com/questions/28521535/requests-how-to-disable-bypass-proxy/28521696#28521696  # noqa
-        # session = requests.Session()
-        # session.trust_env = False
-        # response = session.get(url, auth=(
-        #     _ES_USER, _ES_PASSWORD), stream=True)
-        # if response.ok:
-        #     res = response.iter_content(chunk_size=CHUNK_SIZE)
-        #     if format == "json":
-        #         res = StreamJSONContent(res)
-        #     elif format == "csv":
-        #         readable_header = ",".join('"' + rfield + '"'
-        #                                    for rfield in CSV_ORDERED_HEADERS.values()) + "\n"
-        #         res = StreamCSVContent(readable_header, res)
-
-        # Test for export_2
         scanResponse = helpers.scan(client=_get_es(), query=body, scroll= "10m", 
                 index=params.get("index_name"), size=7000, doc_type=_COMPLAINT_DOC_TYPE, 
                 request_timeout=3000)
 
         exporter = ElasticSearchExporter()
-        res = exporter.export_2(
-                scanResponse,
-                CSV_ORDERED_HEADERS)
+
+        if params.get("format") == 'csv':
+            res = exporter.export_csv(
+                    scanResponse,
+                    CSV_ORDERED_HEADERS)
+        elif params.get("format") == 'json':
+            res = exporter.export_json(scanResponse)
 
     return res
 
