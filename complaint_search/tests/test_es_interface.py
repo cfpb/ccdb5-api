@@ -1,3 +1,4 @@
+from django.http import StreamingHttpResponse
 from django.test import TestCase
 from complaint_search.es_interface import (
     _ES_URL,
@@ -14,6 +15,9 @@ from complaint_search.es_interface import (
 from complaint_search.es_builders import (
     AggregationBuilder,
     SearchBuilder
+)
+from complaint_search.export import (
+    ElasticSearchExporter
 )
 from complaint_search.defaults import (
     CSV_ORDERED_HEADERS,
@@ -46,6 +50,19 @@ def load(shortName):
     fileName = to_absolute(shortName + '.json')
     with open(fileName, 'r') as f:
         return json.load(f)
+
+def es_generator(n):
+    count = 0
+    while count < n:
+        yield {
+            '_source':  {
+                'first_entry': 'Random 1',
+                'second_entry': 'Random 2',
+                'third_entry': 'Random 3',
+                'fourth_entry': 'Random 4'
+            }
+        }
+        count += 1
 
 
 class EsInterfaceTest_Search(TestCase):
@@ -302,6 +319,34 @@ class EsInterfaceTest_Search(TestCase):
 
     #     mock_search.assert_not_called()
     #     self.assertEqual(1, mock_rget.call_count)
+
+    @mock.patch.object(ElasticSearchExporter, 'export_csv')
+    @mock.patch('elasticsearch.helpers.scan')
+    def test_search_with_format_csv__valid(self, mock_search, mock_exporter):
+        mock_search.return_value = es_generator(10)
+        mock_exporter.return_value = StreamingHttpResponse()
+
+        body = load("search_with_format_csv__valid")
+        format = 'csv'
+        res = search(format=format)
+        
+        self.assertTrue(isinstance(res, StreamingHttpResponse))
+        self.assertEqual(str(type(res.streaming_content)), "<type 'itertools.imap'>")
+        self.assertEqual(1, mock_search.call_count)
+
+    @mock.patch.object(ElasticSearchExporter, 'export_json')
+    @mock.patch('elasticsearch.helpers.scan')
+    def test_search_with_format_json__valid(self, mock_search, mock_exporter):
+        mock_search.return_value = es_generator(10)
+        mock_exporter.return_value = StreamingHttpResponse()
+
+        body = load("search_with_format_json__valid")
+        format = 'csv'
+        res = search(format=format)
+        
+        self.assertTrue(isinstance(res, StreamingHttpResponse))
+        self.assertEqual(str(type(res.streaming_content)), "<type 'itertools.imap'>")
+        self.assertEqual(1, mock_search.call_count)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._get_meta")
