@@ -116,7 +116,7 @@ def _get_meta():
         "total_record_count": count_res["count"],
         "is_data_stale": _is_data_stale(max_date_res["aggregations"]["max_date"]["value_as_string"]),
         "is_narrative_stale": _is_data_stale(from_timestamp(max_date_res["aggregations"]["max_narratives"]["max_date"]["value"])),
-        "has_data_issue": flag_enabled('CCDB_TECHNICAL_ISSUES')
+        "has_data_issue": bool(flag_enabled('CCDB_TECHNICAL_ISSUES'))
     }
 
     return result
