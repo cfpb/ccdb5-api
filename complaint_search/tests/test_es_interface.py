@@ -1,3 +1,4 @@
+from django.http import StreamingHttpResponse
 from django.test import TestCase
 from complaint_search.es_interface import (
     _ES_URL,
@@ -15,6 +16,9 @@ from complaint_search.es_builders import (
     AggregationBuilder,
     SearchBuilder
 )
+from complaint_search.export import (
+    ElasticSearchExporter
+)
 from complaint_search.defaults import (
     CSV_ORDERED_HEADERS,
 )
@@ -25,6 +29,7 @@ from complaint_search.stream_content import (
 from datetime import datetime
 from elasticsearch import Elasticsearch
 from collections import namedtuple
+from nose_parameterized import parameterized
 import copy
 import deep
 import mock
@@ -302,6 +307,30 @@ class EsInterfaceTest_Search(TestCase):
 
     #     mock_search.assert_not_called()
     #     self.assertEqual(1, mock_rget.call_count)
+
+
+    @parameterized.expand([
+        ['csv'],
+        ['json']
+    ])
+    @mock.patch.object(ElasticSearchExporter, 'export_csv')
+    @mock.patch.object(ElasticSearchExporter, 'export_json')
+    @mock.patch('elasticsearch.helpers.scan')
+    def test_search_with_format__valid(self, export_type, mock_es_helper, mock_exporter_json, mock_exporter_csv):
+        mock_exporter_csv.return_value = StreamingHttpResponse()
+        mock_exporter_json.return_value = StreamingHttpResponse()
+
+        format = export_type
+        res = search(format=format)
+        
+        self.assertIsInstance(res, StreamingHttpResponse)
+        self.assertEqual(1, mock_es_helper.call_count)
+        if export_type == 'csv':
+            self.assertEqual(1, mock_exporter_csv.call_count)
+            self.assertEqual(0, mock_exporter_json.call_count)
+        else:
+            self.assertEqual(1, mock_exporter_json.call_count)
+            self.assertEqual(0, mock_exporter_csv.call_count)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._get_meta")

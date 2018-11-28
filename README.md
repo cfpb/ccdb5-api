@@ -19,7 +19,6 @@ Requirements are retrieved and/or build automatically via pip (see below).
 * djangorestframework - Rest API framework
 * elasticsearch - low level client for Elasticsearch
 * requests - http requests to get different data format
-* urllib3 - http client library to help format http URL
 
 
 ## Setup & Running

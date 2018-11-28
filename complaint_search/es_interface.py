@@ -1,5 +1,4 @@
 import os
-import urllib
 import json
 import copy
 import time
