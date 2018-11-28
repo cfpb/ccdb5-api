@@ -322,31 +322,31 @@ class EsInterfaceTest_Search(TestCase):
 
     @mock.patch.object(ElasticSearchExporter, 'export_csv')
     @mock.patch('elasticsearch.helpers.scan')
-    def test_search_with_format_csv__valid(self, mock_search, mock_exporter):
-        mock_search.return_value = es_generator(10)
+    def test_search_with_format_csv__valid(self, mock_es_helper, mock_exporter):
+        mock_es_helper.return_value = es_generator(10)
         mock_exporter.return_value = StreamingHttpResponse()
 
-        body = load("search_with_format_csv__valid")
         format = 'csv'
         res = search(format=format)
         
-        self.assertTrue(isinstance(res, StreamingHttpResponse))
+        self.assertIsInstance(res, StreamingHttpResponse)
         self.assertEqual(str(type(res.streaming_content)), "<type 'itertools.imap'>")
-        self.assertEqual(1, mock_search.call_count)
+        self.assertEqual(1, mock_es_helper.call_count)
+        self.assertEqual(1, mock_exporter.call_count)
 
     @mock.patch.object(ElasticSearchExporter, 'export_json')
     @mock.patch('elasticsearch.helpers.scan')
-    def test_search_with_format_json__valid(self, mock_search, mock_exporter):
-        mock_search.return_value = es_generator(10)
+    def test_search_with_format_json__valid(self, mock_es_helper, mock_exporter):
+        mock_es_helper.return_value = es_generator(10)
         mock_exporter.return_value = StreamingHttpResponse()
 
-        body = load("search_with_format_json__valid")
-        format = 'csv'
+        format = 'json'
         res = search(format=format)
         
         self.assertTrue(isinstance(res, StreamingHttpResponse))
         self.assertEqual(str(type(res.streaming_content)), "<type 'itertools.imap'>")
-        self.assertEqual(1, mock_search.call_count)
+        self.assertEqual(1, mock_es_helper.call_count)
+        self.assertEqual(1, mock_exporter.call_count)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._get_meta")
