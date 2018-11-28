@@ -52,19 +52,6 @@ def load(shortName):
     with open(fileName, 'r') as f:
         return json.load(f)
 
-def es_generator(n):
-    count = 0
-    while count < n:
-        yield {
-            '_source':  {
-                'first_entry': 'Random 1',
-                'second_entry': 'Random 2',
-                'third_entry': 'Random 3',
-                'fourth_entry': 'Random 4'
-            }
-        }
-        count += 1
-
 
 class EsInterfaceTest_Search(TestCase):
     # -------------------------------------------------------------------------
@@ -330,7 +317,6 @@ class EsInterfaceTest_Search(TestCase):
     @mock.patch.object(ElasticSearchExporter, 'export_json')
     @mock.patch('elasticsearch.helpers.scan')
     def test_search_with_format__valid(self, export_type, mock_es_helper, mock_exporter_json, mock_exporter_csv):
-        mock_es_helper.return_value = es_generator(10)
         mock_exporter_csv.return_value = StreamingHttpResponse()
         mock_exporter_json.return_value = StreamingHttpResponse()
 
