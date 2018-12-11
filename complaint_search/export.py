@@ -26,7 +26,7 @@ class ElasticSearchExporter(object):
     # - header_dict (OrderedDict)
     #   The ordered dictionary where the key is the Elasticsearch field name
     #   and the value is the CSV column header for that field 
-    def export_csv(self, scanResponse, header_dict, max_size=5000):
+    def export_csv(self, scanResponse, header_dict):
         def read_and_flush(writer, buffer_, row):
             writer.writerow(row)
             buffer_.seek(0)
@@ -47,10 +47,7 @@ class ElasticSearchExporter(object):
             count = 0
             # Write CSV
             for row in scanResponse:
-                if count >= max_size:
-                    break
-                else:
-                    count += 1
+                count += 1
                 rows_data = {key: unicode(value) for key, value in row['_source'].iteritems()
                              if key in header_dict.keys()}
 
@@ -68,16 +65,13 @@ class ElasticSearchExporter(object):
     #
     # Parameters:
     # - scanResponse (generator)
-    #   The response from an Elasticsaerch scan query
-    def export_json(self, scanResponse, max_size=5000):
+    #   The response from an Elasticsearch scan query
+    def export_json(self, scanResponse):
         def stream():
             count = 0
             # Write JSON
             for row in scanResponse:
-                if count >= max_size:
-                    break
-                else:
-                    count += 1
+                count += 1
                 yield json.dumps(row)
 
         response = StreamingHttpResponse(
