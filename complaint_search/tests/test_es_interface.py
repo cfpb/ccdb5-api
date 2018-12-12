@@ -62,8 +62,7 @@ class EsInterfaceTest_Search(TestCase):
             "search": "OK",
             "_scroll_id": "This_is_a_scroll_id",
             "hits": {
-                "hits": [0, 1, 2, 3],
-                "total": 4
+                "hits": [0, 1, 2, 3]
             }
         },
         {
@@ -319,7 +318,9 @@ class EsInterfaceTest_Search(TestCase):
     @mock.patch.object(Elasticsearch, 'search')
     @mock.patch('elasticsearch.helpers.scan')
     def test_search_with_format__valid(self, export_type, mock_es_helper, mock_search, mock_exporter_json, mock_exporter_csv):
-        mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
+        mock_search_side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
+        mock_search_side_effect[0]['hits']['total'] = 4
+        mock_search.side_effect = mock_search_side_effect
 
         mock_exporter_csv.return_value = StreamingHttpResponse()
         mock_exporter_json.return_value = StreamingHttpResponse()
