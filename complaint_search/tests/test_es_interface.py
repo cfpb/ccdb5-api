@@ -62,7 +62,8 @@ class EsInterfaceTest_Search(TestCase):
             "search": "OK",
             "_scroll_id": "This_is_a_scroll_id",
             "hits": {
-                "hits": [0, 1, 2, 3]
+                "hits": [0, 1, 2, 3],
+                "total": 4
             }
         },
         {
