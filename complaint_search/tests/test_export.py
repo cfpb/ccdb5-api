@@ -66,7 +66,7 @@ class ExportTest(TestCase):
         gen = es_generator(length)
         
         # act
-        res = es_exporter.export_json(gen)
+        res = es_exporter.export_json(gen, length)
 
         # assert
         self.assertTrue(isinstance(res, StreamingHttpResponse))
