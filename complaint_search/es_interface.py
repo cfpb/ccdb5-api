@@ -189,7 +189,7 @@ def search(agg_exclude=None, **kwargs):
 
     elif format in EXPORT_FORMATS:
         scanResponse = helpers.scan(client=_get_es(), query=body, scroll= "10m", 
-                index=params.get("index_name"), size=7000, doc_type=_COMPLAINT_DOC_TYPE, 
+                index=_COMPLAINT_ES_INDEX, size=7000, doc_type=_COMPLAINT_DOC_TYPE, 
                 request_timeout=3000)
 
         exporter = ElasticSearchExporter()
