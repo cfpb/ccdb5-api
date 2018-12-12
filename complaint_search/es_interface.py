@@ -188,14 +188,6 @@ def search(agg_exclude=None, **kwargs):
         res["_meta"] = _get_meta()
 
     elif format in EXPORT_FORMATS:
-        del body['highlight']
-        body['size'] = 0
-
-        res = _get_es().search(index=_COMPLAINT_ES_INDEX,
-                               doc_type=_COMPLAINT_DOC_TYPE,
-                               body=body,
-                               scroll="10m")
-
         scanResponse = helpers.scan(client=_get_es(), query=body, scroll= "10m", 
                 index=_COMPLAINT_ES_INDEX, size=7000, doc_type=_COMPLAINT_DOC_TYPE, 
                 request_timeout=3000)
@@ -207,6 +199,13 @@ def search(agg_exclude=None, **kwargs):
                     scanResponse,
                     CSV_ORDERED_HEADERS)
         elif params.get("format") == 'json':
+            del body['highlight']
+            body['size'] = 0
+
+            res = _get_es().search(index=_COMPLAINT_ES_INDEX,
+                                   doc_type=_COMPLAINT_DOC_TYPE,
+                                   body=body,
+                                   scroll="10m")
             res = exporter.export_json(scanResponse, res['hits']['total'])
 
     return res
