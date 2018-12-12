@@ -66,13 +66,21 @@ class ElasticSearchExporter(object):
     # Parameters:
     # - scanResponse (generator)
     #   The response from an Elasticsearch scan query
-    def export_json(self, scanResponse):
+    # - total_count (int)
+    #   The total number of records to be output
+    def export_json(self, scanResponse, total_count):
         def stream():
             count = 0
             # Write JSON
+            yield '['
             for row in scanResponse:
                 count += 1
-                yield json.dumps(row)
+                if count < total_count:
+                    yield '{},'.format(json.dumps(row))
+                else:
+                    yield json.dumps(row)
+
+            yield ']'
 
         response = StreamingHttpResponse(
             stream(), content_type='text/json'
