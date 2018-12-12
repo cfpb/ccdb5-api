@@ -315,13 +315,17 @@ class EsInterfaceTest_Search(TestCase):
     ])
     @mock.patch.object(ElasticSearchExporter, 'export_csv')
     @mock.patch.object(ElasticSearchExporter, 'export_json')
+    @mock.patch.object(Elasticsearch, 'search')
     @mock.patch('elasticsearch.helpers.scan')
-    def test_search_with_format__valid(self, export_type, mock_es_helper, mock_exporter_json, mock_exporter_csv):
+    def test_search_with_format__valid(self, export_type, mock_es_helper, mock_search, mock_exporter_json, mock_exporter_csv):
+        mock_search_side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
+        mock_search_side_effect[0]['hits']['total'] = 4
+        mock_search.side_effect = mock_search_side_effect
+
         mock_exporter_csv.return_value = StreamingHttpResponse()
         mock_exporter_json.return_value = StreamingHttpResponse()
 
-        format = export_type
-        res = search(format=format)
+        res = search(format=export_type)
         
         self.assertIsInstance(res, StreamingHttpResponse)
         self.assertEqual(1, mock_es_helper.call_count)
@@ -329,6 +333,7 @@ class EsInterfaceTest_Search(TestCase):
             self.assertEqual(1, mock_exporter_csv.call_count)
             self.assertEqual(0, mock_exporter_json.call_count)
         else:
+            self.assertEqual(1, mock_search.call_count)
             self.assertEqual(1, mock_exporter_json.call_count)
             self.assertEqual(0, mock_exporter_csv.call_count)
 
