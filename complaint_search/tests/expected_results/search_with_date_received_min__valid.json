@@ -1,5 +1,26 @@
 {
     "from": 0,
+  "_source": [
+    "company",
+    "company_public_response",
+    "company_response",
+    "complaint_id",
+    "complaint_what_happened",
+    "consumer_consent_provided",
+    "consumer_disputed",
+    "date_received",
+    "date_sent_to_company",
+    "has_narrative",
+    "issue",
+    "product",
+    "state",
+    "submitted_via",
+    "sub_issue",
+    "sub_product",
+    "tags",
+    "timely",
+    "zip_code"
+  ],
     "size": 10,
     "query": {
         "query_string": {
@@ -25,7 +46,7 @@
                 {
                     "range": {
                         "date_received": {
-                            "from": "2014-04-14"
+                            "from": "2014-04-14T12:00:00-05:00"
                         }
                     }
                 }
@@ -44,7 +65,7 @@
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -69,7 +90,7 @@
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -94,7 +115,7 @@
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -127,7 +148,7 @@
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -160,7 +181,7 @@
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -185,7 +206,7 @@
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -210,7 +231,7 @@
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -235,7 +256,7 @@
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -260,7 +281,7 @@
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -285,7 +306,7 @@
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -310,7 +331,7 @@
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -335,7 +356,7 @@
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }
@@ -360,7 +381,7 @@
                         {
                             "range": {
                                 "date_received": {
-                                    "from": "2014-04-14"
+                                    "from": "2014-04-14T12:00:00-05:00"
                                 }
                             }
                         }

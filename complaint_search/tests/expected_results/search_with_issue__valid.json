@@ -7,45 +7,28 @@
     }
   ],
   "from": 0,
+  "_source": [
+    "company",
+    "company_public_response",
+    "company_response",
+    "complaint_id",
+    "complaint_what_happened",
+    "consumer_consent_provided",
+    "consumer_disputed",
+    "date_received",
+    "date_sent_to_company",
+    "has_narrative",
+    "issue",
+    "product",
+    "state",
+    "submitted_via",
+    "sub_issue",
+    "sub_product",
+    "tags",
+    "timely",
+    "zip_code"
+  ],
   "aggs": {
-    "timely": {
-      "filter": {
-        "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": [
-                  {
-                    "terms": {
-                      "sub_issue.raw": [
-                        "Frequent or repeated calls"
-                      ]
-                    }
-                  },
-                  {
-                    "terms": {
-                      "issue.raw": [
-                        "Loan servicing, payments, escrow account"
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          ],
-          "should": [],
-          "must": []
-        }
-      },
-      "aggs": {
-        "timely": {
-          "terms": {
-            "field": "timely",
-            "size": 0
-          }
-        }
-      }
-    },
     "company_public_response": {
       "filter": {
         "bool": {
@@ -54,9 +37,24 @@
               "bool": {
                 "should": [
                   {
-                    "terms": {
-                      "sub_issue.raw": [
-                        "Frequent or repeated calls"
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_issue.raw": [
+                              "Frequent or repeated calls"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "issue.raw": [
+                              "Communication tactics"
+                            ]
+                          }
+                        }
                       ]
                     }
                   },
@@ -84,6 +82,59 @@
         }
       }
     },
+    "timely": {
+      "filter": {
+        "bool": {
+          "filter": [
+            {
+              "bool": {
+                "should": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_issue.raw": [
+                              "Frequent or repeated calls"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "issue.raw": [
+                              "Communication tactics"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "terms": {
+                      "issue.raw": [
+                        "Loan servicing, payments, escrow account"
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "should": [],
+          "must": []
+        }
+      },
+      "aggs": {
+        "timely": {
+          "terms": {
+            "field": "timely",
+            "size": 0
+          }
+        }
+      }
+    },
     "product": {
       "filter": {
         "bool": {
@@ -92,9 +143,24 @@
               "bool": {
                 "should": [
                   {
-                    "terms": {
-                      "sub_issue.raw": [
-                        "Frequent or repeated calls"
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_issue.raw": [
+                              "Frequent or repeated calls"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "issue.raw": [
+                              "Communication tactics"
+                            ]
+                          }
+                        }
                       ]
                     }
                   },
@@ -130,6 +196,59 @@
         }
       }
     },
+    "state": {
+      "filter": {
+        "bool": {
+          "filter": [
+            {
+              "bool": {
+                "should": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_issue.raw": [
+                              "Frequent or repeated calls"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "issue.raw": [
+                              "Communication tactics"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "terms": {
+                      "issue.raw": [
+                        "Loan servicing, payments, escrow account"
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "should": [],
+          "must": []
+        }
+      },
+      "aggs": {
+        "state": {
+          "terms": {
+            "field": "state",
+            "size": 0
+          }
+        }
+      }
+    },
     "tags": {
       "filter": {
         "bool": {
@@ -138,9 +257,24 @@
               "bool": {
                 "should": [
                   {
-                    "terms": {
-                      "sub_issue.raw": [
-                        "Frequent or repeated calls"
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_issue.raw": [
+                              "Frequent or repeated calls"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "issue.raw": [
+                              "Communication tactics"
+                            ]
+                          }
+                        }
                       ]
                     }
                   },
@@ -168,44 +302,6 @@
         }
       }
     },
-    "company": {
-      "filter": {
-        "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": [
-                  {
-                    "terms": {
-                      "sub_issue.raw": [
-                        "Frequent or repeated calls"
-                      ]
-                    }
-                  },
-                  {
-                    "terms": {
-                      "issue.raw": [
-                        "Loan servicing, payments, escrow account"
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          ],
-          "should": [],
-          "must": []
-        }
-      },
-      "aggs": {
-        "company": {
-          "terms": {
-            "field": "company.raw",
-            "size": 0
-          }
-        }
-      }
-    },
     "consumer_disputed": {
       "filter": {
         "bool": {
@@ -214,9 +310,24 @@
               "bool": {
                 "should": [
                   {
-                    "terms": {
-                      "sub_issue.raw": [
-                        "Frequent or repeated calls"
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_issue.raw": [
+                              "Frequent or repeated calls"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "issue.raw": [
+                              "Communication tactics"
+                            ]
+                          }
+                        }
                       ]
                     }
                   },
@@ -252,9 +363,24 @@
               "bool": {
                 "should": [
                   {
-                    "terms": {
-                      "sub_issue.raw": [
-                        "Frequent or repeated calls"
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_issue.raw": [
+                              "Frequent or repeated calls"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "issue.raw": [
+                              "Communication tactics"
+                            ]
+                          }
+                        }
                       ]
                     }
                   },
@@ -282,44 +408,6 @@
         }
       }
     },
-    "state": {
-      "filter": {
-        "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": [
-                  {
-                    "terms": {
-                      "sub_issue.raw": [
-                        "Frequent or repeated calls"
-                      ]
-                    }
-                  },
-                  {
-                    "terms": {
-                      "issue.raw": [
-                        "Loan servicing, payments, escrow account"
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          ],
-          "should": [],
-          "must": []
-        }
-      },
-      "aggs": {
-        "state": {
-          "terms": {
-            "field": "state",
-            "size": 0
-          }
-        }
-      }
-    },
     "has_narrative": {
       "filter": {
         "bool": {
@@ -328,9 +416,24 @@
               "bool": {
                 "should": [
                   {
-                    "terms": {
-                      "sub_issue.raw": [
-                        "Frequent or repeated calls"
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_issue.raw": [
+                              "Frequent or repeated calls"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "issue.raw": [
+                              "Communication tactics"
+                            ]
+                          }
+                        }
                       ]
                     }
                   },
@@ -353,44 +456,6 @@
         "has_narrative": {
           "terms": {
             "field": "has_narrative",
-            "size": 0
-          }
-        }
-      }
-    },
-    "submitted_via": {
-      "filter": {
-        "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": [
-                  {
-                    "terms": {
-                      "sub_issue.raw": [
-                        "Frequent or repeated calls"
-                      ]
-                    }
-                  },
-                  {
-                    "terms": {
-                      "issue.raw": [
-                        "Loan servicing, payments, escrow account"
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          ],
-          "should": [],
-          "must": []
-        }
-      },
-      "aggs": {
-        "submitted_via": {
-          "terms": {
-            "field": "submitted_via",
             "size": 0
           }
         }
@@ -429,9 +494,24 @@
               "bool": {
                 "should": [
                   {
-                    "terms": {
-                      "sub_issue.raw": [
-                        "Frequent or repeated calls"
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_issue.raw": [
+                              "Frequent or repeated calls"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "issue.raw": [
+                              "Communication tactics"
+                            ]
+                          }
+                        }
                       ]
                     }
                   },
@@ -459,7 +539,7 @@
         }
       }
     },
-    "zip_code": {
+    "submitted_via": {
       "filter": {
         "bool": {
           "filter": [
@@ -467,9 +547,24 @@
               "bool": {
                 "should": [
                   {
-                    "terms": {
-                      "sub_issue.raw": [
-                        "Frequent or repeated calls"
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_issue.raw": [
+                              "Frequent or repeated calls"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "issue.raw": [
+                              "Communication tactics"
+                            ]
+                          }
+                        }
                       ]
                     }
                   },
@@ -489,9 +584,9 @@
         }
       },
       "aggs": {
-        "zip_code": {
+        "submitted_via": {
           "terms": {
-            "field": "zip_code",
+            "field": "submitted_via",
             "size": 0
           }
         }
@@ -514,9 +609,24 @@
           "bool": {
             "should": [
               {
-                "terms": {
-                  "sub_issue.raw": [
-                    "Frequent or repeated calls"
+                "bool": {
+                  "should": [
+                    {
+                      "terms": {
+                        "sub_issue.raw": [
+                          "Frequent or repeated calls"
+                        ]
+                      }
+                    }
+                  ],
+                  "must": [
+                    {
+                      "terms": {
+                        "issue.raw": [
+                          "Communication tactics"
+                        ]
+                      }
+                    }
                   ]
                 }
               },

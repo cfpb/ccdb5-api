@@ -1,23 +1,4 @@
 {
-  "from": 0,
-  "size": 10,
-  "query": {
-    "query_string": {
-      "query": "*",
-      "fields": [
-        "complaint_what_happened"
-      ],
-      "default_operator": "AND"
-    }
-  },
-  "highlight": {
-    "require_field_match": false,
-    "fields": {
-      "complaint_what_happened": {}
-    },
-    "number_of_fragments": 1,
-    "fragment_size": 500
-  },
   "sort": [
     {
       "_score": {
@@ -25,36 +6,30 @@
       }
     }
   ],
-  "post_filter": {
-    "bool": {
-      "filter": [
-        {
-          "bool": {
-            "should": [
-              {
-                "terms": {
-                  "product.raw": [
-                    "Payday Loan"
-                  ]
-                }
-              },
-              {
-                "terms": {
-                  "sub_product.raw": [
-                    "FHA mortgage"
-                  ]
-                }
-              }
-            ]
-          }
-        }
-      ],
-      "must": [],
-      "should": []
-    }
-  },
+  "from": 0,
+  "_source": [
+    "company",
+    "company_public_response",
+    "company_response",
+    "complaint_id",
+    "complaint_what_happened",
+    "consumer_consent_provided",
+    "consumer_disputed",
+    "date_received",
+    "date_sent_to_company",
+    "has_narrative",
+    "issue",
+    "product",
+    "state",
+    "submitted_via",
+    "sub_issue",
+    "sub_product",
+    "tags",
+    "timely",
+    "zip_code"
+  ],
   "aggs": {
-    "has_narrative": {
+    "company_public_response": {
       "filter": {
         "bool": {
           "filter": [
@@ -64,14 +39,29 @@
                   {
                     "terms": {
                       "product.raw": [
-                        "Payday Loan"
+                        "Payday loan"
                       ]
                     }
                   },
                   {
-                    "terms": {
-                      "sub_product.raw": [
-                        "FHA mortgage"
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_product.raw": [
+                              "FHA mortgage"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "product.raw": [
+                              "Mortgage"
+                            ]
+                          }
+                        }
                       ]
                     }
                   }
@@ -84,15 +74,15 @@
         }
       },
       "aggs": {
-        "has_narrative": {
+        "company_public_response": {
           "terms": {
-            "field": "has_narrative",
+            "field": "company_public_response.raw",
             "size": 0
           }
         }
       }
     },
-    "company": {
+    "timely": {
       "filter": {
         "bool": {
           "filter": [
@@ -102,14 +92,29 @@
                   {
                     "terms": {
                       "product.raw": [
-                        "Payday Loan"
+                        "Payday loan"
                       ]
                     }
                   },
                   {
-                    "terms": {
-                      "sub_product.raw": [
-                        "FHA mortgage"
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_product.raw": [
+                              "FHA mortgage"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "product.raw": [
+                              "Mortgage"
+                            ]
+                          }
+                        }
                       ]
                     }
                   }
@@ -122,9 +127,9 @@
         }
       },
       "aggs": {
-        "company": {
+        "timely": {
           "terms": {
-            "field": "company.raw",
+            "field": "timely",
             "size": 0
           }
         }
@@ -155,52 +160,6 @@
         }
       }
     },
-    "issue": {
-      "filter": {
-        "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": [
-                  {
-                    "terms": {
-                      "product.raw": [
-                        "Payday Loan"
-                      ]
-                    }
-                  },
-                  {
-                    "terms": {
-                      "sub_product.raw": [
-                        "FHA mortgage"
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          ],
-          "should": [],
-          "must": []
-        }
-      },
-      "aggs": {
-        "issue": {
-          "terms": {
-            "field": "issue.raw",
-            "size": 0
-          },
-          "aggs": {
-            "sub_issue.raw": {
-              "terms": {
-                "field": "sub_issue.raw",
-                "size": 0
-              }
-            }
-          }
-        }
-      }
-    },
     "state": {
       "filter": {
         "bool": {
@@ -211,14 +170,29 @@
                   {
                     "terms": {
                       "product.raw": [
-                        "Payday Loan"
+                        "Payday loan"
                       ]
                     }
                   },
                   {
-                    "terms": {
-                      "sub_product.raw": [
-                        "FHA mortgage"
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_product.raw": [
+                              "FHA mortgage"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "product.raw": [
+                              "Mortgage"
+                            ]
+                          }
+                        }
                       ]
                     }
                   }
@@ -239,7 +213,7 @@
         }
       }
     },
-    "zip_code": {
+    "tags": {
       "filter": {
         "bool": {
           "filter": [
@@ -249,14 +223,29 @@
                   {
                     "terms": {
                       "product.raw": [
-                        "Payday Loan"
+                        "Payday loan"
                       ]
                     }
                   },
                   {
-                    "terms": {
-                      "sub_product.raw": [
-                        "FHA mortgage"
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_product.raw": [
+                              "FHA mortgage"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "product.raw": [
+                              "Mortgage"
+                            ]
+                          }
+                        }
                       ]
                     }
                   }
@@ -269,123 +258,9 @@
         }
       },
       "aggs": {
-        "zip_code": {
+        "tags": {
           "terms": {
-            "field": "zip_code",
-            "size": 0
-          }
-        }
-      }
-    },
-    "timely": {
-      "filter": {
-        "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": [
-                  {
-                    "terms": {
-                      "product.raw": [
-                        "Payday Loan"
-                      ]
-                    }
-                  },
-                  {
-                    "terms": {
-                      "sub_product.raw": [
-                        "FHA mortgage"
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          ],
-          "should": [],
-          "must": []
-        }
-      },
-      "aggs": {
-        "timely": {
-          "terms": {
-            "field": "timely",
-            "size": 0
-          }
-        }
-      }
-    },
-    "company_response": {
-      "filter": {
-        "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": [
-                  {
-                    "terms": {
-                      "product.raw": [
-                        "Payday Loan"
-                      ]
-                    }
-                  },
-                  {
-                    "terms": {
-                      "sub_product.raw": [
-                        "FHA mortgage"
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          ],
-          "should": [],
-          "must": []
-        }
-      },
-      "aggs": {
-        "company_response": {
-          "terms": {
-            "field": "company_response",
-            "size": 0
-          }
-        }
-      }
-    },
-    "company_public_response": {
-      "filter": {
-        "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": [
-                  {
-                    "terms": {
-                      "product.raw": [
-                        "Payday Loan"
-                      ]
-                    }
-                  },
-                  {
-                    "terms": {
-                      "sub_product.raw": [
-                        "FHA mortgage"
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          ],
-          "should": [],
-          "must": []
-        }
-      },
-      "aggs": {
-        "company_public_response": {
-          "terms": {
-            "field": "company_public_response.raw",
+            "field": "tags",
             "size": 0
           }
         }
@@ -401,14 +276,29 @@
                   {
                     "terms": {
                       "product.raw": [
-                        "Payday Loan"
+                        "Payday loan"
                       ]
                     }
                   },
                   {
-                    "terms": {
-                      "sub_product.raw": [
-                        "FHA mortgage"
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_product.raw": [
+                              "FHA mortgage"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "product.raw": [
+                              "Mortgage"
+                            ]
+                          }
+                        }
                       ]
                     }
                   }
@@ -439,14 +329,29 @@
                   {
                     "terms": {
                       "product.raw": [
-                        "Payday Loan"
+                        "Payday loan"
                       ]
                     }
                   },
                   {
-                    "terms": {
-                      "sub_product.raw": [
-                        "FHA mortgage"
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_product.raw": [
+                              "FHA mortgage"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "product.raw": [
+                              "Mortgage"
+                            ]
+                          }
+                        }
                       ]
                     }
                   }
@@ -467,7 +372,7 @@
         }
       }
     },
-    "tags": {
+    "has_narrative": {
       "filter": {
         "bool": {
           "filter": [
@@ -477,14 +382,29 @@
                   {
                     "terms": {
                       "product.raw": [
-                        "Payday Loan"
+                        "Payday loan"
                       ]
                     }
                   },
                   {
-                    "terms": {
-                      "sub_product.raw": [
-                        "FHA mortgage"
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_product.raw": [
+                              "FHA mortgage"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "product.raw": [
+                              "Mortgage"
+                            ]
+                          }
+                        }
                       ]
                     }
                   }
@@ -497,9 +417,123 @@
         }
       },
       "aggs": {
-        "tags": {
+        "has_narrative": {
           "terms": {
-            "field": "tags",
+            "field": "has_narrative",
+            "size": 0
+          }
+        }
+      }
+    },
+    "issue": {
+      "filter": {
+        "bool": {
+          "filter": [
+            {
+              "bool": {
+                "should": [
+                  {
+                    "terms": {
+                      "product.raw": [
+                        "Payday loan"
+                      ]
+                    }
+                  },
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_product.raw": [
+                              "FHA mortgage"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "product.raw": [
+                              "Mortgage"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "should": [],
+          "must": []
+        }
+      },
+      "aggs": {
+        "issue": {
+          "terms": {
+            "field": "issue.raw",
+            "size": 0
+          },
+          "aggs": {
+            "sub_issue.raw": {
+              "terms": {
+                "field": "sub_issue.raw",
+                "size": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "company_response": {
+      "filter": {
+        "bool": {
+          "filter": [
+            {
+              "bool": {
+                "should": [
+                  {
+                    "terms": {
+                      "product.raw": [
+                        "Payday loan"
+                      ]
+                    }
+                  },
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_product.raw": [
+                              "FHA mortgage"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "product.raw": [
+                              "Mortgage"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "should": [],
+          "must": []
+        }
+      },
+      "aggs": {
+        "company_response": {
+          "terms": {
+            "field": "company_response",
             "size": 0
           }
         }
@@ -515,14 +549,29 @@
                   {
                     "terms": {
                       "product.raw": [
-                        "Payday Loan"
+                        "Payday loan"
                       ]
                     }
                   },
                   {
-                    "terms": {
-                      "sub_product.raw": [
-                        "FHA mortgage"
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_product.raw": [
+                              "FHA mortgage"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "product.raw": [
+                              "Mortgage"
+                            ]
+                          }
+                        }
                       ]
                     }
                   }
@@ -543,5 +592,66 @@
         }
       }
     }
-  }
+  },
+  "query": {
+    "query_string": {
+      "query": "*",
+      "default_operator": "AND",
+      "fields": [
+        "complaint_what_happened"
+      ]
+    }
+  },
+  "post_filter": {
+    "bool": {
+      "filter": [
+        {
+          "bool": {
+            "should": [
+              {
+                "terms": {
+                  "product.raw": [
+                    "Payday loan"
+                  ]
+                }
+              },
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "terms": {
+                        "sub_product.raw": [
+                          "FHA mortgage"
+                        ]
+                      }
+                    }
+                  ],
+                  "must": [
+                    {
+                      "terms": {
+                        "product.raw": [
+                          "Mortgage"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "must": [],
+      "should": []
+    }
+  },
+  "highlight": {
+    "fragment_size": 500,
+    "number_of_fragments": 1,
+    "require_field_match": false,
+    "fields": {
+      "complaint_what_happened": {}
+    }
+  },
+  "size": 10
 }

@@ -1,12 +1,13 @@
 # Python egg metadata
 #################
 *.egg-info
-.eggs
+.eggs/
 
-# Coverage #
-############
+# Testing #
+###########
 .coverage
 htmlcov/
+.tox/
 
 # OS Files #
 ############
@@ -15,3 +16,7 @@ htmlcov/
 .env
 *.pyc
 db.sqlite3
+
+# Documentation files *
+
+site/

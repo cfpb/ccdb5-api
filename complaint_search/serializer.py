@@ -2,21 +2,19 @@ from rest_framework import serializers
 from localflavor.us.us_states import STATE_CHOICES
 from complaint_search.defaults import PARAMS
 
+
 class SearchInputSerializer(serializers.Serializer):
 
     ### Format Choices
     FORMAT_DEFAULT = 'default'
     FORMAT_JSON = 'json'
     FORMAT_CSV = 'csv'
-    FORMAT_XLS = 'xls'
-    FORMAT_XLSX = 'xlsx'
 
     FORMAT_CHOICES = (
         (FORMAT_DEFAULT, 'DEFAULT'),
         (FORMAT_JSON, 'JSON'),
         (FORMAT_CSV, 'CSV'),
-        (FORMAT_XLS, 'XLS'),
-        (FORMAT_XLSX, 'XLSX'), )
+    )
 
     ### Field Choices
     FIELD_NARRATIVE = 'complaint_what_happened'
@@ -124,6 +122,11 @@ class SearchInputSerializer(serializers.Serializer):
             raise serializers.ValidationError("frm is not zero or a multiple of size")
         return data
 
+
 class SuggestInputSerializer(serializers.Serializer):
     text = serializers.CharField(max_length=200, required=False)
     size = serializers.IntegerField(min_value=1, max_value=100000, required=False)
+
+
+class SuggestFilterInputSerializer(SearchInputSerializer):
+    text = serializers.CharField(max_length=100, required=True)

@@ -1,21 +1,33 @@
 import os
-import urllib
 import json
 import copy
+import time
 from datetime import datetime, date, timedelta
 from collections import defaultdict, namedtuple
 import requests
-from elasticsearch import Elasticsearch
+import logging
+from elasticsearch import Elasticsearch, helpers
 from flags.state import flag_enabled
 from complaint_search.es_builders import (
     SearchBuilder,
     PostFilterBuilder,
-    AggregationBuilder
+    AggregationBuilder,
 )
-from complaint_search.defaults import PARAMS
+from complaint_search.defaults import (
+    CHUNK_SIZE,
+    CSV_ORDERED_HEADERS,
+    EXPORT_FORMATS,
+    PARAMS,
+)
+from stream_content import (
+    StreamCSVContent,
+    StreamJSONContent,
+)
+
+from export import ElasticSearchExporter
 
 _ES_URL = "{}://{}:{}".format("http", os.environ.get('ES_HOST', 'localhost'),
-    os.environ.get('ES_PORT', '9200'))
+                              os.environ.get('ES_PORT', '9200'))
 _ES_USER = os.environ.get('ES_USER', '')
 _ES_PASSWORD = os.environ.get('ES_PASSWORD', '')
 
@@ -24,15 +36,18 @@ _ES_INSTANCE = None
 _COMPLAINT_ES_INDEX = os.environ.get('COMPLAINT_ES_INDEX', 'complaint-index')
 _COMPLAINT_DOC_TYPE = os.environ.get('COMPLAINT_DOC_TYPE', 'complaint-doctype')
 
+
 def _get_es():
     global _ES_INSTANCE
     if _ES_INSTANCE is None:
         _ES_INSTANCE = Elasticsearch([_ES_URL], http_auth=(_ES_USER, _ES_PASSWORD),
-            timeout=100)
+                                     timeout=100)
     return _ES_INSTANCE
+
 
 def _get_now():
     return datetime.now()
+
 
 def _min_valid_time():
     # show notification starting fifth business day data has not been updated
@@ -45,38 +60,68 @@ def _min_valid_time():
     delta = weekday if weekday > 3 else 6
     return (now - timedelta(delta)).strftime("%Y-%m-%d")
 
+
 def _is_data_stale(last_updated_time):
     if (last_updated_time < _min_valid_time()):
         return True
 
     return False
 
+
+def from_timestamp(seconds):
+    # Socrata fields (:field_name) are indexed in seconds, not the usual milliseconds
+    fromtimestamp = datetime.fromtimestamp(seconds)
+    return fromtimestamp.strftime('%Y-%m-%d')
+
+
 def _get_meta():
+    # Hard code noon Eastern Time zone since that is where it is built
     body = {
         # size: 0 here to prevent taking too long since we only needed max_date
         "size": 0,
         "aggs": {
-            "max_date" : { "max" : { "field" : "date_received" }},
-            "max_update": { "max" : { "field" : ":updated_at" }},
-            "max_created": { "max" : { "field" : ":created_at" }}
+            "max_date": {
+                "max": {
+                    "field": "date_received",
+                    "format": "yyyy-MM-dd'T'12:00:00-05:00"
+                }
+            },
+            "max_indexed_date": {
+                "max": {
+                    "field": "date_indexed",
+                    "format": "yyyy-MM-dd'T'12:00:00-05:00"
+                }
+            },
+            "max_narratives": {
+                "filter": {"term": {"has_narrative": "true"}},
+                "aggs": {
+                    "max_date": {
+                        "max": {
+                            "field": ":updated_at",
+                        }
+                    }
+                }
+            }
         }
     }
     max_date_res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
-    count_res = _get_es().count(index=_COMPLAINT_ES_INDEX, doc_type=_COMPLAINT_DOC_TYPE)
-    down_res = _is_data_stale(max_date_res["aggregations"]["max_date"]["value_as_string"])
+    count_res = _get_es().count(index=_COMPLAINT_ES_INDEX, 
+        doc_type=_COMPLAINT_DOC_TYPE)
 
     result = {
         "license": "CC0",
         "last_updated": max_date_res["aggregations"]["max_date"]["value_as_string"],
+        "last_indexed": max_date_res["aggregations"]["max_indexed_date"]["value_as_string"],
         "total_record_count": count_res["count"],
         "is_data_stale": _is_data_stale(max_date_res["aggregations"]["max_date"]["value_as_string"]),
-        "has_data_issue": flag_enabled('CCDB_TECHNICAL_ISSUES')
+        "is_narrative_stale": _is_data_stale(from_timestamp(max_date_res["aggregations"]["max_narratives"]["max_date"]["value"])),
+        "has_data_issue": bool(flag_enabled('CCDB_TECHNICAL_ISSUES'))
     }
 
     return result
 
 # List of possible arguments:
-# - format: format to be returned: "json", "csv", "xls", or "xlsx"
+# - format: format to be returned: "json", "csv"
 # - field: field you want to search in: "complaint_what_happened", "company_public_response", "_all"
 # - size: number of complaints to return
 # - frm: from which index to start returning
@@ -99,7 +144,9 @@ def _get_meta():
 # - has_narrative: filters a list of whether complaint has narratives or not
 # - submitted_via: filters a list of ways the complaint was submitted
 # - tags - filters a list of tags
-def search(**kwargs):
+
+
+def search(agg_exclude=None, **kwargs):
     params = copy.deepcopy(PARAMS)
     params.update(**kwargs)
     search_builder = SearchBuilder()
@@ -109,54 +156,116 @@ def search(**kwargs):
     post_filter_builder.add(**params)
     body["post_filter"] = post_filter_builder.build()
 
+    log = logging.getLogger(__name__)
+    log.info(
+        'Calling %s/%s/%s/_search with %s',
+        _ES_URL, _COMPLAINT_ES_INDEX, _COMPLAINT_DOC_TYPE, body
+    )
+
     # format
-    res = None
+    res = {}
     format = params.get("format")
     if format == "default":
         if not params.get("no_aggs"):
             aggregation_builder = AggregationBuilder()
             aggregation_builder.add(**params)
+            if agg_exclude:
+                aggregation_builder.add_exclude(agg_exclude)
             body["aggs"] = aggregation_builder.build()
 
         res = _get_es().search(index=_COMPLAINT_ES_INDEX,
-            doc_type=_COMPLAINT_DOC_TYPE,
-            body=body,
-            scroll="10m")
+                               doc_type=_COMPLAINT_DOC_TYPE,
+                               body=body,
+                               scroll="10m")
 
         num_of_scroll = params.get("frm") / params.get("size")
         scroll_id = res['_scroll_id']
         if num_of_scroll > 0:
             while num_of_scroll > 0:
                 res['hits']['hits'] = _get_es().scroll(scroll_id=scroll_id,
-                    scroll="10m")['hits']['hits']
+                                                       scroll="10m")['hits']['hits']
                 num_of_scroll -= 1
         res["_meta"] = _get_meta()
 
-    elif format in ("json", "csv", "xls", "xlsx"):
-        # Deleting from field and this will force data format plugin to use
-        # scan/scroll query to create the content,
-        # Size also doesn't seem to be relevant anymore
-        del(body["from"])
+    elif format in EXPORT_FORMATS:
+        scanResponse = helpers.scan(client=_get_es(), query=body, scroll= "10m", 
+                index=_COMPLAINT_ES_INDEX, size=7000, doc_type=_COMPLAINT_DOC_TYPE, 
+                request_timeout=3000)
 
-        p = {"format": format, "source": json.dumps(body)}
-        p = urllib.urlencode(p)
-        url = "{}/{}/{}/_data?{}".format(_ES_URL, _COMPLAINT_ES_INDEX,
-            _COMPLAINT_DOC_TYPE, p)
-        response = requests.get(url, auth=(_ES_USER, _ES_PASSWORD))
-        if response.ok:
-            res = response.content
+        exporter = ElasticSearchExporter()
+
+        if params.get("format") == 'csv':
+            res = exporter.export_csv(
+                    scanResponse,
+                    CSV_ORDERED_HEADERS)
+        elif params.get("format") == 'json':
+            del body['highlight']
+            body['size'] = 0
+
+            res = _get_es().search(index=_COMPLAINT_ES_INDEX,
+                                   doc_type=_COMPLAINT_DOC_TYPE,
+                                   body=body,
+                                   scroll="10m")
+            res = exporter.export_json(scanResponse, res['hits']['total'])
+
     return res
+
 
 def suggest(text=None, size=6):
     if text is None:
         return []
-    body = {"sgg": {"text": text, "completion": {"field": "suggest", "size": size}}}
+    body = {"sgg": {"text": text, "completion": {
+        "field": "suggest", "size": size}}}
     res = _get_es().suggest(index=_COMPLAINT_ES_INDEX, body=body)
-    candidates = [ e['text'] for e in res['sgg'][0]['options'] ]
+    candidates = [e['text'] for e in res['sgg'][0]['options']]
     return candidates
+
+
+def filter_suggest(filterField, display_field=None, **kwargs):
+    params = dict(**kwargs)
+    params.update({
+        'size': 0,
+        'no_highlight': True
+    })
+
+    search_builder = SearchBuilder()
+    search_builder.add(**params)
+    body = search_builder.build()
+
+    aggregation_builder = AggregationBuilder()
+    aggregation_builder.add(**params)
+    aggs = {
+        filterField: aggregation_builder.build_one(filterField)
+    }
+    # add the input value as a must match
+    aggs[filterField]['filter']['bool']['must'].append(
+        {
+            'prefix': {filterField: params['text']}
+        }
+    )
+    # choose which field to actually display
+    aggs[filterField]['aggs'][filterField]['terms'][
+        'field'] = filterField if display_field is None else display_field
+    # add to the body
+    body['aggs'] = aggs
+
+    # format
+    res = _get_es().search(
+        index=_COMPLAINT_ES_INDEX,
+        doc_type=_COMPLAINT_DOC_TYPE,
+        body=body
+    )
+    # reformat the return
+    candidates = [
+        x['key']
+        for x in res['aggregations'][filterField][filterField]['buckets'][:10]
+    ]
+
+    return candidates
+
 
 def document(complaint_id):
     doc_query = {"query": {"term": {"_id": complaint_id}}}
     res = _get_es().search(index=_COMPLAINT_ES_INDEX,
-        doc_type=_COMPLAINT_DOC_TYPE, body=doc_query)
+                           doc_type=_COMPLAINT_DOC_TYPE, body=doc_query)
     return res
