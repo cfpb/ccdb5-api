@@ -512,7 +512,7 @@ parameters:
     in: "query"
     description: "Limit the size of the results"
     type: "integer"
-    maximum: 100000
+    maximum: 100
     minimum: 1
     format: "int64"
     default: 10
