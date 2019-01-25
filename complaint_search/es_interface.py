@@ -166,6 +166,9 @@ def search(agg_exclude=None, **kwargs):
     res = {}
     format = params.get("format")
     if format == "default":
+        if body["size"] > 100:
+            body["size"] = 100
+        
         if not params.get("no_aggs"):
             aggregation_builder = AggregationBuilder()
             aggregation_builder.add(**params)
@@ -178,7 +181,7 @@ def search(agg_exclude=None, **kwargs):
                                body=body,
                                scroll="10m")
 
-        num_of_scroll = params.get("frm") / params.get("size")
+        num_of_scroll = params.get("frm") / body["size"]
         scroll_id = res['_scroll_id']
         if num_of_scroll > 0:
             while num_of_scroll > 0:

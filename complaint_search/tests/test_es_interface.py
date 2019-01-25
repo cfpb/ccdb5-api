@@ -428,6 +428,22 @@ class EsInterfaceTest_Search(TestCase):
     @mock.patch.object(Elasticsearch, 'search')
     @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'scroll')
+    def test_search_with_size_corrected__valid(self, mock_scroll, mock_count, mock_search, mock_get_meta):
+        mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
+        mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
+        mock_get_meta.return_value = copy.deepcopy(
+            self.MOCK_SEARCH_RESULT["_meta"])
+        body = load("search_with_size_corrected__valid")
+        res = search(size=500)
+        self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
+        self.assertEqual(100, mock_search.call_args_list[0][1]['body']['size'])
+        mock_scroll.assert_not_called()
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch("complaint_search.es_interface._get_meta")
+    @mock.patch.object(Elasticsearch, 'search')
+    @mock.patch.object(Elasticsearch, 'count')
+    @mock.patch.object(Elasticsearch, 'scroll')
     def test_search_with_frm__valid(self, mock_scroll, mock_count, mock_search, mock_get_meta):
         mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
