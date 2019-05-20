@@ -1,14 +1,13 @@
-from django.core.urlresolvers import reverse
+import copy
+from datetime import date, datetime
+from unittest import skip
+
 from django.conf import settings
 from django.core.cache import cache
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse, StreamingHttpResponse
-from rest_framework import status
-from rest_framework.test import APITestCase
-from unittest import skip
-import copy
+
 import mock
-from datetime import date, datetime
-from elasticsearch import TransportError
 from complaint_search.defaults import (
     AGG_EXCLUDE_FIELDS,
     FORMAT_CONTENT_TYPE_MAP,
@@ -17,11 +16,15 @@ from complaint_search.defaults import (
 from complaint_search.es_interface import search
 from complaint_search.serializer import SearchInputSerializer
 from complaint_search.throttling import (
-    SearchAnonRateThrottle,
-    ExportUIRateThrottle,
-    ExportAnonRateThrottle,
     _CCDB_UI_URL,
+    ExportAnonRateThrottle,
+    ExportUIRateThrottle,
+    SearchAnonRateThrottle,
 )
+from elasticsearch import TransportError
+from rest_framework import status
+from rest_framework.test import APITestCase
+
 
 class SearchTests(APITestCase):
 
@@ -76,7 +79,7 @@ class SearchTests(APITestCase):
         """
         Searching with format
         """
-        for k, v in FORMAT_CONTENT_TYPE_MAP.iteritems():
+        for k, v in FORMAT_CONTENT_TYPE_MAP.items():
             url = reverse('complaint_search:search')
             params = {"format": k}
             mock_essearch.return_value = 'OK'

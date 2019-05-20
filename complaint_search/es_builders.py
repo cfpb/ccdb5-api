@@ -1,12 +1,13 @@
-import re
-import copy
 import abc
+import copy
+import re
 from collections import OrderedDict
+
 from complaint_search.defaults import (
     DELIMITER,
     EXPORT_FORMATS,
     PARAMS,
-    SOURCE_FIELDS
+    SOURCE_FIELDS,
 )
 
 
@@ -398,10 +399,11 @@ class AggregationBuilder(BaseBuilder):
 
         return aggs
 
+
 if __name__ == "__main__":
     searchbuilder = SearchBuilder()
-    print searchbuilder.build()
+    print(searchbuilder.build())
     pfbuilder = PostFilterBuilder()
-    print pfbuilder.build()
+    print(pfbuilder.build())
     aggbuilder = AggregationBuilder()
-    print aggbuilder.build()
+    print(aggbuilder.build())

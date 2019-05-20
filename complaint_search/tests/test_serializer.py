@@ -1,8 +1,11 @@
 # Most of the serializer code has been tested through the views
 import copy
+
 from django.test import TestCase
+
 from complaint_search.defaults import PARAMS
 from complaint_search.serializer import SearchInputSerializer
+
 
 class SearchInputSerializerTests(TestCase):
 
@@ -17,7 +20,7 @@ class SearchInputSerializerTests(TestCase):
         exp_dict = copy.deepcopy(PARAMS)
 
         # This is an OrderedDict
-        for k, v in serializer.validated_data.iteritems():
+        for k, v in serializer.validated_data.items():
 
             self.assertIn(k, exp_dict)
             self.assertEqual(v, exp_dict[k])
@@ -43,7 +46,3 @@ class SearchInputSerializerTests(TestCase):
         serializer = SearchInputSerializer(data=self.data)
         self.assertFalse(serializer.is_valid())
         self.assertEqual(serializer.errors.get('issue'), [u'Issue is malformed, it needs to be "issue" or "issue\u2022subissue"'])
-
-
-
-

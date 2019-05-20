@@ -2,12 +2,13 @@
 # -*- coding: utf-8 -*-
 import io
 import json
-from collections import namedtuple, OrderedDict
+from collections import OrderedDict, namedtuple
+
 from django.http import StreamingHttpResponse
 from django.test import TestCase
-from nose_parameterized import parameterized
 
 from complaint_search.export import ElasticSearchExporter
+from nose_parameterized import parameterized
 
 
 TEST_HEADERS = OrderedDict([
@@ -50,9 +51,9 @@ class ExportTest(TestCase):
 
         # mock_search.assert_not_called()
         self.assertEqual(res.get('Content-Disposition'), "attachment; filename=file.csv")
-        self.assertTrue('itertools.imap' in str(type(res.streaming_content)))
+        self.assertTrue('map' in str(type(res.streaming_content)))
         downloaded_file = io.BytesIO(b"".join(res.streaming_content))
-        self.assertTrue(not downloaded_file == None)
+        self.assertFalse(downloaded_file == None)
 
 
     @parameterized.expand([
@@ -73,7 +74,6 @@ class ExportTest(TestCase):
 
         # mock_search.assert_not_called()
         self.assertEqual(res.get('Content-Disposition'), "attachment; filename=file.json")
-        self.assertTrue('itertools.imap' in str(type(res.streaming_content)))
+        self.assertTrue('map' in str(type(res.streaming_content)))
         downloaded_file = io.BytesIO(b"".join(res.streaming_content))
-        self.assertTrue(not downloaded_file == None)
-
+        self.assertFalse(downloaded_file == None)

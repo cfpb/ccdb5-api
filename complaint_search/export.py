@@ -1,20 +1,23 @@
+import csv
 import json
 import os
+import six
 import sys
-import csv
-import elasticsearch
-from elasticsearch import helpers
-from elasticsearch import Elasticsearch
 from collections import OrderedDict
+from six import text_type
+from six.moves import cStringIO as StringIO
 
 from django.http import StreamingHttpResponse
 
-import cStringIO as StringIO
-import csv
+import elasticsearch
+from elasticsearch import Elasticsearch, helpers
 
-# make sure no encode issues
-reload(sys)
-sys.setdefaultencoding('utf8')
+
+if six.PY2:
+    # make sure no encode issues
+    reload(sys)
+    sys.setdefaultencoding('utf8')
+
 
 class ElasticSearchExporter(object):
 
@@ -36,7 +39,7 @@ class ElasticSearchExporter(object):
             return data
 
         def stream():
-            buffer_ = StringIO.StringIO()
+            buffer_ = StringIO()
             writer = csv.DictWriter(buffer_, header_dict.keys(), 
                 delimiter=",",quoting=csv.QUOTE_MINIMAL)
             
@@ -48,7 +51,7 @@ class ElasticSearchExporter(object):
             # Write CSV
             for row in scanResponse:
                 count += 1
-                rows_data = {key: unicode(value) for key, value in row['_source'].iteritems()
+                rows_data = {key: text_type(value) for key, value in row['_source'].items()
                              if key in header_dict.keys()}
 
                 data = read_and_flush(writer, buffer_, rows_data)
@@ -87,4 +90,3 @@ class ElasticSearchExporter(object):
         )
         response['Content-Disposition'] = "attachment; filename=file.json"
         return response
-

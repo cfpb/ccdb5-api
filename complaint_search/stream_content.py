@@ -8,12 +8,15 @@ class StreamCSVContent(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         if self.header and not self.is_header_returned:
             self.is_header_returned = True
             return self.header
         else:
             return next(self.content)
+
+    def next(self):
+        return self.__next__()
 
 
 class StreamJSONContent(object):
@@ -50,7 +53,7 @@ class StreamJSONContent(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         while True:
             if not self.is_streaming_started:
                 # This is the beginning
@@ -79,3 +82,6 @@ class StreamJSONContent(object):
                     return "]"
                 else:
                     raise StopIteration
+
+    def next(self):
+        return self.__next__()
