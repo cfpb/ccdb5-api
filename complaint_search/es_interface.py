@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import copy
 import json
 import logging
@@ -106,7 +108,7 @@ def _get_meta():
         }
     }
     max_date_res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
-    count_res = _get_es().count(index=_COMPLAINT_ES_INDEX, 
+    count_res = _get_es().count(index=_COMPLAINT_ES_INDEX,
         doc_type=_COMPLAINT_DOC_TYPE)
 
     result = {
@@ -169,7 +171,7 @@ def search(agg_exclude=None, **kwargs):
     if format == "default":
         if body["size"] > 100:
             body["size"] = 100
-        
+
         if not params.get("no_aggs"):
             aggregation_builder = AggregationBuilder()
             aggregation_builder.add(**params)
@@ -192,8 +194,8 @@ def search(agg_exclude=None, **kwargs):
         res["_meta"] = _get_meta()
 
     elif format in EXPORT_FORMATS:
-        scanResponse = helpers.scan(client=_get_es(), query=body, scroll= "10m", 
-                index=_COMPLAINT_ES_INDEX, size=7000, doc_type=_COMPLAINT_DOC_TYPE, 
+        scanResponse = helpers.scan(client=_get_es(), query=body, scroll= "10m",
+                index=_COMPLAINT_ES_INDEX, size=7000, doc_type=_COMPLAINT_DOC_TYPE,
                 request_timeout=3000)
 
         exporter = ElasticSearchExporter()

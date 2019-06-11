@@ -23,6 +23,7 @@ testing_extras = [
     'coverage>=4.5.1,<5',
     'mock==2.0.0',
     'deep==0.10',
+    'deepdiff>=3.3,<5.0',
     'django-nose==1.4.1',
     'parameterized==0.6.1',
 ]

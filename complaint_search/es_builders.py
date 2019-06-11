@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import abc
 import copy
 import re
@@ -109,7 +111,7 @@ class BaseBuilder(object):
 
                 # Go through item_dict to create filters
                 f_list = []
-                for item, child in item_dict.iteritems():
+                for item, child in item_dict.items():
                     # Always append the item to list
                     parent_term = {"terms": {es_field_name: [item]}}
                     if not child:
@@ -119,9 +121,9 @@ class BaseBuilder(object):
                         parent_child_bool_structure = {"bool": {"must": [], "should": []}}
                         parent_child_bool_structure["bool"]["must"].append(parent_term)
                         parent_child_bool_structure["bool"]["should"].append(child_term)
-                        
+
                         f_list.append(parent_child_bool_structure)
-                
+
                 return f_list
 
     # This creates a dictionary of all filter_clauses, where the keys are the field name
@@ -367,7 +369,7 @@ class AggregationBuilder(BaseBuilder):
             field_aggs["filter"]["bool"]["filter"].append(company_filter)
 
         # Add filter clauses to aggregation entries (only those that are not
-        # the same as field name or part of the exclude list, which means we 
+        # the same as field name or part of the exclude list, which means we
         # want to list all matched aggregation)
         for item in self.params:
             include_filter = item != field_name or (item == field_name and item in self.exclude)
