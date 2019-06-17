@@ -118,7 +118,6 @@ def _buildHeaders():
 @catch_es_error
 def search(request):
 
-    fixed_qparam = request.query_params
     data = _parse_query_params(request.query_params)
 
     # Add format to data

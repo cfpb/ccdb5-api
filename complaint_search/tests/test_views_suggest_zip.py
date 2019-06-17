@@ -1,10 +1,10 @@
 from django.conf import settings
 from django.core.urlresolvers import reverse
+
+import mock
+from elasticsearch import TransportError
 from rest_framework import status
 from rest_framework.test import APITestCase
-from elasticsearch import TransportError
-import mock
-from complaint_search.es_interface import filter_suggest
 
 
 class SuggestZipTests(APITestCase):

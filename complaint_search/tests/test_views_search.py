@@ -1,11 +1,10 @@
 import copy
 from datetime import date, datetime
-from unittest import skip
 
 from django.conf import settings
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, StreamingHttpResponse
+from django.http import StreamingHttpResponse
 
 import mock
 from complaint_search.defaults import (
@@ -13,7 +12,6 @@ from complaint_search.defaults import (
     FORMAT_CONTENT_TYPE_MAP,
     PARAMS,
 )
-from complaint_search.es_interface import search
 from complaint_search.serializer import SearchInputSerializer
 from complaint_search.throttling import (
     _CCDB_UI_URL,
@@ -58,7 +56,7 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
-            **self.buildDefaultParams({}))
+                                              **self.buildDefaultParams({}))
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -83,14 +81,26 @@ class SearchTests(APITestCase):
             url = reverse('complaint_search:search')
             params = {"format": k}
             mock_essearch.return_value = 'OK'
-            mock_dt.now.return_value = datetime(2017,1,1,12,0)
+            mock_dt.now.return_value = datetime(2017, 1, 1, 12, 0)
             response = self.client.get(url, params)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertIn(v, response.get('Content-Type'))
-            self.assertEqual(response.get('Content-Disposition'), 'attachment; filename="complaints-2017-01-01_12_00.{}"'.format(k))
+            self.assertEqual(
+                response.get('Content-Disposition'),
+                'attachment; filename="complaints-2017-01-01_12_00.{}"'.format(
+                    k
+                )
+            )
             self.assertTrue(isinstance(response, StreamingHttpResponse))
-        mock_essearch.has_calls([ mock.call(format=k) for k in FORMAT_CONTENT_TYPE_MAP ], any_order=True)
-        self.assertEqual(len(FORMAT_CONTENT_TYPE_MAP), mock_essearch.call_count)
+        mock_essearch.has_calls(
+            [
+                mock.call(format=k) for k in FORMAT_CONTENT_TYPE_MAP
+            ],
+            any_order=True
+        )
+        self.assertEqual(
+            len(FORMAT_CONTENT_TYPE_MAP), mock_essearch.call_count
+        )
 
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_field__valid(self, mock_essearch):
@@ -102,11 +112,17 @@ class SearchTests(APITestCase):
             self.assertEqual(status.HTTP_200_OK, response.status_code)
             self.assertEqual('OK', response.data)
 
-        calls = [ mock.call(agg_exclude=AGG_EXCLUDE_FIELDS,
-            **self.buildDefaultParams({
-            "field": SearchInputSerializer.FIELD_MAP.get(field_pair[0],
-                field_pair[0])}))
-            for field_pair in SearchInputSerializer.FIELD_CHOICES ]
+        calls = [
+            mock.call(
+                agg_exclude=AGG_EXCLUDE_FIELDS,
+                **self.buildDefaultParams({
+                    "field": SearchInputSerializer.FIELD_MAP.get(
+                        field_pair[0],
+                        field_pair[0]
+                    )})
+            )
+            for field_pair in SearchInputSerializer.FIELD_CHOICES
+        ]
         mock_essearch.assert_has_calls(calls)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -117,8 +133,10 @@ class SearchTests(APITestCase):
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
-        self.assertDictEqual({"field": ["\"invalid_choice\" is not a valid choice."]},
-            response.data)
+        self.assertDictEqual(
+            {"field": ["\"invalid_choice\" is not a valid choice."]},
+            response.data
+        )
 
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_size__valid(self, mock_essearch):
@@ -127,8 +145,10 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
-            **self.buildDefaultParams(params))
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
+            **self.buildDefaultParams(params)
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -138,8 +158,10 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
-            **self.buildDefaultParams(params))
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
+            **self.buildDefaultParams(params)
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -151,10 +173,12 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
         self.assertDictEqual({"size": ["A valid integer is required."]},
-            response.data)
+                             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
-    def test_search_with_size__invalid_smaller_than_min_number(self, mock_essearch):
+    def test_search_with_size__invalid_smaller_than_min_number(
+        self, mock_essearch
+    ):
         url = reverse('complaint_search:search')
         params = {"size": -1}
         mock_essearch.return_value = 'OK'
@@ -163,7 +187,8 @@ class SearchTests(APITestCase):
         mock_essearch.assert_not_called()
         self.assertDictEqual(
             {"size": ["Ensure this value is greater than or equal to 0."]},
-            response.data)
+            response.data
+        )
 
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_size__invalid_exceed_max_number(self, mock_essearch):
@@ -180,12 +205,14 @@ class SearchTests(APITestCase):
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_frm__valid(self, mock_essearch):
         url = reverse('complaint_search:search')
-        params = { "frm": 10 }
+        params = {"frm": 10}
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
-            **self.buildDefaultParams(params))
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
+            **self.buildDefaultParams(params)
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -196,11 +223,15 @@ class SearchTests(APITestCase):
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
-        self.assertDictEqual({"frm": ["A valid integer is required."]},
-            response.data)
+        self.assertDictEqual(
+            {"frm": ["A valid integer is required."]},
+            response.data
+        )
 
     @mock.patch('complaint_search.es_interface.search')
-    def test_search_with_frm__invalid_smaller_than_min_number(self, mock_essearch):
+    def test_search_with_frm__invalid_smaller_than_min_number(
+        self, mock_essearch
+    ):
         url = reverse('complaint_search:search')
         params = {"frm": -1}
         mock_essearch.return_value = 'OK'
@@ -224,9 +255,11 @@ class SearchTests(APITestCase):
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
-    def test_search_with_frm__invalid_frm_not_multiples_of_size(self, mock_essearch):
+    def test_search_with_frm__invalid_frm_not_multiples_of_size(
+        self, mock_essearch
+    ):
         url = reverse('complaint_search:search')
-        params = { "frm": 4 }
+        params = {"frm": 4}
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
@@ -245,9 +278,11 @@ class SearchTests(APITestCase):
             self.assertEqual(status.HTTP_200_OK, response.status_code)
             self.assertEqual('OK', response.data)
 
-        calls = [ mock.call(agg_exclude=AGG_EXCLUDE_FIELDS,
-            **self.buildDefaultParams({"sort": sort_pair[0]}))
-            for sort_pair in SearchInputSerializer.SORT_CHOICES ]
+        calls = [
+            mock.call(agg_exclude=AGG_EXCLUDE_FIELDS,
+                      **self.buildDefaultParams({"sort": sort_pair[0]}))
+            for sort_pair in SearchInputSerializer.SORT_CHOICES
+        ]
         mock_essearch.assert_has_calls(calls)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -258,8 +293,10 @@ class SearchTests(APITestCase):
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
-        self.assertDictEqual({"sort": ["\"invalid_choice\" is not a valid choice."]},
-            response.data)
+        self.assertDictEqual(
+            {"sort": ["\"invalid_choice\" is not a valid choice."]},
+            response.data
+        )
 
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_search_term__valid(self, mock_essearch):
@@ -268,8 +305,10 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
-            **self.buildDefaultParams(params))
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
+            **self.buildDefaultParams(params)
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -279,21 +318,30 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
             **self.buildDefaultParams({
-            "date_received_min": date(2017, 4, 11)}))
+                "date_received_min": date(2017, 4, 11)})
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
-    def test_search_with_date_received_min__invalid_format(self, mock_essearch):
+    def test_search_with_date_received_min__invalid_format(
+        self, mock_essearch
+    ):
         url = reverse('complaint_search:search')
         params = {"date_received_min": "not_a_date"}
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
-        self.assertDictEqual({"date_received_min": ["Date has wrong format. Use one of these formats instead: YYYY[-MM[-DD]]."]},
-            response.data)
+        self.assertDictEqual(
+            {"date_received_min": [
+                "Date has wrong format. Use one of these formats instead: "
+                "YYYY[-MM[-DD]]."
+            ]},
+            response.data
+        )
 
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_date_received_max__valid(self, mock_essearch):
@@ -302,21 +350,30 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
             **self.buildDefaultParams({
-            "date_received_max": date(2017, 4, 11)}))
+                "date_received_max": date(2017, 4, 11)})
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
-    def test_search_with_date_received_max__invalid_format(self, mock_essearch):
+    def test_search_with_date_received_max__invalid_format(
+        self, mock_essearch
+    ):
         url = reverse('complaint_search:search')
         params = {"date_received_max": "not_a_date"}
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
-        self.assertDictEqual({"date_received_max": ["Date has wrong format. Use one of these formats instead: YYYY[-MM[-DD]]."]},
-            response.data)
+        self.assertDictEqual(
+            {"date_received_max": [
+                "Date has wrong format. Use one of these formats instead: "
+                "YYYY[-MM[-DD]]."
+            ]},
+            response.data
+        )
 
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_company_received_min__valid(self, mock_essearch):
@@ -325,21 +382,30 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
             **self.buildDefaultParams({
-            "company_received_min": date(2017, 4, 11)}))
+                "company_received_min": date(2017, 4, 11)})
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
-    def test_search_with_company_received_min__invalid_format(self, mock_essearch):
+    def test_search_with_company_received_min__invalid_format(
+        self, mock_essearch
+    ):
         url = reverse('complaint_search:search')
         params = {"company_received_min": "not_a_date"}
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
-        self.assertDictEqual({"company_received_min": ["Date has wrong format. Use one of these formats instead: YYYY[-MM[-DD]]."]},
-            response.data)
+        self.assertDictEqual(
+            {"company_received_min": [
+                "Date has wrong format. Use one of these formats instead: "
+                "YYYY[-MM[-DD]]."
+            ]},
+            response.data
+        )
 
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_company_received_max__valid(self, mock_essearch):
@@ -348,21 +414,30 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
             **self.buildDefaultParams({
-            "company_received_max": date(2017, 4, 11)}))
+                "company_received_max": date(2017, 4, 11)})
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
-    def test_search_with_company_received_max__invalid_format(self, mock_essearch):
+    def test_search_with_company_received_max__invalid_format(
+        self, mock_essearch
+    ):
         url = reverse('complaint_search:search')
         params = {"company_received_max": "not_a_date"}
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
-        self.assertDictEqual({"company_received_max": ["Date has wrong format. Use one of these formats instead: YYYY[-MM[-DD]]."]},
-            response.data)
+        self.assertDictEqual(
+            {"company_received_max": [
+                "Date has wrong format. Use one of these formats instead: "
+                "YYYY[-MM[-DD]]."
+            ]},
+            response.data
+        )
 
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_company__valid(self, mock_essearch):
@@ -371,9 +446,11 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
             **self.buildDefaultParams({
-            "company": ["One Bank", "Bank 2"]}))
+                "company": ["One Bank", "Bank 2"]})
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -386,9 +463,11 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
             **self.buildDefaultParams({
-            "product": ["Mortgage-FHA Mortgage", "Payday Loan"]}))
+                "product": ["Mortgage-FHA Mortgage", "Payday Loan"]})
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -397,16 +476,20 @@ class SearchTests(APITestCase):
         # parameter doesn't represent real data, as client has a hard time
         # taking unicode.  The original API will use a bullet u2022 in place
         # of the '-'
-        url += "?issue=Communication%20tactics-Frequent%20or%20repeated%20calls" \
-        "&issue=Loan%20servicing,%20payments,%20escrow%20account"
+        url += (
+            "?issue=Communication%20tactics-Frequent%20or%20repeated%20calls"
+            "&issue=Loan%20servicing,%20payments,%20escrow%20account"
+        )
         mock_essearch.return_value = 'OK'
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
             **self.buildDefaultParams({
                 "issue": ["Communication tactics-Frequent or repeated calls",
-            "Loan servicing, payments, escrow account"]}))
+                          "Loan servicing, payments, escrow account"]})
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -417,9 +500,11 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
             **self.buildDefaultParams({
-                "state": ["CA", "FL", "VA"]}))
+                "state": ["CA", "FL", "VA"]})
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -430,9 +515,11 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
             **self.buildDefaultParams({
-                "zip_code": ["94XXX", "24236", "23456"]}))
+                "zip_code": ["94XXX", "24236", "23456"]})
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -443,9 +530,11 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
             **self.buildDefaultParams({
-                "timely": ["YES", "NO"]}))
+                "timely": ["YES", "NO"]})
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -456,9 +545,11 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
             **self.buildDefaultParams({
-                "consumer_disputed": ["yes", "no"]}))
+                "consumer_disputed": ["yes", "no"]})
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -469,22 +560,29 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
             **self.buildDefaultParams({
-                "company_response": ["Closed", "No response"]}))
+                "company_response": ["Closed", "No response"]})
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_company_public_response__valid(self, mock_essearch):
         url = reverse('complaint_search:search')
-        url += "?company_public_response=Closed&company_public_response=No%20response"
+        url += (
+            "?company_public_response=Closed&"
+            "company_public_response=No%20response"
+        )
         mock_essearch.return_value = 'OK'
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
             **self.buildDefaultParams({
-                "company_public_response": ["Closed", "No response"]}))
+                "company_public_response": ["Closed", "No response"]})
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -495,9 +593,11 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
             **self.buildDefaultParams({
-                "consumer_consent_provided": ["Yes", "No"]}))
+                "consumer_consent_provided": ["Yes", "No"]})
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -508,9 +608,11 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
             **self.buildDefaultParams({
-                "has_narrative": ["Yes", "No"]}))
+                "has_narrative": ["Yes", "No"]})
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -521,9 +623,11 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
             **self.buildDefaultParams({
-                "submitted_via": ["Web", "Phone"]}))
+                "submitted_via": ["Web", "Phone"]})
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -534,9 +638,11 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # -*- coding: utf-8 -*-
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
             **self.buildDefaultParams({
-                "tags": ["Older American", "Servicemember"]}))
+                "tags": ["Older American", "Servicemember"]})
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -546,9 +652,11 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
             **self.buildDefaultParams({
-                "no_aggs": True}))
+                "no_aggs": True})
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -559,8 +667,10 @@ class SearchTests(APITestCase):
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
-        self.assertDictEqual({"no_aggs": [u'"Not boolean" is not a valid boolean.']},
-            response.data)
+        self.assertDictEqual(
+            {"no_aggs": [u'"Not boolean" is not a valid boolean.']},
+            response.data
+        )
 
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_no_highlight__valid(self, mock_essearch):
@@ -569,9 +679,11 @@ class SearchTests(APITestCase):
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        mock_essearch.assert_called_once_with(agg_exclude=AGG_EXCLUDE_FIELDS,
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
             **self.buildDefaultParams({
-                "no_highlight": True}))
+                "no_highlight": True})
+        )
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -582,7 +694,8 @@ class SearchTests(APITestCase):
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
-        self.assertDictEqual({"no_highlight": [u'"Not boolean" is not a valid boolean.']},
+        self.assertDictEqual(
+            {"no_highlight": [u'"Not boolean" is not a valid boolean.']},
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
@@ -599,7 +712,9 @@ class SearchTests(APITestCase):
             self.assertEqual('OK', response.data)
 
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
+        self.assertEqual(
+            response.status_code, status.HTTP_429_TOO_MANY_REQUESTS
+        )
         self.assertIsNotNone(response.data.get('detail'))
         self.assertIn("Request was throttled", response.data.get('detail'))
         self.assertEqual(limit, mock_essearch.call_count)
@@ -639,7 +754,9 @@ class SearchTests(APITestCase):
             self.assertTrue(isinstance(response, StreamingHttpResponse))
 
         response = self.client.get(url, {"format": "csv"})
-        self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
+        self.assertEqual(
+            response.status_code, status.HTTP_429_TOO_MANY_REQUESTS
+        )
         self.assertIsNotNone(response.data.get('detail'))
         self.assertIn("Request was throttled", response.data.get('detail'))
         self.assertEqual(limit, mock_essearch.call_count)
@@ -654,12 +771,18 @@ class SearchTests(APITestCase):
         ExportAnonRateThrottle.rate = self.orig_export_anon_rate
         limit = int(self.orig_export_ui_rate.split('/')[0])
         for _ in range(limit):
-            response = self.client.get(url, {"format": "csv"}, HTTP_REFERER=_CCDB_UI_URL)
+            response = self.client.get(
+                url, {"format": "csv"}, HTTP_REFERER=_CCDB_UI_URL
+            )
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertTrue(isinstance(response, StreamingHttpResponse))
 
-        response = self.client.get(url, {"format": "csv"}, HTTP_REFERER=_CCDB_UI_URL)
-        self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
+        response = self.client.get(
+            url, {"format": "csv"}, HTTP_REFERER=_CCDB_UI_URL
+        )
+        self.assertEqual(
+            response.status_code, status.HTTP_429_TOO_MANY_REQUESTS
+        )
         self.assertIsNotNone(response.data.get('detail'))
         self.assertIn("Request was throttled", response.data.get('detail'))
         self.assertEqual(limit, mock_essearch.call_count)

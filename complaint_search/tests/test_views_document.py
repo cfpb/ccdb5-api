@@ -1,15 +1,11 @@
-from django.core.urlresolvers import reverse
 from django.core.cache import cache
+from django.core.urlresolvers import reverse
+
+import mock
+from complaint_search.throttling import _CCDB_UI_URL, DocumentAnonRateThrottle
+from elasticsearch import TransportError
 from rest_framework import status
 from rest_framework.test import APITestCase
-from unittest import skip
-from elasticsearch import TransportError
-import mock
-from complaint_search.es_interface import document
-from complaint_search.throttling import (
-    DocumentAnonRateThrottle,
-    _CCDB_UI_URL,
-)
 
 
 class DocumentTests(APITestCase):

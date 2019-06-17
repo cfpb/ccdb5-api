@@ -1,7 +1,9 @@
 import logging
+
+from elasticsearch import TransportError
 from rest_framework import status
 from rest_framework.response import Response
-from elasticsearch import TransportError
+
 
 log = logging.getLogger(__name__)
 

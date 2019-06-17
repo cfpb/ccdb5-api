@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from collections import OrderedDict
 
+
 PARAMS = {
     "format": "default",
     "field": "complaint_what_happened",

@@ -1,11 +1,11 @@
-from rest_framework import serializers
-from localflavor.us.us_states import STATE_CHOICES
 from complaint_search.defaults import PARAMS
+from localflavor.us.us_states import STATE_CHOICES
+from rest_framework import serializers
 
 
 class SearchInputSerializer(serializers.Serializer):
 
-    ### Format Choices
+    # Format Choices
     FORMAT_DEFAULT = 'default'
     FORMAT_JSON = 'json'
     FORMAT_CSV = 'csv'
@@ -16,7 +16,7 @@ class SearchInputSerializer(serializers.Serializer):
         (FORMAT_CSV, 'CSV'),
     )
 
-    ### Field Choices
+    # Field Choices
     FIELD_NARRATIVE = 'complaint_what_happened'
     FIELD_COMPANY = 'company'
     FIELD_ALL = 'all'
@@ -31,7 +31,7 @@ class SearchInputSerializer(serializers.Serializer):
         FIELD_ALL: '_all'
     }
 
-    ### Sort Choices
+    # Sort Choices
     SORT_RELEVANCE_DESC = 'relevance_desc'
     SORT_RELEVANCE_ASC = 'relevance_asc'
     SORT_CREATED_DATE_DESC = 'created_date_desc'
@@ -45,8 +45,12 @@ class SearchInputSerializer(serializers.Serializer):
     )
     format = serializers.ChoiceField(FORMAT_CHOICES, default=PARAMS['format'])
     field = serializers.ChoiceField(FIELD_CHOICES, default=PARAMS['field'])
-    size = serializers.IntegerField(min_value=0, max_value=10000000, default=PARAMS['size'])
-    frm = serializers.IntegerField(min_value=0, max_value=10000000, default=PARAMS['frm'])
+    size = serializers.IntegerField(
+        min_value=0, max_value=10000000, default=PARAMS['size']
+    )
+    frm = serializers.IntegerField(
+        min_value=0, max_value=10000000, default=PARAMS['frm']
+    )
     sort = serializers.ChoiceField(SORT_CHOICES, default=PARAMS['sort'])
     search_term = serializers.CharField(max_length=200, required=False)
     date_received_min = serializers.DateField(required=False)
@@ -62,7 +66,9 @@ class SearchInputSerializer(serializers.Serializer):
     state = serializers.ListField(
         child=serializers.ChoiceField(STATE_CHOICES), required=False)
     zip_code = serializers.ListField(
-        child=serializers.CharField(min_length=5, max_length=5), required=False)
+        child=serializers.CharField(
+            min_length=5, max_length=5), required=False
+    )
     timely = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False)
     consumer_disputed = serializers.ListField(
@@ -85,7 +91,8 @@ class SearchInputSerializer(serializers.Serializer):
     def to_internal_value(self, data):
         ret = super(SearchInputSerializer, self).to_internal_value(data)
         if ret.get('field'):
-            ret['field'] = SearchInputSerializer.FIELD_MAP.get(ret['field'], ret['field'])
+            ret['field'] = SearchInputSerializer.FIELD_MAP.get(
+                ret['field'], ret['field'])
         return ret
 
     def validate_product(self, value):
@@ -97,7 +104,10 @@ class SearchInputSerializer(serializers.Serializer):
             for p in value:
                 # -*- coding: utf-8 -*-
                 if p.count(u'\u2022') > 1:
-                    raise serializers.ValidationError(u"Product is malformed, it needs to be \"product\" or \"product\u2022subproduct\"")
+                    raise serializers.ValidationError(
+                        u"Product is malformed, it needs to be \"product\" or "
+                        "\"product\u2022subproduct\""
+                    )
 
         return value
 
@@ -110,7 +120,10 @@ class SearchInputSerializer(serializers.Serializer):
             for p in value:
                 # -*- coding: utf-8 -*-
                 if p.count(u'\u2022') > 1:
-                    raise serializers.ValidationError(u"Issue is malformed, it needs to be \"issue\" or \"issue\u2022subissue\"")
+                    raise serializers.ValidationError(
+                        u"Issue is malformed, it needs to be \"issue\" or "
+                        "\"issue\u2022subissue\""
+                    )
 
         return value
 
@@ -119,13 +132,16 @@ class SearchInputSerializer(serializers.Serializer):
         Check that from is a multiple of size
         """
         if data['size'] != 0 and data['frm'] % data['size'] != 0:
-            raise serializers.ValidationError("frm is not zero or a multiple of size")
+            raise serializers.ValidationError(
+                "frm is not zero or a multiple of size")
         return data
 
 
 class SuggestInputSerializer(serializers.Serializer):
     text = serializers.CharField(max_length=200, required=False)
-    size = serializers.IntegerField(min_value=1, max_value=100000, required=False)
+    size = serializers.IntegerField(
+        min_value=1, max_value=100000, required=False
+    )
 
 
 class SuggestFilterInputSerializer(SearchInputSerializer):

@@ -29,12 +29,15 @@ class StreamCSVContentTests(TestCase):
 class StreamJSONContentTests(TestCase):
 
     def setUp(self):
-        self.content = '{"index": {"_index": "test", "_id": 12345}}\n' \
-            '{"product": "mortgage", "complaint_id": 12345, "tags": null}\n' \
-            '{"index": {"_index": "test", "_id": 23456}}\n' \
-            '{"product": "test", "complaint_id": 23456, "tags": "Older Americans"}\n' \
-            '{"index": {"_index": "test", "_id": 45678}}\n' \
-            '{"product": "loan", "complaint_id": 45678, "tags": null} \n' \
+        self.content = (
+            '{"index": {"_index": "test", "_id": 12345}}\n'
+            '{"product": "mortgage", "complaint_id": 12345, "tags": null}\n'
+            '{"index": {"_index": "test", "_id": 23456}}\n'
+            '{"product": "test", "complaint_id": 23456, '
+            '"tags": "Older Americans"}\n'
+            '{"index": {"_index": "test", "_id": 45678}}\n'
+            '{"product": "loan", "complaint_id": 45678, "tags": null} \n'
+        )
 
         # pretend this is broken up randomly every 20 chars
         self.content_list = [self.content[(i * 20):(i * 20 + 20)]
@@ -53,7 +56,11 @@ class StreamJSONContentTests(TestCase):
             for json_in_progress in sc:
                 result += json_in_progress
 
-            exp_result = '[{"product": "mortgage", "complaint_id": 12345, "tags": null},' \
-                '{"product": "test", "complaint_id": 23456, "tags": "Older Americans"},' \
+            exp_result = (
+                '[{"product": "mortgage", "complaint_id": 12345, '
+                '"tags": null},'
+                '{"product": "test", "complaint_id": 23456, '
+                '"tags": "Older Americans"},'
                 '{"product": "loan", "complaint_id": 45678, "tags": null}]'
+            )
             self.assertEqual(exp_result, result)

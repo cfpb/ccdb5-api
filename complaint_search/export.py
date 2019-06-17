@@ -1,21 +1,16 @@
 import csv
 import json
-import os
 import six
 import sys
-from collections import OrderedDict
 from six import text_type
 from six.moves import cStringIO as StringIO
 
 from django.http import StreamingHttpResponse
 
-import elasticsearch
-from elasticsearch import Elasticsearch, helpers
-
 
 if six.PY2:
     # make sure no encode issues
-    reload(sys)
+    reload(sys)  # noqa: F821
     sys.setdefaultencoding('utf8')
 
 
@@ -28,7 +23,7 @@ class ElasticSearchExporter(object):
     #   The response from an Elasticsaerch scan query
     # - header_dict (OrderedDict)
     #   The ordered dictionary where the key is the Elasticsearch field name
-    #   and the value is the CSV column header for that field 
+    #   and the value is the CSV column header for that field
     def export_csv(self, scanResponse, header_dict):
         def read_and_flush(writer, buffer_, row):
             writer.writerow(row)
@@ -40,9 +35,9 @@ class ElasticSearchExporter(object):
 
         def stream():
             buffer_ = StringIO()
-            writer = csv.DictWriter(buffer_, header_dict.keys(), 
-                delimiter=",",quoting=csv.QUOTE_MINIMAL)
-            
+            writer = csv.DictWriter(buffer_, header_dict.keys(),
+                                    delimiter=",", quoting=csv.QUOTE_MINIMAL)
+
             # Write Header Row
             data = read_and_flush(writer, buffer_, header_dict)
             yield data
@@ -51,8 +46,11 @@ class ElasticSearchExporter(object):
             # Write CSV
             for row in scanResponse:
                 count += 1
-                rows_data = {key: text_type(value) for key, value in row['_source'].items()
-                             if key in header_dict.keys()}
+                rows_data = {
+                    key: text_type(value)
+                    for key, value in row['_source'].items()
+                    if key in header_dict.keys()
+                }
 
                 data = read_and_flush(writer, buffer_, rows_data)
                 yield data
@@ -62,7 +60,6 @@ class ElasticSearchExporter(object):
         )
         response['Content-Disposition'] = "attachment; filename=file.csv"
         return response
-
 
     # export_json - Stream an Elsticsearch response as a JSON file
     #

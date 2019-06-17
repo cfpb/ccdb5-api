@@ -1,5 +1,7 @@
 from django.conf.urls import url
+
 import complaint_search.views
+
 
 urlpatterns = [
     url(
@@ -13,6 +15,8 @@ urlpatterns = [
         name="suggest_zip"
     ),
     url(r'^_suggest', complaint_search.views.suggest, name="suggest"),
-    url(r'^(?P<id>[0-9]+)$', complaint_search.views.document, name="complaint"),
+    url(
+        r'^(?P<id>[0-9]+)$', complaint_search.views.document, name="complaint"
+    ),
     url(r'^$', complaint_search.views.search, name="search"),
 ]
