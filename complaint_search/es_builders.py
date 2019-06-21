@@ -1,12 +1,15 @@
-import re
-import copy
+from __future__ import unicode_literals
+
 import abc
+import copy
+import re
 from collections import OrderedDict
+
 from complaint_search.defaults import (
     DELIMITER,
     EXPORT_FORMATS,
     PARAMS,
-    SOURCE_FIELDS
+    SOURCE_FIELDS,
 )
 
 
@@ -70,23 +73,31 @@ class BaseBuilder(object):
     def build(self):
         """Method that will build the body dictionary."""
 
-    ## This create all the bool should filter clauses for a field
-    ## es_field_name: a field name (to be filtered in ES)
-    ## value_list: a list of values to be filtered for this field
-    ## with_child: set to true if this field has a child field
-    ## es_child_field_name: if with_child is true, this holds the field
-    ## name of the child used (to be filtered in ES)
+    # This create all the bool should filter clauses for a field
+    # es_field_name: a field name (to be filtered in ES)
+    # value_list: a list of values to be filtered for this field
+    # with_child: set to true if this field has a child field
+    # es_child_field_name: if with_child is true, this holds the field
+    # name of the child used (to be filtered in ES)
     def _build_bool_clauses(self, field):
         es_field_name = self._get_es_name(field)
-        value_list = [0 if cd.lower() == "no" else 1 for cd in self.params[field]] \
-            if field in self._OPTIONAL_FILTERS_STRING_TO_BOOL else self.params.get(field)
+        value_list = (
+            [
+                0 if cd.lower() == "no" else 1 for cd in self.params[field]
+            ]
+            if field in self._OPTIONAL_FILTERS_STRING_TO_BOOL
+            else self.params.get(field)
+        )
 
         if value_list:
 
-            # MUST filters must be in parallel otherwise they will not execute as intended
+            # MUST filters must be in parallel otherwise they will not execute
+            # as intended
             if field in self._OPTIONAL_FILTERS_MUST:
                 term_list_container = []
-                term_list = [{"terms": {es_field_name: [value]}} for value in value_list]
+                term_list = [
+                    {"terms": {es_field_name: [value]}} for value in value_list
+                ]
 
                 return term_list
 
@@ -108,26 +119,35 @@ class BaseBuilder(object):
 
                 # Go through item_dict to create filters
                 f_list = []
-                for item, child in item_dict.iteritems():
+                for item, child in item_dict.items():
                     # Always append the item to list
                     parent_term = {"terms": {es_field_name: [item]}}
                     if not child:
                         f_list.append(parent_term)
                     else:
-                        child_term = {"terms": {self._get_es_name(self._get_child(field)): child}}
-                        parent_child_bool_structure = {"bool": {"must": [], "should": []}}
-                        parent_child_bool_structure["bool"]["must"].append(parent_term)
-                        parent_child_bool_structure["bool"]["should"].append(child_term)
-                        
+                        child_term = {"terms": {
+                            self._get_es_name(self._get_child(field)): child
+                        }}
+                        parent_child_bool_structure = {"bool": {
+                            "must": [], "should": []
+                        }}
+                        parent_child_bool_structure["bool"]["must"].append(
+                            parent_term)
+                        parent_child_bool_structure["bool"]["should"].append(
+                            child_term)
+
                         f_list.append(parent_child_bool_structure)
-                
+
                 return f_list
 
-    # This creates a dictionary of all filter_clauses, where the keys are the field name
+    # This creates a dictionary of all filter_clauses, where the keys are the
+    # field name
     def _build_filter_clauses(self):
         filter_clauses = {}
         for item in self.params:
-            if item in self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL + self._OPTIONAL_FILTERS_MUST:
+            if item in (self._OPTIONAL_FILTERS +
+                        self._OPTIONAL_FILTERS_STRING_TO_BOOL +
+                        self._OPTIONAL_FILTERS_MUST):
                 filter_clauses[item] = self._build_bool_clauses(item)
         return filter_clauses
 
@@ -140,7 +160,7 @@ class BaseBuilder(object):
                 d = str(date_min) + timeSuffix
                 date_clause["range"][es_field_name]["from"] = d
             if date_max:
-                d =  str(date_max) + timeSuffix
+                d = str(date_max) + timeSuffix
                 date_clause["range"][es_field_name]["to"] = d
 
         return date_clause
@@ -157,7 +177,7 @@ class SearchBuilder(BaseBuilder):
             "fragment_size": 500
         }
         if self.params.get("field") == "_all":
-            highlight["fields"] = { source: {} for source in SOURCE_FIELDS }
+            highlight["fields"] = {source: {} for source in SOURCE_FIELDS}
         else:
             highlight["fields"] = {self.params.get("field"): {}}
 
@@ -210,9 +230,9 @@ class SearchBuilder(BaseBuilder):
         # query
         search_term = self.params.get("search_term")
         if search_term:
-            if re.match("^[A-Za-z\d\s]+$", search_term) and \
-            not any(keyword in search_term
-                for keyword in ("AND", "OR", "NOT", "TO")):
+            if (re.match(r"^[A-Za-z\d\s]+$", search_term) and not
+                any(keyword in search_term
+                    for keyword in ("AND", "OR", "NOT", "TO"))):
 
                 # Match Query
                 search["query"] = {
@@ -247,7 +267,7 @@ class PostFilterBuilder(BaseBuilder):
 
         post_filter = {"bool": {"should": [], "must": [], "filter": []}}
 
-        ## date_received
+        # date_received
         date_received = self._build_date_range_filter(
             self.params.get("date_received_min"),
             self.params.get("date_received_max"),
@@ -256,7 +276,7 @@ class PostFilterBuilder(BaseBuilder):
         if date_received:
             post_filter["bool"]["filter"].append(date_received)
 
-        ## company_received
+        # company_received
         company_received = self._build_date_range_filter(
             self.params.get("company_received_min"),
             self.params.get("company_received_max"),
@@ -265,13 +285,16 @@ class PostFilterBuilder(BaseBuilder):
         if company_received:
             post_filter["bool"]["filter"].append(company_received)
 
-        ## Create filter clauses for all other filters
+        # Create filter clauses for all other filters
         for item in self.params:
-            if item in self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL:
-                # for filters selected, we are creating the field level OR query that must match
-                # e.g (this OR that) AND (y or z) AND servicemember
-                field_level_should = {"bool": {"should":filter_clauses[item]}}
-                post_filter["bool"]["filter"].append( field_level_should )
+            if item in (
+                self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL
+            ):
+                # for filters selected, we are creating the field level OR
+                # query that must match e.g (this OR that) AND (y or z) AND
+                # servicemember
+                field_level_should = {"bool": {"should": filter_clauses[item]}}
+                post_filter["bool"]["filter"].append(field_level_should)
             if item in self._OPTIONAL_FILTERS_MUST:
                 post_filter["bool"]["filter"].append(filter_clauses[item])
 
@@ -366,12 +389,17 @@ class AggregationBuilder(BaseBuilder):
             field_aggs["filter"]["bool"]["filter"].append(company_filter)
 
         # Add filter clauses to aggregation entries (only those that are not
-        # the same as field name or part of the exclude list, which means we 
+        # the same as field name or part of the exclude list, which means we
         # want to list all matched aggregation)
         for item in self.params:
-            include_filter = item != field_name or (item == field_name and item in self.exclude)
+            include_filter = (
+                item != field_name or
+                (item == field_name and item in self.exclude)
+            )
 
-            if include_filter and item in self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL:
+            if include_filter and item in (
+                self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL
+            ):
                 field_level_should = {
                     "bool": {"should": self.filter_clauses[item]}
                 }
@@ -391,17 +419,19 @@ class AggregationBuilder(BaseBuilder):
 
         agg_fields = self._AGG_FIELDS
         if self.exclude:
-            agg_fields = [ field_name for field_name in self._AGG_FIELDS
-                if field_name not in self.exclude or field_name in self.params ]
+            agg_fields = [field_name for field_name in self._AGG_FIELDS
+                          if field_name not in self.exclude
+                          or field_name in self.params]
         for field_name in agg_fields:
             aggs[field_name] = self.build_one(field_name)
 
         return aggs
 
+
 if __name__ == "__main__":
     searchbuilder = SearchBuilder()
-    print searchbuilder.build()
+    print(searchbuilder.build())
     pfbuilder = PostFilterBuilder()
-    print pfbuilder.build()
+    print(pfbuilder.build())
     aggbuilder = AggregationBuilder()
-    print aggbuilder.build()
+    print(aggbuilder.build())

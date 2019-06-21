@@ -1,31 +1,36 @@
-from rest_framework import status
-from rest_framework.decorators import (
-    api_view, renderer_classes, throttle_classes
-)
-from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
-from rest_framework.response import Response
-from django.http import StreamingHttpResponse
-from django.conf import settings
 from datetime import datetime
-import es_interface
+
+from django.conf import settings
+from django.http import StreamingHttpResponse
+
+from complaint_search import es_interface
+from complaint_search.decorators import catch_es_error
 from complaint_search.defaults import (
     AGG_EXCLUDE_FIELDS,
     EXPORT_FORMATS,
-    FORMAT_CONTENT_TYPE_MAP
+    FORMAT_CONTENT_TYPE_MAP,
 )
-from complaint_search.renderers import (
-    DefaultRenderer, CSVRenderer
-)
-from complaint_search.decorators import catch_es_error
+from complaint_search.renderers import CSVRenderer, DefaultRenderer
 from complaint_search.serializer import (
-    SearchInputSerializer, SuggestInputSerializer, SuggestFilterInputSerializer
+    SearchInputSerializer,
+    SuggestFilterInputSerializer,
+    SuggestInputSerializer,
 )
 from complaint_search.throttling import (
-    SearchAnonRateThrottle,
-    ExportUIRateThrottle,
-    ExportAnonRateThrottle,
     DocumentAnonRateThrottle,
+    ExportAnonRateThrottle,
+    ExportUIRateThrottle,
+    SearchAnonRateThrottle,
 )
+from rest_framework import status
+from rest_framework.decorators import (
+    api_view,
+    renderer_classes,
+    throttle_classes,
+)
+from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
+from rest_framework.response import Response
+
 
 # -----------------------------------------------------------------------------
 # Query Parameters
@@ -113,7 +118,6 @@ def _buildHeaders():
 @catch_es_error
 def search(request):
 
-    fixed_qparam = request.query_params
     data = _parse_query_params(request.query_params)
 
     # Add format to data
