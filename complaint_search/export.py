@@ -1,7 +1,8 @@
-import csv
-import json
 from six import text_type
 from six.moves import cStringIO as StringIO
+
+import csv
+import json
 
 from django.http import StreamingHttpResponse
 
