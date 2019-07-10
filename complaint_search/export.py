@@ -1,17 +1,9 @@
 import csv
 import json
-import six
-import sys
 from six import text_type
 from six.moves import cStringIO as StringIO
 
 from django.http import StreamingHttpResponse
-
-
-if six.PY2:
-    # make sure no encode issues
-    reload(sys)  # noqa: F821
-    sys.setdefaultencoding('utf8')
 
 
 class ElasticSearchExporter(object):
