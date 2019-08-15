@@ -8,9 +8,9 @@ import json
 from django.http import StreamingHttpResponse
 
 
-if six.PY2:
+if six.PY2:  # pragma: no cover
     from unicodecsv import DictWriter
-else:
+else:  # pragma: no cover
     from csv import DictWriter
 
 
