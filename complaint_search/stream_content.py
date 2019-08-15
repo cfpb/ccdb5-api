@@ -1,3 +1,6 @@
+import six
+
+
 class StreamCSVContent(object):
 
     def __init__(self, header, content):
@@ -15,8 +18,9 @@ class StreamCSVContent(object):
         else:
             return next(self.content)
 
-    def next(self):
-        return self.__next__()
+    if six.PY2:  # pragma: no cover
+        def next(self):
+            return self.__next__()
 
 
 class StreamJSONContent(object):
@@ -83,5 +87,6 @@ class StreamJSONContent(object):
                 else:
                     raise StopIteration
 
-    def next(self):
-        return self.__next__()
+    if six.PY2:  # pragma: no cover
+        def next(self):
+            return self.__next__()
