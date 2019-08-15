@@ -1,3 +1,4 @@
+import six
 from six import text_type
 from six.moves import cStringIO as StringIO
 
@@ -5,6 +6,12 @@ import csv
 import json
 
 from django.http import StreamingHttpResponse
+
+
+if six.PY2:  # pragma: no cover
+    from unicodecsv import DictWriter
+else:  # pragma: no cover
+    from csv import DictWriter
 
 
 class ElasticSearchExporter(object):
@@ -28,8 +35,8 @@ class ElasticSearchExporter(object):
 
         def stream():
             buffer_ = StringIO()
-            writer = csv.DictWriter(buffer_, header_dict.keys(),
-                                    delimiter=",", quoting=csv.QUOTE_MINIMAL)
+            writer = DictWriter(buffer_, header_dict.keys(),
+                                delimiter=",", quoting=csv.QUOTE_MINIMAL)
 
             # Write Header Row
             data = read_and_flush(writer, buffer_, header_dict)

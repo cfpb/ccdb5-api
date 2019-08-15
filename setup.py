@@ -17,6 +17,7 @@ install_requires = [
     'elasticsearch>=2.4.1,<3',
     'django-localflavor>=1.1,<2',
     'django-flags>=4.0.1,<5',
+    'unicodecsv>=0.14.1,<1',
 ]
 
 testing_extras = [
