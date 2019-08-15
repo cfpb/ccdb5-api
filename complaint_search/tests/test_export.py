@@ -80,3 +80,22 @@ class ExportTest(TestCase):
         self.assertTrue('map' in str(type(res.streaming_content)))
         downloaded_file = io.BytesIO(b"".join(res.streaming_content))
         self.assertFalse(downloaded_file is None)
+
+
+class TestCSVExportWithUnicodeCharacters(TestCase):
+    def test_export_contains_unicode_chacter(self):
+        headers = OrderedDict([
+            ('key', 'Key'),
+        ])
+
+        def unicode_results():
+            yield {
+                '_source': {
+                    'key': u'\u2019',
+                },
+            }
+
+        exporter = ElasticSearchExporter()
+        response = exporter.export_csv(unicode_results(), headers)
+        content = io.BytesIO(b"".join(response.streaming_content)).read()
+        self.assertEqual(content, b'Key\r\n\xe2\x80\x99\r\n')
