@@ -475,7 +475,7 @@ parameters:
   issue:
     name: issue
     in: query
-    description: "Filter the results to only return these types of issue and subissue, i.e. product-only: Getting a Loan, subproduct needs to include product, separated by 'â€¢', U+2022: Getting a Loanâ€¢Can't qualify for a loan"
+    description: "Filter the results to only return these types of issue and subissue, i.e. product-only: Getting a Loan, subproduct needs to include product, separated by '\u2022', Getting a Loan\u2022Can't qualify for a loan"
     type: array
     items: 
       type: string
@@ -495,7 +495,7 @@ parameters:
   product:
     name: product
     in: query
-    description: "Filter the results to only return these types of product and subproduct, i.e. product-only: Mortgage, subproduct needs to include product, separated by 'â€¢', U+2022: Mortgageâ€¢FHA mortgage"
+    description: "Filter the results to only return these types of product and subproduct, i.e. product-only: Mortgage, subproduct needs to include product, separated by '\u2022', Mortgage\u2022FHA mortgage"
     type: array
     items: 
       type: string
