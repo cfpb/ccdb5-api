@@ -54,9 +54,7 @@ paths:
         200:
           description: "successful operation"
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/SearchResult'
+            $ref: '#/definitions/SearchResult'
         400:
           description: "Invalid status value"
   /_suggest:
