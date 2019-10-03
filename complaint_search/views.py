@@ -86,7 +86,7 @@ def _parse_query_params(query_params, validVars=None):
 
 
 # -----------------------------------------------------------------------------
-# Header methods TEST REMOVE ME
+# Header methods
 
 def _buildHeaders():
     # API Documentation hosted on Github pages needs GET access
