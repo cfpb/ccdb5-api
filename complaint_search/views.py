@@ -89,8 +89,12 @@ def _parse_query_params(query_params, validVars=None):
 # Header methods
 
 def _buildHeaders():
+    # API Documentation hosted on Github pages needs GET access
+    headers = {
+        'Access-Control-Allow-Origin': 'https://cfpb.github.io',
+        'Access-Control-Allow-Methods': 'GET'
+    }
     # Local development requires CORS support
-    headers = {}
     if settings.DEBUG:
         headers = {
             'Access-Control-Allow-Origin': '*',
