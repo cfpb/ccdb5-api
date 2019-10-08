@@ -170,7 +170,6 @@ externalDocs:
   description: Full documentation for the API
   url: 'https://cfpb.github.io/api/ccdb/'
 servers:
-  - url: 'http://www.consumerfinance.gov/data-research/consumer-complaints/search/api/v1/'
   - url: 'https://www.consumerfinance.gov/data-research/consumer-complaints/search/api/v1/'
 components:
   parameters:
