@@ -5,9 +5,10 @@ info:
   description: The API for searching the Consumer Complaint Database
   termsOfService: 'https://cfpb.github.io/source-code-policy/'
   contact:
-    email: tech@consumerfinance.gov
+    name: Report API Issues
+    url: https://github.com/cfpb/ccdb5-api/issues  
   license:
-    name: CC0
+    name: Creative Commons License CC0
     url: 'https://github.com/cfpb/ccdb5-api/blob/master/LICENSE'
 paths:
   /:
@@ -167,7 +168,7 @@ tags:
   - name: Typeahead
     description: These endpoints support the typeahead boxes in the UI
 externalDocs:
-  description: Full documentation for the API
+  description: Additional API Information
   url: 'https://cfpb.github.io/api/ccdb/'
 servers:
   - url: 'https://www.consumerfinance.gov/data-research/consumer-complaints/search/api/v1/'
