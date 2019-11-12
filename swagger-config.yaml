@@ -162,6 +162,70 @@ paths:
           description: Invalid ID supplied
         '404':
           description: Complaint not found
+  /states:
+    get:
+      tags:
+        - Complaints
+      summary: Get the state-by-state information
+      description: Get complaint information broken down by states
+      parameters:
+        - $ref: '#/components/parameters/search_term'
+        - $ref: '#/components/parameters/field'
+        - $ref: '#/components/parameters/company'
+        - $ref: '#/components/parameters/company_public_response'
+        - $ref: '#/components/parameters/company_received_max'
+        - $ref: '#/components/parameters/company_received_min'
+        - $ref: '#/components/parameters/company_response'
+        - $ref: '#/components/parameters/consumer_consent_provided'
+        - $ref: '#/components/parameters/consumer_disputed'
+        - $ref: '#/components/parameters/date_received_max'
+        - $ref: '#/components/parameters/date_received_min'
+        - $ref: '#/components/parameters/has_narrative'
+        - $ref: '#/components/parameters/issue'
+        - $ref: '#/components/parameters/product'
+        - $ref: '#/components/parameters/state'
+        - $ref: '#/components/parameters/submitted_via'
+        - $ref: '#/components/parameters/tag'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatesResult'
+  /trends:
+    get:
+      tags:
+        - Complaints
+      summary: Get the current trends
+      description: Show the trending products and issues for complaints
+      parameters:
+        - $ref: '#/components/parameters/search_term'
+        - $ref: '#/components/parameters/field'
+        - $ref: '#/components/parameters/company'
+        - $ref: '#/components/parameters/company_public_response'
+        - $ref: '#/components/parameters/company_received_max'
+        - $ref: '#/components/parameters/company_received_min'
+        - $ref: '#/components/parameters/company_response'
+        - $ref: '#/components/parameters/consumer_consent_provided'
+        - $ref: '#/components/parameters/consumer_disputed'
+        - $ref: '#/components/parameters/date_received_max'
+        - $ref: '#/components/parameters/date_received_min'
+        - $ref: '#/components/parameters/has_narrative'
+        - $ref: '#/components/parameters/issue'
+        - $ref: '#/components/parameters/lens'
+        - $ref: '#/components/parameters/product'
+        - $ref: '#/components/parameters/state'
+        - $ref: '#/components/parameters/submitted_via'
+        - $ref: '#/components/parameters/tag'
+        - $ref: '#/components/parameters/trend_interval'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrendsResult'
 tags:
   - name: Complaints
     description: These endpoints provide access to consumer complaints
@@ -296,6 +360,19 @@ components:
         type: array
         items:
           type: string
+    lens:
+      name: lens
+      in: query
+      required: true
+      description:
+        Data Lens parameter for Trends
+      schema:
+        type: string
+        enum:
+          - "overview"
+          - "product"
+          - "issue"
+        default: "overview"
     no_aggs:
       name: no_aggs
       in: query
@@ -381,6 +458,19 @@ components:
         type: array
         items:
           type: string
+    trend_interval:
+      name: "trend_interval"
+      in: "query"
+      description: "Date interval filter for histogram"
+      required: true
+      schema:
+        type: "string"
+        enum:
+        - "yearly"
+        - "quarterly"
+        - "monthly"
+        - "weekly"
+        - "daily"
   schemas:
     Aggregation:
       type: object
@@ -403,6 +493,16 @@ components:
             sum_other_doc_count:
               type: integer
               description: The number of complaints that were not included in this aggregation.
+    AggregationDate:
+      type: object
+      properties:
+        value_as_string:
+          type: string
+          format: date-time
+          description: ISO-8601 formatted date (yyyy-mm-ddTHH:MM:SSZZ)
+        value:
+          type: number
+          description: Seconds since 1970 (Unix Epoch)
     Bucket:
       type: object
       properties:
@@ -591,10 +691,78 @@ components:
               $ref: '#/components/schemas/Aggregation'
         hits:
           $ref: '#/components/schemas/Hits'
+    State:
+      type: object
+      description: Details about a US state or territory
+      properties:
+        name:
+          type: string
+          description: The full name of the state
+          example: Arkansas
+        abbreviation:
+          type: string
+          description: The USPS abbreviation for the state
+          example: AR
+        complaints:
+          type: integer
+          description: The number of complaints
+        top_issue:
+          type: string
+          description: The issue that gets the most complaints in the state
+        top_product:
+          type: string
+          description: The product that gets the most complaints in the state
+    StatesResult:
+      type: object
+      properties:
+        states:
+          type: array
+          description: All 50 states plus DC
+          items:
+            $ref: '#/components/schemas/State'
+        issues:
+          $ref: '#/components/schemas/TopFive'
+        products:
+          $ref: '#/components/schemas/TopFive'
     SuggestResult:
       type: array
       items:
         type: string
+    TopFive:
+      type: array
+      description: The top five categories with complaints
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+          complaints:
+            type: integer
+            description: The number of complaints
+    TrendsResult:
+      type: object
+      properties:
+        _meta:
+          $ref: '#/components/schemas/Meta'
+        aggregations:
+          type: object
+          properties:
+            dateRangeArea:
+              $ref: '#/components/schemas/Aggregation'
+            dateRangeBrush:
+              $ref: '#/components/schemas/Aggregation'
+            issue:
+              $ref: '#/components/schemas/Aggregation'
+            max_date:
+              $ref: '#/components/schemas/AggregationDate'
+            min_date:
+              $ref: '#/components/schemas/AggregationDate'
+            product:
+              $ref: '#/components/schemas/Aggregation'
+        issues:
+          $ref: '#/components/schemas/TopFive'
+        products:
+          $ref: '#/components/schemas/TopFive'
   links: {}
   callbacks: {}
 security: []
