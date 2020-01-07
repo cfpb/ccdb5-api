@@ -476,6 +476,23 @@ class StateAggregationBuilder(BaseBuilder):
             }
         }
 
+        # Get top product & issue for each state
+        if field_name == 'state':
+            field_aggs["aggs"]["state"]["aggs"] = {
+                "product": {
+                    "terms": {
+                        "field": "product.raw",
+                        "size": 1
+                    }
+                },
+                "issue": {
+                    "terms": {
+                        "field": "issue.raw",
+                        "size": 1
+                    }
+                }
+            }
+
         date_filter = self._build_date_range_filter(
             self.params.get("date_received_min"),
             self.params.get("date_received_max"), "date_received")
