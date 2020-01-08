@@ -314,7 +314,7 @@ def states_agg(agg_exclude=None, **kwargs):
         _ES_URL, _COMPLAINT_ES_INDEX, _COMPLAINT_DOC_TYPE, body
     )
 
-    # AD, TODO: Do i need to hardcode?
+    # AD, TODO: Do I need to hardcode?
     body["size"] = 0
     del body['_source']
     del body['highlight']
@@ -330,11 +330,5 @@ def states_agg(agg_exclude=None, **kwargs):
                            doc_type=_COMPLAINT_DOC_TYPE,
                            body=body,
                            scroll="10m")
-
-    # AZ, TODO: Do we need _meta for this endpoint?
-    # res["_meta"] = _get_meta()
-
-    # AZ, TODO: Remove after debug?
-    res['body'] = body
 
     return res
