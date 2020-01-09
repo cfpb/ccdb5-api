@@ -1,11 +1,11 @@
 import copy
+
 from django.core.urlresolvers import reverse
+
 import mock
+from complaint_search.defaults import AGG_EXCLUDE_FIELDS, PARAMS
 from complaint_search.serializer import SearchInputSerializer
-from complaint_search.defaults import (
-    AGG_EXCLUDE_FIELDS,
-    PARAMS,
-)
+from nose_parameterized import parameterized
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -33,26 +33,29 @@ class StatesTests(APITestCase):
                                               **self.buildDefaultParams({}))
         self.assertEqual('OK', response.data)
 
+    @parameterized.expand([
+        [('complaint_what_happened', 'complaint_what_happened field')],
+        [('company', 'company field')],
+        [('all', 'all fields')],
+    ])
     @mock.patch('complaint_search.es_interface.states_agg')
-    def test_states_with_field__valid(self, mock_essearch):
+    def test_states_with_field__valid(self, test_pair, mock_essearch):
         url = reverse('complaint_search:states')
-        for field in SearchInputSerializer.FIELD_CHOICES:
-            params = {"field": field[0]}
-            mock_essearch.return_value = 'OK'
-            response = self.client.get(url, params)
-            self.assertEqual(status.HTTP_200_OK, response.status_code)
-            self.assertEqual('OK', response.data)
+        params = {"field": test_pair[0]}
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url, params)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual('OK', response.data)
 
         calls = [
             mock.call(
                 agg_exclude=AGG_EXCLUDE_FIELDS,
                 **self.buildDefaultParams({
                     "field": SearchInputSerializer.FIELD_MAP.get(
-                        field_pair[0],
-                        field_pair[0]
+                        test_pair[0],
+                        test_pair[0]
                     )})
             )
-            for field_pair in SearchInputSerializer.FIELD_CHOICES
         ]
         mock_essearch.assert_has_calls(calls)
 
