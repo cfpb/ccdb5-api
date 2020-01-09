@@ -1,6 +1,5 @@
 import copy
 from django.core.urlresolvers import reverse
-
 import mock
 from complaint_search.serializer import SearchInputSerializer
 from complaint_search.defaults import (
