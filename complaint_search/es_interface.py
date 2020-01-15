@@ -14,6 +14,7 @@ from complaint_search.es_builders import (
     AggregationBuilder,
     PostFilterBuilder,
     SearchBuilder,
+    StateAggregationBuilder,
 )
 from complaint_search.export import ElasticSearchExporter
 from elasticsearch import Elasticsearch, helpers
@@ -297,4 +298,37 @@ def document(complaint_id):
     doc_query = {"query": {"term": {"_id": complaint_id}}}
     res = _get_es().search(index=_COMPLAINT_ES_INDEX,
                            doc_type=_COMPLAINT_DOC_TYPE, body=doc_query)
+    return res
+
+
+def states_agg(agg_exclude=None, **kwargs):
+    params = copy.deepcopy(PARAMS)
+    params.update(**kwargs)
+    search_builder = SearchBuilder()
+    search_builder.add(**params)
+    body = search_builder.build()
+
+    log = logging.getLogger(__name__)
+    log.info(
+        'Calling %s/%s/%s/states with %s',
+        _ES_URL, _COMPLAINT_ES_INDEX, _COMPLAINT_DOC_TYPE, body
+    )
+
+    # AD, TODO: Do I need to hardcode?
+    body["size"] = 0
+    del body['_source']
+    del body['highlight']
+    del body['sort']
+
+    aggregation_builder = StateAggregationBuilder()
+    aggregation_builder.add(**params)
+    if agg_exclude:
+        aggregation_builder.add_exclude(agg_exclude)
+    body["aggs"] = aggregation_builder.build()
+
+    res = _get_es().search(index=_COMPLAINT_ES_INDEX,
+                           doc_type=_COMPLAINT_DOC_TYPE,
+                           body=body,
+                           scroll="10m")
+
     return res

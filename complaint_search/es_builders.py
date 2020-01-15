@@ -428,6 +428,119 @@ class AggregationBuilder(BaseBuilder):
         return aggs
 
 
+class StateAggregationBuilder(BaseBuilder):
+    _AGG_FIELDS = (
+        'issue',
+        'product',
+        'state',
+    )
+
+    _AGG_SIZES = {
+        'state': 0,
+        'product': 5,
+        'issue': 5
+    }
+
+    def __init__(self):
+        BaseBuilder.__init__(self)
+        self.filter_clauses = None
+        self.exclude = []
+
+    def add_exclude(self, field_name_list):
+        self.exclude += field_name_list
+
+    def build_one(self, field_name):
+        # Lazy initialization
+        if not self.filter_clauses:
+            self.filter_clauses = self._build_filter_clauses()
+
+        field_aggs = {
+            "filter": {
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [],
+                }
+            }
+        }
+
+        es_field_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
+            field_name, field_name
+        )
+        field_aggs["aggs"] = {
+            field_name: {
+                "terms": {
+                    "field": es_field_name,
+                    "size": self._AGG_SIZES[field_name]
+                }
+            }
+        }
+
+        # Get top product & issue for each state
+        if field_name == 'state':
+            field_aggs["aggs"]["state"]["aggs"] = {
+                "product": {
+                    "terms": {
+                        "field": "product.raw",
+                        "size": 1
+                    }
+                },
+                "issue": {
+                    "terms": {
+                        "field": "issue.raw",
+                        "size": 1
+                    }
+                }
+            }
+
+        date_filter = self._build_date_range_filter(
+            self.params.get("date_received_min"),
+            self.params.get("date_received_max"), "date_received")
+
+        if date_filter:
+            field_aggs["filter"]["bool"]["filter"].append(date_filter)
+
+        company_filter = self._build_date_range_filter(
+            self.params.get("company_received_min"),
+            self.params.get("company_received_max"), "date_sent_to_company")
+
+        if company_filter:
+            field_aggs["filter"]["bool"]["filter"].append(company_filter)
+
+        # Since these aggregations are not used for left-side filters, we can
+        # apply all filters to all params
+        for item in self.params:
+            if item in (
+                self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL
+            ):
+                field_level_should = {
+                    "bool": {"should": self.filter_clauses[item]}
+                }
+                field_aggs["filter"]["bool"]["filter"].append(
+                    field_level_should
+                )
+
+            if item in self._OPTIONAL_FILTERS_MUST:
+                field_aggs["filter"]["bool"]["filter"].append(
+                    self.filter_clauses[item]
+                )
+
+        return field_aggs
+
+    def build(self):
+        aggs = {}
+
+        agg_fields = self._AGG_FIELDS
+        if self.exclude:
+            agg_fields = [field_name for field_name in self._AGG_FIELDS
+                          if field_name not in self.exclude
+                          or field_name in self.params]
+        for field_name in agg_fields:
+            aggs[field_name] = self.build_one(field_name)
+
+        return aggs
+
+
 if __name__ == "__main__":
     searchbuilder = SearchBuilder()
     print(searchbuilder.build())
@@ -435,3 +548,5 @@ if __name__ == "__main__":
     print(pfbuilder.build())
     aggbuilder = AggregationBuilder()
     print(aggbuilder.build())
+    stateaggbuilder = StateAggregationBuilder()
+    print(stateaggbuilder.build())
