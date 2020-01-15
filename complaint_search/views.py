@@ -105,7 +105,7 @@ def _buildHeaders():
 
 
 # -----------------------------------------------------------------------------
-# Request Handlers
+# Request Handlers: Complaints
 
 @api_view(['GET'])
 @renderer_classes((
@@ -230,6 +230,10 @@ def suggest_company(request):
 def document(request, id):
     results = es_interface.document(id)
     return Response(results, headers=_buildHeaders())
+
+
+# -----------------------------------------------------------------------------
+# Request Handlers: Geo
 
 
 @api_view(['GET'])
