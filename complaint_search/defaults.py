@@ -1,4 +1,7 @@
+from __future__ import unicode_literals
+
 from collections import OrderedDict
+
 
 PARAMS = {
     "format": "default",
@@ -42,7 +45,7 @@ EXPORT_FORMATS = (
 
 CSV_ORDERED_HEADERS = OrderedDict([
     ("date_received_formatted", "Date received"),
-    ("product", "Product"), 
+    ("product", "Product"),
     ("sub_product", "Sub-product"),
     ("issue", "Issue"),
     ("sub_issue", "Sub-issue"),

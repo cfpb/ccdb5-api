@@ -1,10 +1,10 @@
 from django.conf import settings
 from django.core.urlresolvers import reverse
+
+import mock
+from elasticsearch import TransportError
 from rest_framework import status
 from rest_framework.test import APITestCase
-from elasticsearch import TransportError
-import mock
-from complaint_search.es_interface import filter_suggest
 
 
 class SuggestCompanyTests(APITestCase):
@@ -62,17 +62,16 @@ class SuggestCompanyTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response.has_header('Access-Control-Allow-Origin'))
 
-
     @mock.patch('complaint_search.es_interface.filter_suggest')
-    def test_suggest__transport_error_without_status_code(
+    def test_suggest__transport_error(
         self, mock_essuggest
     ):
         mock_essuggest.side_effect = TransportError('N/A', "Error")
         url = reverse('complaint_search:suggest_zip')
         param = {"text": "test"}
         response = self.client.get(url, param)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, 424)
         self.assertDictEqual(
-            {"error": "Elasticsearch error: Error"}, response.data
+            {"error": "There was an error calling Elasticsearch"},
+            response.data
         )
-

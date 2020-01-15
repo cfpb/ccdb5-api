@@ -19,11 +19,7 @@ Requirements are retrieved and/or build automatically via pip (see below).
 * djangorestframework - Rest API framework
 * elasticsearch - low level client for Elasticsearch
 * requests - http requests to get different data format
-* urllib3 - http client library to help format http URL
 
-## API Docs
-
-TBD
 
 ## Setup & Running
 This repository assumes that you have an instance of elasticsearch running with complaint data set up and running.
@@ -56,20 +52,59 @@ brew info autoenv
 You can then copy the `.env_SAMPLE` file to `.env`, then update any environment variables accordingly.
 
 ### Dependencies
-This project uses `requirements.txt` files for defining dependencies, so you
-can get up and running with `pip`:
+First, create a virtual environment for Python dependencies:
+```
+mkvirtualenv ccdb5-api
+```
 
-```shell
-$ pip install -r requirements.txt       # modules required for execution
+Next, use `pip` to install dependencies, which are defined in `setup.py`:
+```
+pip install -e '.[testing]'
 ```
 
 With that, you just need a few additional commands to get up and running:
-```shell
-$ python manage.py runserver
 ```
+python manage.py runserver
+```
+
+## API Docs
+
+[Documentation](https://cfpb.github.io/ccdb5-api/) for this repository is rendered via GitHub pages and [Swagger](https://swagger.io/docs/). They can be edited in the `docs/` directory, but to view or deploy them, you'll need to install the dependencies listed in the `docs_extras` section of `setup.py`:
+
+```
+pip install -e '.[docs]'
+```
+
+You can then preview your changes locally by running `mkdocs serve` and then reviewing <http://127.0.0.1:8000/>
+
+When your changes are ready, you can submit them as a normal pull request. After that, you can use this command to publish them:
+
+```
+mkdocs gh-deploy --clean
+```
+
+That pushes the necessary files to the `gh-pages` branch.
+
+### Notes
+
+- The `mkdocs gh-deploy` command will push any edits you've made locally to the `gh-pages` branch of the repository, whether you've committed them or not.
+- Mkdocs will create a "site" directory locally when you use either `build`, `serve` or `gh-deploy`. This is used to assemble assets to be pushed to the gh-pages branch, but the `site/` directory itself doesn't need to be under version control. It can be deleted after a deploy.
+
 
 ##  Running Tests
 
-```shell
-$ python manage.py test
+If you have [Tox](https://tox.readthedocs.io/en/latest/) installed (recommended),
+you can run the specs for this project with the `tox` command.
+
+If not, this command will run the specs on the python version your local
+environment has installed: `./manage.py test`.
+
+If you run the tests via Tox, it will automatically display spec coverage information.
+To get test coverage information outside of Tox, install [Coverage.py](https://coverage.readthedocs.io/en/coverage-4.5.1a/)
+and run these commands:
+
+```
+coverage erase
+coverage run manage.py test
+coverage report
 ```

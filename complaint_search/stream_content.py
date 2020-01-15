@@ -1,3 +1,6 @@
+import six
+
+
 class StreamCSVContent(object):
 
     def __init__(self, header, content):
@@ -8,12 +11,16 @@ class StreamCSVContent(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         if self.header and not self.is_header_returned:
             self.is_header_returned = True
             return self.header
         else:
             return next(self.content)
+
+    if six.PY2:  # pragma: no cover
+        def next(self):
+            return self.__next__()
 
 
 class StreamJSONContent(object):
@@ -30,9 +37,9 @@ class StreamJSONContent(object):
         try:
             first_eol_index = self.complaint_in_progress.index('\n')
 
-            # see if we have 2nd completed line, and that's the complaint we want to return
-            # assuming at the EOF there's also a '\n' as seen from data format
-            # plugin so far
+            # see if we have 2nd completed line, and that's the complaint we
+            # want to return assuming at the EOF there's also a '\n' as seen
+            # from data format plugin so far
             second_eol_index = self.complaint_in_progress.index(
                 '\n', first_eol_index + 1)
 
@@ -50,7 +57,7 @@ class StreamJSONContent(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         while True:
             if not self.is_streaming_started:
                 # This is the beginning
@@ -79,3 +86,7 @@ class StreamJSONContent(object):
                     return "]"
                 else:
                     raise StopIteration
+
+    if six.PY2:  # pragma: no cover
+        def next(self):
+            return self.__next__()

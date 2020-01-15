@@ -1,11 +1,11 @@
 from django.conf import settings
 from django.core.urlresolvers import reverse
+
+import mock
+from elasticsearch import TransportError
 from rest_framework import status
 from rest_framework.test import APITestCase
-from unittest import skip
-from elasticsearch import TransportError
-import mock
-from complaint_search.es_interface import suggest
+
 
 class SuggestTests(APITestCase):
 
@@ -51,7 +51,9 @@ class SuggestTests(APITestCase):
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.suggest')
-    def test_suggest_with_size__invalid_smaller_than_min_number(self, mock_essuggest):
+    def test_suggest_with_size__invalid_smaller_than_min_number(
+        self, mock_essuggest
+    ):
         url = reverse('complaint_search:suggest')
         params = {"size": 0}
         mock_essuggest.return_value = 'OK'
@@ -59,7 +61,7 @@ class SuggestTests(APITestCase):
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essuggest.assert_not_called()
         self.assertDictEqual(
-            {"size": ["Ensure this value is greater than or equal to 1."]}, 
+            {"size": ["Ensure this value is greater than or equal to 1."]},
             response.data)
 
     @mock.patch('complaint_search.es_interface.suggest')
@@ -74,7 +76,7 @@ class SuggestTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         mock_essuggest.assert_not_called()
         self.assertDictEqual(
-            {"size": ["Ensure this value is less than or equal to 100000."]}, 
+            {"size": ["Ensure this value is less than or equal to 100000."]},
             response.data)
 
     @mock.patch('complaint_search.es_interface.suggest')
@@ -90,21 +92,13 @@ class SuggestTests(APITestCase):
         self.assertTrue(response.has_header('Access-Control-Allow-Origin'))
 
     @mock.patch('complaint_search.es_interface.suggest')
-    def test_suggest__transport_error_with_status_code(self, mock_essuggest):
-        mock_essuggest.side_effect = TransportError(status.HTTP_404_NOT_FOUND, "Error")
-        url = reverse('complaint_search:suggest')
-        param = {"text": "test"}
-        response = self.client.get(url, param)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertDictEqual({"error": "Elasticsearch error: Error"}, response.data)
-
-    @mock.patch('complaint_search.es_interface.suggest')
-    def test_suggest__transport_error_without_status_code(self, mock_essuggest):
+    def test_suggest__transport_error(self, mock_essuggest):
         mock_essuggest.side_effect = TransportError('N/A', "Error")
         url = reverse('complaint_search:suggest')
         param = {"text": "test"}
         response = self.client.get(url, param)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertDictEqual({"error": "Elasticsearch error: Error"}, response.data)
-
-
+        self.assertEqual(response.status_code, 424)
+        self.assertDictEqual(
+            {"error": "There was an error calling Elasticsearch"},
+            response.data
+        )

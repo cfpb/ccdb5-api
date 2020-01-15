@@ -1,11 +1,17 @@
+# Python #
+#########
+.python-version
+
 # Django #
 #################
 *.egg-info
+.eggs/
 
-# Coverage #
-############
+# Testing #
+###########
 .coverage
 htmlcov/
+.tox/
 
 # OS Files #
 ############
@@ -14,3 +20,7 @@ htmlcov/
 .env
 *.pyc
 db.sqlite3
+
+# Documentation files *
+
+site/

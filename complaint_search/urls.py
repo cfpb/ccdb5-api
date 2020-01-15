@@ -1,8 +1,9 @@
-from django.conf.urls import include, url
+from django.conf.urls import url
+
 import complaint_search.views
 
+
 urlpatterns = [
-	  url(r'^docs/', include('rest_framework_swagger.urls')),
     url(
         r'^_suggest_company',
         complaint_search.views.suggest_company,
@@ -14,6 +15,8 @@ urlpatterns = [
         name="suggest_zip"
     ),
     url(r'^_suggest', complaint_search.views.suggest, name="suggest"),
-    url(r'^(?P<id>[0-9]+)$', complaint_search.views.document, name="document"),
+    url(
+        r'^(?P<id>[0-9]+)$', complaint_search.views.document, name="complaint"
+    ),
     url(r'^$', complaint_search.views.search, name="search"),
 ]

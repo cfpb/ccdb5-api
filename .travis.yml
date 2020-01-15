@@ -1,13 +1,10 @@
 language: python
 python:
-- '2.7'
+- 3.6
 install:
-- pip install -r requirements.txt
-- pip install -r requirements_test.txt
-- pip install coveralls
+- pip install coveralls tox-travis
 script:
-- ./manage.py migrate
-- coverage run --source='.' manage.py test
+- tox
 - python setup.py bdist_wheel
 after_success:
 - coveralls
