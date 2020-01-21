@@ -199,15 +199,16 @@ def search(agg_exclude=None, **kwargs):
                                body=body,
                                scroll="10m")
 
-        num_of_scroll = params.get("frm") / body["size"]
-        scroll_id = res['_scroll_id']
-        if num_of_scroll > 0:
-            while num_of_scroll > 0:
-                res['hits']['hits'] = _get_es().scroll(
-                    scroll_id=scroll_id,
-                    scroll="10m"
-                )['hits']['hits']
-                num_of_scroll -= 1
+        if res['hits']['hits']:
+            num_of_scroll = params.get("frm") / body["size"]
+            scroll_id = res['_scroll_id']
+            if num_of_scroll > 0:
+                while num_of_scroll > 0:
+                    res['hits']['hits'] = _get_es().scroll(
+                        scroll_id=scroll_id,
+                        scroll="10m"
+                    )['hits']['hits']
+                    num_of_scroll -= 1
         res["_meta"] = _get_meta()
 
     elif format in EXPORT_FORMATS:
