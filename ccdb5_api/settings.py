@@ -82,7 +82,7 @@ SWAGGER_SETTINGS = {
     'api_version': '0.1',
     'info': {
         'title': 'Complaint Search Public API',
-        'description': 'This is the initial API for looking at Complaint Search Data',
+        'description': 'This is the API for looking at Complaint Search Data',
         'version': '1.0.0',
         'termsOfService': 'http://swagger.io/terms/',
         'contact': 'apiteam@swagger.io',
