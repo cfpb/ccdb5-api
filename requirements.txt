@@ -2,7 +2,7 @@ Django>=1.8,<=1.8.99
 djangorestframework==3.1.3
 django-rest-swagger==0.3.0
 elasticsearch==2.4.1
-requests==2.14.2
+requests==2.20.0
 urllib3==1.21.1
 django-localflavor==1.5
 wagtail-flags==2.0.5
