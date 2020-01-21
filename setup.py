@@ -12,7 +12,7 @@ with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
 
 install_requires = [
     'Django>=1.11,<1.12',
-    'djangorestframework>=3.6,<3.9',
+    'djangorestframework>=3.6,<3.10',
     'requests>=2.18,<3',
     'elasticsearch>=2.4.1,<3',
     'django-localflavor>=1.1,<2',
