@@ -266,7 +266,7 @@ components:
     consumer_disputed:
       name: consumer_disputed
       in: query
-      description: 'Filter the results to only return the specified state of consumer disputed, i.e. yes, no'
+      description: Filter the results to only return the specified state of consumer disputed, i.e. yes, no
       explode: true
       schema:
         type: array
@@ -275,7 +275,7 @@ components:
     date_received_max:
       name: date_received_max
       in: query
-      description: Return results with date < date_received_max (i.e. 2017-03-04)
+      description: Return results with date <= date_received_max (i.e. 2017-03-04)
       schema:
         type: string
         format: date
@@ -289,7 +289,7 @@ components:
     field:
       name: field
       in: query
-      description: Search by particular field
+      description: Search by particular field. If this parameter is not specified, default behavior will return only complaints with narratives.
       schema:
         type: string
         enum:
@@ -300,7 +300,7 @@ components:
     format:
       name: format
       in: query
-      description: 'Format to be returned, if this parameter is not specified, frm/size parameters can be used properly, but if a format is specified for exporting, frm/size will be ignored'
+      description: Format to be returned, if this parameter is not specified, frm/size parameters can be used properly, but if a format is specified for exporting, frm/size will be ignored
       schema:
         type: string
         enum:
@@ -310,7 +310,7 @@ components:
     from:
       name: frm
       in: query
-      description: 'Return results starting from a specific index, only if format parameter is not specified, ignore otherwise'
+      description: Return results starting from a specific index, only if format parameter is not specified, ignore otherwise
       schema:
         type: integer
         format: int64
@@ -320,7 +320,7 @@ components:
     has_narrative:
       name: has_narrative
       in: query
-      description: 'Filter the results to only return the specified state of whether it has narrative in the complaint or not, i.e. yes, no'
+      description: Filter the results to only return the specified state of whether it has narrative in the complaint or not, i.e. yes, no
       explode: true
       schema:
         type: array
@@ -338,14 +338,14 @@ components:
     no_aggs:
       name: no_aggs
       in: query
-      description: 'Include aggregations in result or not, True means no aggregations will be included, False means aggregations will be included.'
+      description: Include aggregations in result or not, True means no aggregations will be included, False means aggregations will be included.
       schema:
         type: boolean
         default: false
     no_highlight:
       name: no_highlight
       in: query
-      description: 'Include highlight of search term in result or not, True means no highlighting will be included, False means highlighting will be included.'
+      description: Include highlight of search term in result or not, True means no highlighting will be included, False means highlighting will be included.
       schema:
         type: boolean
         default: false
@@ -389,7 +389,7 @@ components:
     state:
       name: state
       in: query
-      description: 'Filter the results to only return these states (use abbreviation, i.e. CA, VA)'
+      description: Filter the results to only return these states (use abbreviation, i.e. CA, VA)
       explode: true
       schema:
         type: array
