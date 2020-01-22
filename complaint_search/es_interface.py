@@ -198,8 +198,8 @@ def search(agg_exclude=None, **kwargs):
                                body=body,
                                scroll="10m")
 
-        if res['hits'['hits']:
-            num_of_scroll=params.get("frm") / body["size"]
+        if res['hits']['hits']:
+            num_of_scroll = params.get("frm") / body["size"]
             scroll_id = res['_scroll_id']
             if num_of_scroll > 0:
                 while num_of_scroll > 0:
