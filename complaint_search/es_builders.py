@@ -507,10 +507,16 @@ class StateAggregationBuilder(BaseBuilder):
         if company_filter:
             field_aggs["filter"]["bool"]["filter"].append(company_filter)
 
-        # Since these aggregations are not used for left-side filters, we can
-        # apply all filters to all params
+        # Add filter clauses to aggregation entries (only those that are not
+        # the same as field name or part of the exclude list, which means we
+        # want to list all matched aggregation)
         for item in self.params:
-            if item in (
+            include_filter = (
+                item != field_name or
+                (item == field_name and item in self.exclude)
+            )
+
+            if include_filter and item in (
                 self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL
             ):
                 field_level_should = {
@@ -533,8 +539,7 @@ class StateAggregationBuilder(BaseBuilder):
         agg_fields = self._AGG_FIELDS
         if self.exclude:
             agg_fields = [field_name for field_name in self._AGG_FIELDS
-                          if field_name not in self.exclude
-                          or field_name in self.params]
+                          if field_name not in self.exclude]
         for field_name in agg_fields:
             aggs[field_name] = self.build_one(field_name)
 
