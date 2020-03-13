@@ -21,6 +21,7 @@ from complaint_search.throttling import (
 )
 from elasticsearch import TransportError
 from rest_framework import status
+from rest_framework.exceptions import ErrorDetail
 from rest_framework.test import APITestCase
 
 
@@ -336,9 +337,12 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
         self.assertDictEqual(
-            {"date_received_min": [
-                "Date has wrong format. Use one of these formats instead: "
-                "YYYY[-MM[-DD]]."
+            {'date_received_min': [
+                ErrorDetail(
+                    string='Date has wrong format. Use one of these formats '
+                    'instead: YYYY-MM-DD.',
+                    code='invalid'
+                )
             ]},
             response.data
         )
@@ -368,9 +372,12 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
         self.assertDictEqual(
-            {"date_received_max": [
-                "Date has wrong format. Use one of these formats instead: "
-                "YYYY[-MM[-DD]]."
+            {'date_received_max': [
+                ErrorDetail(
+                    string='Date has wrong format. Use one of these formats '
+                    'instead: YYYY-MM-DD.',
+                    code='invalid'
+                )
             ]},
             response.data
         )
@@ -400,9 +407,11 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
         self.assertDictEqual(
-            {"company_received_min": [
-                "Date has wrong format. Use one of these formats instead: "
-                "YYYY[-MM[-DD]]."
+            {'company_received_min': [
+                ErrorDetail(
+                    string='Date has wrong format. Use one of these formats '
+                    'instead: YYYY-MM-DD.',
+                    code='invalid')
             ]},
             response.data
         )
@@ -433,8 +442,11 @@ class SearchTests(APITestCase):
         mock_essearch.assert_not_called()
         self.assertDictEqual(
             {"company_received_max": [
-                "Date has wrong format. Use one of these formats instead: "
-                "YYYY[-MM[-DD]]."
+                ErrorDetail(
+                    string="Date has wrong format. Use one of these formats "
+                    "instead: YYYY-MM-DD.",
+                    code='invalid'
+                )
             ]},
             response.data
         )
@@ -668,7 +680,9 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
         self.assertDictEqual(
-            {"no_aggs": [u'"Not boolean" is not a valid boolean.']},
+            {'no_aggs': [
+                ErrorDetail(string='Must be a valid boolean.', code='invalid')
+            ]},
             response.data
         )
 
@@ -695,7 +709,9 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
         self.assertDictEqual(
-            {"no_highlight": [u'"Not boolean" is not a valid boolean.']},
+            {'no_highlight': [
+                ErrorDetail(string='Must be a valid boolean.', code='invalid')
+            ]},
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
