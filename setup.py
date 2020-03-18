@@ -11,7 +11,7 @@ with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
 
 
 install_requires = [
-    'Django>=1.11,<1.12',
+    'Django>=1.11,<2.3',
     'djangorestframework>=3.9.1,<4.0',
     'django-rest-swagger>=2.2.0',
     'requests>=2.18,<3',
@@ -51,8 +51,8 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Indexing/Search',
         'License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3.6',
-        'Framework :: Django :: 1.11',
+        'Programming Language :: Python :: 3',
+        'Framework :: Django',
     ],
     keywords='complaint search api',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
