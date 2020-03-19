@@ -7,6 +7,8 @@ except ImportError:
     from django.conf.urls import url as re_path
 
 
+app_name = "complaint_search"
+
 urlpatterns = [
     re_path(
         r'^_suggest_company',

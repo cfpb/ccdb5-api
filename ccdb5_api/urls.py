@@ -23,10 +23,9 @@ except ImportError:
     from django.conf.urls import url as re_path
 
 if django.VERSION >= (2, 0):
-    app_name = "complaint_search"
     urlpatterns = [
         re_path(r'^admin/', admin.site.urls),
-        re_path(r'^', include('complaint_search.urls')),
+        re_path('complaint_search/', include('complaint_search.urls')),
     ]
 else:
     urlpatterns = [
