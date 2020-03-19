@@ -1,8 +1,12 @@
-from django.core.urlresolvers import reverse
-
 import mock
 from rest_framework import status
 from rest_framework.test import APITestCase
+
+
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 
 
 DEFAULT_ACCEPT = (
