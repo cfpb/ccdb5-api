@@ -12,7 +12,6 @@ Class-based views
 Including another URLconf
     1. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-import django
 from django.contrib import admin
 
 
@@ -22,14 +21,8 @@ except ImportError:
     from django.conf.urls import include
     from django.conf.urls import url as re_path
 
-if django.VERSION >= (2, 0):
-    urlpatterns = [
-        re_path(r'^admin/', admin.site.urls),
-        re_path('complaint_search/', include('complaint_search.urls')),
-    ]
-else:
-    urlpatterns = [
-        re_path(r'^admin/', include(admin.site.urls)),
-        re_path(r'^', include('complaint_search.urls',
-                              namespace="complaint_search")),
-    ]
+
+urlpatterns = [
+    re_path(r'^admin/', admin.site.urls),
+    re_path(r'^', include('complaint_search.urls')),
+]
