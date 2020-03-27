@@ -3,7 +3,6 @@ from datetime import date, datetime
 
 from django.conf import settings
 from django.core.cache import cache
-from django.core.urlresolvers import reverse
 from django.http import StreamingHttpResponse
 
 import mock
@@ -23,6 +22,12 @@ from elasticsearch import TransportError
 from rest_framework import status
 from rest_framework.exceptions import ErrorDetail
 from rest_framework.test import APITestCase
+
+
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 
 
 class SearchTests(APITestCase):
