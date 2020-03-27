@@ -1146,7 +1146,7 @@ class EsInterfaceTest_Search(TestCase):
         act_body = mock_search.call_args_list[0][1]['body']
         diff = DeepDiff(act_body, body)
         # if diff:
-        #     pprint(diff, indent=2)
+        #     print(diff)
         self.assertEqual(diff, {})
         self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
