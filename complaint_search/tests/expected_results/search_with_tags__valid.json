@@ -33,22 +33,18 @@
       "filter": {
         "bool": {
           "filter": [
-            [
-              {
-                "terms": {
-                  "tags": [
-                    "Older American"
-                  ]
-                }
-              },
-              {
-                "terms": {
-                  "tags": [
-                    "Servicemember"
-                  ]
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "tags": [
+                      "Older American",
+                      "Servicemember"
+                    ]
+                  }
                 }
               }
-            ]
+            }
           ],
           "should": [],
           "must": []
@@ -67,22 +63,18 @@
       "filter": {
         "bool": {
           "filter": [
-            [
-              {
-                "terms": {
-                  "tags": [
-                    "Older American"
-                  ]
-                }
-              },
-              {
-                "terms": {
-                  "tags": [
-                    "Servicemember"
-                  ]
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "tags": [
+                      "Older American",
+                      "Servicemember"
+                    ]
+                  }
                 }
               }
-            ]
+            }
           ],
           "should": [],
           "must": []
@@ -101,22 +93,18 @@
       "filter": {
         "bool": {
           "filter": [
-            [
-              {
-                "terms": {
-                  "tags": [
-                    "Older American"
-                  ]
-                }
-              },
-              {
-                "terms": {
-                  "tags": [
-                    "Servicemember"
-                  ]
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "tags": [
+                      "Older American",
+                      "Servicemember"
+                    ]
+                  }
                 }
               }
-            ]
+            }
           ],
           "should": [],
           "must": []
@@ -160,22 +148,18 @@
       "filter": {
         "bool": {
           "filter": [
-            [
-              {
-                "terms": {
-                  "tags": [
-                    "Older American"
-                  ]
-                }
-              },
-              {
-                "terms": {
-                  "tags": [
-                    "Servicemember"
-                  ]
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "tags": [
+                      "Older American",
+                      "Servicemember"
+                    ]
+                  }
                 }
               }
-            ]
+            }
           ],
           "should": [],
           "must": []
@@ -194,22 +178,18 @@
       "filter": {
         "bool": {
           "filter": [
-            [
-              {
-                "terms": {
-                  "tags": [
-                    "Older American"
-                  ]
-                }
-              },
-              {
-                "terms": {
-                  "tags": [
-                    "Servicemember"
-                  ]
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "tags": [
+                      "Older American",
+                      "Servicemember"
+                    ]
+                  }
                 }
               }
-            ]
+            }
           ],
           "should": [],
           "must": []
@@ -228,22 +208,18 @@
       "filter": {
         "bool": {
           "filter": [
-            [
-              {
-                "terms": {
-                  "tags": [
-                    "Older American"
-                  ]
-                }
-              },
-              {
-                "terms": {
-                  "tags": [
-                    "Servicemember"
-                  ]
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "tags": [
+                      "Older American",
+                      "Servicemember"
+                    ]
+                  }
                 }
               }
-            ]
+            }
           ],
           "should": [],
           "must": []
@@ -262,22 +238,18 @@
       "filter": {
         "bool": {
           "filter": [
-            [
-              {
-                "terms": {
-                  "tags": [
-                    "Older American"
-                  ]
-                }
-              },
-              {
-                "terms": {
-                  "tags": [
-                    "Servicemember"
-                  ]
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "tags": [
+                      "Older American",
+                      "Servicemember"
+                    ]
+                  }
                 }
               }
-            ]
+            }
           ],
           "should": [],
           "must": []
@@ -296,22 +268,18 @@
       "filter": {
         "bool": {
           "filter": [
-            [
-              {
-                "terms": {
-                  "tags": [
-                    "Older American"
-                  ]
-                }
-              },
-              {
-                "terms": {
-                  "tags": [
-                    "Servicemember"
-                  ]
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "tags": [
+                      "Older American",
+                      "Servicemember"
+                    ]
+                  }
                 }
               }
-            ]
+            }
           ],
           "should": [],
           "must": []
@@ -330,22 +298,18 @@
       "filter": {
         "bool": {
           "filter": [
-            [
-              {
-                "terms": {
-                  "tags": [
-                    "Older American"
-                  ]
-                }
-              },
-              {
-                "terms": {
-                  "tags": [
-                    "Servicemember"
-                  ]
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "tags": [
+                      "Older American",
+                      "Servicemember"
+                    ]
+                  }
                 }
               }
-            ]
+            }
           ],
           "should": [],
           "must": []
@@ -364,22 +328,18 @@
       "filter": {
         "bool": {
           "filter": [
-            [
-              {
-                "terms": {
-                  "tags": [
-                    "Older American"
-                  ]
-                }
-              },
-              {
-                "terms": {
-                  "tags": [
-                    "Servicemember"
-                  ]
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "tags": [
+                      "Older American",
+                      "Servicemember"
+                    ]
+                  }
                 }
               }
-            ]
+            }
           ],
           "should": [],
           "must": []
@@ -406,22 +366,18 @@
       "filter": {
         "bool": {
           "filter": [
-            [
-              {
-                "terms": {
-                  "tags": [
-                    "Older American"
-                  ]
-                }
-              },
-              {
-                "terms": {
-                  "tags": [
-                    "Servicemember"
-                  ]
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "tags": [
+                      "Older American",
+                      "Servicemember"
+                    ]
+                  }
                 }
               }
-            ]
+            }
           ],
           "should": [],
           "must": []
@@ -440,22 +396,18 @@
       "filter": {
         "bool": {
           "filter": [
-            [
-              {
-                "terms": {
-                  "tags": [
-                    "Older American"
-                  ]
-                }
-              },
-              {
-                "terms": {
-                  "tags": [
-                    "Servicemember"
-                  ]
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "tags": [
+                      "Older American",
+                      "Servicemember"
+                    ]
+                  }
                 }
               }
-            ]
+            }
           ],
           "should": [],
           "must": []
@@ -483,22 +435,18 @@
   "post_filter": {
     "bool": {
       "filter": [
-        [
-          {
-            "terms": {
-              "tags": [
-                "Older American"
-              ]
-            }
-          },
-          {
-            "terms": {
-              "tags": [
-                "Servicemember"
-              ]
+        {
+          "bool": {
+            "should": {
+              "terms": {
+                "tags": [
+                  "Older American",
+                  "Servicemember"
+                ]
+              }
             }
           }
-        ]
+        }
       ],
       "must": [],
       "should": []

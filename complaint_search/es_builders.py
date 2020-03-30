@@ -27,11 +27,10 @@ class BaseBuilder(object):
         "product",
         "state",
         "submitted_via",
+        "tags",
         "timely",
         "zip_code",
     )
-
-    _OPTIONAL_FILTERS_MUST = ("tags",)
 
     # Filters for those that need conversion from string to boolean
     _OPTIONAL_FILTERS_STRING_TO_BOOL = ("has_narrative",)
@@ -90,17 +89,6 @@ class BaseBuilder(object):
         )
 
         if value_list:
-
-            # MUST filters must be in parallel otherwise they will not execute
-            # as intended
-            if field in self._OPTIONAL_FILTERS_MUST:
-                term_list_container = []
-                term_list = [
-                    {"terms": {es_field_name: [value]}} for value in value_list
-                ]
-
-                return term_list
-
             # The most common property for data is to not have a child element
             if not self._has_child(field):
                 term_list_container = {"terms": {es_field_name: []}}
@@ -146,8 +134,7 @@ class BaseBuilder(object):
         filter_clauses = {}
         for item in self.params:
             if item in (self._OPTIONAL_FILTERS +
-                        self._OPTIONAL_FILTERS_STRING_TO_BOOL +
-                        self._OPTIONAL_FILTERS_MUST):
+                        self._OPTIONAL_FILTERS_STRING_TO_BOOL):
                 filter_clauses[item] = self._build_bool_clauses(item)
         return filter_clauses
 
@@ -295,8 +282,6 @@ class PostFilterBuilder(BaseBuilder):
                 # servicemember
                 field_level_should = {"bool": {"should": filter_clauses[item]}}
                 post_filter["bool"]["filter"].append(field_level_should)
-            if item in self._OPTIONAL_FILTERS_MUST:
-                post_filter["bool"]["filter"].append(filter_clauses[item])
 
         return post_filter
 
@@ -405,11 +390,6 @@ class AggregationBuilder(BaseBuilder):
                 }
                 field_aggs["filter"]["bool"]["filter"].append(
                     field_level_should
-                )
-
-            if include_filter and item in self._OPTIONAL_FILTERS_MUST:
-                field_aggs["filter"]["bool"]["filter"].append(
-                    self.filter_clauses[item]
                 )
 
         return field_aggs
@@ -524,11 +504,6 @@ class StateAggregationBuilder(BaseBuilder):
                 }
                 field_aggs["filter"]["bool"]["filter"].append(
                     field_level_should
-                )
-
-            if item in self._OPTIONAL_FILTERS_MUST:
-                field_aggs["filter"]["bool"]["filter"].append(
-                    self.filter_clauses[item]
                 )
 
         return field_aggs

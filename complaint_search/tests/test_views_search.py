@@ -646,6 +646,25 @@ class SearchTests(APITestCase):
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
+    def test_search_with__multiple_tags__valid(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        url += "?tags=Older%20American%2C%20Servicemember"
+        url += "&tags=Older%20American"
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        # -*- coding: utf-8 -*-
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
+            **self.buildDefaultParams({
+                "tags": [
+                    "Older American, Servicemember",
+                    "Older American"
+                ]})
+        )
+        self.assertEqual('OK', response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
     def test_search_with_no_aggs__valid(self, mock_essearch):
         url = reverse('complaint_search:search')
         params = {"no_aggs": True}
