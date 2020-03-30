@@ -506,11 +506,6 @@ class StateAggregationBuilder(BaseBuilder):
                     field_level_should
                 )
 
-            if item in self._OPTIONAL_FILTERS_MUST:
-                field_aggs["filter"]["bool"]["filter"].append(
-                    self.filter_clauses[item]
-                )
-
         return field_aggs
 
     def build(self):
