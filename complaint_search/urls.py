@@ -1,9 +1,7 @@
-<<<<<<< HEAD
+
 from django.conf.urls import url
 from django.views.generic.base import RedirectView
 
-=======
->>>>>>> 794b9a015ca9064597d56992e80756803d06ae5f
 import complaint_search.views
 
 
