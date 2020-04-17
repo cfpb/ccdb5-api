@@ -1,5 +1,3 @@
-
-
 import copy
 import mock
 from complaint_search.defaults import AGG_EXCLUDE_FIELDS, PARAMS
@@ -14,8 +12,10 @@ try:
 except ImportError:
     from django.core.urlresolvers import reverse
 
+    
 class StatesTests(APITestCase):
 
+    
     def setUp(self):
         pass
 
