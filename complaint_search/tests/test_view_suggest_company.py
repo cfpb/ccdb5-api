@@ -1,10 +1,15 @@
 from django.conf import settings
-from django.core.urlresolvers import reverse
 
 import mock
 from elasticsearch import TransportError
 from rest_framework import status
 from rest_framework.test import APITestCase
+
+
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 
 
 class SuggestCompanyTests(APITestCase):

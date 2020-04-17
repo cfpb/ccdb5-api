@@ -1,17 +1,9 @@
-import six
-from six import text_type
-from six.moves import cStringIO as StringIO
-
 import csv
 import json
+from csv import DictWriter
+from io import StringIO
 
 from django.http import StreamingHttpResponse
-
-
-if six.PY2:  # pragma: no cover
-    from unicodecsv import DictWriter
-else:  # pragma: no cover
-    from csv import DictWriter
 
 
 class ElasticSearchExporter(object):
@@ -47,7 +39,7 @@ class ElasticSearchExporter(object):
             for row in scanResponse:
                 count += 1
                 rows_data = {
-                    key: text_type(value)
+                    key: str(value)
                     for key, value in row['_source'].items()
                     if key in header_dict.keys()
                 }
