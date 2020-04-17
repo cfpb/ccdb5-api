@@ -1,6 +1,10 @@
 import copy
 
-from django.core.urlresolvers import reverse
+try:
+    from django.urls import reverse
+
+except ImportError:
+    from django.core.urlresolvers import reverse
 
 import mock
 from complaint_search.defaults import AGG_EXCLUDE_FIELDS, PARAMS
