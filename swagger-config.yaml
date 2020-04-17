@@ -501,10 +501,10 @@ components:
           description: A description of the complaint provided by the consumer
         consumer_consent_provided:
           type: string
-          description: dentifies whether the consumer opted in to publish their complaint narrative
+          description: Identifies whether the consumer opted in to publish their complaint narrative
         consumer_disputed:
           type: string
-          description: Whether the consumer disputed the companyâ€™s response
+          description: Whether the consumer disputed the company's response
         date_received:
           type: string
           format: date

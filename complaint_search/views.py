@@ -28,7 +28,7 @@ from rest_framework.decorators import (
     renderer_classes,
     throttle_classes,
 )
-from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
 
@@ -112,7 +112,6 @@ def _buildHeaders():
     DefaultRenderer,
     JSONRenderer,
     CSVRenderer,
-    BrowsableAPIRenderer,
 ))
 @throttle_classes([
     SearchAnonRateThrottle,

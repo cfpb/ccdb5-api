@@ -1,7 +1,7 @@
 """ccdb5_api URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.11/topics/http/urls/
+    https://docs.djangoproject.com/en/stable/topics/http/urls/
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -12,11 +12,17 @@ Class-based views
 Including another URLconf
     1. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import include, url
 from django.contrib import admin
 
 
+try:
+    from django.urls import include, re_path
+except ImportError:
+    from django.conf.urls import include
+    from django.conf.urls import url as re_path
+
+
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^', include('complaint_search.urls', namespace="complaint_search")),
+    re_path(r'^admin/', admin.site.urls),
+    re_path(r'^', include('complaint_search.urls')),
 ]
