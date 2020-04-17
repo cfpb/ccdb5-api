@@ -41,6 +41,8 @@ paths:
         - $ref: '#/components/parameters/state'
         - $ref: '#/components/parameters/submitted_via'
         - $ref: '#/components/parameters/tag'
+        - $ref: '#/components/parameters/timely'
+        - $ref: '#/components/parameters/zip_code'
       responses:
         '200':
           description: successful operation
@@ -94,6 +96,8 @@ paths:
         - $ref: '#/components/parameters/state'
         - $ref: '#/components/parameters/submitted_via'
         - $ref: '#/components/parameters/tag'
+        - $ref: '#/components/parameters/timely'
+        - $ref: '#/components/parameters/zip_code'
       responses:
         '200':
           description: successful operation
@@ -126,6 +130,8 @@ paths:
         - $ref: '#/components/parameters/state'
         - $ref: '#/components/parameters/submitted_via'
         - $ref: '#/components/parameters/tag'
+        - $ref: '#/components/parameters/timely'
+        - $ref: '#/components/parameters/zip_code'
       responses:
         '200':
           description: successful operation
@@ -162,6 +168,39 @@ paths:
           description: Invalid ID supplied
         '404':
           description: Complaint not found
+  /geo/states:
+    get:
+      tags:
+        - Complaints
+      summary: Get the state-by-state information
+      description: Get complaint information broken down by states
+      parameters:
+        - $ref: '#/components/parameters/search_term'
+        - $ref: '#/components/parameters/field'
+        - $ref: '#/components/parameters/company'
+        - $ref: '#/components/parameters/company_public_response'
+        - $ref: '#/components/parameters/company_received_max'
+        - $ref: '#/components/parameters/company_received_min'
+        - $ref: '#/components/parameters/company_response'
+        - $ref: '#/components/parameters/consumer_consent_provided'
+        - $ref: '#/components/parameters/consumer_disputed'
+        - $ref: '#/components/parameters/date_received_max'
+        - $ref: '#/components/parameters/date_received_min'
+        - $ref: '#/components/parameters/has_narrative'
+        - $ref: '#/components/parameters/issue'
+        - $ref: '#/components/parameters/product'
+        - $ref: '#/components/parameters/state'
+        - $ref: '#/components/parameters/submitted_via'
+        - $ref: '#/components/parameters/tag'
+        - $ref: '#/components/parameters/timely'
+        - $ref: '#/components/parameters/zip_code'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatesResult'
 tags:
   - name: Complaints
     description: These endpoints provide access to consumer complaints
@@ -373,9 +412,27 @@ components:
       schema:
         type: string
     tag:
-      name: tag
+      name: tags
       in: query
       description: Filter the results to only return these types of tag
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+    timely:
+      name: timely
+      in: query
+      description: Filter the results to show whether a response was timely
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+    zip_code:
+      name: zip_code
+      in: query
+      description: Filter the results to only return these zip codes
       explode: true
       schema:
         type: array
@@ -403,6 +460,16 @@ components:
             sum_other_doc_count:
               type: integer
               description: The number of complaints that were not included in this aggregation.
+    AggregationDate:
+      type: object
+      properties:
+        value_as_string:
+          type: string
+          format: date-time
+          description: ISO-8601 formatted date (yyyy-mm-ddTHH:MM:SSZZ)
+        value:
+          type: number
+          description: Seconds since 1970 (Unix Epoch)
     Bucket:
       type: object
       properties:
@@ -591,6 +658,18 @@ components:
               $ref: '#/components/schemas/Aggregation'
         hits:
           $ref: '#/components/schemas/Hits'
+    StatesResult:
+      type: object
+      properties:
+        aggregations:
+          type: object
+          properties:
+            issue:
+              $ref: '#/components/schemas/MultiLevelAggregation'
+            product:
+              $ref: '#/components/schemas/MultiLevelAggregation'
+            state:
+              $ref: '#/components/schemas/MultiLevelAggregation'
     SuggestResult:
       type: array
       items:

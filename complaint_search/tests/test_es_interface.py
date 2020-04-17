@@ -12,6 +12,7 @@ from complaint_search.es_interface import (
     document,
     filter_suggest,
     search,
+    states_agg,
     suggest,
 )
 from complaint_search.export import ElasticSearchExporter
@@ -1472,6 +1473,23 @@ class EsInterfaceTest_Document(TestCase):
         self.assertEqual(0, len(mock_search.call_args[0]))
         self.assertEqual(3, len(mock_search.call_args[1]))
         self.assertDictEqual(mock_search.call_args[1]['body'], body)
+        self.assertEqual(mock_search.call_args[1]['doc_type'], 'DOC_TYPE')
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
+        self.assertEqual('OK', res)
+
+
+class EsInterfaceTest_States(TestCase):
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE",
+                "DOC_TYPE")
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_states__valid(self, mock_search):
+        mock_search.return_value = 'OK'
+        res = states_agg()
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(4, len(mock_search.call_args[1]))
         self.assertEqual(mock_search.call_args[1]['doc_type'], 'DOC_TYPE')
         self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)

@@ -105,7 +105,7 @@ def _buildHeaders():
 
 
 # -----------------------------------------------------------------------------
-# Request Handlers
+# Request Handlers: Complaints
 
 @api_view(['GET'])
 @renderer_classes((
@@ -229,3 +229,25 @@ def suggest_company(request):
 def document(request, id):
     results = es_interface.document(id)
     return Response(results, headers=_buildHeaders())
+
+
+# -----------------------------------------------------------------------------
+# Request Handlers: Geo
+
+
+@api_view(['GET'])
+@catch_es_error
+def states(request):
+    data = _parse_query_params(request.query_params)
+    serializer = SearchInputSerializer(data=data)
+
+    if not serializer.is_valid():
+        return Response(
+            serializer.errors, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    results = es_interface.states_agg(
+        agg_exclude=AGG_EXCLUDE_FIELDS, **serializer.validated_data)
+    headers = _buildHeaders()
+
+    return Response(results, headers=headers)
