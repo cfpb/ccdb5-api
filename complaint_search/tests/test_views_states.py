@@ -15,7 +15,6 @@ except ImportError:
 
 class StatesTests(APITestCase):
 
-
     def setUp(self):
         pass
 
