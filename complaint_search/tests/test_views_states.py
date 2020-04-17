@@ -12,10 +12,10 @@ try:
 except ImportError:
     from django.core.urlresolvers import reverse
 
-    
+
 class StatesTests(APITestCase):
 
-    
+
     def setUp(self):
         pass
 
