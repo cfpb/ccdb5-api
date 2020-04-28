@@ -16,6 +16,7 @@ An API that provides an interface to search complaint data.
 Requirements are retrieved and/or build automatically via pip (see below).
 
 * django - Web framework
+* djangolocalflavor - Country-specific Django helpers
 * djangorestframework - Rest API framework
 * elasticsearch - low level client for Elasticsearch
 * requests - http requests to get different data format
