@@ -201,9 +201,54 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StatesResult'
+  /trends:
+    get:
+      tags:
+        - Trends
+      summary: "List trends"
+      description: "Return specific aggregations for a search"
+      parameters:
+        - $ref: '#/components/parameters/search_term'
+        - $ref: '#/components/parameters/field'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/company'
+        - $ref: '#/components/parameters/company_public_response'
+        - $ref: '#/components/parameters/company_received_max'
+        - $ref: '#/components/parameters/company_received_min'
+        - $ref: '#/components/parameters/company_response'
+        - $ref: '#/components/parameters/consumer_consent_provided'
+        - $ref: '#/components/parameters/consumer_disputed'
+        - $ref: '#/components/parameters/date_received_max'
+        - $ref: '#/components/parameters/date_received_min'
+        - $ref: '#/components/parameters/has_narrative'
+        - $ref: '#/components/parameters/issue'
+        - $ref: '#/components/parameters/product'
+        - $ref: '#/components/parameters/state'
+        - $ref: '#/components/parameters/submitted_via'
+        - $ref: '#/components/parameters/tag'
+        - $ref: '#/components/parameters/timely'
+        - $ref: '#/components/parameters/zip_code'
+        - $ref: '#/components/parameters/trend_depth'
+        - $ref: '#/components/parameters/trend_interval'
+        - $ref: '#/components/parameters/lens'
+        - $ref: '#/components/parameters/sub_lens'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrendsResult'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/TrendsResult'
+        '400':
+          description: Invalid status value
 tags:
   - name: Complaints
     description: These endpoints provide access to consumer complaints
+  - name: Trends
+    description: These endpoints proovide access to complaint trend data
   - name: Typeahead
     description: These endpoints support the typeahead boxes in the UI
 externalDocs:
@@ -335,6 +380,22 @@ components:
         type: array
         items:
           type: string
+    lens:
+      name: lens
+      in: query
+      required: true
+      description: The data lens through which to view complaint trends over time.
+      explode: true
+      schema:
+        type: string
+        items:
+          type: string
+        enum:
+          - overview
+          - product
+          - issue
+          - company
+        default: overview
     no_aggs:
       name: no_aggs
       in: query
@@ -395,6 +456,21 @@ components:
         type: array
         items:
           type: string
+    sub_lens:
+      name: lens
+      in: query
+      description: 'The sub-lens through which to view complaint trends over time.'
+      explode: true
+      schema:
+        type: string
+        items:
+          type: string
+        enum:
+          - "overview"
+          - "product"
+          - "issue"
+          - "company"
+        default: "overview"
     submitted_via:
       name: submitted_via
       in: query
@@ -429,6 +505,29 @@ components:
         type: array
         items:
           type: string
+    trend_depth:
+      name: trend_depth
+      in: query
+      description: The top X trend aggregations will be returned, where X is the supplied trend_depth.
+      schema:
+        type: integer
+        maximum: 10000000
+        minimum: 5
+        format: int64
+        default: 10
+    trend_interval:
+      name: trend_interval
+      in: query
+      description: The interval of time to use for trends aggregations histograms.
+      required: true
+      schema:
+        type: string
+        enum:
+          - yearly
+          - quarterly
+          - monthly
+          - weekly
+          - daily
     zip_code:
       name: zip_code
       in: query
@@ -674,6 +773,18 @@ components:
       type: array
       items:
         type: string
+    TrendsResult:
+      type: object
+      properties:
+        aggregations:
+          type: object
+          properties:
+            company:
+              $ref: '#/components/schemas/MultiLevelAggregation'
+            product:
+              $ref: '#/components/schemas/MultiLevelAggregation'
+            issue:
+              $ref: '#/components/schemas/MultiLevelAggregation'
   links: {}
   callbacks: {}
 security: []
