@@ -40,7 +40,7 @@ paths:
         - $ref: '#/components/parameters/product'
         - $ref: '#/components/parameters/state'
         - $ref: '#/components/parameters/submitted_via'
-        - $ref: '#/components/parameters/tag'
+        - $ref: '#/components/parameters/tags'
         - $ref: '#/components/parameters/timely'
         - $ref: '#/components/parameters/zip_code'
       responses:
@@ -95,7 +95,7 @@ paths:
         - $ref: '#/components/parameters/product'
         - $ref: '#/components/parameters/state'
         - $ref: '#/components/parameters/submitted_via'
-        - $ref: '#/components/parameters/tag'
+        - $ref: '#/components/parameters/tags'
         - $ref: '#/components/parameters/timely'
         - $ref: '#/components/parameters/zip_code'
       responses:
@@ -129,7 +129,7 @@ paths:
         - $ref: '#/components/parameters/product'
         - $ref: '#/components/parameters/state'
         - $ref: '#/components/parameters/submitted_via'
-        - $ref: '#/components/parameters/tag'
+        - $ref: '#/components/parameters/tags'
         - $ref: '#/components/parameters/timely'
         - $ref: '#/components/parameters/zip_code'
       responses:
@@ -191,7 +191,7 @@ paths:
         - $ref: '#/components/parameters/product'
         - $ref: '#/components/parameters/state'
         - $ref: '#/components/parameters/submitted_via'
-        - $ref: '#/components/parameters/tag'
+        - $ref: '#/components/parameters/tags'
         - $ref: '#/components/parameters/timely'
         - $ref: '#/components/parameters/zip_code'
       responses:
@@ -225,7 +225,7 @@ paths:
         - $ref: '#/components/parameters/product'
         - $ref: '#/components/parameters/state'
         - $ref: '#/components/parameters/submitted_via'
-        - $ref: '#/components/parameters/tag'
+        - $ref: '#/components/parameters/tags'
         - $ref: '#/components/parameters/timely'
         - $ref: '#/components/parameters/zip_code'
         - $ref: '#/components/parameters/trend_depth'
@@ -487,7 +487,7 @@ components:
       required: true
       schema:
         type: string
-    tag:
+    tags:
       name: tags
       in: query
       description: Filter the results to only return these types of tag
