@@ -519,6 +519,192 @@ class StateAggregationBuilder(BaseBuilder):
         return aggs
 
 
+class LensAggregationBuilder(BaseBuilder):
+    _ES_CHILD_AGG_MAP = {
+        'product.raw': 'Sub-Product',
+        'product_level_1.raw': 'Product',
+        'category.raw': 'Sub-Issue',
+        'category_level_1.raw': 'Issue',
+        'company_name': 'Matched Company',
+        'predicted_tags': 'Collections'
+    }
+
+    def __init__(self):
+        super(LensAggregationBuilder, self).__init__()
+        self.filter_clauses = None
+
+    def build_histogram(self, agg_name, interval, include_date_filter):
+        agg = {
+            "aggs": {
+                agg_name: {
+                    "date_histogram": {
+                        "field": "date_received",
+                        "interval": interval
+                    }
+                }
+            }
+        }
+
+        # Lazy initialization
+        if not self.filter_clauses:
+            self.filter_clauses = self._build_filter_clauses()
+
+        agg['filter'] = self.filter_clauses
+
+        # Add filter clauses
+        # agg['filter'] = self._build_dsl_filter(
+        #     self.include_clauses, self.exclude_clauses,
+        #     include_dates=include_date_filter,
+        #     single_not_clause=False
+        # )
+
+        return agg
+
+    def date_extreme(self, extreme):
+        return {
+            extreme: {
+                "field": "date_received",
+                "format": "yyyy-MM-dd'T'12:00:00-05:00"
+            }
+        }
+
+
+class TrendsAggregationBuilder(LensAggregationBuilder):
+    _AGG_FIELDS = (
+        'collection',
+        'company',
+        'issue',
+        'product'
+    )
+
+    _AGG_HEADING_MAP = {
+        'collection': 'Collections',
+        'company': 'Matched Company',
+        'issue': 'Issue',
+        'product': 'Product',
+        'sub_product': 'Sub-Product',
+        'sub_issue': 'Sub-Issue',
+    }
+
+    def __init__(self):
+        super(TrendsAggregationBuilder, self).__init__()
+
+    def percent_change_agg(self, es_field_name, interval, trend_depth):
+        return {
+            "terms": {
+                "field": es_field_name,
+                "size": trend_depth
+            },
+            "aggs": {
+                "trend_period": {
+                    "date_histogram": {
+                        "field": "date_received",
+                        "interval": interval
+                    },
+                    "aggs": {
+                        "interval_diff": {
+                            "serial_diff": {"buckets_path": "_count"}
+                        }
+                    }
+                }
+            }
+        }
+
+    def get_agg_heading(self, field_name):
+        return self._AGG_HEADING_MAP.get(field_name, field_name)
+
+    def agg_setup(self, field_name, agg_heading_name, interval):
+        field_aggs = {
+            "aggs": {}
+        }
+
+        es_field_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
+            field_name, field_name
+        )
+
+        field_aggs["aggs"][agg_heading_name] = self.percent_change_agg(
+            es_field_name, interval, self.params['trend_depth'])
+
+        # Add the filters
+        # field_aggs['filter'] = self._build_dsl_filter(
+        #   self.include_clauses, self.exclude_clauses, single_not_clause=False
+        # )
+
+        # Lazy initialization
+        if not self.filter_clauses:
+            self.filter_clauses = self._build_filter_clauses()
+        field_aggs['filter'] = self.filter_clauses
+
+        # Filter out Pending Company Match
+        if field_name == 'company':
+            field_aggs['aggs']['Matched Company']['terms']['exclude'] = \
+                "PENDING COMPANY MATCH"
+
+        return field_aggs
+
+    def build_one_overview(self, field_name, agg_heading_name, interval):
+        field_aggs = self.agg_setup(field_name, agg_heading_name, interval)
+
+        if field_name in self._OPTIONAL_FILTERS_CHILD_MAP:
+            es_child_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
+                self._OPTIONAL_FILTERS_CHILD_MAP.get(field_name))
+            child_agg_name = self._ES_CHILD_AGG_MAP.get(es_child_name)
+            field_aggs["aggs"][agg_heading_name]["aggs"][child_agg_name] = \
+                self.percent_change_agg(es_child_name, interval, 0)
+
+        return field_aggs
+
+    def build_one_lens(self, field_name, agg_heading_name, interval, sub_lens):
+        field_aggs = self.agg_setup(field_name, agg_heading_name, interval)
+
+        es_child_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
+            sub_lens)
+        child_agg_name = self._ES_CHILD_AGG_MAP.get(es_child_name)
+        field_aggs["aggs"][agg_heading_name]["aggs"][child_agg_name] = \
+            self.percent_change_agg(es_child_name, interval,
+                                    self.params['sub_lens_depth'])
+
+        return field_aggs
+
+    def build(self):
+        # Lazy initialization
+        if not self.filter_clauses:
+            self.filter_clauses = self._build_filter_clauses()
+
+        aggs = {}
+
+        aggs['dateRangeArea'] = self.build_histogram(
+            'dateRangeArea', self.params['trend_interval'], True)
+        aggs['dateRangeBrush'] = self.build_histogram(
+            'dateRangeBrush', self.params['trend_interval'], False)
+
+        if self.params['lens'] == 'overview':
+            # Reset default for overview row charts
+            self.params['trend_depth'] = 5
+
+            for field_name in self._AGG_FIELDS:
+                agg_heading_name = self.get_agg_heading(field_name)
+
+                aggs[agg_heading_name] = self.build_one_overview(
+                    field_name,
+                    agg_heading_name,
+                    self.params['trend_interval']
+                )
+        else:
+            agg_heading_name = self.get_agg_heading(self.params['lens'])
+
+            aggs[agg_heading_name] = self.build_one_lens(
+                self.params['lens'],
+                agg_heading_name,
+                self.params['trend_interval'],
+                self.params['sub_lens']
+            )
+
+        aggs['min_date'] = self.date_extreme('min')
+        aggs['max_date'] = self.date_extreme('max')
+        return aggs
+
+
 if __name__ == "__main__":
     searchbuilder = SearchBuilder()
     print(searchbuilder.build())
@@ -528,3 +714,5 @@ if __name__ == "__main__":
     print(aggbuilder.build())
     stateaggbuilder = StateAggregationBuilder()
     print(stateaggbuilder.build())
+    trendsaggbuilder = TrendsAggregationBuilder()
+    print(trendsaggbuilder.build())

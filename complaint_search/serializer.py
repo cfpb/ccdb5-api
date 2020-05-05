@@ -146,3 +146,74 @@ class SuggestInputSerializer(serializers.Serializer):
 
 class SuggestFilterInputSerializer(SearchInputSerializer):
     text = serializers.CharField(max_length=100, required=True)
+
+
+class TrendsInputSerializer(SearchInputSerializer):
+    # -----------------------------------------------------------------------------
+    # Constants
+    #
+
+    YEARLY = 'year'
+    QUARTERLY = 'quarter'
+    MONTHLY = 'month'
+    WEEKLY = 'week'
+    DAILY = 'day'
+
+    INTERVAL_CHOICES = (
+        (YEARLY, 'Yearly Interval'),
+        (QUARTERLY, 'Quarterly Interval'),
+        (MONTHLY, 'Monthly Interval'),
+        (WEEKLY, 'Weekly Interval'),
+        (DAILY, 'Daily Interval'),
+    )
+
+    # Data Lens Choices
+    OVERVIEW = 'overview'
+    PRODUCT = 'product'
+    SUBPRODUCT = 'sub_product'
+    ISSUE = 'issue'
+    SUBISSUE = 'sub_issue'
+    COMPANY = 'company'
+    COLLECTION = 'collection'
+
+    DATA_LENS_CHOICES = (
+        (OVERVIEW, 'overview Lens'),
+        (PRODUCT, 'Product Lens'),
+        (ISSUE, 'Issue Lens'),
+        (COMPANY, 'Company Lens'),
+        (COLLECTION, 'Collection Lens'),
+    )
+
+    trend_interval = serializers.ChoiceField(INTERVAL_CHOICES)
+    trend_depth = serializers.IntegerField(
+        min_value=5, max_value=10000000, default=10
+    )
+    sub_lens_depth = serializers.IntegerField(
+        min_value=5, max_value=10000000, default=10
+    )
+    lens = serializers.ChoiceField(DATA_LENS_CHOICES)
+    sub_lens = serializers.CharField(min_length=5, max_length=100,
+                                     required=False)
+
+    def validate(self, data):
+        ret = super(TrendsInputSerializer, self).to_internal_value(data)
+
+        if 'sub_lens' not in data \
+           and not data['lens'] == 'overview':
+            raise serializers.ValidationError(
+                "Either Focus or Sub-lens is required for lens '{}'." +
+                " Valid sub-lens are: {}"
+                .format(data['lens'],
+                        DATA_SUB_LENS_MAP[data['lens']])
+            )
+
+        if 'sub_lens' in data and not data['lens'] == 'overview':
+            if not data['sub_lens'] in DATA_SUB_LENS_MAP[data['lens']]:
+                raise serializers.ValidationError(
+                    "'{}' is not a valid sub-lens for '{}'."
+                    " Valid sub-lens are: {}"
+                    .format(data['sub_lens'], data['lens'],
+                            DATA_SUB_LENS_MAP[data['lens']])
+                )
+
+        return data
