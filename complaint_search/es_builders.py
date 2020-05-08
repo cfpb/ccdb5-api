@@ -536,6 +536,10 @@ class LensAggregationBuilder(BaseBuilder):
     def __init__(self):
         super(LensAggregationBuilder, self).__init__()
         self.filter_clauses = None
+        self.exclude = []
+
+    def add_exclude(self, field_name_list):
+        self.exclude += field_name_list
 
     def build_histogram(self, agg_name, interval, include_date_filter):
         agg = {
@@ -548,6 +552,10 @@ class LensAggregationBuilder(BaseBuilder):
                 }
             }
         }
+
+        # Lazy initialization
+        if not self.filter_clauses:
+            self.filter_clauses = self._build_filter_clauses()
 
         filters = {
             "filter": {
@@ -577,7 +585,12 @@ class LensAggregationBuilder(BaseBuilder):
         # the same as field name or part of the exclude list, which means we
         # want to list all matched aggregation)
         for item in self.params:
-            if item in (
+            include_filter = (
+                item != agg_name or
+                (item == agg_name and item in self.exclude)
+            )
+
+            if include_filter and item in (
                 self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL
             ):
                 field_level_should = {
@@ -708,21 +721,21 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
     def build_one_overview(self, field_name, agg_heading_name, interval):
         field_aggs = self.agg_setup(field_name, agg_heading_name, interval)
 
-        if field_name in self._OPTIONAL_FILTERS_CHILD_MAP:
-            es_child_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
-                self._OPTIONAL_FILTERS_CHILD_MAP.get(field_name))
-            child_agg_name = self._ES_CHILD_AGG_MAP.get(es_child_name)
-            # field_aggs["aggs"][agg_heading_name]["aggs"][child_agg_name] = \
-            #     self.percent_change_agg(es_child_name, interval, 0)
+        # if field_name in self._OPTIONAL_FILTERS_CHILD_MAP:
+        #     es_child_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
+        #         self._OPTIONAL_FILTERS_CHILD_MAP.get(field_name))
+        #     child_agg_name = self._ES_CHILD_AGG_MAP.get(es_child_name)
+        #     field_aggs["aggs"][agg_heading_name]["aggs"][child_agg_name] = \
+        #         self.percent_change_agg(es_child_name, interval, 0)
 
         return field_aggs
 
     def build_one_lens(self, field_name, agg_heading_name, interval, sub_lens):
         field_aggs = self.agg_setup(field_name, agg_heading_name, interval)
 
-        es_child_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
-            sub_lens)
-        child_agg_name = self._ES_CHILD_AGG_MAP.get(es_child_name)
+        # es_child_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
+        #     sub_lens)
+        # child_agg_name = self._ES_CHILD_AGG_MAP.get(es_child_name)
         # field_aggs["aggs"][agg_heading_name]["aggs"][child_agg_name] = \
         #     self.percent_change_agg(es_child_name, interval,
         #                             self.params['sub_lens_depth'])
@@ -730,10 +743,6 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
         return field_aggs
 
     def build(self):
-        # Lazy initialization
-        # if not self.filter_clauses:
-        #     self.filter_clauses = self._build_filter_clauses()
-
         aggs = {}
 
         aggs['dateRangeArea'] = self.build_histogram(
