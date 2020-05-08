@@ -721,24 +721,24 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
     def build_one_overview(self, field_name, agg_heading_name, interval):
         field_aggs = self.agg_setup(field_name, agg_heading_name, interval)
 
-        # if field_name in self._OPTIONAL_FILTERS_CHILD_MAP:
-        #     es_child_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
-        #         self._OPTIONAL_FILTERS_CHILD_MAP.get(field_name))
-        #     child_agg_name = self._ES_CHILD_AGG_MAP.get(es_child_name)
-        #     field_aggs["aggs"][agg_heading_name]["aggs"][child_agg_name] = \
-        #         self.percent_change_agg(es_child_name, interval, 0)
+        if field_name in self._OPTIONAL_FILTERS_CHILD_MAP:
+            es_child_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
+                self._OPTIONAL_FILTERS_CHILD_MAP.get(field_name))
+            child_agg_name = self._ES_CHILD_AGG_MAP.get(es_child_name)
+            field_aggs["aggs"][agg_heading_name]["aggs"][child_agg_name] = \
+                self.percent_change_agg(es_child_name, interval, 0)
 
         return field_aggs
 
     def build_one_lens(self, field_name, agg_heading_name, interval, sub_lens):
         field_aggs = self.agg_setup(field_name, agg_heading_name, interval)
 
-        # es_child_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
-        #     sub_lens)
-        # child_agg_name = self._ES_CHILD_AGG_MAP.get(es_child_name)
-        # field_aggs["aggs"][agg_heading_name]["aggs"][child_agg_name] = \
-        #     self.percent_change_agg(es_child_name, interval,
-        #                             self.params['sub_lens_depth'])
+        es_child_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
+            sub_lens)
+        child_agg_name = self._ES_CHILD_AGG_MAP.get(es_child_name)
+        field_aggs["aggs"][agg_heading_name]["aggs"][child_agg_name] = \
+            self.percent_change_agg(es_child_name, interval,
+                                    self.params['sub_lens_depth'])
 
         return field_aggs
 
