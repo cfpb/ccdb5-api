@@ -25,9 +25,7 @@ def build_search_terms(search_term, field):
                 }
             }
         }
-
     else:
-
         # QueryString Query
         return {
             "query_string": {
@@ -551,11 +549,45 @@ class LensAggregationBuilder(BaseBuilder):
             }
         }
 
-        # Lazy initialization
-        if not self.filter_clauses:
-            self.filter_clauses = self._build_filter_clauses()
+        filters = {
+            "filter": {
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [],
+                }
+            }
+        }
 
-        agg['filter'] = self.filter_clauses
+        date_filter = self._build_date_range_filter(
+            self.params.get("date_received_min"),
+            self.params.get("date_received_max"), "date_received")
+
+        if date_filter and include_date_filter:
+            filters["filter"]["bool"]["filter"].append(date_filter)
+
+        company_filter = self._build_date_range_filter(
+            self.params.get("company_received_min"),
+            self.params.get("company_received_max"), "date_sent_to_company")
+
+        if company_filter:
+            filters["filter"]["bool"]["filter"].append(company_filter)
+
+        # Add filter clauses to aggregation entries (only those that are not
+        # the same as field name or part of the exclude list, which means we
+        # want to list all matched aggregation)
+        for item in self.params:
+            if item in (
+                self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL
+            ):
+                field_level_should = {
+                    "bool": {"should": self.filter_clauses[item]}
+                }
+                filters["filter"]["bool"]["filter"].append(
+                    field_level_should
+                )
+
+        agg['filter'] = filters['filter']
 
         return agg
 
@@ -570,13 +602,13 @@ class LensAggregationBuilder(BaseBuilder):
 
 class TrendsAggregationBuilder(LensAggregationBuilder):
     _AGG_FIELDS = (
-        'collection',
+        'tags',
         'issue',
         'product'
     )
 
     _AGG_HEADING_MAP = {
-        'collection': 'collections',
+        'tags': 'collections',
         'issue': 'issue',
         'product': 'product',
         'sub_product': 'sub-product',
@@ -625,7 +657,51 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
         # Lazy initialization
         if not self.filter_clauses:
             self.filter_clauses = self._build_filter_clauses()
-        field_aggs['filter'] = self.filter_clauses
+
+        filters = {
+            "filter": {
+                "bool": {
+                    "must": [],
+                    "should": [],
+                    "filter": [],
+                }
+            }
+        }
+
+        date_filter = self._build_date_range_filter(
+            self.params.get("date_received_min"),
+            self.params.get("date_received_max"), "date_received")
+
+        if date_filter:
+            filters["filter"]["bool"]["filter"].append(date_filter)
+
+        company_filter = self._build_date_range_filter(
+            self.params.get("company_received_min"),
+            self.params.get("company_received_max"), "date_sent_to_company")
+
+        if company_filter:
+            filters["filter"]["bool"]["filter"].append(company_filter)
+
+        # Add filter clauses to aggregation entries (only those that are not
+        # the same as field name or part of the exclude list, which means we
+        # want to list all matched aggregation)
+        for item in self.params:
+            include_filter = (
+                item != field_name or
+                (item == field_name and item in self.exclude)
+            )
+
+            if include_filter and item in (
+                self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL
+            ):
+                field_level_should = {
+                    "bool": {"should": self.filter_clauses[item]}
+                }
+                filters["filter"]["bool"]["filter"].append(
+                    field_level_should
+                )
+
+        field_aggs['filter'] = filters['filter']
 
         return field_aggs
 
@@ -655,8 +731,8 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
 
     def build(self):
         # Lazy initialization
-        if not self.filter_clauses:
-            self.filter_clauses = self._build_filter_clauses()
+        # if not self.filter_clauses:
+        #     self.filter_clauses = self._build_filter_clauses()
 
         aggs = {}
 
