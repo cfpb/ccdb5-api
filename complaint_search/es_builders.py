@@ -11,6 +11,35 @@ from complaint_search.defaults import (
 )
 
 
+def build_search_terms(search_term, field):
+    if (re.match(r"^[A-Za-z\d\s]+$", search_term) and not
+        any(keyword in search_term
+            for keyword in ("AND", "OR", "NOT", "TO"))):
+
+        # Match Query
+        return {
+            "match": {
+                self.params.get("field"): {
+                    "query": search_term,
+                    "operator": "and"
+                }
+            }
+        }
+
+    else:
+
+        # QueryString Query
+        return {
+            "query_string": {
+                "query": search_term,
+                "fields": [
+                    self.params.get("field")
+                ],
+                "default_operator": "AND"
+            }
+        }
+
+
 class BaseBuilder(object):
     __metaclass__ = abc.ABCMeta
 
@@ -206,41 +235,19 @@ class SearchBuilder(BaseBuilder):
         }
 
         # Highlight
-        if not self.params.get("no_highlight"):
+        if not self.params.get("no_highlight") and \
+                not self.params.get("size") == 0:
             search["highlight"] = self._build_highlight()
 
         # sort
-        search["sort"] = self._build_sort()
+        if not self.params.get("size") == 0:
+            search["sort"] = self._build_sort()
 
         # query
         search_term = self.params.get("search_term")
         if search_term:
-            if (re.match(r"^[A-Za-z\d\s]+$", search_term) and not
-                any(keyword in search_term
-                    for keyword in ("AND", "OR", "NOT", "TO"))):
-
-                # Match Query
-                search["query"] = {
-                    "match": {
-                        self.params.get("field"): {
-                            "query": search_term,
-                            "operator": "and"
-                        }
-                    }
-                }
-
-            else:
-
-                # QueryString Query
-                search["query"] = {
-                    "query_string": {
-                        "query": search_term,
-                        "fields": [
-                            self.params.get("field")
-                        ],
-                        "default_operator": "AND"
-                    }
-                }
+            search["query"] = build_search_terms(
+                search_term, self.params.get("field"))
 
         return search
 
@@ -521,12 +528,11 @@ class StateAggregationBuilder(BaseBuilder):
 
 class LensAggregationBuilder(BaseBuilder):
     _ES_CHILD_AGG_MAP = {
-        'product.raw': 'Sub-Product',
-        'product_level_1.raw': 'Product',
-        'category.raw': 'Sub-Issue',
-        'category_level_1.raw': 'Issue',
-        'company_name': 'Matched Company',
-        'predicted_tags': 'Collections'
+        'product.raw': 'sub-product',
+        'sub_product.raw': 'product',
+        'issue.raw': 'sub-issue',
+        'sub_issue.raw': 'issue',
+        'tags': 'collections'
     }
 
     def __init__(self):
@@ -551,13 +557,6 @@ class LensAggregationBuilder(BaseBuilder):
 
         agg['filter'] = self.filter_clauses
 
-        # Add filter clauses
-        # agg['filter'] = self._build_dsl_filter(
-        #     self.include_clauses, self.exclude_clauses,
-        #     include_dates=include_date_filter,
-        #     single_not_clause=False
-        # )
-
         return agg
 
     def date_extreme(self, extreme):
@@ -572,18 +571,16 @@ class LensAggregationBuilder(BaseBuilder):
 class TrendsAggregationBuilder(LensAggregationBuilder):
     _AGG_FIELDS = (
         'collection',
-        'company',
         'issue',
         'product'
     )
 
     _AGG_HEADING_MAP = {
-        'collection': 'Collections',
-        'company': 'Matched Company',
-        'issue': 'Issue',
-        'product': 'Product',
-        'sub_product': 'Sub-Product',
-        'sub_issue': 'Sub-Issue',
+        'collection': 'collections',
+        'issue': 'issue',
+        'product': 'product',
+        'sub_product': 'sub-product',
+        'sub_issue': 'sub-issue',
     }
 
     def __init__(self):
@@ -625,20 +622,10 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
         field_aggs["aggs"][agg_heading_name] = self.percent_change_agg(
             es_field_name, interval, self.params['trend_depth'])
 
-        # Add the filters
-        # field_aggs['filter'] = self._build_dsl_filter(
-        #   self.include_clauses, self.exclude_clauses, single_not_clause=False
-        # )
-
         # Lazy initialization
         if not self.filter_clauses:
             self.filter_clauses = self._build_filter_clauses()
         field_aggs['filter'] = self.filter_clauses
-
-        # Filter out Pending Company Match
-        if field_name == 'company':
-            field_aggs['aggs']['Matched Company']['terms']['exclude'] = \
-                "PENDING COMPANY MATCH"
 
         return field_aggs
 
@@ -649,8 +636,8 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
             es_child_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
                 self._OPTIONAL_FILTERS_CHILD_MAP.get(field_name))
             child_agg_name = self._ES_CHILD_AGG_MAP.get(es_child_name)
-            field_aggs["aggs"][agg_heading_name]["aggs"][child_agg_name] = \
-                self.percent_change_agg(es_child_name, interval, 0)
+            # field_aggs["aggs"][agg_heading_name]["aggs"][child_agg_name] = \
+            #     self.percent_change_agg(es_child_name, interval, 0)
 
         return field_aggs
 
@@ -660,9 +647,9 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
         es_child_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
             sub_lens)
         child_agg_name = self._ES_CHILD_AGG_MAP.get(es_child_name)
-        field_aggs["aggs"][agg_heading_name]["aggs"][child_agg_name] = \
-            self.percent_change_agg(es_child_name, interval,
-                                    self.params['sub_lens_depth'])
+        # field_aggs["aggs"][agg_heading_name]["aggs"][child_agg_name] = \
+        #     self.percent_change_agg(es_child_name, interval,
+        #                             self.params['sub_lens_depth'])
 
         return field_aggs
 

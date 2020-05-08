@@ -184,6 +184,13 @@ class TrendsInputSerializer(SearchInputSerializer):
         (COLLECTION, 'Collection Lens'),
     )
 
+    DATA_SUB_LENS_MAP = {
+        'product': ('sub_product', 'issue', 'company', 'collection'),
+        'issue': ('product', 'sub_issue', 'company', 'collection'),
+        'company': ('product', 'issue', 'collection'),
+        'collection': ('product', 'issue', 'company'),
+    }
+
     trend_interval = serializers.ChoiceField(INTERVAL_CHOICES)
     trend_depth = serializers.IntegerField(
         min_value=5, max_value=10000000, default=10
@@ -196,24 +203,24 @@ class TrendsInputSerializer(SearchInputSerializer):
                                      required=False)
 
     def validate(self, data):
-        ret = super(TrendsInputSerializer, self).to_internal_value(data)
+        ret = super(SearchInputSerializer, self).to_internal_value(data)
 
         if 'sub_lens' not in data \
            and not data['lens'] == 'overview':
             raise serializers.ValidationError(
-                "Either Focus or Sub-lens is required for lens '{}'." +
+                "Either Focus or Sub-lens is required for lens '{}'."
                 " Valid sub-lens are: {}"
                 .format(data['lens'],
-                        DATA_SUB_LENS_MAP[data['lens']])
+                        self.DATA_SUB_LENS_MAP[data['lens']])
             )
 
         if 'sub_lens' in data and not data['lens'] == 'overview':
-            if not data['sub_lens'] in DATA_SUB_LENS_MAP[data['lens']]:
+            if not data['sub_lens'] in self.DATA_SUB_LENS_MAP[data['lens']]:
                 raise serializers.ValidationError(
                     "'{}' is not a valid sub-lens for '{}'."
                     " Valid sub-lens are: {}"
                     .format(data['sub_lens'], data['lens'],
-                            DATA_SUB_LENS_MAP[data['lens']])
+                            self.DATA_SUB_LENS_MAP[data['lens']])
                 )
 
         return data
