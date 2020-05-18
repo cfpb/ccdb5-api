@@ -49,8 +49,8 @@ def build_trend_meta(response):
         date_max = extract_date(response['aggregations']['max_date'], None)
         date_min = extract_date(response['aggregations']['min_date'], None)
 
-        del response["aggregations"]["max_date"]
-        del response["aggregations"]["min_date"]
+        # del response["aggregations"]["max_date"]
+        # del response["aggregations"]["min_date"]
 
         meta['date_min'] = date_min
         meta['date_max'] = date_max
@@ -71,12 +71,11 @@ def get_sug_agg_key_if_exists(agg):
 # Change on chart
 def process_trend_aggregations(aggregations):
     trend_charts = (
-        'Product',
-        'Sub-Product',
-        'Issue',
-        'Sub-Issue',
-        'Matched Company',
-        'Collections'
+        'product',
+        'sub-product',
+        'issue',
+        'sub-issue',
+        'tags'
     )
 
     for agg_name in trend_charts:

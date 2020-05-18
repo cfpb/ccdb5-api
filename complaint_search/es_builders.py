@@ -19,7 +19,7 @@ def build_search_terms(search_term, field):
         # Match Query
         return {
             "match": {
-                self.params.get("field"): {
+                field: {
                     "query": search_term,
                     "operator": "and"
                 }
@@ -31,7 +31,7 @@ def build_search_terms(search_term, field):
             "query_string": {
                 "query": search_term,
                 "fields": [
-                    self.params.get("field")
+                    field
                 ],
                 "default_operator": "AND"
             }

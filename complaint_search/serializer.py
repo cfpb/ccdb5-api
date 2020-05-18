@@ -28,7 +28,7 @@ class SearchInputSerializer(serializers.Serializer):
     )
 
     FIELD_MAP = {
-        FIELD_ALL: '_all'
+        FIELD_ALL: 'all'
     }
 
     # Sort Choices
