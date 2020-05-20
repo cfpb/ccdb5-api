@@ -24,6 +24,7 @@ SOURCE_FIELDS = (
     "consumer_disputed",
     "date_received",
     "date_sent_to_company",
+    "event_tag",
     "has_narrative",
     "issue",
     "product",
@@ -59,7 +60,8 @@ CSV_ORDERED_HEADERS = OrderedDict([
     ("company_response", "Company response to consumer"),
     ("timely", "Timely response?"),
     ("consumer_disputed", "Consumer disputed?"),
-    ("complaint_id", "Complaint ID")
+    ("complaint_id", "Complaint ID"),
+    ("event_tag", "Event tag")
 ])
 
 AGG_EXCLUDE_FIELDS = ['company', 'zip_code']
