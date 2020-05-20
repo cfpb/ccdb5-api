@@ -10,6 +10,7 @@
     "consumer_disputed",
     "date_received",
     "date_sent_to_company",
+    "event_tag",
     "has_narrative",
     "issue",
     "product",
@@ -394,6 +395,36 @@
                 }
             }
         },
+        "event_tag": {
+          "filter": {
+            "bool": {
+              "filter": [
+                {
+                  "bool": {
+                    "should": {
+                      "terms": {
+                        "company.raw": [
+                          "Bank 1",
+                          "Second Bank"
+                        ]
+                      }
+                    }
+                  }
+                }
+              ],
+              "should": [],
+              "must": []
+            }
+          },
+          "aggs": {
+            "event_tag": {
+              "terms": {
+                "field": "event_tag",
+                "size": 0
+              }
+            }
+          }
+        },        
         "tags": {
           "filter": {
             "bool": {

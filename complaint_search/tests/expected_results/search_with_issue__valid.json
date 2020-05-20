@@ -17,6 +17,7 @@
     "consumer_disputed",
     "date_received",
     "date_sent_to_company",
+    "event_tag",
     "has_narrative",
     "issue",
     "product",
@@ -192,6 +193,59 @@
                 "size": 0
               }
             }
+          }
+        }
+      }
+    },
+    "event_tag": {
+      "filter": {
+        "bool": {
+          "filter": [
+            {
+              "bool": {
+                "should": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_issue.raw": [
+                              "Frequent or repeated calls"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "issue.raw": [
+                              "Communication tactics"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "terms": {
+                      "issue.raw": [
+                        "Loan servicing, payments, escrow account"
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "should": [],
+          "must": []
+        }
+      },
+      "aggs": {
+        "event_tag": {
+          "terms": {
+            "field": "event_tag",
+            "size": 0
           }
         }
       }

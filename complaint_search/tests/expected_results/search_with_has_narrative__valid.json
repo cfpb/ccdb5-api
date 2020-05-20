@@ -17,6 +17,7 @@
     "consumer_disputed",
     "date_received",
     "date_sent_to_company",
+    "event_tag",
     "has_narrative",
     "issue",
     "product",
@@ -240,6 +241,35 @@
         }
       }
     },
+    "event_tag": {
+      "filter": {
+        "bool": {
+          "filter": [
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "has_narrative": [
+                      1
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "should": [],
+          "must": []
+        }
+      },
+      "aggs": {
+        "event_tag": {
+          "terms": {
+            "field": "event_tag",
+            "size": 0
+          }
+        }
+      }
+    },    
     "state": {
       "filter": {
         "bool": {

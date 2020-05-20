@@ -17,6 +17,7 @@
     "consumer_disputed",
     "date_received",
     "date_sent_to_company",
+    "event_tag",
     "has_narrative",
     "issue",
     "product",
@@ -156,6 +157,59 @@
                 "size": 0
               }
             }
+          }
+        }
+      }
+    },
+    "event_tag": {
+      "filter": {
+        "bool": {
+          "filter": [
+            {
+              "bool": {
+                "should": [
+                  {
+                    "terms": {
+                      "product.raw": [
+                        "Payday loan"
+                      ]
+                    }
+                  },
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "terms": {
+                            "sub_product.raw": [
+                              "FHA mortgage"
+                            ]
+                          }
+                        }
+                      ],
+                      "must": [
+                        {
+                          "terms": {
+                            "product.raw": [
+                              "Mortgage"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "should": [],
+          "must": []
+        }
+      },
+      "aggs": {
+        "event_tag": {
+          "terms": {
+            "field": "event_tag",
+            "size": 0
           }
         }
       }
