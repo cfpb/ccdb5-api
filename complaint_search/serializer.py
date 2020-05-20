@@ -20,15 +20,17 @@ class SearchInputSerializer(serializers.Serializer):
     FIELD_NARRATIVE = 'complaint_what_happened'
     FIELD_COMPANY = 'company'
     FIELD_ALL = 'all'
+    FIELD_ALL_ES = '_all'
 
     FIELD_CHOICES = (
         (FIELD_NARRATIVE, 'complaint_what_happened field'),
         (FIELD_COMPANY, 'company field'),
         (FIELD_ALL, 'all fields'),
+        (FIELD_ALL_ES, 'all fields'),
     )
 
     FIELD_MAP = {
-        FIELD_ALL: 'all'
+        FIELD_ALL: '_all'
     }
 
     # Sort Choices
@@ -196,7 +198,7 @@ class TrendsInputSerializer(SearchInputSerializer):
         min_value=5, max_value=10000000, default=10
     )
     sub_lens_depth = serializers.IntegerField(
-        min_value=5, max_value=10000000, default=10
+        min_value=5, max_value=10000000, default=5
     )
     lens = serializers.ChoiceField(DATA_LENS_CHOICES)
     sub_lens = serializers.CharField(min_length=5, max_length=100,
