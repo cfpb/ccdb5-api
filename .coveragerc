@@ -8,3 +8,4 @@ exclude_lines =
     if __name__ == .__main__.:
     datetime.now()
     diff.print_full()
+    except ImportError:
