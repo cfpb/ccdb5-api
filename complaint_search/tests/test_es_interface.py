@@ -1,4 +1,5 @@
 import copy
+import json
 from datetime import datetime
 
 from django.http import StreamingHttpResponse
@@ -25,6 +26,12 @@ from nose_parameterized import parameterized
 # Helper Methods
 # -------------------------------------------------------------------------
 
+def assertBodyEqual(expected, actual):
+    diff = DeepDiff(expected, actual)
+    if diff:  # pragma: no cover
+        print(json.dumps(json.loads(diff.to_json()), indent=2, sort_keys=True))
+        raise AssertionError('Request bodies do not match')
+
 
 def to_absolute(fileName):
     import os.path
@@ -34,7 +41,6 @@ def to_absolute(fileName):
 
 
 def load(shortName):
-    import json
     fileName = to_absolute(shortName + '.json')
     with open(fileName, 'r') as f:
         return json.load(f)
@@ -107,8 +113,6 @@ class EsInterfaceTest_Search(TestCase):
     # -------------------------------------------------------------------------
 
     def request_test(self, expected, **kwargs):
-        import json
-
         body = load(expected)
 
         with mock.patch(
@@ -136,12 +140,7 @@ class EsInterfaceTest_Search(TestCase):
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
         self.assertEqual(4, len(mock_search.call_args_list[0][1]))
 
-        act_body = mock_search.call_args_list[0][1]['body']
-        diff = DeepDiff(body, act_body)
-        self.assertEqual(diff, {},
-                         json.dumps(json.loads(diff.to_json()),
-                                    indent=2, sort_keys=True)
-                         )
+        assertBodyEqual(body, mock_search.call_args_list[0][1]['body'])
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
         mock_scroll.assert_not_called()
         self.assertDictEqual(self.MOCK_SEARCH_RESULT, res)
@@ -723,11 +722,31 @@ class EsInterfaceTest_States(TestCase):
                 "DOC_TYPE")
     @mock.patch.object(Elasticsearch, 'search')
     def test_states__valid(self, mock_search):
+        body = load('states_agg__valid')
+
         mock_search.return_value = 'OK'
         res = states_agg()
         self.assertEqual(len(mock_search.call_args), 2)
         self.assertEqual(0, len(mock_search.call_args[0]))
         self.assertEqual(4, len(mock_search.call_args[1]))
         self.assertEqual(mock_search.call_args[1]['doc_type'], 'DOC_TYPE')
+        assertBodyEqual(body, mock_search.call_args_list[0][1]['body'])
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
+        self.assertEqual('OK', res)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE",
+                "DOC_TYPE")
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_states_exclude__valid(self, mock_search):
+        body = load('states_agg__valid')
+
+        mock_search.return_value = 'OK'
+        res = states_agg(['zip_code'])
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(0, len(mock_search.call_args[0]))
+        self.assertEqual(4, len(mock_search.call_args[1]))
+        self.assertEqual(mock_search.call_args[1]['doc_type'], 'DOC_TYPE')
+        assertBodyEqual(body, mock_search.call_args_list[0][1]['body'])
         self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual('OK', res)
