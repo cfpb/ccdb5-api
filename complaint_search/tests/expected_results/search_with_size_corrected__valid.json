@@ -10,6 +10,7 @@
     "consumer_disputed",
     "date_received",
     "date_sent_to_company",
+    "event_tag",
     "has_narrative",
     "issue",
     "product",
@@ -21,7 +22,7 @@
     "timely",
     "zip_code"
   ],
-    "size": 500,
+    "size": 100,
     "query": {
         "query_string": {
             "query": "*",
@@ -122,6 +123,23 @@
                                 "size": 0
                             }
                         }
+                    }
+                }
+            }
+        },
+        "event_tag": {
+            "filter": {
+                "bool": {
+                    "filter": [],
+                    "must": [],
+                    "should": []
+                }
+            },
+            "aggs": {
+                "event_tag": {
+                    "terms": {
+                        "field": "event_tag",
+                        "size": 0
                     }
                 }
             }
