@@ -284,6 +284,9 @@ def search(agg_exclude=None, **kwargs):
                     )['hits']['hits']
                     num_of_scroll -= 1
         res["_meta"] = _get_meta()
+        res['body'] = body
+        res['params'] = params
+        res['AdamTest'] = _COMPLAINT_ES_INDEX
 
     elif format in EXPORT_FORMATS:
         scanResponse = helpers.scan(
@@ -423,8 +426,8 @@ def trends(**kwargs):
     aggregation_builder.add(**params)
     body["aggs"] = aggregation_builder.build()
 
-    res = _get_es().search(index=params.get("index_name"),
-                           doc_type='complaint',
+    res = _get_es().search(index=_COMPLAINT_ES_INDEX,
+                           doc_type=_COMPLAINT_DOC_TYPE,
                            body=body)
     res['body'] = body
     res['params'] = params
