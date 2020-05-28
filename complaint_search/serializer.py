@@ -195,7 +195,7 @@ class TrendsInputSerializer(SearchInputSerializer):
 
     trend_interval = serializers.ChoiceField(INTERVAL_CHOICES)
     trend_depth = serializers.IntegerField(
-        min_value=5, max_value=10000000, default=10
+        min_value=5, max_value=10000000, default=5
     )
     sub_lens_depth = serializers.IntegerField(
         min_value=5, max_value=10000000, default=5
@@ -205,7 +205,7 @@ class TrendsInputSerializer(SearchInputSerializer):
                                      required=False)
 
     def validate(self, data):
-        ret = super(SearchInputSerializer, self).to_internal_value(data)
+        # ret = super(SearchInputSerializer, self).to_internal_value(data)
 
         if 'sub_lens' not in data \
            and not data['lens'] == 'overview':

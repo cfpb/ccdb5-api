@@ -284,9 +284,6 @@ def search(agg_exclude=None, **kwargs):
                     )['hits']['hits']
                     num_of_scroll -= 1
         res["_meta"] = _get_meta()
-        res['body'] = body
-        res['params'] = params
-        res['AdamTest'] = _COMPLAINT_ES_INDEX
 
     elif format in EXPORT_FORMATS:
         scanResponse = helpers.scan(
@@ -392,12 +389,7 @@ def states_agg(agg_exclude=None, **kwargs):
         _ES_URL, _COMPLAINT_ES_INDEX, _COMPLAINT_DOC_TYPE, body
     )
 
-    # AD, TODO: Do I need to hardcode?
     body["size"] = 0
-    del body['_source']
-    del body['highlight']
-    del body['sort']
-
     aggregation_builder = StateAggregationBuilder()
     aggregation_builder.add(**params)
     if agg_exclude:
@@ -429,8 +421,6 @@ def trends(**kwargs):
     res = _get_es().search(index=_COMPLAINT_ES_INDEX,
                            doc_type=_COMPLAINT_DOC_TYPE,
                            body=body)
-    res['body'] = body
-    res['params'] = params
 
     res = process_trends_response(res)
 
