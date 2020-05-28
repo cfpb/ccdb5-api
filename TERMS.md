@@ -14,7 +14,6 @@ rights for that work are waived through the CC0 1.0 Universal dedication.
 
 For further details, please see the CFPB [Source Code Policy][policy].
 
-
 ## CC0 1.0 Universal Summary
 
 This is a human-readable summary of the [Legal Code (read the full text)][CC0].
