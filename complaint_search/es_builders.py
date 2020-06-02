@@ -427,10 +427,6 @@ class StateAggregationBuilder(BaseBuilder):
     def __init__(self):
         BaseBuilder.__init__(self)
         self.filter_clauses = None
-        self.exclude = []
-
-    def add_exclude(self, field_name_list):
-        self.exclude += field_name_list
 
     def build_one(self, field_name):
         # Lazy initialization
@@ -490,16 +486,8 @@ class StateAggregationBuilder(BaseBuilder):
         if company_filter:
             field_aggs["filter"]["bool"]["filter"].append(company_filter)
 
-        # Add filter clauses to aggregation entries (only those that are not
-        # the same as field name or part of the exclude list, which means we
-        # want to list all matched aggregation)
         for item in self.params:
-            include_filter = (
-                item != field_name or
-                (item == field_name and item in self.exclude)
-            )
-
-            if include_filter and item in (
+            if item in (
                 self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL
             ):
                 field_level_should = {
@@ -515,9 +503,6 @@ class StateAggregationBuilder(BaseBuilder):
         aggs = {}
 
         agg_fields = self._AGG_FIELDS
-        if self.exclude:
-            agg_fields = [field_name for field_name in self._AGG_FIELDS
-                          if field_name not in self.exclude]
         for field_name in agg_fields:
             aggs[field_name] = self.build_one(field_name)
 
@@ -536,10 +521,6 @@ class LensAggregationBuilder(BaseBuilder):
     def __init__(self):
         super(LensAggregationBuilder, self).__init__()
         self.filter_clauses = None
-        self.exclude = []
-
-    def add_exclude(self, field_name_list):
-        self.exclude += field_name_list
 
     def build_histogram(self, agg_name, interval, include_date_filter):
         agg = {
@@ -581,16 +562,8 @@ class LensAggregationBuilder(BaseBuilder):
         if company_filter:
             filters["filter"]["bool"]["filter"].append(company_filter)
 
-        # Add filter clauses to aggregation entries (only those that are not
-        # the same as field name or part of the exclude list, which means we
-        # want to list all matched aggregation)
         for item in self.params:
-            include_filter = (
-                item != agg_name or
-                (item == agg_name and item in self.exclude)
-            )
-
-            if include_filter and item in (
+            if item in (
                 self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL
             ):
                 field_level_should = {
@@ -695,16 +668,8 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
         if company_filter:
             filters["filter"]["bool"]["filter"].append(company_filter)
 
-        # Add filter clauses to aggregation entries (only those that are not
-        # the same as field name or part of the exclude list, which means we
-        # want to list all matched aggregation)
         for item in self.params:
-            include_filter = (
-                item != field_name or
-                (item == field_name and item in self.exclude)
-            )
-
-            if include_filter and item in (
+            if item in (
                 self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL
             ):
                 field_level_should = {
