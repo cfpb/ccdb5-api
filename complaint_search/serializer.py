@@ -176,21 +176,21 @@ class TrendsInputSerializer(SearchInputSerializer):
     ISSUE = 'issue'
     SUBISSUE = 'sub_issue'
     COMPANY = 'company'
-    COLLECTION = 'collection'
+    TAGS = 'tags'
 
     DATA_LENS_CHOICES = (
-        (OVERVIEW, 'overview Lens'),
+        (OVERVIEW, 'Overview Lens'),
         (PRODUCT, 'Product Lens'),
         (ISSUE, 'Issue Lens'),
         (COMPANY, 'Company Lens'),
-        (COLLECTION, 'Collection Lens'),
+        (TAGS, 'Tags Lens'),
     )
 
     DATA_SUB_LENS_MAP = {
-        'product': ('sub_product', 'issue', 'company', 'collection'),
-        'issue': ('product', 'sub_issue', 'company', 'collection'),
-        'company': ('product', 'issue', 'collection'),
-        'collection': ('product', 'issue', 'company'),
+        'product': ('sub_product', 'issue', 'company', 'tags'),
+        'issue': ('product', 'sub_issue', 'company', 'tags'),
+        'company': ('product', 'issue', 'tags'),
+        'tags': ('product', 'issue', 'company'),
     }
 
     trend_interval = serializers.ChoiceField(INTERVAL_CHOICES)

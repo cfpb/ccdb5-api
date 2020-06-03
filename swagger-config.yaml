@@ -248,7 +248,7 @@ tags:
   - name: Complaints
     description: These endpoints provide access to consumer complaints
   - name: Trends
-    description: These endpoints proovide access to consumer complaint trend data
+    description: These endpoints provide access aggregated consumer complaint data
   - name: Typeahead
     description: These endpoints support the typeahead boxes in the UI
 externalDocs:
@@ -334,7 +334,7 @@ components:
     field:
       name: field
       in: query
-      description: Search by particular field. If this parameter is not specified, default behavior will return only complaints with narratives.
+      description: If the parameter "search_term" has a value, use "field" to specify which field is searched. If not specified, "complaint_what_happened" will be searched.
       schema:
         type: string
         enum:
@@ -392,9 +392,9 @@ components:
           type: string
         enum:
           - overview
-          - product
           - issue
-          - company
+          - product
+          - tags
         default: overview
     no_aggs:
       name: no_aggs
@@ -457,19 +457,20 @@ components:
         items:
           type: string
     sub_lens:
-      name: lens
+      name: sub_lens
       in: query
-      description: 'The sub-lens through which to view complaint trends over time.'
+      description: The sub-lens through which to view complaint trends over time.
       explode: true
       schema:
         type: string
         items:
           type: string
         enum:
-          - "overview"
-          - "product"
-          - "issue"
-          - "company"
+          - issue
+          - product
+          - sub_product
+          - sub_issue
+          - tags
     sub_lens_depth:
       name: sub_lens_depth
       in: query
@@ -788,11 +789,15 @@ components:
         aggregations:
           type: object
           properties:
-            collection:
-              $ref: '#/components/schemas/MultiLevelAggregation'
             issue:
               $ref: '#/components/schemas/MultiLevelAggregation'
             product:
+              $ref: '#/components/schemas/MultiLevelAggregation'
+            sub_issue:
+              $ref: '#/components/schemas/MultiLevelAggregation'
+            sub_product:
+              $ref: '#/components/schemas/MultiLevelAggregation'
+            tags:
               $ref: '#/components/schemas/MultiLevelAggregation'
   links: {}
   callbacks: {}

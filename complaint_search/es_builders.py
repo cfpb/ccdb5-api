@@ -515,7 +515,7 @@ class LensAggregationBuilder(BaseBuilder):
         'sub_product.raw': 'product',
         'issue.raw': 'sub-issue',
         'sub_issue.raw': 'issue',
-        'tags': 'collections'
+        'tags': 'tags'
     }
 
     def __init__(self):
@@ -594,7 +594,7 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
     )
 
     _AGG_HEADING_MAP = {
-        'tags': 'collections',
+        'tags': 'tags',
         'issue': 'issue',
         'product': 'product',
         'sub_product': 'sub-product',
