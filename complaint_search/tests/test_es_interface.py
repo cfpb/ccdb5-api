@@ -16,28 +16,10 @@ from complaint_search.es_interface import (
     suggest,
 )
 from complaint_search.export import ElasticSearchExporter
+from complaint_search.tests.es_interface_test_helpers import load
 from deepdiff import DeepDiff
 from elasticsearch import Elasticsearch
 from nose_parameterized import parameterized
-
-
-# -------------------------------------------------------------------------
-# Helper Methods
-# -------------------------------------------------------------------------
-
-
-def to_absolute(fileName):
-    import os.path
-    # where is this module?
-    thisDir = os.path.dirname(__file__)
-    return os.path.join(thisDir, "expected_results", fileName)
-
-
-def load(shortName):
-    import json
-    fileName = to_absolute(shortName + '.json')
-    with open(fileName, 'r') as f:
-        return json.load(f)
 
 
 class EsInterfaceTest_Search(TestCase):

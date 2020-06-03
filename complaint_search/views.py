@@ -15,6 +15,7 @@ from complaint_search.serializer import (
     SearchInputSerializer,
     SuggestFilterInputSerializer,
     SuggestInputSerializer,
+    TrendsInputSerializer,
 )
 from complaint_search.throttling import (
     DocumentAnonRateThrottle,
@@ -45,11 +46,16 @@ QPARAMS_VARS = (
     'date_received_min',
     'field',
     'frm',
+    'lens',
     'no_aggs',
     'no_highlight',
     'search_term',
     'size',
-    'sort'
+    'sort',
+    'sub_lens',
+    'sub_lens_depth',
+    'trend_depth',
+    'trend_interval'
 )
 
 
@@ -234,7 +240,6 @@ def document(request, id):
 # -----------------------------------------------------------------------------
 # Request Handlers: Geo
 
-
 @api_view(['GET'])
 @catch_es_error
 def states(request):
@@ -247,6 +252,27 @@ def states(request):
         )
 
     results = es_interface.states_agg(
+        agg_exclude=AGG_EXCLUDE_FIELDS, **serializer.validated_data)
+    headers = _buildHeaders()
+
+    return Response(results, headers=headers)
+
+
+# -----------------------------------------------------------------------------
+# Request Handlers: Trends
+
+@api_view(['GET'])
+@catch_es_error
+def trends(request):
+    data = _parse_query_params(request.query_params)
+    serializer = TrendsInputSerializer(data=data)
+
+    if not serializer.is_valid():
+        return Response(
+            serializer.errors, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    results = es_interface.trends(
         agg_exclude=AGG_EXCLUDE_FIELDS, **serializer.validated_data)
     headers = _buildHeaders()
 
