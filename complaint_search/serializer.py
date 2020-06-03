@@ -20,11 +20,13 @@ class SearchInputSerializer(serializers.Serializer):
     FIELD_NARRATIVE = 'complaint_what_happened'
     FIELD_COMPANY = 'company'
     FIELD_ALL = 'all'
+    FIELD_ALL_ES = '_all'
 
     FIELD_CHOICES = (
         (FIELD_NARRATIVE, 'complaint_what_happened field'),
         (FIELD_COMPANY, 'company field'),
         (FIELD_ALL, 'all fields'),
+        (FIELD_ALL_ES, 'all fields'),
     )
 
     FIELD_MAP = {
@@ -146,3 +148,81 @@ class SuggestInputSerializer(serializers.Serializer):
 
 class SuggestFilterInputSerializer(SearchInputSerializer):
     text = serializers.CharField(max_length=100, required=True)
+
+
+class TrendsInputSerializer(SearchInputSerializer):
+    # -----------------------------------------------------------------------------
+    # Constants
+    #
+
+    YEARLY = 'year'
+    QUARTERLY = 'quarter'
+    MONTHLY = 'month'
+    WEEKLY = 'week'
+    DAILY = 'day'
+
+    INTERVAL_CHOICES = (
+        (YEARLY, 'Yearly Interval'),
+        (QUARTERLY, 'Quarterly Interval'),
+        (MONTHLY, 'Monthly Interval'),
+        (WEEKLY, 'Weekly Interval'),
+        (DAILY, 'Daily Interval'),
+    )
+
+    # Data Lens Choices
+    OVERVIEW = 'overview'
+    PRODUCT = 'product'
+    SUBPRODUCT = 'sub_product'
+    ISSUE = 'issue'
+    SUBISSUE = 'sub_issue'
+    COMPANY = 'company'
+    TAGS = 'tags'
+
+    DATA_LENS_CHOICES = (
+        (OVERVIEW, 'Overview Lens'),
+        (PRODUCT, 'Product Lens'),
+        (ISSUE, 'Issue Lens'),
+        # (COMPANY, 'Company Lens'),
+        (TAGS, 'Tags Lens'),
+    )
+
+    DATA_SUB_LENS_MAP = {
+        'product': ('sub_product', 'issue', 'company', 'tags'),
+        'issue': ('product', 'sub_issue', 'company', 'tags'),
+        # 'company': ('product', 'issue', 'tags'),
+        'tags': ('product', 'issue', 'company'),
+    }
+
+    trend_interval = serializers.ChoiceField(INTERVAL_CHOICES)
+    trend_depth = serializers.IntegerField(
+        min_value=5, max_value=10000000, default=5
+    )
+    sub_lens_depth = serializers.IntegerField(
+        min_value=5, max_value=10000000, default=5
+    )
+    lens = serializers.ChoiceField(DATA_LENS_CHOICES)
+    sub_lens = serializers.CharField(min_length=5, max_length=100,
+                                     required=False)
+
+    def validate(self, data):
+        # ret = super(SearchInputSerializer, self).to_internal_value(data)
+
+        if 'sub_lens' not in data \
+           and not data['lens'] == 'overview':
+            raise serializers.ValidationError(
+                "Either Focus or Sub-lens is required for lens '{}'."
+                " Valid sub-lens are: {}"
+                .format(data['lens'],
+                        self.DATA_SUB_LENS_MAP[data['lens']])
+            )
+
+        if 'sub_lens' in data and not data['lens'] == 'overview':
+            if not data['sub_lens'] in self.DATA_SUB_LENS_MAP[data['lens']]:
+                raise serializers.ValidationError(
+                    "'{}' is not a valid sub-lens for '{}'."
+                    " Valid sub-lens are: {}"
+                    .format(data['sub_lens'], data['lens'],
+                            self.DATA_SUB_LENS_MAP[data['lens']])
+                )
+
+        return data
