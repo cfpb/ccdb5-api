@@ -485,16 +485,15 @@ class StateAggregationBuilder(BaseBuilder):
         if company_filter:
             field_aggs["filter"]["bool"]["filter"].append(company_filter)
 
-        for item in self.params:
-            if item in (
-                self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL
-            ):
-                field_level_should = {
-                    "bool": {"should": self.filter_clauses[item]}
-                }
-                field_aggs["filter"]["bool"]["filter"].append(
-                    field_level_should
-                )
+        if item in (
+            self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL
+        ):
+            field_level_should = {
+                "bool": {"should": self.filter_clauses[item]}
+            }
+            field_aggs["filter"]["bool"]["filter"].append(
+                field_level_should
+            )
 
         return field_aggs
 
