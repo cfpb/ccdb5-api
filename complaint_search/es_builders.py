@@ -485,24 +485,15 @@ class StateAggregationBuilder(BaseBuilder):
         if company_filter:
             field_aggs["filter"]["bool"]["filter"].append(company_filter)
 
-        # Add filter clauses to aggregation entries (only those that are not
-        # the same as field name or part of the exclude list, which means we
-        # want to list all matched aggregation)
-        for item in self.params:
-            include_filter = (
-                item != field_name or
-                (item == field_name and item in self.exclude)
+        if item in (
+            self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL
+        ):
+            field_level_should = {
+                "bool": {"should": self.filter_clauses[item]}
+            }
+            field_aggs["filter"]["bool"]["filter"].append(
+                field_level_should
             )
-
-            if include_filter and item in (
-                self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL
-            ):
-                field_level_should = {
-                    "bool": {"should": self.filter_clauses[item]}
-                }
-                field_aggs["filter"]["bool"]["filter"].append(
-                    field_level_should
-                )
 
         return field_aggs
 
