@@ -33,6 +33,4 @@ urlpatterns = [
         name="states"),
     url(r'^geo',
         RedirectView.as_view(url='/geo/states'), name="geo"),
-    url(r'^trends', complaint_search.views.trends,
-        name="trends"),
 ]
