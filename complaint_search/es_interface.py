@@ -376,7 +376,7 @@ def document(complaint_id):
     return res
 
 
-def states_agg(**kwargs):
+def states_agg(agg_exclude=None, **kwargs):
     params = copy.deepcopy(PARAMS)
     params.update(**kwargs)
     search_builder = SearchBuilder()
@@ -392,6 +392,8 @@ def states_agg(**kwargs):
     body["size"] = 0
     aggregation_builder = StateAggregationBuilder()
     aggregation_builder.add(**params)
+    if agg_exclude:
+        aggregation_builder.add_exclude(agg_exclude)
     body["aggs"] = aggregation_builder.build()
 
     res = _get_es().search(index=_COMPLAINT_ES_INDEX,
@@ -402,7 +404,7 @@ def states_agg(**kwargs):
     return res
 
 
-def trends(**kwargs):
+def trends(agg_exclude=None, **kwargs):
     params = copy.deepcopy(PARAMS)
     params.update(**kwargs)
     params.update(size=0)
@@ -414,6 +416,8 @@ def trends(**kwargs):
 
     aggregation_builder = TrendsAggregationBuilder()
     aggregation_builder.add(**params)
+    if agg_exclude:
+        aggregation_builder.add_exclude(agg_exclude)
     body["aggs"] = aggregation_builder.build()
 
     res = _get_es().search(index=_COMPLAINT_ES_INDEX,

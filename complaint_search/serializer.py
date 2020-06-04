@@ -182,14 +182,14 @@ class TrendsInputSerializer(SearchInputSerializer):
         (OVERVIEW, 'Overview Lens'),
         (PRODUCT, 'Product Lens'),
         (ISSUE, 'Issue Lens'),
-        # (COMPANY, 'Company Lens'),
+        (COMPANY, 'Company Lens'),
         (TAGS, 'Tags Lens'),
     )
 
     DATA_SUB_LENS_MAP = {
         'product': ('sub_product', 'issue', 'company', 'tags'),
         'issue': ('product', 'sub_issue', 'company', 'tags'),
-        # 'company': ('product', 'issue', 'tags'),
+        'company': ('product', 'issue', 'tags'),
         'tags': ('product', 'issue', 'company'),
     }
 

@@ -427,6 +427,10 @@ class StateAggregationBuilder(BaseBuilder):
     def __init__(self):
         BaseBuilder.__init__(self)
         self.filter_clauses = None
+        self.exclude = []
+
+    def add_exclude(self, field_name_list):
+        self.exclude += field_name_list
 
     def build_one(self, field_name):
         # Lazy initialization
@@ -489,7 +493,7 @@ class StateAggregationBuilder(BaseBuilder):
         for item in self.params:
             if item in (
                 self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL
-            ):
+            ) and item not in self.exclude:
                 field_level_should = {
                     "bool": {"should": self.filter_clauses[item]}
                 }
@@ -503,6 +507,9 @@ class StateAggregationBuilder(BaseBuilder):
         aggs = {}
 
         agg_fields = self._AGG_FIELDS
+        if self.exclude:
+            agg_fields = [field_name for field_name in self._AGG_FIELDS
+                          if field_name not in self.exclude]
         for field_name in agg_fields:
             aggs[field_name] = self.build_one(field_name)
 
@@ -521,6 +528,10 @@ class LensAggregationBuilder(BaseBuilder):
     def __init__(self):
         super(LensAggregationBuilder, self).__init__()
         self.filter_clauses = None
+        self.exclude = []
+
+    def add_exclude(self, field_name_list):
+        self.exclude += field_name_list
 
     def build_histogram(self, agg_name, interval, include_date_filter):
         agg = {
@@ -588,17 +599,19 @@ class LensAggregationBuilder(BaseBuilder):
 
 class TrendsAggregationBuilder(LensAggregationBuilder):
     _AGG_FIELDS = (
-        'tags',
+        'company',
         'issue',
+        'tags',
         'product'
     )
 
     _AGG_HEADING_MAP = {
-        'tags': 'tags',
+        'company': 'company',
         'issue': 'issue',
         'product': 'product',
         'sub_product': 'sub-product',
         'sub_issue': 'sub-issue',
+        'tags': 'tags',
     }
 
     def __init__(self):
@@ -708,6 +721,11 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
         return field_aggs
 
     def build(self):
+        # AZ - Only include a company aggregation if at least one company
+        # filter is selected
+        if 'company' in self.params and 'company' in self.exclude:
+            self.exclude.remove('company')
+
         aggs = {}
 
         aggs['dateRangeArea'] = self.build_histogram(
@@ -720,13 +738,14 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
             self.params['trend_depth'] = 5
 
             for field_name in self._AGG_FIELDS:
-                agg_heading_name = self.get_agg_heading(field_name)
+                if field_name not in self.exclude:
+                    agg_heading_name = self.get_agg_heading(field_name)
 
-                aggs[agg_heading_name] = self.build_one_overview(
-                    field_name,
-                    agg_heading_name,
-                    self.params['trend_interval']
-                )
+                    aggs[agg_heading_name] = self.build_one_overview(
+                        field_name,
+                        agg_heading_name,
+                        self.params['trend_interval']
+                    )
         else:
             agg_heading_name = self.get_agg_heading(self.params['lens'])
 
