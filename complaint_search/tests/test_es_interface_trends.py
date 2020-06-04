@@ -117,6 +117,7 @@ class EsInterfaceTest_Trends(TestCase):
                 "DOC_TYPE")
     @mock.patch.object(Elasticsearch, 'search')
     def test_trends_company_filter__valid(self, mock_search):
+        default_exclude = ['company', 'zip_code']
         trends_params = {
             'lens': 'overview',
             'trend_interval': 'year',
@@ -126,7 +127,7 @@ class EsInterfaceTest_Trends(TestCase):
         body = load("trends_company_filter__valid")
         mock_search.return_value = body
 
-        res = trends(**trends_params)
+        res = trends(default_exclude, **trends_params)
         self.assertEqual(len(mock_search.call_args), 2)
         self.assertEqual(mock_search.call_args[1]['doc_type'], 'DOC_TYPE')
         self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')

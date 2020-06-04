@@ -789,6 +789,8 @@ components:
         aggregations:
           type: object
           properties:
+            company:
+              $ref: '#/components/schemas/MultiLevelAggregation'
             issue:
               $ref: '#/components/schemas/MultiLevelAggregation'
             product:
