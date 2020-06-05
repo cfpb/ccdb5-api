@@ -207,7 +207,6 @@ def suggest_zip(request):
 @api_view(['GET'])
 @catch_es_error
 def suggest_company(request):
-
     # Key removal that takes mutation into account in case of other reference
     def removekey(d, key):
         r = dict(d)
