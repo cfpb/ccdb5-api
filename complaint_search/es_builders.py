@@ -4,6 +4,7 @@ import re
 from collections import OrderedDict
 
 from complaint_search.defaults import (
+    DATA_SUB_LENS_MAP,
     DELIMITER,
     EXPORT_FORMATS,
     PARAMS,
@@ -720,6 +721,21 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
 
         return field_aggs
 
+    def focus_filter(self):
+        return {
+            'term': {
+                self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
+                    self.params['lens']): self.params['focus']
+            }
+        }
+
+    def build_one_focus(self, field_name, agg_heading_name, interval):
+        field_aggs = self.agg_setup(field_name, agg_heading_name, interval)
+
+        field_aggs['filter']['bool']['must'].append(self.focus_filter())
+
+        return field_aggs
+
     def build(self):
         # AZ - Only include a company aggregation if at least one company
         # filter is selected
@@ -746,6 +762,22 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
                         agg_heading_name,
                         self.params['trend_interval']
                     )
+        elif 'focus' in self.params:
+            for field_name in DATA_SUB_LENS_MAP.get(self.params['lens']) \
+                    + (self.params['lens'], ):
+                agg_heading_name = self.get_agg_heading(field_name)
+
+                aggs[agg_heading_name] = self.build_one_focus(
+                    field_name,
+                    agg_heading_name,
+                    self.params['trend_interval']
+                )
+
+            aggs['dateRangeArea']['filter']['bool']['must']\
+                .append(self.focus_filter())
+            aggs['dateRangeBrush']['filter']['bool']['must']\
+                .append(self.focus_filter())
+
         else:
             agg_heading_name = self.get_agg_heading(self.params['lens'])
 
