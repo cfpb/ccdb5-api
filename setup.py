@@ -68,11 +68,11 @@ docs_extras = [
 setup(
     name='ccdb5-api',
     version=get_git_version(),
+    author='CFPB',
+    author_email='tech@cfpb.gov',
     description='Complaint Search API',
     long_description=long_description,
     url='https://github.com/cfpb/ccdb5-api',
-    author='CFPB',
-    author_email='tech@cfpb.gov',
     license='CC0',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
