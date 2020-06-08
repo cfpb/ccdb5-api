@@ -1,7 +1,37 @@
 import os
 from codecs import open
-
 from setuptools import find_packages, setup
+from subprocess import check_output
+
+# -----------------------------------------------------------------------------
+# Version handler
+
+
+command = 'git describe --tags --long --dirty --always'
+fmt = '{tag}.dev{commitcount}+{gitsha}'
+
+
+def format_version(version, fmt=fmt):
+    parts = version.split('-')
+
+    # This is an unknown fork/branch being run in the CI
+    if len(parts) == 1:
+        return fmt.format(tag='ci', commitcount=0, gitsha=version)
+
+    assert len(parts) in (3, 4)
+    dirty = len(parts) == 4
+    tag, count, sha = parts[:3]
+    if count == '0' and not dirty:
+        return tag
+    return fmt.format(tag=tag, commitcount=count, gitsha=sha.lstrip('g'))
+
+
+def get_git_version():
+    git_version = check_output(command.split()).decode('utf-8').strip()
+    return format_version(version=git_version)
+
+# -----------------------------------------------------------------------------
+# Readme Importer
 
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -37,7 +67,7 @@ docs_extras = [
 
 setup(
     name='ccdb5-api',
-    version_format='{tag}.dev{commitcount}+{gitsha}',
+    version=get_git_version(),
     description='Complaint Search API',
     long_description=long_description,
     url='https://github.com/cfpb/ccdb5-api',
@@ -55,7 +85,7 @@ setup(
     ],
     keywords='complaint search api',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    setup_requires=['setuptools-git-version==1.0.3'],
+    setup_requires=[],
     install_requires=install_requires,
     extras_require={
         'docs': docs_extras,
