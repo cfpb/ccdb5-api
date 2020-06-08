@@ -600,14 +600,12 @@ class LensAggregationBuilder(BaseBuilder):
 
 class TrendsAggregationBuilder(LensAggregationBuilder):
     _AGG_FIELDS = (
-        'company',
         'issue',
         'tags',
         'product'
     )
 
     _AGG_HEADING_MAP = {
-        'company': 'company',
         'issue': 'issue',
         'product': 'product',
         'sub_product': 'sub-product',
@@ -741,6 +739,8 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
         # filter is selected
         if 'company' in self.params and 'company' in self.exclude:
             self.exclude.remove('company')
+            self._AGG_FIELDS + ('company',)
+            self._AGG_HEADING_MAP['company'] = 'company'
 
         aggs = {}
 
@@ -765,6 +765,10 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
         elif 'focus' in self.params:
             for field_name in DATA_SUB_LENS_MAP.get(self.params['lens']) \
                     + (self.params['lens'], ):
+                if field_name == 'company' and 'company' not in self.params:
+                    # Do not include company agg unless there is a company
+                    # filter
+                    continue
                 agg_heading_name = self.get_agg_heading(field_name)
 
                 aggs[agg_heading_name] = self.build_one_focus(

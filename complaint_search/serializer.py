@@ -1,4 +1,4 @@
-from complaint_search.defaults import PARAMS, DATA_SUB_LENS_MAP
+from complaint_search.defaults import DATA_SUB_LENS_MAP, PARAMS
 from localflavor.us.us_states import STATE_CHOICES
 from rest_framework import serializers
 
@@ -204,7 +204,7 @@ class TrendsInputSerializer(SearchInputSerializer):
            and 'sub_lens' not in data \
            and not data['lens'] == 'overview':
             raise serializers.ValidationError(
-                "Either Focus or Sub-lens is required for lens '{}'." +
+                "Either Focus or Sub-lens is required for lens '{}'."
                 " Valid sub-lens are: {}"
                 .format(data['lens'],
                         DATA_SUB_LENS_MAP[data['lens']])
