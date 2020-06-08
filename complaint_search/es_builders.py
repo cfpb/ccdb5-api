@@ -494,7 +494,7 @@ class StateAggregationBuilder(BaseBuilder):
         for item in self.params:
             if item in (
                 self._OPTIONAL_FILTERS + self._OPTIONAL_FILTERS_STRING_TO_BOOL
-            ) and item not in self.exclude:
+            ):
                 field_level_should = {
                     "bool": {"should": self.filter_clauses[item]}
                 }
