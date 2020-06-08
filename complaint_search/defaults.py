@@ -70,3 +70,10 @@ FORMAT_CONTENT_TYPE_MAP = {
     "json": "application/json",
     "csv": "text/csv",
 }
+
+DATA_SUB_LENS_MAP = {
+    'product': ('sub_product', 'issue', 'company', 'tags'),
+    'issue': ('product', 'sub_issue', 'company', 'tags'),
+    'company': ('product', 'issue', 'tags'),
+    'tags': ('product', 'issue', 'company'),
+}

@@ -45,6 +45,7 @@ QPARAMS_VARS = (
     'date_received_max',
     'date_received_min',
     'field',
+    'focus',
     'frm',
     'lens',
     'no_aggs',

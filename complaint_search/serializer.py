@@ -1,4 +1,4 @@
-from complaint_search.defaults import PARAMS
+from complaint_search.defaults import DATA_SUB_LENS_MAP, PARAMS
 from localflavor.us.us_states import STATE_CHOICES
 from rest_framework import serializers
 
@@ -186,13 +186,8 @@ class TrendsInputSerializer(SearchInputSerializer):
         (TAGS, 'Tags Lens'),
     )
 
-    DATA_SUB_LENS_MAP = {
-        'product': ('sub_product', 'issue', 'company', 'tags'),
-        'issue': ('product', 'sub_issue', 'company', 'tags'),
-        'company': ('product', 'issue', 'tags'),
-        'tags': ('product', 'issue', 'company'),
-    }
-
+    focus = serializers.CharField(min_length=1, max_length=10000,
+                                  required=False)
     trend_interval = serializers.ChoiceField(INTERVAL_CHOICES)
     trend_depth = serializers.IntegerField(
         min_value=5, max_value=10000000, default=5
@@ -205,24 +200,23 @@ class TrendsInputSerializer(SearchInputSerializer):
                                      required=False)
 
     def validate(self, data):
-        # ret = super(SearchInputSerializer, self).to_internal_value(data)
-
-        if 'sub_lens' not in data \
+        if 'focus' not in data \
+           and 'sub_lens' not in data \
            and not data['lens'] == 'overview':
             raise serializers.ValidationError(
                 "Either Focus or Sub-lens is required for lens '{}'."
                 " Valid sub-lens are: {}"
                 .format(data['lens'],
-                        self.DATA_SUB_LENS_MAP[data['lens']])
+                        DATA_SUB_LENS_MAP[data['lens']])
             )
 
         if 'sub_lens' in data and not data['lens'] == 'overview':
-            if not data['sub_lens'] in self.DATA_SUB_LENS_MAP[data['lens']]:
+            if not data['sub_lens'] in DATA_SUB_LENS_MAP[data['lens']]:
                 raise serializers.ValidationError(
                     "'{}' is not a valid sub-lens for '{}'."
                     " Valid sub-lens are: {}"
                     .format(data['sub_lens'], data['lens'],
-                            self.DATA_SUB_LENS_MAP[data['lens']])
+                            DATA_SUB_LENS_MAP[data['lens']])
                 )
 
         return data

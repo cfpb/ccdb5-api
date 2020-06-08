@@ -132,3 +132,52 @@ class EsInterfaceTest_Trends(TestCase):
         self.assertEqual(mock_search.call_args[1]['doc_type'], 'DOC_TYPE')
         self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertTrue('company' in res['aggregations'])
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE",
+                "DOC_TYPE")
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_trends_issue_focus__valid(self, mock_search):
+        default_exclude = ['company', 'zip_code']
+        trends_params = {
+            'lens': 'issue',
+            'trend_interval': 'year',
+            'trend_depth': 5,
+            'focus': 'Incorrect information on your report'
+        }
+
+        body = load("trends_issue_focus__valid")
+        mock_search.return_value = body
+
+        res = trends(default_exclude, **trends_params)
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(mock_search.call_args[1]['doc_type'], 'DOC_TYPE')
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
+        self.assertFalse('company' in res['aggregations'])
+        self.assertEqual(len(res['aggregations']['issue']['issue']['buckets']),
+                         1)
+
+    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
+    @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE",
+                "DOC_TYPE")
+    @mock.patch.object(Elasticsearch, 'search')
+    def test_trends_issue_focus_company_filter__valid(self, mock_search):
+        default_exclude = ['company', 'zip_code']
+        trends_params = {
+            'lens': 'issue',
+            'trend_interval': 'year',
+            'trend_depth': 5,
+            'focus': 'Incorrect information on your report',
+            'company': 'EQUIFAX, INC.'
+        }
+
+        body = load("trends_issue_focus_company_filter__valid")
+        mock_search.return_value = body
+
+        res = trends(default_exclude, **trends_params)
+        self.assertEqual(len(mock_search.call_args), 2)
+        self.assertEqual(mock_search.call_args[1]['doc_type'], 'DOC_TYPE')
+        self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
+        self.assertTrue('company' in res['aggregations'])
+        self.assertEqual(len(res['aggregations']['issue']['issue']['buckets']),
+                         1)
