@@ -18,7 +18,7 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install tox coveralls
+          pip install tox coveralls<2
 
       - name: Run back-end tests
         run: |
