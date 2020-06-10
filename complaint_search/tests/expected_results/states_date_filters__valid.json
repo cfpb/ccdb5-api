@@ -1,0 +1,174 @@
+{
+  "from": 0,
+  "size": 0,
+  "_source": [
+    "company",
+    "company_public_response",
+    "company_response",
+    "complaint_id",
+    "complaint_what_happened",
+    "consumer_consent_provided",
+    "consumer_disputed",
+    "date_received",
+    "date_sent_to_company",
+    "has_narrative",
+    "issue",
+    "product",
+    "state",
+    "submitted_via",
+    "sub_issue",
+    "sub_product",
+    "tags",
+    "timely",
+    "zip_code"
+  ],
+  "query": {
+    "query_string": {
+      "query": "*",
+      "fields": [
+        "complaint_what_happened"
+      ],
+      "default_operator": "AND"
+    }
+  },
+  "aggs": {
+    "issue": {
+      "filter": {
+        "bool": {
+          "must": [],
+          "should": [],
+          "filter": [
+            {
+              "range": {
+                "date_received": {
+                  "from": "2020-01-01T12:00:00-05:00",
+                  "to": "2020-05-05T12:00:00-05:00"
+                }
+              }
+            },
+            {
+              "range": {
+                "date_sent_to_company": {
+                  "from": "2020-01-01T12:00:00-05:00",
+                  "to": "2020-05-05T12:00:00-05:00"
+                }
+              }
+            },
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "state": [
+                      "VA"
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "aggs": {
+        "issue": {
+          "terms": {
+            "field": "issue.raw",
+            "size": 5
+          }
+        }
+      }
+    },
+    "product": {
+      "filter": {
+        "bool": {
+          "must": [],
+          "should": [],
+          "filter": [
+            {
+              "range": {
+                "date_received": {
+                  "from": "2020-01-01T12:00:00-05:00",
+                  "to": "2020-05-05T12:00:00-05:00"
+                }
+              }
+            },
+            {
+              "range": {
+                "date_sent_to_company": {
+                  "from": "2020-01-01T12:00:00-05:00",
+                  "to": "2020-05-05T12:00:00-05:00"
+                }
+              }
+            },
+            {
+              "bool": {
+                "should": {
+                  "terms": {
+                    "state": [
+                      "VA"
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "aggs": {
+        "product": {
+          "terms": {
+            "field": "product.raw",
+            "size": 5
+          }
+        }
+      }
+    },
+    "state": {
+      "filter": {
+        "bool": {
+          "must": [],
+          "should": [],
+          "filter": [
+            {
+              "range": {
+                "date_received": {
+                  "from": "2020-01-01T12:00:00-05:00",
+                  "to": "2020-05-05T12:00:00-05:00"
+                }
+              }
+            },
+            {
+              "range": {
+                "date_sent_to_company": {
+                  "from": "2020-01-01T12:00:00-05:00",
+                  "to": "2020-05-05T12:00:00-05:00"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "aggs": {
+        "state": {
+          "terms": {
+            "field": "state",
+            "size": 0
+          },
+          "aggs": {
+            "product": {
+              "terms": {
+                "field": "product.raw",
+                "size": 1
+              }
+            },
+            "issue": {
+              "terms": {
+                "field": "issue.raw",
+                "size": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -379,6 +379,7 @@ def document(complaint_id):
 def states_agg(agg_exclude=None, **kwargs):
     params = copy.deepcopy(PARAMS)
     params.update(**kwargs)
+    params.update({'size': 0})
     search_builder = SearchBuilder()
     search_builder.add(**params)
     body = search_builder.build()
@@ -389,7 +390,6 @@ def states_agg(agg_exclude=None, **kwargs):
         _ES_URL, _COMPLAINT_ES_INDEX, _COMPLAINT_DOC_TYPE, body
     )
 
-    body["size"] = 0
     aggregation_builder = StateAggregationBuilder()
     aggregation_builder.add(**params)
     if agg_exclude:
