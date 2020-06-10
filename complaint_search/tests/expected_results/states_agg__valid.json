@@ -1,0 +1,101 @@
+{
+  "_source": [
+            "company",
+            "company_public_response",
+            "company_response",
+            "complaint_id",
+            "complaint_what_happened",
+            "consumer_consent_provided",
+            "consumer_disputed",
+            "date_received",
+            "date_sent_to_company",
+            "has_narrative",
+            "issue",
+            "product",
+            "state",
+            "submitted_via",
+            "sub_issue",
+            "sub_product",
+            "tags",
+            "timely",
+            "zip_code"
+        ],
+  "aggs": {
+    "issue": {
+      "aggs": {
+        "issue": {
+          "terms": {
+            "field": "issue.raw",
+            "size": 5
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "filter": [],
+          "must": [],
+          "should": []
+        }
+      }
+    },
+    "product": {
+      "aggs": {
+        "product": {
+          "terms": {
+            "field": "product.raw",
+            "size": 5
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "filter": [],
+          "must": [],
+          "should": []
+        }
+      }
+    },
+    "state": {
+      "aggs": {
+        "state": {
+          "aggs": {
+            "issue": {
+              "terms": {
+                "field": "issue.raw",
+                "size": 1
+              }
+            },
+            "product": {
+              "terms": {
+                "field": "product.raw",
+                "size": 1
+              }
+            }
+          },
+          "terms": {
+            "field": "state",
+            "size": 0
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "filter": [],
+          "must": [],
+          "should": []
+        }
+      }
+    }
+  },
+  "from": 0,
+  "query": {
+    "query_string": {
+      "default_operator": "AND",
+      "fields": [
+        "complaint_what_happened"
+      ],
+      "query": "*"
+    }
+  },
+  "size": 0
+}
