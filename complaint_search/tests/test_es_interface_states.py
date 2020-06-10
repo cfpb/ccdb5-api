@@ -51,21 +51,22 @@ class EsInterfaceTest_States(TestCase):
     @mock.patch.object(Elasticsearch, 'search')
     def test_states_date_filters__valid(self, mock_search):
         params = {
-            'date_received_min': '01-01-2020',
-            'date_received_max': '05-05-2020',
-            'company_received_min': '01-01-2020',
-            'company_received_max': '05-05-2020',
-            'state': 'VA',
+            'date_received_min': '2020-01-01',
+            'date_received_max': '2020-05-05',
+            'company_received_min': '2020-01-01',
+            'company_received_max': '2020-05-05',
+            'state': ['VA'],
             'size': 0
         }
 
-        expected = load('states_date_filters__valid')
+        body = load('states_date_filters__valid')
 
-        mock_search.return_value = expected
+        mock_search.return_value = 'OK'
         res = states_agg(**params)
         self.assertEqual(len(mock_search.call_args), 2)
         self.assertEqual(0, len(mock_search.call_args[0]))
         self.assertEqual(4, len(mock_search.call_args[1]))
         self.assertEqual(mock_search.call_args[1]['doc_type'], 'DOC_TYPE')
+        assertBodyEqual(body, mock_search.call_args_list[0][1]['body'])
         self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
-        self.assertDictEqual(res, expected)
+        self.assertEqual(res, 'OK')
