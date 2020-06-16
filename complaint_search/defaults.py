@@ -36,6 +36,8 @@ SOURCE_FIELDS = (
     "zip_code",
 )
 
+EXCLUDE_PREFIX = 'not_'
+
 EXPORT_FORMATS = (
     'csv',
     'json',
