@@ -1,4 +1,8 @@
-from complaint_search.defaults import DATA_SUB_LENS_MAP, PARAMS
+from complaint_search.defaults import (
+    DATA_SUB_LENS_MAP,
+    EXCLUDE_PREFIX,
+    PARAMS
+)
 from localflavor.us.us_states import STATE_CHOICES
 from rest_framework import serializers
 
@@ -45,6 +49,7 @@ class SearchInputSerializer(serializers.Serializer):
         (SORT_CREATED_DATE_DESC, 'Descending Created Date'),
         (SORT_CREATED_DATE_ASC, 'Ascending Created Date'),
     )
+
     format = serializers.ChoiceField(FORMAT_CHOICES, default=PARAMS['format'])
     field = serializers.ChoiceField(FIELD_CHOICES, default=PARAMS['field'])
     size = serializers.IntegerField(
@@ -89,6 +94,30 @@ class SearchInputSerializer(serializers.Serializer):
         child=serializers.CharField(max_length=200), required=False)
     no_aggs = serializers.BooleanField(default=PARAMS['no_aggs'])
     no_highlight = serializers.BooleanField(default=PARAMS['no_highlight'])
+
+    # oh these had to be Python variables
+    # couldn't just get away with a '-' prefix >:(
+    not_company = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    not_company_public_response = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    not_company_response = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    not_consumer_consent_provided = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    not_consumer_disputed = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    not_issue = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    not_product = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    not_state = serializers.ListField(
+        child=serializers.ChoiceField(STATE_CHOICES), required=False)
+    not_tags = serializers.ListField(
+        child=serializers.CharField(max_length=200), required=False)
+    not_zip = serializers.ListField(
+        child=serializers.CharField(min_length=5, max_length=5),
+        required=False)
 
     def to_internal_value(self, data):
         ret = super(SearchInputSerializer, self).to_internal_value(data)
