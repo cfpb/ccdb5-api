@@ -1,12 +1,6 @@
 {
-  "sort": [
-    {
-      "_score": {
-        "order": "desc"
-      }
-    }
-  ],
   "from": 0,
+  "size": 10,
   "_source": [
     "company",
     "company_public_response",
@@ -28,56 +22,46 @@
     "timely",
     "zip_code"
   ],
-  "aggs": {
-    "timely": {
-      "filter": {
-        "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
-          "should": [],
-          "must": []
-        }
-      },
-      "aggs": {
-        "timely": {
+  "query": {
+    "query_string": {
+      "query": "*",
+      "fields": [
+        "complaint_what_happened"
+      ],
+      "default_operator": "AND"
+    }
+  },
+  "highlight": {
+    "require_field_match": false,
+    "number_of_fragments": 1,
+    "fragment_size": 500,
+    "fields": {
+      "complaint_what_happened": {}
+    }
+  },
+  "sort": [
+    {
+      "_score": {
+        "order": "desc"
+      }
+    }
+  ],
+  "post_filter": {
+    "bool": {
+      "must": [
+        {
           "terms": {
-            "field": "timely",
-            "size": 0
+            "consumer_consent_provided.raw": [
+              "Consent provided"
+            ]
           }
         }
-      }
-    },
+      ],
+      "must_not": []
+    }
+  },
+  "aggs": {
     "company_public_response": {
-      "filter": {
-        "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
-          "should": [],
-          "must": []
-        }
-      },
       "aggs": {
         "company_public_response": {
           "terms": {
@@ -85,140 +69,47 @@
             "size": 0
           }
         }
-      }
-    },
-    "product": {
+      },
       "filter": {
         "bool": {
-          "filter": [
+          "must": [
             {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
-          "should": [],
-          "must": []
-        }
-      },
-      "aggs": {
-        "product": {
-          "terms": {
-            "field": "product.raw",
-            "size": 0
-          },
-          "aggs": {
-            "sub_product.raw": {
               "terms": {
-                "field": "sub_product.raw",
-                "size": 0
-              }
-            }
-          }
-        }
-      }
-    },
-    "tags": {
-      "filter": {
-        "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
+                "consumer_consent_provided.raw": [
+                  "Consent provided"
+                ]
               }
             }
           ],
-          "should": [],
-          "must": []
-        }
-      },
-      "aggs": {
-        "tags": {
-          "terms": {
-            "field": "tags",
-            "size": 0
-          }
+          "must_not": []
         }
       }
     },
-    "company": {
-      "filter": {
-        "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
-          "should": [],
-          "must": []
-        }
-      },
+    "company_response": {
       "aggs": {
-        "company": {
+        "company_response": {
           "terms": {
-            "field": "company.raw",
+            "field": "company_response",
             "size": 0
           }
         }
-      }
-    },
-    "consumer_disputed": {
+      },
       "filter": {
         "bool": {
-          "filter": [
+          "must": [
             {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
+              "terms": {
+                "consumer_consent_provided.raw": [
+                  "Consent provided"
+                ]
               }
             }
           ],
-          "should": [],
-          "must": []
-        }
-      },
-      "aggs": {
-        "consumer_disputed": {
-          "terms": {
-            "field": "consumer_disputed.raw",
-            "size": 0
-          }
+          "must_not": []
         }
       }
     },
     "consumer_consent_provided": {
-      "filter": {
-        "bool": {
-          "filter": [],
-          "should": [],
-          "must": []
-        }
-      },
       "aggs": {
         "consumer_consent_provided": {
           "terms": {
@@ -226,57 +117,47 @@
             "size": 0
           }
         }
-      }
-    },
-    "state": {
+      },
       "filter": {
         "bool": {
-          "filter": [
+          "must": [
             {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
+              "terms": {
+                "consumer_consent_provided.raw": [
+                  "Consent provided"
+                ]
               }
             }
           ],
-          "should": [],
-          "must": []
+          "must_not": []
         }
-      },
+      }
+    },
+    "consumer_disputed": {
       "aggs": {
-        "state": {
+        "consumer_disputed": {
           "terms": {
-            "field": "state",
+            "field": "consumer_disputed.raw",
             "size": 0
           }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "terms": {
+                "consumer_consent_provided.raw": [
+                  "Consent provided"
+                ]
+              }
+            }
+          ],
+          "must_not": []
         }
       }
     },
     "has_narrative": {
-      "filter": {
-        "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
-          "should": [],
-          "must": []
-        }
-      },
       "aggs": {
         "has_narrative": {
           "terms": {
@@ -284,57 +165,23 @@
             "size": 0
           }
         }
-      }
-    },
-    "submitted_via": {
+      },
       "filter": {
         "bool": {
-          "filter": [
+          "must": [
             {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
+              "terms": {
+                "consumer_consent_provided.raw": [
+                  "Consent provided"
+                ]
               }
             }
           ],
-          "should": [],
-          "must": []
-        }
-      },
-      "aggs": {
-        "submitted_via": {
-          "terms": {
-            "field": "submitted_via",
-            "size": 0
-          }
+          "must_not": []
         }
       }
     },
     "issue": {
-      "filter": {
-        "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
-          "should": [],
-          "must": []
-        }
-      },
       "aggs": {
         "issue": {
           "terms": {
@@ -350,102 +197,149 @@
             }
           }
         }
-      }
-    },
-    "company_response": {
+      },
       "filter": {
         "bool": {
-          "filter": [
+          "must": [
             {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
-          "should": [],
-          "must": []
-        }
-      },
-      "aggs": {
-        "company_response": {
-          "terms": {
-            "field": "company_response",
-            "size": 0
-          }
-        }
-      }
-    },
-    "zip_code": {
-      "filter": {
-        "bool": {
-          "filter": [
-            {
-              "bool": {
-                "should": {
-                  "terms": {
-                    "consumer_consent_provided.raw": [
-                      "Consent provided"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
-          "should": [],
-          "must": []
-        }
-      },
-      "aggs": {
-        "zip_code": {
-          "terms": {
-            "field": "zip_code",
-            "size": 0
-          }
-        }
-      }
-    }
-  },
-  "query": {
-    "query_string": {
-      "query": "*",
-      "default_operator": "AND",
-      "fields": [
-        "complaint_what_happened"
-      ]
-    }
-  },
-  "post_filter": {
-    "bool": {
-      "filter": [
-        {
-          "bool": {
-            "should": {
               "terms": {
                 "consumer_consent_provided.raw": [
                   "Consent provided"
                 ]
               }
             }
+          ],
+          "must_not": []
+        }
+      }
+    },
+    "product": {
+      "aggs": {
+        "product": {
+          "terms": {
+            "field": "product.raw",
+            "size": 0
+          },
+          "aggs": {
+            "sub_product.raw": {
+              "terms": {
+                "field": "sub_product.raw",
+                "size": 0
+              }
+            }
           }
         }
-      ],
-      "must": [],
-      "should": []
+      },
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "terms": {
+                "consumer_consent_provided.raw": [
+                  "Consent provided"
+                ]
+              }
+            }
+          ],
+          "must_not": []
+        }
+      }
+    },
+    "state": {
+      "aggs": {
+        "state": {
+          "terms": {
+            "field": "state",
+            "size": 0
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "terms": {
+                "consumer_consent_provided.raw": [
+                  "Consent provided"
+                ]
+              }
+            }
+          ],
+          "must_not": []
+        }
+      }
+    },
+    "submitted_via": {
+      "aggs": {
+        "submitted_via": {
+          "terms": {
+            "field": "submitted_via",
+            "size": 0
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "terms": {
+                "consumer_consent_provided.raw": [
+                  "Consent provided"
+                ]
+              }
+            }
+          ],
+          "must_not": []
+        }
+      }
+    },
+    "tags": {
+      "aggs": {
+        "tags": {
+          "terms": {
+            "field": "tags",
+            "size": 0
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "terms": {
+                "consumer_consent_provided.raw": [
+                  "Consent provided"
+                ]
+              }
+            }
+          ],
+          "must_not": []
+        }
+      }
+    },
+    "timely": {
+      "aggs": {
+        "timely": {
+          "terms": {
+            "field": "timely",
+            "size": 0
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "terms": {
+                "consumer_consent_provided.raw": [
+                  "Consent provided"
+                ]
+              }
+            }
+          ],
+          "must_not": []
+        }
+      }
     }
-  },
-  "highlight": {
-    "fragment_size": 500,
-    "number_of_fragments": 1,
-    "require_field_match": false,
-    "fields": {
-      "complaint_what_happened": {}
-    }
-  },
-  "size": 10
+  }
 }

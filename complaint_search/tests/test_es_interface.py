@@ -85,11 +85,14 @@ class EsInterfaceTest_Search(TestCase):
         }
     ]
 
+    DEFAULT_EXCLUDE = ['company', 'zip_code']
+
     # -------------------------------------------------------------------------
     # Helper Methods
     # -------------------------------------------------------------------------
 
-    def request_test(self, expected, **kwargs):
+    def request_test(self, expected, agg_exclude=['company', 'zip_code'],
+                     **kwargs):
         body = load(expected)
 
         with mock.patch(
@@ -110,7 +113,7 @@ class EsInterfaceTest_Search(TestCase):
                 self.MOCK_SEARCH_RESULT["_meta"])
             mock_scroll.return_value = self.MOCK_SEARCH_SIDE_EFFECT[0]
 
-            res = search(**kwargs)
+            res = search(agg_exclude, **kwargs)
 
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -248,7 +251,7 @@ class EsInterfaceTest_Search(TestCase):
             self.MOCK_SEARCH_RESULT["_meta"])
         mock_scroll.side_effect = copy.deepcopy(self.MOCK_SCROLL_SIDE_EFFECT)
         body = load("search_with_frm__valid")
-        res = search(frm=20)
+        res = search(self.DEFAULT_EXCLUDE, frm=20)
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
@@ -298,7 +301,7 @@ class EsInterfaceTest_Search(TestCase):
         body = load("search_with_sort__valid")
 
         for s in sort_fields:
-            res = search(sort=s[0])
+            res = search(self.DEFAULT_EXCLUDE, sort=s[0])
             body["sort"] = [{s[1]: {"order": s[2]}}]
             mock_search.assert_any_call(
                 body=body,
