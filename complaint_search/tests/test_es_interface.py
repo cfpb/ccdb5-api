@@ -354,6 +354,10 @@ class EsInterfaceTest_Search(TestCase):
         self.request_test("search_with_company__valid",
                           company=["Bank 1", "Second Bank"])
 
+    def test_search_with_not_company__valid(self):
+        self.request_test("search_with_not_company__valid",
+                          not_company=["EQUIFAX, INC."])
+
     def test_search_with_company_agg_exclude__valid(self):
         self.request_test("search_with_company_agg_exclude__valid",
                           agg_exclude=['company'],
@@ -366,12 +370,34 @@ class EsInterfaceTest_Search(TestCase):
             product=["Payday loan", u"Mortgage\u2022FHA mortgage"]
         )
 
+    def test_search_with_not_product__valid(self):
+        self.request_test(
+            "search_with_not_product__valid",
+            not_product=["Credit reporting, credit repair services, or "
+                         "other personal consumer reports",
+                         "Mortgage\u2022FHA mortgage"]
+        )
+
     def test_search_with_issue__valid(self):
         self.request_test(
             "search_with_issue__valid",
             agg_exclude=[u"zip_code", u"company"],
             issue=[u"Communication tactics\u2022Frequent or repeated calls",
                    "Loan servicing, payments, escrow account"]
+        )
+
+    def test_search_with_not_issue__valid(self):
+        self.request_test(
+            "search_with_not_issue__valid",
+            not_issue=["Incorrect information on your report"]
+        )
+
+    def test_search_with_two_not__valid(self):
+        self.request_test(
+            "search_with_two_not__valid",
+            not_issue=["Incorrect information on your report"],
+            not_product=["Credit reporting, credit repair services, or "
+                         "other personal consumer reports"]
         )
 
     def test_search_with_state__valid(self):
