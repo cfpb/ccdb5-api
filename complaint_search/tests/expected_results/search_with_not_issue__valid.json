@@ -48,16 +48,20 @@
   ],
   "post_filter": {
     "bool": {
-      "must": [
+      "must": [],
+      "must_not": [
         {
-          "range": {
-            "created_time": {
-              "to": "2017-04-14"
-            }
+          "bool": {
+            "should": [
+              {
+                "term": {
+                  "issue.raw": "Incorrect information on your report"
+                }
+              }
+            ]
           }
         }
-      ],
-      "must_not": []
+      ]
     }
   },
   "aggs": {
@@ -72,16 +76,20 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "bool": {
+                "should": [
+                  {
+                    "term": {
+                      "issue.raw": "Incorrect information on your report"
+                    }
+                  }
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -96,16 +104,20 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "bool": {
+                "should": [
+                  {
+                    "term": {
+                      "issue.raw": "Incorrect information on your report"
+                    }
+                  }
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -120,16 +132,20 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "bool": {
+                "should": [
+                  {
+                    "term": {
+                      "issue.raw": "Incorrect information on your report"
+                    }
+                  }
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -144,16 +160,20 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "bool": {
+                "should": [
+                  {
+                    "term": {
+                      "issue.raw": "Incorrect information on your report"
+                    }
+                  }
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -168,16 +188,20 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "bool": {
+                "should": [
+                  {
+                    "term": {
+                      "issue.raw": "Incorrect information on your report"
+                    }
+                  }
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -200,16 +224,20 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "bool": {
+                "should": [
+                  {
+                    "term": {
+                      "issue.raw": "Incorrect information on your report"
+                    }
+                  }
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -232,16 +260,20 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "bool": {
+                "should": [
+                  {
+                    "term": {
+                      "issue.raw": "Incorrect information on your report"
+                    }
+                  }
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -256,16 +288,20 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "bool": {
+                "should": [
+                  {
+                    "term": {
+                      "issue.raw": "Incorrect information on your report"
+                    }
+                  }
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -280,16 +316,20 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "bool": {
+                "should": [
+                  {
+                    "term": {
+                      "issue.raw": "Incorrect information on your report"
+                    }
+                  }
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -304,16 +344,20 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "bool": {
+                "should": [
+                  {
+                    "term": {
+                      "issue.raw": "Incorrect information on your report"
+                    }
+                  }
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -328,16 +372,20 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "bool": {
+                "should": [
+                  {
+                    "term": {
+                      "issue.raw": "Incorrect information on your report"
+                    }
+                  }
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     }

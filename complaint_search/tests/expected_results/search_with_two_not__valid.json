@@ -48,38 +48,37 @@
   ],
   "post_filter": {
     "bool": {
-      "must": [
+      "must": [],
+      "must_not": [
         {
           "bool": {
-            "should": [
+            "must": [
               {
                 "bool": {
-                  "must": [
+                  "should": [
                     {
                       "term": {
-                        "issue.raw": "Communication tactics"
-                      }
-                    },
-                    {
-                      "terms": {
-                        "sub_issue.raw": [
-                          "Frequent or repeated calls"
-                        ]
+                        "issue.raw": "Incorrect information on your report"
                       }
                     }
                   ]
                 }
               },
               {
-                "term": {
-                  "issue.raw": "Loan servicing, payments, escrow account"
+                "bool": {
+                  "should": [
+                    {
+                      "term": {
+                        "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                      }
+                    }
+                  ]
                 }
               }
             ]
           }
         }
-      ],
-      "must_not": []
+      ]
     }
   },
   "aggs": {
@@ -94,38 +93,37 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
-                "should": [
+                "must": [
                   {
                     "bool": {
-                      "must": [
+                      "should": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
-                          }
-                        },
-                        {
-                          "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
-                            ]
+                            "issue.raw": "Incorrect information on your report"
                           }
                         }
                       ]
                     }
                   },
                   {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
+                    "bool": {
+                      "should": [
+                        {
+                          "term": {
+                            "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                          }
+                        }
+                      ]
                     }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -140,38 +138,37 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
-                "should": [
+                "must": [
                   {
                     "bool": {
-                      "must": [
+                      "should": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
-                          }
-                        },
-                        {
-                          "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
-                            ]
+                            "issue.raw": "Incorrect information on your report"
                           }
                         }
                       ]
                     }
                   },
                   {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
+                    "bool": {
+                      "should": [
+                        {
+                          "term": {
+                            "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                          }
+                        }
+                      ]
                     }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -186,38 +183,37 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
-                "should": [
+                "must": [
                   {
                     "bool": {
-                      "must": [
+                      "should": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
-                          }
-                        },
-                        {
-                          "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
-                            ]
+                            "issue.raw": "Incorrect information on your report"
                           }
                         }
                       ]
                     }
                   },
                   {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
+                    "bool": {
+                      "should": [
+                        {
+                          "term": {
+                            "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                          }
+                        }
+                      ]
                     }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -232,38 +228,37 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
-                "should": [
+                "must": [
                   {
                     "bool": {
-                      "must": [
+                      "should": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
-                          }
-                        },
-                        {
-                          "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
-                            ]
+                            "issue.raw": "Incorrect information on your report"
                           }
                         }
                       ]
                     }
                   },
                   {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
+                    "bool": {
+                      "should": [
+                        {
+                          "term": {
+                            "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                          }
+                        }
+                      ]
                     }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -278,38 +273,37 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
-                "should": [
+                "must": [
                   {
                     "bool": {
-                      "must": [
+                      "should": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
-                          }
-                        },
-                        {
-                          "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
-                            ]
+                            "issue.raw": "Incorrect information on your report"
                           }
                         }
                       ]
                     }
                   },
                   {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
+                    "bool": {
+                      "should": [
+                        {
+                          "term": {
+                            "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                          }
+                        }
+                      ]
                     }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -332,38 +326,37 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
-                "should": [
+                "must": [
                   {
                     "bool": {
-                      "must": [
+                      "should": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
-                          }
-                        },
-                        {
-                          "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
-                            ]
+                            "issue.raw": "Incorrect information on your report"
                           }
                         }
                       ]
                     }
                   },
                   {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
+                    "bool": {
+                      "should": [
+                        {
+                          "term": {
+                            "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                          }
+                        }
+                      ]
                     }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -386,38 +379,37 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
-                "should": [
+                "must": [
                   {
                     "bool": {
-                      "must": [
+                      "should": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
-                          }
-                        },
-                        {
-                          "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
-                            ]
+                            "issue.raw": "Incorrect information on your report"
                           }
                         }
                       ]
                     }
                   },
                   {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
+                    "bool": {
+                      "should": [
+                        {
+                          "term": {
+                            "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                          }
+                        }
+                      ]
                     }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -432,38 +424,37 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
-                "should": [
+                "must": [
                   {
                     "bool": {
-                      "must": [
+                      "should": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
-                          }
-                        },
-                        {
-                          "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
-                            ]
+                            "issue.raw": "Incorrect information on your report"
                           }
                         }
                       ]
                     }
                   },
                   {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
+                    "bool": {
+                      "should": [
+                        {
+                          "term": {
+                            "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                          }
+                        }
+                      ]
                     }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -478,38 +469,37 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
-                "should": [
+                "must": [
                   {
                     "bool": {
-                      "must": [
+                      "should": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
-                          }
-                        },
-                        {
-                          "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
-                            ]
+                            "issue.raw": "Incorrect information on your report"
                           }
                         }
                       ]
                     }
                   },
                   {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
+                    "bool": {
+                      "should": [
+                        {
+                          "term": {
+                            "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                          }
+                        }
+                      ]
                     }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -524,38 +514,37 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
-                "should": [
+                "must": [
                   {
                     "bool": {
-                      "must": [
+                      "should": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
-                          }
-                        },
-                        {
-                          "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
-                            ]
+                            "issue.raw": "Incorrect information on your report"
                           }
                         }
                       ]
                     }
                   },
                   {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
+                    "bool": {
+                      "should": [
+                        {
+                          "term": {
+                            "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                          }
+                        }
+                      ]
                     }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -570,38 +559,37 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
-                "should": [
+                "must": [
                   {
                     "bool": {
-                      "must": [
+                      "should": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
-                          }
-                        },
-                        {
-                          "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
-                            ]
+                            "issue.raw": "Incorrect information on your report"
                           }
                         }
                       ]
                     }
                   },
                   {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
+                    "bool": {
+                      "should": [
+                        {
+                          "term": {
+                            "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                          }
+                        }
+                      ]
                     }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     }

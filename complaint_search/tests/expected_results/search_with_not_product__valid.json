@@ -48,38 +48,38 @@
   ],
   "post_filter": {
     "bool": {
-      "must": [
+      "must": [],
+      "must_not": [
         {
           "bool": {
             "should": [
+              {
+                "term": {
+                  "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                }
+              },
               {
                 "bool": {
                   "must": [
                     {
                       "term": {
-                        "issue.raw": "Communication tactics"
+                        "product.raw": "Mortgage"
                       }
                     },
                     {
                       "terms": {
-                        "sub_issue.raw": [
-                          "Frequent or repeated calls"
+                        "sub_product.raw": [
+                          "FHA mortgage"
                         ]
                       }
                     }
                   ]
                 }
-              },
-              {
-                "term": {
-                  "issue.raw": "Loan servicing, payments, escrow account"
-                }
               }
             ]
           }
         }
-      ],
-      "must_not": []
+      ]
     }
   },
   "aggs": {
@@ -94,38 +94,38 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
                 "should": [
+                  {
+                    "term": {
+                      "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                    }
+                  },
                   {
                     "bool": {
                       "must": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
+                            "product.raw": "Mortgage"
                           }
                         },
                         {
                           "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
+                            "sub_product.raw": [
+                              "FHA mortgage"
                             ]
                           }
                         }
                       ]
                     }
-                  },
-                  {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
-                    }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -140,38 +140,38 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
                 "should": [
+                  {
+                    "term": {
+                      "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                    }
+                  },
                   {
                     "bool": {
                       "must": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
+                            "product.raw": "Mortgage"
                           }
                         },
                         {
                           "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
+                            "sub_product.raw": [
+                              "FHA mortgage"
                             ]
                           }
                         }
                       ]
                     }
-                  },
-                  {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
-                    }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -186,38 +186,38 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
                 "should": [
+                  {
+                    "term": {
+                      "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                    }
+                  },
                   {
                     "bool": {
                       "must": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
+                            "product.raw": "Mortgage"
                           }
                         },
                         {
                           "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
+                            "sub_product.raw": [
+                              "FHA mortgage"
                             ]
                           }
                         }
                       ]
                     }
-                  },
-                  {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
-                    }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -232,38 +232,38 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
                 "should": [
+                  {
+                    "term": {
+                      "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                    }
+                  },
                   {
                     "bool": {
                       "must": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
+                            "product.raw": "Mortgage"
                           }
                         },
                         {
                           "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
+                            "sub_product.raw": [
+                              "FHA mortgage"
                             ]
                           }
                         }
                       ]
                     }
-                  },
-                  {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
-                    }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -278,38 +278,38 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
                 "should": [
+                  {
+                    "term": {
+                      "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                    }
+                  },
                   {
                     "bool": {
                       "must": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
+                            "product.raw": "Mortgage"
                           }
                         },
                         {
                           "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
+                            "sub_product.raw": [
+                              "FHA mortgage"
                             ]
                           }
                         }
                       ]
                     }
-                  },
-                  {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
-                    }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -332,38 +332,38 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
                 "should": [
+                  {
+                    "term": {
+                      "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                    }
+                  },
                   {
                     "bool": {
                       "must": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
+                            "product.raw": "Mortgage"
                           }
                         },
                         {
                           "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
+                            "sub_product.raw": [
+                              "FHA mortgage"
                             ]
                           }
                         }
                       ]
                     }
-                  },
-                  {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
-                    }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -386,38 +386,38 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
                 "should": [
+                  {
+                    "term": {
+                      "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                    }
+                  },
                   {
                     "bool": {
                       "must": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
+                            "product.raw": "Mortgage"
                           }
                         },
                         {
                           "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
+                            "sub_product.raw": [
+                              "FHA mortgage"
                             ]
                           }
                         }
                       ]
                     }
-                  },
-                  {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
-                    }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -432,38 +432,38 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
                 "should": [
+                  {
+                    "term": {
+                      "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                    }
+                  },
                   {
                     "bool": {
                       "must": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
+                            "product.raw": "Mortgage"
                           }
                         },
                         {
                           "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
+                            "sub_product.raw": [
+                              "FHA mortgage"
                             ]
                           }
                         }
                       ]
                     }
-                  },
-                  {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
-                    }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -478,38 +478,38 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
                 "should": [
+                  {
+                    "term": {
+                      "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                    }
+                  },
                   {
                     "bool": {
                       "must": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
+                            "product.raw": "Mortgage"
                           }
                         },
                         {
                           "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
+                            "sub_product.raw": [
+                              "FHA mortgage"
                             ]
                           }
                         }
                       ]
                     }
-                  },
-                  {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
-                    }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -524,38 +524,38 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
                 "should": [
+                  {
+                    "term": {
+                      "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                    }
+                  },
                   {
                     "bool": {
                       "must": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
+                            "product.raw": "Mortgage"
                           }
                         },
                         {
                           "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
+                            "sub_product.raw": [
+                              "FHA mortgage"
                             ]
                           }
                         }
                       ]
                     }
-                  },
-                  {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
-                    }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -570,38 +570,38 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
               "bool": {
                 "should": [
+                  {
+                    "term": {
+                      "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                    }
+                  },
                   {
                     "bool": {
                       "must": [
                         {
                           "term": {
-                            "issue.raw": "Communication tactics"
+                            "product.raw": "Mortgage"
                           }
                         },
                         {
                           "terms": {
-                            "sub_issue.raw": [
-                              "Frequent or repeated calls"
+                            "sub_product.raw": [
+                              "FHA mortgage"
                             ]
                           }
                         }
                       ]
                     }
-                  },
-                  {
-                    "term": {
-                      "issue.raw": "Loan servicing, payments, escrow account"
-                    }
                   }
                 ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     }

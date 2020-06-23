@@ -471,6 +471,20 @@ class SearchTests(APITestCase):
         self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_not_company__valid(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        url += "?not_company=One%20Bank&not_company=Bank%202"
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
+            **self.buildDefaultParams({
+                "not_company": ["One Bank", "Bank 2"]})
+        )
+        self.assertEqual('OK', response.data)
+
+    @mock.patch('complaint_search.es_interface.search')
     def test_search_with_product__valid(self, mock_essearch):
         url = reverse('complaint_search:search')
         # parameter doesn't represent real data, as client has a hard time

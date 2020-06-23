@@ -48,16 +48,16 @@
   ],
   "post_filter": {
     "bool": {
-      "must": [
+      "must": [],
+      "must_not": [
         {
-          "range": {
-            "created_time": {
-              "to": "2017-04-14"
-            }
+          "terms": {
+            "company.raw": [
+              "EQUIFAX, INC."
+            ]
           }
         }
-      ],
-      "must_not": []
+      ]
     }
   },
   "aggs": {
@@ -72,16 +72,16 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -96,16 +96,16 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -120,16 +120,16 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -144,16 +144,16 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -168,16 +168,16 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -200,16 +200,16 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -232,16 +232,16 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -256,16 +256,16 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -280,16 +280,16 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -304,16 +304,16 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     },
@@ -328,16 +328,16 @@
       },
       "filter": {
         "bool": {
-          "must": [
+          "must": [],
+          "must_not": [
             {
-              "range": {
-                "created_time": {
-                  "to": "2017-04-14"
-                }
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
               }
             }
-          ],
-          "must_not": []
+          ]
         }
       }
     }
