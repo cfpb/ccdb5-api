@@ -51,7 +51,7 @@
       "must": [
         {
           "range": {
-            "created_time": {
+            "date_received": {
               "to": "2017-04-14"
             }
           }
@@ -75,7 +75,7 @@
           "must": [
             {
               "range": {
-                "created_time": {
+                "date_received": {
                   "to": "2017-04-14"
                 }
               }
@@ -99,7 +99,7 @@
           "must": [
             {
               "range": {
-                "created_time": {
+                "date_received": {
                   "to": "2017-04-14"
                 }
               }
@@ -123,7 +123,7 @@
           "must": [
             {
               "range": {
-                "created_time": {
+                "date_received": {
                   "to": "2017-04-14"
                 }
               }
@@ -147,7 +147,7 @@
           "must": [
             {
               "range": {
-                "created_time": {
+                "date_received": {
                   "to": "2017-04-14"
                 }
               }
@@ -171,7 +171,7 @@
           "must": [
             {
               "range": {
-                "created_time": {
+                "date_received": {
                   "to": "2017-04-14"
                 }
               }
@@ -203,7 +203,7 @@
           "must": [
             {
               "range": {
-                "created_time": {
+                "date_received": {
                   "to": "2017-04-14"
                 }
               }
@@ -235,7 +235,7 @@
           "must": [
             {
               "range": {
-                "created_time": {
+                "date_received": {
                   "to": "2017-04-14"
                 }
               }
@@ -259,7 +259,7 @@
           "must": [
             {
               "range": {
-                "created_time": {
+                "date_received": {
                   "to": "2017-04-14"
                 }
               }
@@ -283,7 +283,7 @@
           "must": [
             {
               "range": {
-                "created_time": {
+                "date_received": {
                   "to": "2017-04-14"
                 }
               }
@@ -307,7 +307,7 @@
           "must": [
             {
               "range": {
-                "created_time": {
+                "date_received": {
                   "to": "2017-04-14"
                 }
               }
@@ -331,7 +331,7 @@
           "must": [
             {
               "range": {
-                "created_time": {
+                "date_received": {
                   "to": "2017-04-14"
                 }
               }
