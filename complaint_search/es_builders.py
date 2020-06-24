@@ -197,7 +197,7 @@ class BaseBuilder(object):
         date_received = self._build_date_range_filter(
             self.params.get("date_received_min"),
             self.params.get("date_received_max"),
-            "created_time")
+            "date_received")
 
         if date_received and include_dates:
             andClauses.append(date_received)
