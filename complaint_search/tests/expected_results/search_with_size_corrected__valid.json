@@ -21,7 +21,7 @@
     "timely",
     "zip_code"
   ],
-    "size": 500,
+    "size": 100,
     "query": {
         "query_string": {
             "query": "*",
