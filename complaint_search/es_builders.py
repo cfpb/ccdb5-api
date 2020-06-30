@@ -457,17 +457,9 @@ class StateAggregationBuilder(BaseBuilder):
         es_field_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
             field_name, field_name
         )
-        # field_aggs["aggs"] = {
-        #     field_name: {
-        #         "terms": {
-        #             "field": es_field_name,
-        #             "size": self._AGG_SIZES[field_name]
-        #         }
-        #     }
-        # }
-
         es_child_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
                 self._OPTIONAL_FILTERS_CHILD_MAP.get(field_name))
+
         field_aggs["aggs"] = {
             field_name: {
                 "terms": {
@@ -478,7 +470,7 @@ class StateAggregationBuilder(BaseBuilder):
                     self._ES_CHILD_AGG_MAP.get(es_child_name): {
                         "terms": {
                             "field": es_child_name,
-                            "size": 5
+                            "size": 10
                         }
                     }
                 }
