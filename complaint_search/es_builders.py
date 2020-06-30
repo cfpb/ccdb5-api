@@ -458,7 +458,7 @@ class StateAggregationBuilder(BaseBuilder):
             field_name, field_name
         )
         es_child_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
-                self._OPTIONAL_FILTERS_CHILD_MAP.get(field_name))
+            self._OPTIONAL_FILTERS_CHILD_MAP.get(field_name))
 
         field_aggs["aggs"] = {
             field_name: {
