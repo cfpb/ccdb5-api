@@ -425,6 +425,14 @@ class StateAggregationBuilder(BaseBuilder):
         'issue': 5
     }
 
+    _ES_CHILD_AGG_MAP = {
+        'product.raw': 'sub-product',
+        'sub_product.raw': 'product',
+        'issue.raw': 'sub-issue',
+        'sub_issue.raw': 'issue',
+        'tags': 'tags'
+    }
+
     def __init__(self):
         BaseBuilder.__init__(self)
         self.include_clauses = None
@@ -449,11 +457,22 @@ class StateAggregationBuilder(BaseBuilder):
         es_field_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
             field_name, field_name
         )
+        es_child_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
+            self._OPTIONAL_FILTERS_CHILD_MAP.get(field_name))
+
         field_aggs["aggs"] = {
             field_name: {
                 "terms": {
                     "field": es_field_name,
                     "size": self._AGG_SIZES[field_name]
+                },
+                "aggs": {
+                    self._ES_CHILD_AGG_MAP.get(es_child_name): {
+                        "terms": {
+                            "field": es_child_name,
+                            "size": 10
+                        }
+                    }
                 }
             }
         }
