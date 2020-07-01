@@ -394,8 +394,15 @@ class AggregationBuilder(BaseBuilder):
                 }
             }
 
+        # Create a subset of the filters
+        incl_subset = {
+            k: v
+            for k, v in self.include_clauses.items()
+            if k != field_name
+        }
+
         # Add the aggregation filters
-        field_aggs['filter'] = self._build_dsl_filter(self.include_clauses,
+        field_aggs['filter'] = self._build_dsl_filter(incl_subset,
                                                       self.exclude_clauses)
         return field_aggs
 
