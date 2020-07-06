@@ -611,8 +611,8 @@ class EsInterfaceTest_FilterSuggest(TestCase):
                             'bool': {
                                 'must': [
                                     {
-                                        'prefix': {
-                                            'company.suggest': 'BA'
+                                        'wildcard': {
+                                            'company.suggest': '*BA*'
                                         }}]}
                         },
                         "aggs": {
