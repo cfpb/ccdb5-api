@@ -20,7 +20,7 @@ def format_version(version, fmt=fmt):
 
     # Sometimes the closest tag has '-dev' and messes everything up
     if len(parts) == 5 and parts[1] == 'dev':
-        parts = [parts[0]] + parts[1:3]
+        parts = [parts[0] + '-dev', parts[2], parts[3], parts[4]]
 
     assert len(parts) in (3, 4), '|'.join(parts)
     dirty = len(parts) == 4
