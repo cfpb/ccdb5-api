@@ -321,6 +321,7 @@ def suggest(text=None, size=6):
         return []
     body = {"sgg": {"text": text, "completion": {
         "field": "suggest", "size": size}}}
+
     res = _get_es().suggest(index=_COMPLAINT_ES_INDEX, body=body)
     candidates = [e['text'] for e in res['sgg'][0]['options']]
     return candidates
@@ -343,11 +344,19 @@ def filter_suggest(filterField, display_field=None, **kwargs):
         filterField: aggregation_builder.build_one(filterField)
     }
     # add the input value as a must match
-    aggs[filterField]['filter']['bool']['must'].append(
-        {
-            'prefix': {filterField: params['text']}
-        }
-    )
+    if filterField != 'zip_code':
+        aggs[filterField]['filter']['bool']['must'].append(
+            {
+                'wildcard': {filterField: '*{}*'.format(params['text'])}
+            }
+        )
+    else:
+        aggs[filterField]['filter']['bool']['must'].append(
+            {
+                'prefix': {filterField: params['text']}
+            }
+        )
+
     # choose which field to actually display
     aggs[filterField]['aggs'][filterField]['terms'][
         'field'] = filterField if display_field is None else display_field
