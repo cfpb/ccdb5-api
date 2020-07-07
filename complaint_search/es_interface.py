@@ -304,7 +304,8 @@ def search(agg_exclude=None, **kwargs):
                 CSV_ORDERED_HEADERS
             )
         elif params.get("format") == 'json':
-            del body['highlight']
+            if 'highlight' in body:
+                del body['highlight']
             body['size'] = 0
 
             res = _get_es().search(index=_COMPLAINT_ES_INDEX,
