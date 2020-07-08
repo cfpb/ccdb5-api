@@ -737,6 +737,29 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
         return aggs
 
 
+class DateRangeBucketsBuilder(BaseBuilder):
+    def build(self):
+        agg = {
+            'dateRangeBuckets': {
+                'aggs': {
+                    'dateRangeBuckets': {
+                        "date_histogram": {
+                            "field": "date_received",
+                            "interval": self.params['trend_interval']
+                        }
+                    }
+                }
+            }
+        }
+
+        # Add date filter clause
+        agg['dateRangeBuckets']['filter'] = self._build_dsl_filter(
+            {}, {}, include_dates=True, single_not_clause=False
+        )
+
+        return agg
+
+
 if __name__ == "__main__":
     searchbuilder = SearchBuilder()
     print(searchbuilder.build())
@@ -748,3 +771,5 @@ if __name__ == "__main__":
     print(stateaggbuilder.build())
     trendsaggbuilder = TrendsAggregationBuilder()
     print(trendsaggbuilder.build())
+    daterangebucketsbuilder = DateRangeBucketsBuilder()
+    print(daterangebucketsbuilder.build())

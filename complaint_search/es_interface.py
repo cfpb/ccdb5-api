@@ -10,6 +10,7 @@ from complaint_search.defaults import (
 )
 from complaint_search.es_builders import (
     AggregationBuilder,
+    DateRangeBucketsBuilder,
     PostFilterBuilder,
     SearchBuilder,
     StateAggregationBuilder,
@@ -422,7 +423,7 @@ def trends(agg_exclude=None, **kwargs):
     search_builder.add(**params)
     body = search_builder.build()
 
-    res = None
+    res_trends = None
 
     aggregation_builder = TrendsAggregationBuilder()
     aggregation_builder.add(**params)
@@ -430,10 +431,40 @@ def trends(agg_exclude=None, **kwargs):
         aggregation_builder.add_exclude(agg_exclude)
     body["aggs"] = aggregation_builder.build()
 
-    res = _get_es().search(index=_COMPLAINT_ES_INDEX,
-                           doc_type=_COMPLAINT_DOC_TYPE,
-                           body=body)
+    res_trends = _get_es().search(index=_COMPLAINT_ES_INDEX,
+                                  doc_type=_COMPLAINT_DOC_TYPE,
+                                  body=body)
 
-    res = process_trends_response(res)
+    res_date_buckets = None
 
-    return res
+    date_bucket_body = copy.deepcopy(body)
+    date_bucket_body['query'] = {
+        "query_string": {
+          "query": "*",
+          "fields": [
+            "_all"
+          ],
+          "default_operator": "AND"
+        }
+      }
+
+    date_range_buckets_builder = DateRangeBucketsBuilder()
+    date_range_buckets_builder.add(**params)
+    date_bucket_body['aggs'] = date_range_buckets_builder.build()
+
+    res_date_buckets = _get_es().search(index=_COMPLAINT_ES_INDEX,
+                                        doc_type=_COMPLAINT_DOC_TYPE,
+                                        body=date_bucket_body)
+
+    # res_date_buckets['body'] = date_bucket_body
+    # res_trends['DATE BODY'] = res_date_buckets
+    # res_trends['DATE BODY'] = date_bucket_body
+
+    # return res_trends
+
+    # res_trends['body'] = body
+    res_trends = process_trends_response(res_trends)
+    res_trends['aggregations']['dateRangeBuckets'] = \
+        res_date_buckets['aggregations']['dateRangeBuckets']
+
+    return res_trends
