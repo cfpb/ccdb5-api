@@ -758,18 +758,3 @@ class DateRangeBucketsBuilder(BaseBuilder):
         )
 
         return agg
-
-
-if __name__ == "__main__":
-    searchbuilder = SearchBuilder()
-    print(searchbuilder.build())
-    pfbuilder = PostFilterBuilder()
-    print(pfbuilder.build())
-    aggbuilder = AggregationBuilder()
-    print(aggbuilder.build())
-    stateaggbuilder = StateAggregationBuilder()
-    print(stateaggbuilder.build())
-    trendsaggbuilder = TrendsAggregationBuilder()
-    print(trendsaggbuilder.build())
-    daterangebucketsbuilder = DateRangeBucketsBuilder()
-    print(daterangebucketsbuilder.build())
