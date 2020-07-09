@@ -440,13 +440,13 @@ def trends(agg_exclude=None, **kwargs):
     date_bucket_body = copy.deepcopy(body)
     date_bucket_body['query'] = {
         "query_string": {
-          "query": "*",
-          "fields": [
-            "_all"
-          ],
-          "default_operator": "AND"
+            "query": "*",
+            "fields": [
+                "_all"
+            ],
+            "default_operator": "AND"
         }
-      }
+    }
 
     date_range_buckets_builder = DateRangeBucketsBuilder()
     date_range_buckets_builder.add(**params)
@@ -456,13 +456,6 @@ def trends(agg_exclude=None, **kwargs):
                                         doc_type=_COMPLAINT_DOC_TYPE,
                                         body=date_bucket_body)
 
-    # res_date_buckets['body'] = date_bucket_body
-    # res_trends['DATE BODY'] = res_date_buckets
-    # res_trends['DATE BODY'] = date_bucket_body
-
-    # return res_trends
-
-    # res_trends['body'] = body
     res_trends = process_trends_response(res_trends)
     res_trends['aggregations']['dateRangeBuckets'] = \
         res_date_buckets['aggregations']['dateRangeBuckets']
