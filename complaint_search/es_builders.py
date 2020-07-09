@@ -745,7 +745,7 @@ class DateRangeBucketsBuilder(BaseBuilder):
                     'dateRangeBuckets': {
                         "date_histogram": {
                             "field": "date_received",
-                            "interval": self.params['trend_interval']
+                            "interval": self.params.get('trend_interval', 5)
                         }
                     }
                 }
