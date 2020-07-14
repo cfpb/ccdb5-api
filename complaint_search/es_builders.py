@@ -50,6 +50,7 @@ class BaseBuilder(object):
         "company_response",
         "consumer_consent_provided",
         "consumer_disputed",
+        "has_narrative",
         "issue",
         "product",
         "state",
