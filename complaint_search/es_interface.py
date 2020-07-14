@@ -14,6 +14,7 @@ from complaint_search.es_builders import (
     PostFilterBuilder,
     SearchBuilder,
     StateAggregationBuilder,
+    TrendsAggregationBuilder,
 )
 from complaint_search.export import ElasticSearchExporter
 from elasticsearch import Elasticsearch, helpers
@@ -29,6 +30,81 @@ _ES_INSTANCE = None
 
 _COMPLAINT_ES_INDEX = os.environ.get('COMPLAINT_ES_INDEX', 'complaint-index')
 _COMPLAINT_DOC_TYPE = os.environ.get('COMPLAINT_DOC_TYPE', 'complaint-doctype')
+
+
+# -----------------------------------------------------------------------------
+# Trends Operations
+# -----------------------------------------------------------------------------
+
+# Safely extracts a string from an object
+# if it isn't present, the default value is returned
+def extract_date(agg_term, default_value):
+    return agg_term['value_as_string'] \
+        if 'value_as_string' in agg_term else default_value
+
+
+def build_trend_meta(response):
+    meta = {}
+
+    if 'max_date' in response['aggregations']:
+        date_max = extract_date(response['aggregations']['max_date'], None)
+        date_min = extract_date(response['aggregations']['min_date'], None)
+
+        # del response["aggregations"]["max_date"]
+        # del response["aggregations"]["min_date"]
+
+        meta['date_min'] = date_min
+        meta['date_max'] = date_max
+
+    return meta
+
+
+# Find sub_agg name if it exists in order to filter percent change
+def get_sug_agg_key_if_exists(agg):
+    agg_keys_exclude = ('trend_period', 'key', 'doc_count')
+    for key in agg.keys():
+        if key not in agg_keys_exclude:
+            return key
+    return None
+
+
+# Filter out all but the most recent buckets in sub agg for the Percent
+# Change on chart
+def process_trend_aggregations(aggregations):
+    trend_charts = (
+        'product',
+        'sub-product',
+        'issue',
+        'sub-issue',
+        'tags'
+    )
+
+    for agg_name in trend_charts:
+        if agg_name in aggregations:
+            agg_buckets = \
+                aggregations[agg_name][agg_name]['buckets']
+            for sub_agg in agg_buckets:
+                sub_agg['trend_period']['buckets'] = sorted(
+                    sub_agg['trend_period']['buckets'],
+                    key=lambda k: k['key_as_string'], reverse=True)
+                sub_agg_name = get_sug_agg_key_if_exists(sub_agg)
+                if sub_agg_name:
+                    for sub_sub_agg in sub_agg[sub_agg_name]['buckets']:
+                        sub_sub_agg['trend_period']['buckets'] = sorted(
+                            sub_sub_agg['trend_period']['buckets'],
+                            key=lambda k: k['key_as_string'],
+                            reverse=True)[1:2]
+    return aggregations
+
+
+# Process the response from a trends query
+def process_trends_response(response):
+    response['aggregations'] = \
+        process_trend_aggregations(response['aggregations'])
+
+    response['_meta'] = build_trend_meta(response)
+
+    return response
 
 
 def _get_es():

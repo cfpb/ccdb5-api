@@ -169,6 +169,10 @@ class SuggestInputSerializer(serializers.Serializer):
     )
 
 
+class SuggestFilterInputSerializer(SearchInputSerializer):
+    text = serializers.CharField(max_length=100, required=True)
+
+
 class TrendsInputSerializer(SearchInputSerializer):
     # -----------------------------------------------------------------------------
     # Constants
