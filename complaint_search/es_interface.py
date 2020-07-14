@@ -10,6 +10,7 @@ from complaint_search.defaults import (
 )
 from complaint_search.es_builders import (
     AggregationBuilder,
+    DateRangeBucketsBuilder,
     PostFilterBuilder,
     SearchBuilder,
     StateAggregationBuilder,
@@ -228,7 +229,8 @@ def search(agg_exclude=None, **kwargs):
                 CSV_ORDERED_HEADERS
             )
         elif params.get("format") == 'json':
-            del body['highlight']
+            if 'highlight' in body:
+                del body['highlight']
             body['size'] = 0
 
             res = _get_es().search(index=_COMPLAINT_ES_INDEX,
@@ -245,6 +247,7 @@ def suggest(text=None, size=6):
         return []
     body = {"sgg": {"text": text, "completion": {
         "field": "suggest", "size": size}}}
+
     res = _get_es().suggest(index=_COMPLAINT_ES_INDEX, body=body)
     candidates = [e['text'] for e in res['sgg'][0]['options']]
     return candidates
@@ -267,11 +270,19 @@ def filter_suggest(filterField, display_field=None, **kwargs):
         filterField: aggregation_builder.build_one(filterField)
     }
     # add the input value as a must match
-    aggs[filterField]['filter']['bool']['must'].append(
-        {
-            'prefix': {filterField: params['text']}
-        }
-    )
+    if filterField != 'zip_code':
+        aggs[filterField]['filter']['bool']['must'].append(
+            {
+                'wildcard': {filterField: '*{}*'.format(params['text'])}
+            }
+        )
+    else:
+        aggs[filterField]['filter']['bool']['must'].append(
+            {
+                'prefix': {filterField: params['text']}
+            }
+        )
+
     # choose which field to actually display
     aggs[filterField]['aggs'][filterField]['terms'][
         'field'] = filterField if display_field is None else display_field
@@ -314,9 +325,6 @@ def states_agg(agg_exclude=None, **kwargs):
         _ES_URL, _COMPLAINT_ES_INDEX, _COMPLAINT_DOC_TYPE, body
     )
 
-    del body['highlight']
-    del body['sort']
-
     aggregation_builder = StateAggregationBuilder()
     aggregation_builder.add(**params)
     if agg_exclude:
@@ -329,3 +337,51 @@ def states_agg(agg_exclude=None, **kwargs):
                            scroll="10m")
 
     return res
+
+
+def trends(agg_exclude=None, **kwargs):
+    params = copy.deepcopy(PARAMS)
+    params.update(**kwargs)
+    params.update(size=0)
+    search_builder = SearchBuilder()
+    search_builder.add(**params)
+    body = search_builder.build()
+
+    res_trends = None
+
+    aggregation_builder = TrendsAggregationBuilder()
+    aggregation_builder.add(**params)
+    if agg_exclude:
+        aggregation_builder.add_exclude(agg_exclude)
+    body["aggs"] = aggregation_builder.build()
+
+    res_trends = _get_es().search(index=_COMPLAINT_ES_INDEX,
+                                  doc_type=_COMPLAINT_DOC_TYPE,
+                                  body=body)
+
+    res_date_buckets = None
+
+    date_bucket_body = copy.deepcopy(body)
+    date_bucket_body['query'] = {
+        "query_string": {
+            "query": "*",
+            "fields": [
+                "_all"
+            ],
+            "default_operator": "AND"
+        }
+    }
+
+    date_range_buckets_builder = DateRangeBucketsBuilder()
+    date_range_buckets_builder.add(**params)
+    date_bucket_body['aggs'] = date_range_buckets_builder.build()
+
+    res_date_buckets = _get_es().search(index=_COMPLAINT_ES_INDEX,
+                                        doc_type=_COMPLAINT_DOC_TYPE,
+                                        body=date_bucket_body)
+
+    res_trends = process_trends_response(res_trends)
+    res_trends['aggregations']['dateRangeBuckets'] = \
+        res_date_buckets['aggregations']['dateRangeBuckets']
+
+    return res_trends

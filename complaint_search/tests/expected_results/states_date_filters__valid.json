@@ -1,108 +1,186 @@
 {
-    "_scroll_id": "cXVlcnlUaGVuRmV0Y2g7NTsxNjYxNzpmaUlRdTA0dlJyZTJjVlpROXBoeFBBOzE2NjE4OmZpSVF1MDR2UnJlMmNWWlE5cGh4UEE7MTY2MTY6ZmlJUXUwNHZScmUyY1ZaUTlwaHhQQTsxNjYxOTpmaUlRdTA0dlJyZTJjVlpROXBoeFBBOzE2NjIwOmZpSVF1MDR2UnJlMmNWWlE5cGh4UEE7MDs=",
-    "took": 109,
-    "timed_out": false,
-    "_shards": {
-        "total": 5,
-        "successful": 5,
-        "failed": 0
-    },
-    "hits": {
-        "total": 1609587,
-        "max_score": 0.0,
-        "hits": []
-    },
-    "aggregations": {
-        "product": {
-            "doc_count": 2507,
-            "product": {
-                "doc_count_error_upper_bound": 0,
-                "sum_other_doc_count": 247,
-                "buckets": [
-                    {
-                        "key": "Credit reporting, credit repair services, or other personal consumer reports",
-                        "doc_count": 1093
-                    },
-                    {
-                        "key": "Debt collection",
-                        "doc_count": 450
-                    },
-                    {
-                        "key": "Credit card or prepaid card",
-                        "doc_count": 280
-                    },
-                    {
-                        "key": "Mortgage",
-                        "doc_count": 262
-                    },
-                    {
-                        "key": "Checking or savings account",
-                        "doc_count": 175
-                    }
-                ]
+        "from": 0,
+        "size": 0,
+        "_source": [
+            "company",
+            "company_public_response",
+            "company_response",
+            "complaint_id",
+            "complaint_what_happened",
+            "consumer_consent_provided",
+            "consumer_disputed",
+            "date_received",
+            "date_sent_to_company",
+            "has_narrative",
+            "issue",
+            "product",
+            "state",
+            "submitted_via",
+            "sub_issue",
+            "sub_product",
+            "tags",
+            "timely",
+            "zip_code"
+        ],
+        "query": {
+            "query_string": {
+                "query": "*",
+                "fields": [
+                    "complaint_what_happened"
+                ],
+                "default_operator": "AND"
             }
         },
-        "issue": {
-            "doc_count": 2507,
+        "aggs": {
             "issue": {
-                "doc_count_error_upper_bound": 20,
-                "sum_other_doc_count": 1094,
-                "buckets": [
-                    {
-                        "key": "Incorrect information on your report",
-                        "doc_count": 694
-                    },
-                    {
-                        "key": "Problem with a credit reporting company's investigation into an existing problem",
-                        "doc_count": 296
-                    },
-                    {
-                        "key": "Attempts to collect debt not owed",
-                        "doc_count": 202
-                    },
-                    {
-                        "key": "Managing an account",
-                        "doc_count": 115
-                    },
-                    {
-                        "key": "Trouble during payment process",
-                        "doc_count": 106
+                "filter": {
+                    "bool": {
+                        "must": [
+                            {
+                                "range": {
+                                    "date_received": {
+                                        "from": "2020-01-01",
+                                        "to": "2020-05-05"
+                                    }
+                                }
+                            },
+                            {
+                                "range": {
+                                    "date_sent_to_company": {
+                                        "from": "2020-01-01",
+                                        "to": "2020-05-05"
+                                    }
+                                }
+                            },
+                            {
+                                "terms": {
+                                    "state": [
+                                        "VA"
+                                    ]
+                                }
+                            }
+                        ],
+                        "must_not": []
                     }
-                ]
-            }
-        },
-        "state": {
-            "doc_count": 2507,
-            "state": {
-                "doc_count_error_upper_bound": 0,
-                "sum_other_doc_count": 0,
-                "buckets": [
-                    {
-                        "key": "VA",
-                        "doc_count": 2507,
-                        "product": {
-                            "doc_count_error_upper_bound": 0,
-                            "sum_other_doc_count": 1414,
-                            "buckets": [
-                                {
-                                    "key": "Credit reporting, credit repair services, or other personal consumer reports",
-                                    "doc_count": 1093
-                                }
-                            ]
+                },
+                "aggs": {
+                    "issue": {
+                        "terms": {
+                            "field": "issue.raw",
+                            "size": 5
                         },
-                        "issue": {
-                            "doc_count_error_upper_bound": 60,
-                            "sum_other_doc_count": 1813,
-                            "buckets": [
-                                {
-                                    "key": "Incorrect information on your report",
-                                    "doc_count": 694
+                        "aggs": {
+                            "issue": {
+                                "terms": {
+                                    "field": "sub_issue.raw",
+                                    "size": 10
                                 }
-                            ]
+                            }
                         }
                     }
-                ]
+                }
+            },
+            "product": {
+                "filter": {
+                    "bool": {
+                        "must": [
+                            {
+                                "range": {
+                                    "date_received": {
+                                        "from": "2020-01-01",
+                                        "to": "2020-05-05"
+                                    }
+                                }
+                            },
+                            {
+                                "range": {
+                                    "date_sent_to_company": {
+                                        "from": "2020-01-01",
+                                        "to": "2020-05-05"
+                                    }
+                                }
+                            },
+                            {
+                                "terms": {
+                                    "state": [
+                                        "VA"
+                                    ]
+                                }
+                            }
+                        ],
+                        "must_not": []
+                    }
+                },
+                "aggs": {
+                    "product": {
+                        "terms": {
+                            "field": "product.raw",
+                            "size": 5
+                        },
+                        "aggs": {
+                            "product": {
+                                "terms": {
+                                    "field": "sub_product.raw",
+                                    "size": 10
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "state": {
+                "filter": {
+                    "bool": {
+                        "must": [
+                            {
+                                "range": {
+                                    "date_received": {
+                                        "from": "2020-01-01",
+                                        "to": "2020-05-05"
+                                    }
+                                }
+                            },
+                            {
+                                "range": {
+                                    "date_sent_to_company": {
+                                        "from": "2020-01-01",
+                                        "to": "2020-05-05"
+                                    }
+                                }
+                            },
+                            {
+                                "terms": {
+                                    "state": [
+                                        "VA"
+                                    ]
+                                }
+                            }
+                        ],
+                        "must_not": []
+                    }
+                },
+                "aggs": {
+                    "state": {
+                        "terms": {
+                            "field": "state",
+                            "size": 0
+                        },
+                        "aggs": {
+                            "product": {
+                                "terms": {
+                                    "field": "product.raw",
+                                    "size": 1
+                                }
+                            },
+                            "issue": {
+                                "terms": {
+                                    "field": "issue.raw",
+                                    "size": 1
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
-}

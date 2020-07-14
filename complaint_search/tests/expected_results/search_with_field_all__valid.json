@@ -1,5 +1,6 @@
 {
-    "from": 0,
+  "from": 0,
+  "size": 10,
   "_source": [
     "company",
     "company_public_response",
@@ -21,282 +22,246 @@
     "timely",
     "zip_code"
   ],
-    "size": 10,
-    "query": {
-        "query_string": {
-            "query": "*",
-            "fields": [
-                "_all"
-            ],
-            "default_operator": "AND"
-        }
-    },
-    "highlight": {
-        "require_field_match": false,
-        "fields": {
-            "sub_product": {},
-            "date_sent_to_company": {},
-            "complaint_id": {},
-            "consumer_consent_provided": {},
-            "date_received": {},
-            "state": {},
-            "issue": {},
-            "company_response": {},
-            "zip_code": {},
-            "timely": {},
-            "product": {},
-            "complaint_what_happened": {},
-            "company": {},
-            "sub_issue": {},
-            "tags": {},
-            "company_public_response": {},
-            "consumer_disputed": {},
-            "has_narrative": {},
-            "submitted_via": {}
-        },
-        "number_of_fragments": 1,
-        "fragment_size": 500
-    },
-    "sort": [{"_score": {"order": "desc"}}],
-    "post_filter": {"bool": {"filter": [], "must": [], "should":[]}},
-    "aggs": {
-        "has_narrative": {
-            "filter": {
-                "bool": {
-                    "filter": [],
-                    "must": [],
-                    "should": []
-                }
-            },
-            "aggs": {
-                "has_narrative": {
-                    "terms": {
-                        "field": "has_narrative",
-                        "size": 0
-                    }
-                }
-            }
-        },
-        "company": {
-            "filter": {
-                "bool": {
-                    "filter": [],
-                    "must": [],
-                    "should": []
-                }
-            },
-            "aggs": {
-                "company": {
-                    "terms": {
-                        "field": "company.raw",
-                        "size": 0
-                    }
-                }
-            }
-        },
-        "product": {
-            "filter": {
-                "bool": {
-                    "filter": [],
-                    "must": [],
-                    "should": []
-                }
-            },
-            "aggs": {
-                "product": {
-                    "terms": {
-                        "field": "product.raw",
-                        "size": 0
-                    },
-                    "aggs": {
-                        "sub_product.raw": {
-                            "terms": {
-                                "field": "sub_product.raw",
-                                "size": 0
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "issue": {
-            "filter": {
-                "bool": {
-                    "filter": [],
-                    "must": [],
-                    "should": []
-                }
-            },
-            "aggs": {
-                "issue": {
-                    "terms": {
-                        "field": "issue.raw",
-                        "size": 0
-                    },
-                    "aggs": {
-                        "sub_issue.raw": {
-                            "terms": {
-                                "field": "sub_issue.raw",
-                                "size": 0
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "state": {
-            "filter": {
-                "bool": {
-                    "filter": [],
-                    "must": [],
-                    "should": []
-                }
-            },
-            "aggs": {
-                "state": {
-                    "terms": {
-                        "field": "state",
-                        "size": 0
-                    }
-                }
-            }
-        },
-        "zip_code": {
-            "filter": {
-                "bool": {
-                    "filter": [],
-                    "must": [],
-                    "should": []
-                }
-            },
-            "aggs": {
-                "zip_code": {
-                    "terms": {
-                        "field": "zip_code",
-                        "size": 0
-                    }
-                }
-            }
-        },
-        "timely": {
-            "filter": {
-                "bool": {
-                    "filter": [],
-                    "must": [],
-                    "should": []
-                }
-            },
-            "aggs": {
-                "timely": {
-                    "terms": {
-                        "field": "timely",
-                        "size": 0
-                    }
-                }
-            }
-        },
-        "company_response": {
-            "filter": {
-                "bool": {
-                    "filter": [],
-                    "must": [],
-                    "should": []
-                }
-            },
-            "aggs": {
-                "company_response": {
-                    "terms": {
-                        "field": "company_response",
-                        "size": 0
-                    }
-                }
-            }
-        },
-        "company_public_response": {
-            "filter": {
-                "bool": {
-                    "filter": [],
-                    "must": [],
-                    "should": []
-                }
-            },
-            "aggs": {
-                "company_public_response": {
-                    "terms": {
-                        "field": "company_public_response.raw",
-                        "size": 0
-                    }
-                }
-            }
-        },
-        "consumer_disputed": {
-            "filter": {
-                "bool": {
-                    "filter": [],
-                    "must": [],
-                    "should": []
-                }
-            },
-            "aggs": {
-                "consumer_disputed": {
-                    "terms": {
-                        "field": "consumer_disputed.raw",
-                        "size": 0
-                    }
-                }
-            }
-        },
-        "consumer_consent_provided": {
-            "filter": {
-                "bool": {
-                    "filter": [],
-                    "must": [],
-                    "should": []
-                }
-            },
-            "aggs": {
-                "consumer_consent_provided": {
-                    "terms": {
-                        "field": "consumer_consent_provided.raw",
-                        "size": 0
-                    }
-                }
-            }
-        },
-        "tags": {
-            "filter": {
-                "bool": {
-                    "filter": [],
-                    "must": [],
-                    "should": []
-                }
-            },
-            "aggs": {
-                "tags": {
-                    "terms": {
-                        "field": "tags",
-                        "size": 0
-                    }
-                }
-            }
-        },
-        "submitted_via": {
-            "filter": {
-                "bool": {
-                    "filter": [],
-                    "must": [],
-                    "should": []
-                }
-            },
-            "aggs": {
-                "submitted_via": {
-                    "terms": {
-                        "field": "submitted_via",
-                        "size": 0
-                    }
-                }
-            }
-        }
-
+  "query": {
+    "query_string": {
+      "query": "*",
+      "fields": [
+        "_all"
+      ],
+      "default_operator": "AND"
     }
+  },
+  "highlight": {
+    "require_field_match": false,
+    "number_of_fragments": 1,
+    "fragment_size": 500,
+    "fields": {
+      "company": {},
+      "company_public_response": {},
+      "company_response": {},
+      "complaint_id": {},
+      "complaint_what_happened": {},
+      "consumer_consent_provided": {},
+      "consumer_disputed": {},
+      "date_received": {},
+      "date_sent_to_company": {},
+      "has_narrative": {},
+      "issue": {},
+      "product": {},
+      "state": {},
+      "submitted_via": {},
+      "sub_issue": {},
+      "sub_product": {},
+      "tags": {},
+      "timely": {},
+      "zip_code": {}
+    }
+  },
+  "sort": [
+    {
+      "_score": {
+        "order": "desc"
+      }
+    }
+  ],
+  "post_filter": {
+    "bool": {
+      "must": [],
+      "must_not": []
+    }
+  },
+  "aggs": {
+    "company_public_response": {
+      "aggs": {
+        "company_public_response": {
+          "terms": {
+            "field": "company_public_response.raw",
+            "size": 0
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [],
+          "must_not": []
+        }
+      }
+    },
+    "company_response": {
+      "aggs": {
+        "company_response": {
+          "terms": {
+            "field": "company_response",
+            "size": 0
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [],
+          "must_not": []
+        }
+      }
+    },
+    "consumer_consent_provided": {
+      "aggs": {
+        "consumer_consent_provided": {
+          "terms": {
+            "field": "consumer_consent_provided.raw",
+            "size": 0
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [],
+          "must_not": []
+        }
+      }
+    },
+    "consumer_disputed": {
+      "aggs": {
+        "consumer_disputed": {
+          "terms": {
+            "field": "consumer_disputed.raw",
+            "size": 0
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [],
+          "must_not": []
+        }
+      }
+    },
+    "has_narrative": {
+      "aggs": {
+        "has_narrative": {
+          "terms": {
+            "field": "has_narrative",
+            "size": 0
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [],
+          "must_not": []
+        }
+      }
+    },
+    "issue": {
+      "aggs": {
+        "issue": {
+          "terms": {
+            "field": "issue.raw",
+            "size": 0
+          },
+          "aggs": {
+            "sub_issue.raw": {
+              "terms": {
+                "field": "sub_issue.raw",
+                "size": 0
+              }
+            }
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [],
+          "must_not": []
+        }
+      }
+    },
+    "product": {
+      "aggs": {
+        "product": {
+          "terms": {
+            "field": "product.raw",
+            "size": 0
+          },
+          "aggs": {
+            "sub_product.raw": {
+              "terms": {
+                "field": "sub_product.raw",
+                "size": 0
+              }
+            }
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [],
+          "must_not": []
+        }
+      }
+    },
+    "state": {
+      "aggs": {
+        "state": {
+          "terms": {
+            "field": "state",
+            "size": 0
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [],
+          "must_not": []
+        }
+      }
+    },
+    "submitted_via": {
+      "aggs": {
+        "submitted_via": {
+          "terms": {
+            "field": "submitted_via",
+            "size": 0
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [],
+          "must_not": []
+        }
+      }
+    },
+    "tags": {
+      "aggs": {
+        "tags": {
+          "terms": {
+            "field": "tags",
+            "size": 0
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [],
+          "must_not": []
+        }
+      }
+    },
+    "timely": {
+      "aggs": {
+        "timely": {
+          "terms": {
+            "field": "timely",
+            "size": 0
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [],
+          "must_not": []
+        }
+      }
+    }
+  }
 }

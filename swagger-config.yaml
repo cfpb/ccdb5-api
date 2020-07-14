@@ -674,6 +674,24 @@ components:
       type: array
       items:
         type: string
+    TrendsResult:
+      type: object
+      properties:
+        aggregations:
+          type: object
+          properties:
+            company:
+              $ref: '#/components/schemas/MultiLevelAggregation'
+            issue:
+              $ref: '#/components/schemas/MultiLevelAggregation'
+            product:
+              $ref: '#/components/schemas/MultiLevelAggregation'
+            sub_issue:
+              $ref: '#/components/schemas/MultiLevelAggregation'
+            sub_product:
+              $ref: '#/components/schemas/MultiLevelAggregation'
+            tags:
+              $ref: '#/components/schemas/MultiLevelAggregation'
   links: {}
   callbacks: {}
 security: []
