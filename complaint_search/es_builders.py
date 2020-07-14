@@ -50,6 +50,7 @@ class BaseBuilder(object):
         "company_response",
         "consumer_consent_provided",
         "consumer_disputed",
+        "has_narrative",
         "issue",
         "product",
         "state",
@@ -58,9 +59,6 @@ class BaseBuilder(object):
         "timely",
         "zip_code",
     )
-
-    # Filters for those that need conversion from string to boolean
-    _OPTIONAL_FILTERS_STRING_TO_BOOL = ("has_narrative",)
 
     # Filters that use different names in Elasticsearch
     _OPTIONAL_FILTERS_PARAM_TO_ES_MAP = {
