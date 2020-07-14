@@ -60,9 +60,6 @@ class BaseBuilder(object):
         "zip_code",
     )
 
-    # Filters for those that need conversion from string to boolean
-    _OPTIONAL_FILTERS_STRING_TO_BOOL = ("has_narrative",)
-
     # Filters that use different names in Elasticsearch
     _OPTIONAL_FILTERS_PARAM_TO_ES_MAP = {
         "company_public_response": "company_public_response.raw",
