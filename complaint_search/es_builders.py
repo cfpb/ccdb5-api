@@ -409,8 +409,10 @@ class AggregationBuilder(BaseBuilder):
 
         agg_fields = self._AGG_FIELDS
         if self.exclude:
-            agg_fields = [field_name for field_name in self._AGG_FIELDS
-                          if field_name not in self.exclude]
+            agg_fields = [
+                field_name for field_name in self._AGG_FIELDS
+                if field_name not in self.exclude or field_name in self.params
+            ]
         for field_name in agg_fields:
             aggs[field_name] = self.build_one(field_name)
 
