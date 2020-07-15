@@ -390,6 +390,22 @@
           "must_not": []
         }
       }
+    },
+    "zip_code": {
+      "aggs": {
+        "zip_code": {
+          "terms": {
+            "field": "zip_code",
+            "size": 0
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [],
+          "must_not": []
+        }
+      }
     }
   }
 }

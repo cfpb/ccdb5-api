@@ -62,6 +62,22 @@
     }
   },
   "aggs": {
+    "company": {
+      "aggs": {
+        "company": {
+          "terms": {
+            "field": "company.raw",
+            "size": 0
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [],
+          "must_not": []
+        }
+      }
+    },
     "company_public_response": {
       "aggs": {
         "company_public_response": {
