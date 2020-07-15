@@ -57,7 +57,7 @@ MIDDLEWARE = (
     'django.middleware.security.SecurityMiddleware',
 )
 
-if django.VERSION < (2, 0):
+if django.VERSION < (2, 0):  # pragma: no cover
     MIDDLEWARE += (
         'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     )

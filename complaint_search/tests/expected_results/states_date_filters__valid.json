@@ -1,0 +1,186 @@
+{
+        "from": 0,
+        "size": 0,
+        "_source": [
+            "company",
+            "company_public_response",
+            "company_response",
+            "complaint_id",
+            "complaint_what_happened",
+            "consumer_consent_provided",
+            "consumer_disputed",
+            "date_received",
+            "date_sent_to_company",
+            "has_narrative",
+            "issue",
+            "product",
+            "state",
+            "submitted_via",
+            "sub_issue",
+            "sub_product",
+            "tags",
+            "timely",
+            "zip_code"
+        ],
+        "query": {
+            "query_string": {
+                "query": "*",
+                "fields": [
+                    "complaint_what_happened"
+                ],
+                "default_operator": "AND"
+            }
+        },
+        "aggs": {
+            "issue": {
+                "filter": {
+                    "bool": {
+                        "must": [
+                            {
+                                "range": {
+                                    "date_received": {
+                                        "from": "2020-01-01",
+                                        "to": "2020-05-05"
+                                    }
+                                }
+                            },
+                            {
+                                "range": {
+                                    "date_sent_to_company": {
+                                        "from": "2020-01-01",
+                                        "to": "2020-05-05"
+                                    }
+                                }
+                            },
+                            {
+                                "terms": {
+                                    "state": [
+                                        "VA"
+                                    ]
+                                }
+                            }
+                        ],
+                        "must_not": []
+                    }
+                },
+                "aggs": {
+                    "issue": {
+                        "terms": {
+                            "field": "issue.raw",
+                            "size": 5
+                        },
+                        "aggs": {
+                            "issue": {
+                                "terms": {
+                                    "field": "sub_issue.raw",
+                                    "size": 10
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "product": {
+                "filter": {
+                    "bool": {
+                        "must": [
+                            {
+                                "range": {
+                                    "date_received": {
+                                        "from": "2020-01-01",
+                                        "to": "2020-05-05"
+                                    }
+                                }
+                            },
+                            {
+                                "range": {
+                                    "date_sent_to_company": {
+                                        "from": "2020-01-01",
+                                        "to": "2020-05-05"
+                                    }
+                                }
+                            },
+                            {
+                                "terms": {
+                                    "state": [
+                                        "VA"
+                                    ]
+                                }
+                            }
+                        ],
+                        "must_not": []
+                    }
+                },
+                "aggs": {
+                    "product": {
+                        "terms": {
+                            "field": "product.raw",
+                            "size": 5
+                        },
+                        "aggs": {
+                            "product": {
+                                "terms": {
+                                    "field": "sub_product.raw",
+                                    "size": 10
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "state": {
+                "filter": {
+                    "bool": {
+                        "must": [
+                            {
+                                "range": {
+                                    "date_received": {
+                                        "from": "2020-01-01",
+                                        "to": "2020-05-05"
+                                    }
+                                }
+                            },
+                            {
+                                "range": {
+                                    "date_sent_to_company": {
+                                        "from": "2020-01-01",
+                                        "to": "2020-05-05"
+                                    }
+                                }
+                            },
+                            {
+                                "terms": {
+                                    "state": [
+                                        "VA"
+                                    ]
+                                }
+                            }
+                        ],
+                        "must_not": []
+                    }
+                },
+                "aggs": {
+                    "state": {
+                        "terms": {
+                            "field": "state",
+                            "size": 0
+                        },
+                        "aggs": {
+                            "product": {
+                                "terms": {
+                                    "field": "product.raw",
+                                    "size": 1
+                                }
+                            },
+                            "issue": {
+                                "terms": {
+                                    "field": "issue.raw",
+                                    "size": 1
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
