@@ -85,11 +85,14 @@ class EsInterfaceTest_Search(TestCase):
         }
     ]
 
+    DEFAULT_EXCLUDE = ['company', 'zip_code']
+
     # -------------------------------------------------------------------------
     # Helper Methods
     # -------------------------------------------------------------------------
 
-    def request_test(self, expected, **kwargs):
+    def request_test(self, expected, agg_exclude=['company', 'zip_code'],
+                     **kwargs):
         body = load(expected)
 
         with mock.patch(
@@ -110,7 +113,7 @@ class EsInterfaceTest_Search(TestCase):
                 self.MOCK_SEARCH_RESULT["_meta"])
             mock_scroll.return_value = self.MOCK_SEARCH_SIDE_EFFECT[0]
 
-            res = search(**kwargs)
+            res = search(agg_exclude, **kwargs)
 
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
@@ -248,7 +251,7 @@ class EsInterfaceTest_Search(TestCase):
             self.MOCK_SEARCH_RESULT["_meta"])
         mock_scroll.side_effect = copy.deepcopy(self.MOCK_SCROLL_SIDE_EFFECT)
         body = load("search_with_frm__valid")
-        res = search(frm=20)
+        res = search(self.DEFAULT_EXCLUDE, frm=20)
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
@@ -298,7 +301,7 @@ class EsInterfaceTest_Search(TestCase):
         body = load("search_with_sort__valid")
 
         for s in sort_fields:
-            res = search(sort=s[0])
+            res = search(self.DEFAULT_EXCLUDE, sort=s[0])
             body["sort"] = [{s[1]: {"order": s[2]}}]
             mock_search.assert_any_call(
                 body=body,
@@ -351,6 +354,10 @@ class EsInterfaceTest_Search(TestCase):
         self.request_test("search_with_company__valid",
                           company=["Bank 1", "Second Bank"])
 
+    def test_search_with_not_company__valid(self):
+        self.request_test("search_with_not_company__valid",
+                          not_company=["EQUIFAX, INC."])
+
     def test_search_with_company_agg_exclude__valid(self):
         self.request_test("search_with_company_agg_exclude__valid",
                           agg_exclude=['company'],
@@ -363,12 +370,34 @@ class EsInterfaceTest_Search(TestCase):
             product=["Payday loan", u"Mortgage\u2022FHA mortgage"]
         )
 
+    def test_search_with_not_product__valid(self):
+        self.request_test(
+            "search_with_not_product__valid",
+            not_product=["Credit reporting, credit repair services, or "
+                         "other personal consumer reports",
+                         "Mortgage\u2022FHA mortgage"]
+        )
+
     def test_search_with_issue__valid(self):
         self.request_test(
             "search_with_issue__valid",
             agg_exclude=[u"zip_code", u"company"],
             issue=[u"Communication tactics\u2022Frequent or repeated calls",
                    "Loan servicing, payments, escrow account"]
+        )
+
+    def test_search_with_not_issue__valid(self):
+        self.request_test(
+            "search_with_not_issue__valid",
+            not_issue=["Incorrect information on your report"]
+        )
+
+    def test_search_with_two_not__valid(self):
+        self.request_test(
+            "search_with_two_not__valid",
+            not_issue=["Incorrect information on your report"],
+            not_product=["Credit reporting, credit repair services, or "
+                         "other personal consumer reports"]
         )
 
     def test_search_with_state__valid(self):
@@ -582,8 +611,8 @@ class EsInterfaceTest_FilterSuggest(TestCase):
                             'bool': {
                                 'must': [
                                     {
-                                        'prefix': {
-                                            'company.suggest': 'BA'
+                                        'wildcard': {
+                                            'company.suggest': '*BA*'
                                         }}]}
                         },
                         "aggs": {

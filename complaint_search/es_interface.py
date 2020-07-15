@@ -10,9 +10,11 @@ from complaint_search.defaults import (
 )
 from complaint_search.es_builders import (
     AggregationBuilder,
+    DateRangeBucketsBuilder,
     PostFilterBuilder,
     SearchBuilder,
     StateAggregationBuilder,
+    TrendsAggregationBuilder,
 )
 from complaint_search.export import ElasticSearchExporter
 from elasticsearch import Elasticsearch, helpers
@@ -28,6 +30,81 @@ _ES_INSTANCE = None
 
 _COMPLAINT_ES_INDEX = os.environ.get('COMPLAINT_ES_INDEX', 'complaint-index')
 _COMPLAINT_DOC_TYPE = os.environ.get('COMPLAINT_DOC_TYPE', 'complaint-doctype')
+
+
+# -----------------------------------------------------------------------------
+# Trends Operations
+# -----------------------------------------------------------------------------
+
+# Safely extracts a string from an object
+# if it isn't present, the default value is returned
+def extract_date(agg_term, default_value):
+    return agg_term['value_as_string'] \
+        if 'value_as_string' in agg_term else default_value
+
+
+def build_trend_meta(response):
+    meta = {}
+
+    if 'max_date' in response['aggregations']:
+        date_max = extract_date(response['aggregations']['max_date'], None)
+        date_min = extract_date(response['aggregations']['min_date'], None)
+
+        # del response["aggregations"]["max_date"]
+        # del response["aggregations"]["min_date"]
+
+        meta['date_min'] = date_min
+        meta['date_max'] = date_max
+
+    return meta
+
+
+# Find sub_agg name if it exists in order to filter percent change
+def get_sug_agg_key_if_exists(agg):
+    agg_keys_exclude = ('trend_period', 'key', 'doc_count')
+    for key in agg.keys():
+        if key not in agg_keys_exclude:
+            return key
+    return None
+
+
+# Filter out all but the most recent buckets in sub agg for the Percent
+# Change on chart
+def process_trend_aggregations(aggregations):
+    trend_charts = (
+        'product',
+        'sub-product',
+        'issue',
+        'sub-issue',
+        'tags'
+    )
+
+    for agg_name in trend_charts:
+        if agg_name in aggregations:
+            agg_buckets = \
+                aggregations[agg_name][agg_name]['buckets']
+            for sub_agg in agg_buckets:
+                sub_agg['trend_period']['buckets'] = sorted(
+                    sub_agg['trend_period']['buckets'],
+                    key=lambda k: k['key_as_string'], reverse=True)
+                sub_agg_name = get_sug_agg_key_if_exists(sub_agg)
+                if sub_agg_name:
+                    for sub_sub_agg in sub_agg[sub_agg_name]['buckets']:
+                        sub_sub_agg['trend_period']['buckets'] = sorted(
+                            sub_sub_agg['trend_period']['buckets'],
+                            key=lambda k: k['key_as_string'],
+                            reverse=True)[1:2]
+    return aggregations
+
+
+# Process the response from a trends query
+def process_trends_response(response):
+    response['aggregations'] = \
+        process_trend_aggregations(response['aggregations'])
+
+    response['_meta'] = build_trend_meta(response)
+
+    return response
 
 
 def _get_es():
@@ -228,7 +305,8 @@ def search(agg_exclude=None, **kwargs):
                 CSV_ORDERED_HEADERS
             )
         elif params.get("format") == 'json':
-            del body['highlight']
+            if 'highlight' in body:
+                del body['highlight']
             body['size'] = 0
 
             res = _get_es().search(index=_COMPLAINT_ES_INDEX,
@@ -245,6 +323,7 @@ def suggest(text=None, size=6):
         return []
     body = {"sgg": {"text": text, "completion": {
         "field": "suggest", "size": size}}}
+
     res = _get_es().suggest(index=_COMPLAINT_ES_INDEX, body=body)
     candidates = [e['text'] for e in res['sgg'][0]['options']]
     return candidates
@@ -267,11 +346,19 @@ def filter_suggest(filterField, display_field=None, **kwargs):
         filterField: aggregation_builder.build_one(filterField)
     }
     # add the input value as a must match
-    aggs[filterField]['filter']['bool']['must'].append(
-        {
-            'prefix': {filterField: params['text']}
-        }
-    )
+    if filterField != 'zip_code':
+        aggs[filterField]['filter']['bool']['must'].append(
+            {
+                'wildcard': {filterField: '*{}*'.format(params['text'])}
+            }
+        )
+    else:
+        aggs[filterField]['filter']['bool']['must'].append(
+            {
+                'prefix': {filterField: params['text']}
+            }
+        )
+
     # choose which field to actually display
     aggs[filterField]['aggs'][filterField]['terms'][
         'field'] = filterField if display_field is None else display_field
@@ -314,9 +401,6 @@ def states_agg(agg_exclude=None, **kwargs):
         _ES_URL, _COMPLAINT_ES_INDEX, _COMPLAINT_DOC_TYPE, body
     )
 
-    del body['highlight']
-    del body['sort']
-
     aggregation_builder = StateAggregationBuilder()
     aggregation_builder.add(**params)
     if agg_exclude:
@@ -329,3 +413,51 @@ def states_agg(agg_exclude=None, **kwargs):
                            scroll="10m")
 
     return res
+
+
+def trends(agg_exclude=None, **kwargs):
+    params = copy.deepcopy(PARAMS)
+    params.update(**kwargs)
+    params.update(size=0)
+    search_builder = SearchBuilder()
+    search_builder.add(**params)
+    body = search_builder.build()
+
+    res_trends = None
+
+    aggregation_builder = TrendsAggregationBuilder()
+    aggregation_builder.add(**params)
+    if agg_exclude:
+        aggregation_builder.add_exclude(agg_exclude)
+    body["aggs"] = aggregation_builder.build()
+
+    res_trends = _get_es().search(index=_COMPLAINT_ES_INDEX,
+                                  doc_type=_COMPLAINT_DOC_TYPE,
+                                  body=body)
+
+    res_date_buckets = None
+
+    date_bucket_body = copy.deepcopy(body)
+    date_bucket_body['query'] = {
+        "query_string": {
+            "query": "*",
+            "fields": [
+                "_all"
+            ],
+            "default_operator": "AND"
+        }
+    }
+
+    date_range_buckets_builder = DateRangeBucketsBuilder()
+    date_range_buckets_builder.add(**params)
+    date_bucket_body['aggs'] = date_range_buckets_builder.build()
+
+    res_date_buckets = _get_es().search(index=_COMPLAINT_ES_INDEX,
+                                        doc_type=_COMPLAINT_DOC_TYPE,
+                                        body=date_bucket_body)
+
+    res_trends = process_trends_response(res_trends)
+    res_trends['aggregations']['dateRangeBuckets'] = \
+        res_date_buckets['aggregations']['dateRangeBuckets']
+
+    return res_trends

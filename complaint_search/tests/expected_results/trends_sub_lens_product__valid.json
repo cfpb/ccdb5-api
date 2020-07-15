@@ -1,0 +1,888 @@
+{
+    "took": 984,
+    "timed_out": false,
+    "_shards": {
+        "total": 5,
+        "successful": 5,
+        "failed": 0
+    },
+    "hits": {
+        "total": 1657420,
+        "max_score": 0.0,
+        "hits": []
+    },
+    "aggregations": {
+        "dateRangeBrush": {
+            "doc_count": 1657420,
+            "dateRangeBrush": {
+                "buckets": [
+                    {
+                        "key_as_string": "2011-01-01T00:00:00.000Z",
+                        "key": 1293840000000,
+                        "doc_count": 2536
+                    },
+                    {
+                        "key_as_string": "2012-01-01T00:00:00.000Z",
+                        "key": 1325376000000,
+                        "doc_count": 72373
+                    },
+                    {
+                        "key_as_string": "2013-01-01T00:00:00.000Z",
+                        "key": 1356998400000,
+                        "doc_count": 108217
+                    },
+                    {
+                        "key_as_string": "2014-01-01T00:00:00.000Z",
+                        "key": 1388534400000,
+                        "doc_count": 153043
+                    },
+                    {
+                        "key_as_string": "2015-01-01T00:00:00.000Z",
+                        "key": 1420070400000,
+                        "doc_count": 168475
+                    },
+                    {
+                        "key_as_string": "2016-01-01T00:00:00.000Z",
+                        "key": 1451606400000,
+                        "doc_count": 191468
+                    },
+                    {
+                        "key_as_string": "2017-01-01T00:00:00.000Z",
+                        "key": 1483228800000,
+                        "doc_count": 242965
+                    },
+                    {
+                        "key_as_string": "2018-01-01T00:00:00.000Z",
+                        "key": 1514764800000,
+                        "doc_count": 257313
+                    },
+                    {
+                        "key_as_string": "2019-01-01T00:00:00.000Z",
+                        "key": 1546300800000,
+                        "doc_count": 277390
+                    },
+                    {
+                        "key_as_string": "2020-01-01T00:00:00.000Z",
+                        "key": 1577836800000,
+                        "doc_count": 183640
+                    }
+                ]
+            }
+        },
+        "product": {
+            "doc_count": 1657420,
+            "product": {
+                "doc_count_error_upper_bound": 0,
+                "sum_other_doc_count": 388948,
+                "buckets": [
+                    {
+                        "key": "Credit reporting, credit repair services, or other personal consumer reports",
+                        "doc_count": 434259,
+                        "product": {
+                            "doc_count_error_upper_bound": 0,
+                            "sum_other_doc_count": 0,
+                            "buckets": [
+                                {
+                                    "key": "Credit reporting",
+                                    "doc_count": 427474,
+                                    "trend_period": {
+                                        "buckets": [
+                                            {
+                                                "key_as_string": "2019-01-01T00:00:00.000Z",
+                                                "key": 1546300800000,
+                                                "doc_count": 136459,
+                                                "interval_diff": {
+                                                    "value": 26900.0
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "key": "Other personal consumer report",
+                                    "doc_count": 5419,
+                                    "trend_period": {
+                                        "buckets": [
+                                            {
+                                                "key_as_string": "2019-01-01T00:00:00.000Z",
+                                                "key": 1546300800000,
+                                                "doc_count": 1619,
+                                                "interval_diff": {
+                                                    "value": -85.0
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "key": "Credit repair services",
+                                    "doc_count": 1365,
+                                    "trend_period": {
+                                        "buckets": [
+                                            {
+                                                "key_as_string": "2019-01-01T00:00:00.000Z",
+                                                "key": 1546300800000,
+                                                "doc_count": 516,
+                                                "interval_diff": {
+                                                    "value": 155.0
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "key": "Conventional home mortgage",
+                                    "doc_count": 1,
+                                    "trend_period": {
+                                        "buckets": []
+                                    }
+                                }
+                            ]
+                        },
+                        "trend_period": {
+                            "buckets": [
+                                {
+                                    "key_as_string": "2020-01-01T00:00:00.000Z",
+                                    "key": 1577836800000,
+                                    "doc_count": 110646,
+                                    "interval_diff": {
+                                        "value": -27948.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2019-01-01T00:00:00.000Z",
+                                    "key": 1546300800000,
+                                    "doc_count": 138594,
+                                    "interval_diff": {
+                                        "value": 26969.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2018-01-01T00:00:00.000Z",
+                                    "key": 1514764800000,
+                                    "doc_count": 111625,
+                                    "interval_diff": {
+                                        "value": 38231.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2017-01-01T00:00:00.000Z",
+                                    "key": 1483228800000,
+                                    "doc_count": 73394
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "key": "Mortgage",
+                        "doc_count": 304552,
+                        "product": {
+                            "doc_count_error_upper_bound": 0,
+                            "sum_other_doc_count": 40665,
+                            "buckets": [
+                                {
+                                    "key": "Other mortgage",
+                                    "doc_count": 86635,
+                                    "trend_period": {
+                                        "buckets": [
+                                            {
+                                                "key_as_string": "2016-01-01T00:00:00.000Z",
+                                                "key": 1451606400000,
+                                                "doc_count": 12942,
+                                                "interval_diff": {
+                                                    "value": -382.0
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "key": "Conventional fixed mortgage",
+                                    "doc_count": 70613,
+                                    "trend_period": {
+                                        "buckets": [
+                                            {
+                                                "key_as_string": "2016-01-01T00:00:00.000Z",
+                                                "key": 1451606400000,
+                                                "doc_count": 13700,
+                                                "interval_diff": {
+                                                    "value": -629.0
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "key": "Conventional home mortgage",
+                                    "doc_count": 45545,
+                                    "trend_period": {
+                                        "buckets": [
+                                            {
+                                                "key_as_string": "2019-01-01T00:00:00.000Z",
+                                                "key": 1546300800000,
+                                                "doc_count": 14043,
+                                                "interval_diff": {
+                                                    "value": 19.0
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "key": "FHA mortgage",
+                                    "doc_count": 35714,
+                                    "trend_period": {
+                                        "buckets": [
+                                            {
+                                                "key_as_string": "2019-01-01T00:00:00.000Z",
+                                                "key": 1546300800000,
+                                                "doc_count": 3423,
+                                                "interval_diff": {
+                                                    "value": -11.0
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "key": "Conventional adjustable mortgage (ARM)",
+                                    "doc_count": 25380,
+                                    "trend_period": {
+                                        "buckets": [
+                                            {
+                                                "key_as_string": "2016-01-01T00:00:00.000Z",
+                                                "key": 1451606400000,
+                                                "doc_count": 4638,
+                                                "interval_diff": {
+                                                    "value": -493.0
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        },
+                        "trend_period": {
+                            "buckets": [
+                                {
+                                    "key_as_string": "2020-01-01T00:00:00.000Z",
+                                    "key": 1577836800000,
+                                    "doc_count": 11136,
+                                    "interval_diff": {
+                                        "value": -11572.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2019-01-01T00:00:00.000Z",
+                                    "key": 1546300800000,
+                                    "doc_count": 22708,
+                                    "interval_diff": {
+                                        "value": -1867.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2018-01-01T00:00:00.000Z",
+                                    "key": 1514764800000,
+                                    "doc_count": 24575,
+                                    "interval_diff": {
+                                        "value": -6001.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2017-01-01T00:00:00.000Z",
+                                    "key": 1483228800000,
+                                    "doc_count": 30576,
+                                    "interval_diff": {
+                                        "value": -10890.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2016-01-01T00:00:00.000Z",
+                                    "key": 1451606400000,
+                                    "doc_count": 41466,
+                                    "interval_diff": {
+                                        "value": -879.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2015-01-01T00:00:00.000Z",
+                                    "key": 1420070400000,
+                                    "doc_count": 42345,
+                                    "interval_diff": {
+                                        "value": -616.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2014-01-01T00:00:00.000Z",
+                                    "key": 1388534400000,
+                                    "doc_count": 42961,
+                                    "interval_diff": {
+                                        "value": -6439.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2013-01-01T00:00:00.000Z",
+                                    "key": 1356998400000,
+                                    "doc_count": 49400,
+                                    "interval_diff": {
+                                        "value": 11291.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2012-01-01T00:00:00.000Z",
+                                    "key": 1325376000000,
+                                    "doc_count": 38109,
+                                    "interval_diff": {
+                                        "value": 36833.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2011-01-01T00:00:00.000Z",
+                                    "key": 1293840000000,
+                                    "doc_count": 1276
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "key": "Debt collection",
+                        "doc_count": 300039,
+                        "product": {
+                            "doc_count_error_upper_bound": 0,
+                            "sum_other_doc_count": 85359,
+                            "buckets": [
+                                {
+                                    "key": "I do not know",
+                                    "doc_count": 62909,
+                                    "trend_period": {
+                                        "buckets": [
+                                            {
+                                                "key_as_string": "2019-01-01T00:00:00.000Z",
+                                                "key": 1546300800000,
+                                                "doc_count": 10142,
+                                                "interval_diff": {
+                                                    "value": -577.0
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "key": "Other debt",
+                                    "doc_count": 45339,
+                                    "trend_period": {
+                                        "buckets": [
+                                            {
+                                                "key_as_string": "2019-01-01T00:00:00.000Z",
+                                                "key": 1546300800000,
+                                                "doc_count": 12645,
+                                                "interval_diff": {
+                                                    "value": -2765.0
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "key": "Other (i.e. phone, health club, etc.)",
+                                    "doc_count": 44543,
+                                    "trend_period": {
+                                        "buckets": [
+                                            {
+                                                "key_as_string": "2016-01-01T00:00:00.000Z",
+                                                "key": 1451606400000,
+                                                "doc_count": 13062,
+                                                "interval_diff": {
+                                                    "value": 1030.0
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "key": "Credit card debt",
+                                    "doc_count": 33191,
+                                    "trend_period": {
+                                        "buckets": [
+                                            {
+                                                "key_as_string": "2019-01-01T00:00:00.000Z",
+                                                "key": 1546300800000,
+                                                "doc_count": 10766,
+                                                "interval_diff": {
+                                                    "value": -201.0
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "key": "Credit card",
+                                    "doc_count": 28698,
+                                    "trend_period": {
+                                        "buckets": [
+                                            {
+                                                "key_as_string": "2016-01-01T00:00:00.000Z",
+                                                "key": 1451606400000,
+                                                "doc_count": 7353,
+                                                "interval_diff": {
+                                                    "value": -520.0
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        },
+                        "trend_period": {
+                            "buckets": [
+                                {
+                                    "key_as_string": "2020-01-01T00:00:00.000Z",
+                                    "key": 1577836800000,
+                                    "doc_count": 24101,
+                                    "interval_diff": {
+                                        "value": -22302.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2019-01-01T00:00:00.000Z",
+                                    "key": 1546300800000,
+                                    "doc_count": 46403,
+                                    "interval_diff": {
+                                        "value": -4781.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2018-01-01T00:00:00.000Z",
+                                    "key": 1514764800000,
+                                    "doc_count": 51184,
+                                    "interval_diff": {
+                                        "value": 3231.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2017-01-01T00:00:00.000Z",
+                                    "key": 1483228800000,
+                                    "doc_count": 47953,
+                                    "interval_diff": {
+                                        "value": 7487.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2016-01-01T00:00:00.000Z",
+                                    "key": 1451606400000,
+                                    "doc_count": 40466,
+                                    "interval_diff": {
+                                        "value": 742.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2015-01-01T00:00:00.000Z",
+                                    "key": 1420070400000,
+                                    "doc_count": 39724,
+                                    "interval_diff": {
+                                        "value": 585.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2014-01-01T00:00:00.000Z",
+                                    "key": 1388534400000,
+                                    "doc_count": 39139,
+                                    "interval_diff": {
+                                        "value": 28070.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2013-01-01T00:00:00.000Z",
+                                    "key": 1356998400000,
+                                    "doc_count": 11069
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "key": "Credit reporting",
+                        "doc_count": 140432,
+                        "product": {
+                            "doc_count_error_upper_bound": 0,
+                            "sum_other_doc_count": 0,
+                            "buckets": []
+                        },
+                        "trend_period": {
+                            "buckets": [
+                                {
+                                    "key_as_string": "2017-01-01T00:00:00.000Z",
+                                    "key": 1483228800000,
+                                    "doc_count": 16587,
+                                    "interval_diff": {
+                                        "value": -27494.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2016-01-01T00:00:00.000Z",
+                                    "key": 1451606400000,
+                                    "doc_count": 44081,
+                                    "interval_diff": {
+                                        "value": 9809.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2015-01-01T00:00:00.000Z",
+                                    "key": 1420070400000,
+                                    "doc_count": 34272,
+                                    "interval_diff": {
+                                        "value": 5033.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2014-01-01T00:00:00.000Z",
+                                    "key": 1388534400000,
+                                    "doc_count": 29239,
+                                    "interval_diff": {
+                                        "value": 14859.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2013-01-01T00:00:00.000Z",
+                                    "key": 1356998400000,
+                                    "doc_count": 14380,
+                                    "interval_diff": {
+                                        "value": 12507.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2012-01-01T00:00:00.000Z",
+                                    "key": 1325376000000,
+                                    "doc_count": 1873
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "key": "Credit card",
+                        "doc_count": 89190,
+                        "product": {
+                            "doc_count_error_upper_bound": 0,
+                            "sum_other_doc_count": 0,
+                            "buckets": []
+                        },
+                        "trend_period": {
+                            "buckets": [
+                                {
+                                    "key_as_string": "2017-01-01T00:00:00.000Z",
+                                    "key": 1483228800000,
+                                    "doc_count": 7133,
+                                    "interval_diff": {
+                                        "value": -13932.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2016-01-01T00:00:00.000Z",
+                                    "key": 1451606400000,
+                                    "doc_count": 21065,
+                                    "interval_diff": {
+                                        "value": 3765.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2015-01-01T00:00:00.000Z",
+                                    "key": 1420070400000,
+                                    "doc_count": 17300,
+                                    "interval_diff": {
+                                        "value": 3326.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2014-01-01T00:00:00.000Z",
+                                    "key": 1388534400000,
+                                    "doc_count": 13974,
+                                    "interval_diff": {
+                                        "value": 869.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2013-01-01T00:00:00.000Z",
+                                    "key": 1356998400000,
+                                    "doc_count": 13105,
+                                    "interval_diff": {
+                                        "value": -2248.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2012-01-01T00:00:00.000Z",
+                                    "key": 1325376000000,
+                                    "doc_count": 15353,
+                                    "interval_diff": {
+                                        "value": 14093.0
+                                    }
+                                },
+                                {
+                                    "key_as_string": "2011-01-01T00:00:00.000Z",
+                                    "key": 1293840000000,
+                                    "doc_count": 1260
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "max_date": {
+            "value": 1593622800000.0,
+            "value_as_string": "2020-07-01T12:00:00-05:00"
+        },
+        "min_date": {
+            "value": 1322758800000.0,
+            "value_as_string": "2011-12-01T12:00:00-05:00"
+        },
+        "dateRangeArea": {
+            "doc_count": 1657420,
+            "dateRangeArea": {
+                "buckets": [
+                    {
+                        "key_as_string": "2011-01-01T00:00:00.000Z",
+                        "key": 1293840000000,
+                        "doc_count": 2536
+                    },
+                    {
+                        "key_as_string": "2012-01-01T00:00:00.000Z",
+                        "key": 1325376000000,
+                        "doc_count": 72373
+                    },
+                    {
+                        "key_as_string": "2013-01-01T00:00:00.000Z",
+                        "key": 1356998400000,
+                        "doc_count": 108217
+                    },
+                    {
+                        "key_as_string": "2014-01-01T00:00:00.000Z",
+                        "key": 1388534400000,
+                        "doc_count": 153043
+                    },
+                    {
+                        "key_as_string": "2015-01-01T00:00:00.000Z",
+                        "key": 1420070400000,
+                        "doc_count": 168475
+                    },
+                    {
+                        "key_as_string": "2016-01-01T00:00:00.000Z",
+                        "key": 1451606400000,
+                        "doc_count": 191468
+                    },
+                    {
+                        "key_as_string": "2017-01-01T00:00:00.000Z",
+                        "key": 1483228800000,
+                        "doc_count": 242965
+                    },
+                    {
+                        "key_as_string": "2018-01-01T00:00:00.000Z",
+                        "key": 1514764800000,
+                        "doc_count": 257313
+                    },
+                    {
+                        "key_as_string": "2019-01-01T00:00:00.000Z",
+                        "key": 1546300800000,
+                        "doc_count": 277390
+                    },
+                    {
+                        "key_as_string": "2020-01-01T00:00:00.000Z",
+                        "key": 1577836800000,
+                        "doc_count": 183640
+                    }
+                ]
+            }
+        },
+        "dateRangeBuckets": {
+            "doc_count": 1657420,
+            "dateRangeBuckets": {
+                "buckets": [
+                    {
+                        "key_as_string": "2011-01-01T00:00:00.000Z",
+                        "key": 1293840000000,
+                        "doc_count": 2536
+                    },
+                    {
+                        "key_as_string": "2012-01-01T00:00:00.000Z",
+                        "key": 1325376000000,
+                        "doc_count": 72373
+                    },
+                    {
+                        "key_as_string": "2013-01-01T00:00:00.000Z",
+                        "key": 1356998400000,
+                        "doc_count": 108217
+                    },
+                    {
+                        "key_as_string": "2014-01-01T00:00:00.000Z",
+                        "key": 1388534400000,
+                        "doc_count": 153043
+                    },
+                    {
+                        "key_as_string": "2015-01-01T00:00:00.000Z",
+                        "key": 1420070400000,
+                        "doc_count": 168475
+                    },
+                    {
+                        "key_as_string": "2016-01-01T00:00:00.000Z",
+                        "key": 1451606400000,
+                        "doc_count": 191468
+                    },
+                    {
+                        "key_as_string": "2017-01-01T00:00:00.000Z",
+                        "key": 1483228800000,
+                        "doc_count": 242965
+                    },
+                    {
+                        "key_as_string": "2018-01-01T00:00:00.000Z",
+                        "key": 1514764800000,
+                        "doc_count": 257313
+                    },
+                    {
+                        "key_as_string": "2019-01-01T00:00:00.000Z",
+                        "key": 1546300800000,
+                        "doc_count": 277390
+                    },
+                    {
+                        "key_as_string": "2020-01-01T00:00:00.000Z",
+                        "key": 1577836800000,
+                        "doc_count": 183640
+                    }
+                ]
+            }
+        }
+    },
+    "_meta": {
+        "date_min": "2011-12-01T12:00:00-05:00",
+        "date_max": "2020-07-01T12:00:00-05:00"
+    },
+    "body": {
+        "from": 0,
+        "size": 0,
+        "_source": [
+            "company",
+            "company_public_response",
+            "company_response",
+            "complaint_id",
+            "complaint_what_happened",
+            "consumer_consent_provided",
+            "consumer_disputed",
+            "date_received",
+            "date_sent_to_company",
+            "has_narrative",
+            "issue",
+            "product",
+            "state",
+            "submitted_via",
+            "sub_issue",
+            "sub_product",
+            "tags",
+            "timely",
+            "zip_code"
+        ],
+        "query": {
+            "query_string": {
+                "query": "*",
+                "fields": [
+                    "complaint_what_happened"
+                ],
+                "default_operator": "AND"
+            }
+        },
+        "aggs": {
+            "dateRangeArea": {
+                "aggs": {
+                    "dateRangeArea": {
+                        "date_histogram": {
+                            "field": "date_received",
+                            "interval": "year"
+                        }
+                    }
+                },
+                "filter": {
+                    "bool": {
+                        "must": [],
+                        "must_not": []
+                    }
+                }
+            },
+            "dateRangeBrush": {
+                "aggs": {
+                    "dateRangeBrush": {
+                        "date_histogram": {
+                            "field": "date_received",
+                            "interval": "year"
+                        }
+                    }
+                },
+                "filter": {
+                    "bool": {
+                        "must": [],
+                        "must_not": []
+                    }
+                }
+            },
+            "product": {
+                "aggs": {
+                    "product": {
+                        "terms": {
+                            "field": "product.raw",
+                            "size": 5
+                        },
+                        "aggs": {
+                            "trend_period": {
+                                "date_histogram": {
+                                    "field": "date_received",
+                                    "interval": "year"
+                                },
+                                "aggs": {
+                                    "interval_diff": {
+                                        "serial_diff": {
+                                            "buckets_path": "_count"
+                                        }
+                                    }
+                                }
+                            },
+                            "product": {
+                                "terms": {
+                                    "field": "sub_product.raw",
+                                    "size": 5
+                                },
+                                "aggs": {
+                                    "trend_period": {
+                                        "date_histogram": {
+                                            "field": "date_received",
+                                            "interval": "year"
+                                        },
+                                        "aggs": {
+                                            "interval_diff": {
+                                                "serial_diff": {
+                                                    "buckets_path": "_count"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "filter": {
+                    "bool": {
+                        "must": [],
+                        "must_not": []
+                    }
+                }
+            },
+            "min_date": {
+                "min": {
+                    "field": "date_received",
+                    "format": "yyyy-MM-dd'T'12:00:00-05:00"
+                }
+            },
+            "max_date": {
+                "max": {
+                    "field": "date_received",
+                    "format": "yyyy-MM-dd'T'12:00:00-05:00"
+                }
+            }
+        }
+    }
+}

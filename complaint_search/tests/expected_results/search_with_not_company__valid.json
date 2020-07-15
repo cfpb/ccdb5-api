@@ -31,6 +31,14 @@
       "default_operator": "AND"
     }
   },
+  "highlight": {
+    "require_field_match": false,
+    "number_of_fragments": 1,
+    "fragment_size": 500,
+    "fields": {
+      "complaint_what_happened": {}
+    }
+  },
   "sort": [
     {
       "_score": {
@@ -41,7 +49,15 @@
   "post_filter": {
     "bool": {
       "must": [],
-      "must_not": []
+      "must_not": [
+        {
+          "terms": {
+            "company.raw": [
+              "EQUIFAX, INC."
+            ]
+          }
+        }
+      ]
     }
   },
   "aggs": {
@@ -57,7 +73,15 @@
       "filter": {
         "bool": {
           "must": [],
-          "must_not": []
+          "must_not": [
+            {
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
+              }
+            }
+          ]
         }
       }
     },
@@ -73,7 +97,15 @@
       "filter": {
         "bool": {
           "must": [],
-          "must_not": []
+          "must_not": [
+            {
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
+              }
+            }
+          ]
         }
       }
     },
@@ -89,7 +121,15 @@
       "filter": {
         "bool": {
           "must": [],
-          "must_not": []
+          "must_not": [
+            {
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
+              }
+            }
+          ]
         }
       }
     },
@@ -105,7 +145,15 @@
       "filter": {
         "bool": {
           "must": [],
-          "must_not": []
+          "must_not": [
+            {
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
+              }
+            }
+          ]
         }
       }
     },
@@ -121,7 +169,15 @@
       "filter": {
         "bool": {
           "must": [],
-          "must_not": []
+          "must_not": [
+            {
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
+              }
+            }
+          ]
         }
       }
     },
@@ -145,7 +201,15 @@
       "filter": {
         "bool": {
           "must": [],
-          "must_not": []
+          "must_not": [
+            {
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
+              }
+            }
+          ]
         }
       }
     },
@@ -169,7 +233,15 @@
       "filter": {
         "bool": {
           "must": [],
-          "must_not": []
+          "must_not": [
+            {
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
+              }
+            }
+          ]
         }
       }
     },
@@ -185,7 +257,15 @@
       "filter": {
         "bool": {
           "must": [],
-          "must_not": []
+          "must_not": [
+            {
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
+              }
+            }
+          ]
         }
       }
     },
@@ -201,7 +281,15 @@
       "filter": {
         "bool": {
           "must": [],
-          "must_not": []
+          "must_not": [
+            {
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
+              }
+            }
+          ]
         }
       }
     },
@@ -217,7 +305,15 @@
       "filter": {
         "bool": {
           "must": [],
-          "must_not": []
+          "must_not": [
+            {
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
+              }
+            }
+          ]
         }
       }
     },
@@ -233,7 +329,15 @@
       "filter": {
         "bool": {
           "must": [],
-          "must_not": []
+          "must_not": [
+            {
+              "terms": {
+                "company.raw": [
+                  "EQUIFAX, INC."
+                ]
+              }
+            }
+          ]
         }
       }
     }

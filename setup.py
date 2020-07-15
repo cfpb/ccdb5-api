@@ -18,7 +18,11 @@ def format_version(version, fmt=fmt):
     if len(parts) == 1:
         return fmt.format(tag='ci', commitcount=0, gitsha=version)
 
-    assert len(parts) in (3, 4)
+    # Sometimes the closest tag has '-dev' and messes everything up
+    if len(parts) == 5 and parts[1] == 'dev':
+        parts = [parts[0] + '-dev', parts[2], parts[3], parts[4]]
+
+    assert len(parts) in (3, 4), '|'.join(parts)
     dirty = len(parts) == 4
     tag, count, sha = parts[:3]
     if count == '0' and not dirty:

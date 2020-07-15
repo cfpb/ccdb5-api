@@ -7,6 +7,7 @@ from complaint_search import es_interface
 from complaint_search.decorators import catch_es_error
 from complaint_search.defaults import (
     AGG_EXCLUDE_FIELDS,
+    EXCLUDE_PREFIX,
     EXPORT_FORMATS,
     FORMAT_CONTENT_TYPE_MAP,
 )
@@ -15,6 +16,7 @@ from complaint_search.serializer import (
     SearchInputSerializer,
     SuggestFilterInputSerializer,
     SuggestInputSerializer,
+    TrendsInputSerializer,
 )
 from complaint_search.throttling import (
     DocumentAnonRateThrottle,
@@ -44,12 +46,18 @@ QPARAMS_VARS = (
     'date_received_max',
     'date_received_min',
     'field',
+    'focus',
     'frm',
+    'lens',
     'no_aggs',
     'no_highlight',
     'search_term',
     'size',
-    'sort'
+    'sort',
+    'sub_lens',
+    'sub_lens_depth',
+    'trend_depth',
+    'trend_interval'
 )
 
 
@@ -69,6 +77,8 @@ QPARAMS_LISTS = (
     'zip_code'
 )
 
+QPARAMS_NOT_LISTS = [EXCLUDE_PREFIX + x for x in QPARAMS_LISTS]
+
 
 def _parse_query_params(query_params, validVars=None):
     if not validVars:
@@ -79,6 +89,8 @@ def _parse_query_params(query_params, validVars=None):
         if param in validVars:
             data[param] = query_params.get(param)
         elif param in QPARAMS_LISTS:
+            data[param] = query_params.getlist(param)
+        elif param in QPARAMS_NOT_LISTS:
             data[param] = query_params.getlist(param)
         # TODO: else: Error if extra parameters? Or ignore?
 
@@ -201,7 +213,6 @@ def suggest_zip(request):
 @api_view(['GET'])
 @catch_es_error
 def suggest_company(request):
-
     # Key removal that takes mutation into account in case of other reference
     def removekey(d, key):
         r = dict(d)
@@ -234,7 +245,6 @@ def document(request, id):
 # -----------------------------------------------------------------------------
 # Request Handlers: Geo
 
-
 @api_view(['GET'])
 @catch_es_error
 def states(request):
@@ -247,6 +257,27 @@ def states(request):
         )
 
     results = es_interface.states_agg(
+        agg_exclude=AGG_EXCLUDE_FIELDS, **serializer.validated_data)
+    headers = _buildHeaders()
+
+    return Response(results, headers=headers)
+
+
+# -----------------------------------------------------------------------------
+# Request Handlers: Trends
+
+@api_view(['GET'])
+@catch_es_error
+def trends(request):
+    data = _parse_query_params(request.query_params)
+    serializer = TrendsInputSerializer(data=data)
+
+    if not serializer.is_valid():
+        return Response(
+            serializer.errors, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    results = es_interface.trends(
         agg_exclude=AGG_EXCLUDE_FIELDS, **serializer.validated_data)
     headers = _buildHeaders()
 
