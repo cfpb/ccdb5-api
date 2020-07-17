@@ -533,11 +533,11 @@ components:
       schema:
         type: string
         enum:
-          - yearly
-          - quarterly
-          - monthly
-          - weekly
-          - daily
+          - year
+          - quarter
+          - month
+          - week
+          - day
     zip_code:
       name: zip_code
       in: query
