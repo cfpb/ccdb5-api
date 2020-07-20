@@ -528,16 +528,16 @@ components:
     trend_interval:
       name: trend_interval
       in: query
-      description: The interval of time to use for trends aggregations histograms.
+      description: The interval of time to use for trends aggregations histograms. When using day intervals, we recommend querying for date_received_min / max periods of less than one year.
       required: true
       schema:
         type: string
         enum:
-          - yearly
-          - quarterly
-          - monthly
-          - weekly
-          - daily
+          - year
+          - quarter
+          - month
+          - week
+          - day
     zip_code:
       name: zip_code
       in: query
