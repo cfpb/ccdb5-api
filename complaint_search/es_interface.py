@@ -259,8 +259,8 @@ def search(agg_exclude=None, **kwargs):
     res = {}
     format = params.get("format")
     if format == "default":
-        if body["size"] > 100:
-            body["size"] = 100
+        if body["size"] > 1000:
+            body["size"] = 1000
 
         if not params.get("no_aggs"):
             aggregation_builder = AggregationBuilder()
