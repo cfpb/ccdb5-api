@@ -235,7 +235,7 @@ class EsInterfaceTest_Search(TestCase):
         self.request_test("search_with_size__valid", size=40)
 
     def test_search_with_size_corrected__valid(self):
-        self.request_test("search_with_size_corrected__valid", size=500)
+        self.request_test("search_with_size_corrected__valid", size=5000)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._get_meta")

@@ -482,7 +482,8 @@ class StateAggregationBuilder(BaseBuilder):
             }
         }
 
-        # Get top product & issue for each state
+        # Get top product & issue for each state. Don't apply state filter
+        # to itself
         if field_name == 'state':
             field_aggs["aggs"]["state"]["aggs"] = {
                 "product": {
@@ -499,8 +500,15 @@ class StateAggregationBuilder(BaseBuilder):
                 }
             }
 
-        field_aggs['filter'] = self._build_dsl_filter(self.include_clauses,
-                                                      self.exclude_clauses)
+            filtered_includes = copy.deepcopy(self.include_clauses)
+            if 'state' in filtered_includes:
+                del filtered_includes['state']
+
+            field_aggs['filter'] = self._build_dsl_filter(filtered_includes,
+                                                          self.exclude_clauses)
+        else:
+            field_aggs['filter'] = self._build_dsl_filter(self.include_clauses,
+                                                          self.exclude_clauses)
 
         return field_aggs
 
