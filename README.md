@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/cfpb/ccdb5-api.svg?branch=master)](https://travis-ci.org/cfpb/ccdb5-api)[![Coverage Status](https://coveralls.io/repos/github/cfpb/ccdb5-api/badge.svg?branch=master)](https://coveralls.io/github/cfpb/ccdb5-api?branch=master)
+[![Build Status](https://travis-ci.org/cfpb/ccdb5-api.svg?branch=main)](https://travis-ci.org/cfpb/ccdb5-api)[![Coverage Status](https://coveralls.io/repos/github/cfpb/ccdb5-api/badge.svg?branch=main)](https://coveralls.io/github/cfpb/ccdb5-api?branch=main)
 
 ccdb5-api
 ================
