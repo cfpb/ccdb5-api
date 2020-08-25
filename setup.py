@@ -45,13 +45,13 @@ with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
 
 
 install_requires = [
-    'Django>=1.11,<2.3',
+    'Django>=1.11,<3.2',
     'djangorestframework>=3.9.1,<4.0',
     'django-rest-swagger>=2.2.0',
     'requests>=2.18,<3',
     'elasticsearch>=2.4.1,<3',
     'django-localflavor>=1.1,<3.1',
-    'django-flags>=4.0.1,<5',
+    'django-flags>=4.0.1,<5.1',
 ]
 
 testing_extras = [
