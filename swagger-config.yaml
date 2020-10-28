@@ -145,7 +145,7 @@ paths:
     get:
       tags:
         - Complaints
-      summary: Find comsumer complaint by ID
+      summary: Find consumer complaint by ID
       description: Get complaint details for a specific ID
       parameters:
         - name: complaintId
@@ -219,6 +219,7 @@ paths:
         - $ref: '#/components/parameters/consumer_disputed'
         - $ref: '#/components/parameters/date_received_max'
         - $ref: '#/components/parameters/date_received_min'
+        - $ref: '#/components/parameters/focus'
         - $ref: '#/components/parameters/has_narrative'
         - $ref: '#/components/parameters/issue'
         - $ref: '#/components/parameters/lens'
@@ -342,6 +343,15 @@ components:
           - company_public_response
           - all
         default: complaint_what_happened
+    focus:
+      name: focus
+      in: query
+      description: The name of the product or company on which to focus charts for products and issues
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
     format:
       name: format
       in: query
