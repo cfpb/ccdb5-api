@@ -22,15 +22,6 @@
             "timely",
             "zip_code"
         ],
-        "query": {
-            "query_string": {
-                "query": "*",
-                "fields": [
-                    "complaint_what_happened"
-                ],
-                "default_operator": "AND"
-            }
-        },
         "aggs": {
             "issue": {
                 "filter": {
@@ -66,14 +57,12 @@
                 "aggs": {
                     "issue": {
                         "terms": {
-                            "field": "issue.raw",
-                            "size": 5
+                            "field": "issue.raw"
                         },
                         "aggs": {
                             "issue": {
                                 "terms": {
-                                    "field": "sub_issue.raw",
-                                    "size": 10
+                                    "field": "sub_issue.raw"
                                 }
                             }
                         }
@@ -114,14 +103,12 @@
                 "aggs": {
                     "product": {
                         "terms": {
-                            "field": "product.raw",
-                            "size": 5
+                            "field": "product.raw"
                         },
                         "aggs": {
                             "product": {
                                 "terms": {
-                                    "field": "sub_product.raw",
-                                    "size": 10
+                                    "field": "sub_product.raw"
                                 }
                             }
                         }
@@ -155,20 +142,17 @@
                 "aggs": {
                     "state": {
                         "terms": {
-                            "field": "state",
-                            "size": 0
+                            "field": "state"
                         },
                         "aggs": {
                             "product": {
                                 "terms": {
-                                    "field": "product.raw",
-                                    "size": 1
+                                    "field": "product.raw"
                                 }
                             },
                             "issue": {
                                 "terms": {
-                                    "field": "issue.raw",
-                                    "size": 1
+                                    "field": "issue.raw"
                                 }
                             }
                         }
