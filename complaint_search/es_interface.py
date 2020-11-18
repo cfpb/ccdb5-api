@@ -180,8 +180,7 @@ def _get_meta():
     }
     max_date_res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
     count_res = _get_es().count(
-        index=_COMPLAINT_ES_INDEX,
-        doc_type=_COMPLAINT_DOC_TYPE
+        index=_COMPLAINT_ES_INDEX
     )
 
     result = {
@@ -251,8 +250,8 @@ def search(agg_exclude=None, **kwargs):
 
     log = logging.getLogger(__name__)
     log.info(
-        'Calling %s/%s/%s/_search with %s',
-        _ES_URL, _COMPLAINT_ES_INDEX, _COMPLAINT_DOC_TYPE, body
+        'Calling %s/%s/_search with %s',
+        _ES_URL, _COMPLAINT_ES_INDEX, body
     )
 
     # format
@@ -270,7 +269,6 @@ def search(agg_exclude=None, **kwargs):
             body["aggs"] = aggregation_builder.build()
 
         res = _get_es().search(index=_COMPLAINT_ES_INDEX,
-                               doc_type=_COMPLAINT_DOC_TYPE,
                                body=body,
                                scroll="10m")
 
@@ -293,7 +291,6 @@ def search(agg_exclude=None, **kwargs):
             scroll="10m",
             index=_COMPLAINT_ES_INDEX,
             size=7000,
-            doc_type=_COMPLAINT_DOC_TYPE,
             request_timeout=3000
         )
 
@@ -310,7 +307,6 @@ def search(agg_exclude=None, **kwargs):
             body['size'] = 0
 
             res = _get_es().search(index=_COMPLAINT_ES_INDEX,
-                                   doc_type=_COMPLAINT_DOC_TYPE,
                                    body=body,
                                    scroll="10m")
             res = exporter.export_json(scanResponse, res['hits']['total'])
@@ -368,7 +364,6 @@ def filter_suggest(filterField, display_field=None, **kwargs):
     # format
     res = _get_es().search(
         index=_COMPLAINT_ES_INDEX,
-        doc_type=_COMPLAINT_DOC_TYPE,
         body=body
     )
     # reformat the return
@@ -382,8 +377,7 @@ def filter_suggest(filterField, display_field=None, **kwargs):
 
 def document(complaint_id):
     doc_query = {"query": {"term": {"_id": complaint_id}}}
-    res = _get_es().search(index=_COMPLAINT_ES_INDEX,
-                           doc_type=_COMPLAINT_DOC_TYPE, body=doc_query)
+    res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=doc_query)
     return res
 
 
@@ -408,7 +402,6 @@ def states_agg(agg_exclude=None, **kwargs):
     body["aggs"] = aggregation_builder.build()
 
     res = _get_es().search(index=_COMPLAINT_ES_INDEX,
-                           doc_type=_COMPLAINT_DOC_TYPE,
                            body=body,
                            scroll="10m")
 
@@ -432,7 +425,6 @@ def trends(agg_exclude=None, **kwargs):
     body["aggs"] = aggregation_builder.build()
 
     res_trends = _get_es().search(index=_COMPLAINT_ES_INDEX,
-                                  doc_type=_COMPLAINT_DOC_TYPE,
                                   body=body)
 
     res_date_buckets = None
@@ -453,7 +445,6 @@ def trends(agg_exclude=None, **kwargs):
     date_bucket_body['aggs'] = date_range_buckets_builder.build()
 
     res_date_buckets = _get_es().search(index=_COMPLAINT_ES_INDEX,
-                                        doc_type=_COMPLAINT_DOC_TYPE,
                                         body=date_bucket_body)
 
     res_trends = process_trends_response(res_trends)
