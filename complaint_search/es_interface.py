@@ -7,6 +7,7 @@ from complaint_search.defaults import (
     CSV_ORDERED_HEADERS,
     EXPORT_FORMATS,
     PARAMS,
+    SOURCE_FIELDS
 )
 from complaint_search.es_builders import (
     AggregationBuilder,
@@ -201,41 +202,24 @@ def _get_meta():
 
     return result
 
-# List of possible arguments:
-# - format: format to be returned: "json", "csv"
-# - field: field you want to search in: "complaint_what_happened",
-#   "company_public_response", "_all"
-# - size: number of complaints to return
-# - frm: from which index to start returning
-# - sort: sort by: "relevance_desc", "relevance_asc", "created_date_desc",
-#   "created_date_asc"
-# - search_term: the term to be searched
-# - date_received_min: return only date received including and later than this
-#   date i.e. 2017-03-02
-# - date_received_max: return only date received before this date, i.e.
-#   2017-04-12
-# - company_received_min: return only date company received including and later
-#   than this date i.e. 2017-03-02
-# - company_received_max: return only date company received before this date,
-#   i.e. 2017-04-12
-# - company: filters a list of companies you want ["Bank 1", "Bank 2"]
-# - product: filters a list of product you want if a subproduct is needed to
-#   filter, separated by a bullet (u'\u2022), i.e.
-#   [u"Mortgage\u2022FHA Mortgage", "Payday Loan"]
-# - issue: filters a list of issue you want if a subissue is needed to filter,
-#   separated by a bullet (u'\u2022), i.e. See Product above
-# - state: filters a list of states you want
-# - zip_code: filters a list of zipcodes you want
-# - timely: filters a list of whether the company responds in a timely matter
-#   or not
-# - consumer_disputed: filters a list of dispute resolution
-# - company_response: filters a list of response from the company to consumer
-# - company_public_response: filters a list of public response from the company
-# - consumer_consent_provided: filters a list of whether consumer consent was
-#   provided in the complaint
-# - has_narrative: filters a list of whether complaint has narratives or not
-# - submitted_via: filters a list of ways the complaint was submitted
-# - tags - filters a list of tags
+
+def _extract_total(response):
+    total_obj = response['hits'].get('total')
+    if not total_obj:
+        return None
+
+    # ES7: Less than 10K hits with return an exact value
+    if total_obj['relation'] == 'eq':
+        return total_obj['value']
+
+    # ES7: more than 10K hits is no accurately reported, go find it
+    aggs = response.get('aggregations', {})
+    for field in SOURCE_FIELDS:
+        doc_count = aggs.get(field, {}).get('doc_count', -1)
+        if doc_count != -1:
+            return doc_count
+
+    return None
 
 
 def search(agg_exclude=None, **kwargs):
@@ -283,6 +267,9 @@ def search(agg_exclude=None, **kwargs):
                     )['hits']['hits']
                     num_of_scroll -= 1
         res["_meta"] = _get_meta()
+
+        # Replicate the v2.3 total
+        res['hits']['total'] = _extract_total(res)
 
     elif format in EXPORT_FORMATS:
         scanResponse = helpers.scan(
