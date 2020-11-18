@@ -270,7 +270,7 @@ def search(agg_exclude=None, **kwargs):
 
         res = _get_es().search(index=_COMPLAINT_ES_INDEX,
                                body=body,
-                               scroll="10m")
+                               scroll="10m" if body['size'] else None)
 
         if res['hits']['hits']:
             num_of_scroll = params.get("frm") / body["size"]
