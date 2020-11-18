@@ -7,7 +7,7 @@ from complaint_search.defaults import (
     CSV_ORDERED_HEADERS,
     EXPORT_FORMATS,
     PARAMS,
-    SOURCE_FIELDS
+    SOURCE_FIELDS,
 )
 from complaint_search.es_builders import (
     AggregationBuilder,
