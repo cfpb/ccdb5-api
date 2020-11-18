@@ -13,31 +13,43 @@ from complaint_search.defaults import (
 )
 
 
-def build_search_terms(search_term, field):
-    if (re.match(r"^[A-Za-z\d\s]+$", search_term) and not
-        any(keyword in search_term
-            for keyword in ("AND", "OR", "NOT", "TO"))):
+def is_all_field(field):
+    return field in ['all', '_all']
 
-        # Match Query
-        return {
-            "match": {
-                field: {
-                    "query": search_term,
-                    "operator": "and"
-                }
-            }
-        }
-    else:
-        # QueryString Query
+
+def build_search_terms(search_term, field):
+    has_symbols = re.match(r"^[A-Za-z\d\s]+$", search_term) is None
+    has_keywords = any(
+        keyword in search_term for keyword in ("AND", "OR", "NOT", "TO")
+    )
+    all_fields = is_all_field(field)
+
+    if has_symbols or has_keywords:
         return {
             "query_string": {
                 "query": search_term,
-                "fields": [
-                    field
-                ],
+                "default_field": '*' if all_fields else field
+            }
+        }
+
+    elif all_fields:
+        return {
+            "query_string": {
+                "query": search_term,
+                "default_field": '*',
                 "default_operator": "AND"
             }
         }
+
+    # Specific field with no keywords
+    return {
+        "match": {
+            field: {
+                "query": search_term,
+                "operator": "and"
+            }
+        }
+    }
 
 
 class BaseBuilder(object):
@@ -246,8 +258,8 @@ class SearchBuilder(BaseBuilder):
             "number_of_fragments": 1,
             "fragment_size": 500
         }
-        if self.params.get("field") == "_all":
-            highlight["fields"] = {source: {} for source in SOURCE_FIELDS}
+        if is_all_field(self.params.get("field")):
+            highlight["fields"] = {"*": {}}
         else:
             highlight["fields"] = {self.params.get("field"): {}}
 
@@ -278,16 +290,7 @@ class SearchBuilder(BaseBuilder):
         search = {
             "from": self.params.get("frm"),
             "size": self.params.get("size"),
-            "_source": self._build_source(),
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        self.params.get("field")
-                    ],
-                    "default_operator": "AND"
-                }
-            }
+            "_source": self._build_source()
         }
 
         # Highlight
