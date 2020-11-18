@@ -317,11 +317,19 @@ def search(agg_exclude=None, **kwargs):
 def suggest(text=None, size=6):
     if text is None:
         return []
-    body = {"sgg": {"text": text, "completion": {
-        "field": "suggest", "size": size}}}
+    body = {
+        "_source": False,
+        "suggest": {
+            "sgg": {
+                "text": text,
+                "completion": {
+                    "field": "typeahead_dropdown",
+                    "skip_duplicates": True,
+                    "size": size
+                }}}}
 
-    res = _get_es().suggest(index=_COMPLAINT_ES_INDEX, body=body)
-    candidates = [e['text'] for e in res['sgg'][0]['options']]
+    res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
+    candidates = [e['text'] for e in res['suggest']['sgg'][0]['options']]
     return candidates
 
 
