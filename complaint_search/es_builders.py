@@ -350,14 +350,12 @@ class AggregationBuilder(BaseBuilder):
         return {
             agg_heading_name: {
                 "terms": {
-                    "field": es_parent_name,
-                    "size": 0
+                    "field": es_parent_name
                 },
                 "aggs": {
                     es_child_name: {
                         "terms": {
-                            "field": es_child_name,
-                            "size": 0
+                            "field": es_child_name
                         }
                     }
                 }
@@ -389,8 +387,7 @@ class AggregationBuilder(BaseBuilder):
             field_aggs["aggs"] = {
                 field_name: {
                     "terms": {
-                        "field": es_field_name,
-                        "size": 0
+                        "field": es_field_name
                     }
                 }
             }
@@ -473,14 +470,12 @@ class StateAggregationBuilder(BaseBuilder):
         field_aggs["aggs"] = {
             field_name: {
                 "terms": {
-                    "field": es_field_name,
-                    "size": self._AGG_SIZES[field_name]
+                    "field": es_field_name
                 },
                 "aggs": {
                     self._ES_CHILD_AGG_MAP.get(es_child_name): {
                         "terms": {
-                            "field": es_child_name,
-                            "size": 10
+                            "field": es_child_name
                         }
                     }
                 }
@@ -493,14 +488,12 @@ class StateAggregationBuilder(BaseBuilder):
             field_aggs["aggs"]["state"]["aggs"] = {
                 "product": {
                     "terms": {
-                        "field": "product.raw",
-                        "size": 1
+                        "field": "product.raw"
                     }
                 },
                 "issue": {
                     "terms": {
-                        "field": "issue.raw",
-                        "size": 1
+                        "field": "issue.raw"
                     }
                 }
             }
@@ -606,8 +599,7 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
     def percent_change_agg(self, es_field_name, interval, trend_depth):
         return {
             "terms": {
-                "field": es_field_name,
-                "size": trend_depth
+                "field": es_field_name
             },
             "aggs": {
                 "trend_period": {
