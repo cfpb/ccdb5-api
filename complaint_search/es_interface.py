@@ -18,8 +18,10 @@ from complaint_search.es_builders import (
     TrendsAggregationBuilder,
 )
 from complaint_search.export import ElasticSearchExporter
-from elasticsearch7 import Elasticsearch, helpers
+from elasticsearch7 import Elasticsearch, helpers, RequestHttpConnection
 from flags.state import flag_enabled
+from requests_aws4auth import AWS4Auth
+
 
 
 _ES_URL = "{}://{}:{}".format("http", os.environ.get('ES_HOST', 'localhost'),
@@ -28,6 +30,15 @@ _ES_USER = os.environ.get('ES_USER', '')
 _ES_PASSWORD = os.environ.get('ES_PASSWORD', '')
 
 _ES_INSTANCE = None
+
+USE_AWS_ES = os.environ.get('USE_AWS_ES', False)
+AWS_ES_ACCESS_KEY = os.environ.get('AWS_ES_ACCESS_KEY')
+AWS_ES_SECRET_KEY = os.environ.get('AWS_ES_SECRET_KEY')
+# The below was configured because of a naming convention chosen by
+# CF.gov for ES7 Host. May require changing if var name changed
+# https://github.com/cfpb/consumerfinance.gov/blob/main/.env_SAMPLE#L92
+AWS_ES_HOST = os.environ.get('ES7_HOST')
+
 
 _COMPLAINT_ES_INDEX = os.environ.get('COMPLAINT_ES_INDEX', 'complaint-index')
 _COMPLAINT_DOC_TYPE = os.environ.get('COMPLAINT_DOC_TYPE', 'complaint-doctype')
@@ -111,13 +122,29 @@ def process_trends_response(response):
 def _get_es():
     global _ES_INSTANCE
     if _ES_INSTANCE is None:
-        _ES_INSTANCE = Elasticsearch(
-            [_ES_URL],
-            http_auth=(_ES_USER, _ES_PASSWORD),
-            timeout=100
-        )
-    return _ES_INSTANCE
+        if USE_AWS_ES:
+            awsauth = AWS4Auth(
+              AWS_ES_ACCESS_KEY,
+              AWS_ES_SECRET_KEY,
+              'us-east-1',
+              'es'
+            )
+            _ES_INSTANCE = Elasticsearch(
+                hosts=[{'host': AWS_ES_HOST, 'port': 443}],
+                http_auth=awsauth,
+                use_ssl=True,
+                verify_certs=True,
+                connection_class=RequestsHttpConnection,
+                timeout=100
+            )
+        else:    
+            _ES_INSTANCE = Elasticsearch(
+                [_ES_URL],
+                http_auth=(_ES_USER, _ES_PASSWORD),
+                timeout=100
+            )
 
+    return _ES_INSTANCE
 
 def _get_now():
     return datetime.now()
