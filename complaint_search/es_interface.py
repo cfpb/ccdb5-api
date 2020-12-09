@@ -18,7 +18,7 @@ from complaint_search.es_builders import (
     TrendsAggregationBuilder,
 )
 from complaint_search.export import ElasticSearchExporter
-from elasticsearch7 import Elasticsearch, helpers, RequestHttpConnection
+from elasticsearch7 import Elasticsearch, helpers, RequestsHttpConnection
 from flags.state import flag_enabled
 from requests_aws4auth import AWS4Auth
 
