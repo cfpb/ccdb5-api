@@ -1,6 +1,5 @@
 import abc
 import copy
-import logging
 import re
 from collections import OrderedDict, defaultdict
 
@@ -510,11 +509,6 @@ class StateAggregationBuilder(BaseBuilder):
             field_aggs['filter'] = self._build_dsl_filter(self.include_clauses,
                                                           self.exclude_clauses)
 
-        log = logging.getLogger(__name__)
-        log.info(
-            'Field Aggs are: %s',
-            field_aggs
-        )
         return field_aggs
 
     def build(self):
