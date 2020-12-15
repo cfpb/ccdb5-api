@@ -1,5 +1,6 @@
 import abc
 import copy
+import logging
 import re
 from collections import OrderedDict, defaultdict
 
@@ -427,9 +428,9 @@ class StateAggregationBuilder(BaseBuilder):
     )
 
     _AGG_SIZES = {
-        'state': 0,
-        'product': 5,
-        'issue': 5
+        'state': 100,
+        'product.raw': 5,
+        'issue.raw': 5
     }
 
     _ES_CHILD_AGG_MAP = {
@@ -470,7 +471,8 @@ class StateAggregationBuilder(BaseBuilder):
         field_aggs["aggs"] = {
             field_name: {
                 "terms": {
-                    "field": es_field_name
+                    "field": es_field_name,
+                    "size": self._AGG_SIZES.get(es_field_name)
                 },
                 "aggs": {
                     self._ES_CHILD_AGG_MAP.get(es_child_name): {
@@ -508,6 +510,11 @@ class StateAggregationBuilder(BaseBuilder):
             field_aggs['filter'] = self._build_dsl_filter(self.include_clauses,
                                                           self.exclude_clauses)
 
+        log = logging.getLogger(__name__)
+        log.info(
+            'Field Aggs are: %s',
+            field_aggs
+        )
         return field_aggs
 
     def build(self):
