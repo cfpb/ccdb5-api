@@ -406,7 +406,7 @@ def document(complaint_id):
 def states_agg(agg_exclude=None, **kwargs):
     params = copy.deepcopy(PARAMS)
     params.update(**kwargs)
-    params.update({'size': 0})
+    params.update({'size': 500})
     search_builder = SearchBuilder()
     search_builder.add(**params)
     body = search_builder.build()
@@ -414,8 +414,10 @@ def states_agg(agg_exclude=None, **kwargs):
     log = logging.getLogger(__name__)
     log.info(
         'Calling %s/%s/%s/states with %s',
-        _ES_URL, _COMPLAINT_ES_INDEX, _COMPLAINT_DOC_TYPE, body
+        _ES_URL, _COMPLAINT_ES_INDEX, _COMPLAINT_DOC_TYPE, body,
     )
+    log.info(
+        'Params are %s', params)
 
     aggregation_builder = StateAggregationBuilder()
     aggregation_builder.add(**params)
@@ -424,8 +426,7 @@ def states_agg(agg_exclude=None, **kwargs):
     body["aggs"] = aggregation_builder.build()
 
     res = _get_es().search(index=_COMPLAINT_ES_INDEX,
-                           body=body,
-                           scroll="10m")
+                           body=body)
 
     return res
 
