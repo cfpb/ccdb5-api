@@ -1,6 +1,6 @@
 {
   "from": 0,
-  "size": 0,
+  "size": 500,
   "_source": [
     "company",
     "company_public_response",
@@ -22,6 +22,21 @@
     "timely",
     "zip_code"
   ],
+  "highlight": {
+    "require_field_match": false,
+    "number_of_fragments": 1,
+    "fragment_size": 500,
+    "fields": {
+      "complaint_what_happened": {}
+    }
+  },
+  "sort": [
+    {
+      "_score": {
+        "order": "desc"
+      }
+    }
+  ],
   "aggs": {
     "issue": {
       "filter": {
@@ -33,7 +48,8 @@
       "aggs": {
         "issue": {
           "terms": {
-            "field": "issue.raw"
+            "field": "issue.raw",
+            "size": 5
           },
           "aggs": {
             "issue": {
@@ -55,7 +71,8 @@
       "aggs": {
         "product": {
           "terms": {
-            "field": "product.raw"
+            "field": "product.raw",
+            "size": 5
           },
           "aggs": {
             "product": {
@@ -77,7 +94,8 @@
       "aggs": {
         "state": {
           "terms": {
-            "field": "state"
+            "field": "state",
+            "size": 100
           },
           "aggs": {
             "product": {
