@@ -18,10 +18,9 @@ from complaint_search.es_builders import (
     TrendsAggregationBuilder,
 )
 from complaint_search.export import ElasticSearchExporter
-from elasticsearch7 import Elasticsearch, helpers, RequestsHttpConnection
+from elasticsearch7 import Elasticsearch, RequestsHttpConnection, helpers
 from flags.state import flag_enabled
 from requests_aws4auth import AWS4Auth
-
 
 
 _ES_URL = "{}://{}:{}".format("http", os.environ.get('ES_HOST', 'localhost'),
@@ -124,10 +123,10 @@ def _get_es():
     if _ES_INSTANCE is None:
         if USE_AWS_ES:
             awsauth = AWS4Auth(
-              AWS_ES_ACCESS_KEY,
-              AWS_ES_SECRET_KEY,
-              'us-east-1',
-              'es'
+                AWS_ES_ACCESS_KEY,
+                AWS_ES_SECRET_KEY,
+                'us-east-1',
+                'es'
             )
             _ES_INSTANCE = Elasticsearch(
                 hosts=[{'host': AWS_ES_HOST, 'port': 443}],
@@ -137,7 +136,7 @@ def _get_es():
                 connection_class=RequestsHttpConnection,
                 timeout=100
             )
-        else:    
+        else:
             _ES_INSTANCE = Elasticsearch(
                 [_ES_URL],
                 http_auth=(_ES_USER, _ES_PASSWORD),
@@ -145,6 +144,7 @@ def _get_es():
             )
 
     return _ES_INSTANCE
+
 
 def _get_now():
     return datetime.now()
