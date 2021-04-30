@@ -454,14 +454,9 @@ def trends(agg_exclude=None, **kwargs):
 
     date_bucket_body = copy.deepcopy(body)
     date_bucket_body['query'] = {
-        "query_string": {
-            "query": "*",
-            "fields": [
-                "_all"
-            ],
-            "default_operator": "AND"
-        }
+        "match_all": {} 
     }
+    
 
     date_range_buckets_builder = DateRangeBucketsBuilder()
     date_range_buckets_builder.add(**params)
