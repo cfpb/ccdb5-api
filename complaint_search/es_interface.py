@@ -142,7 +142,7 @@ def _get_es():
                 http_auth=(_ES_USER, _ES_PASSWORD),
                 timeout=100
             )
-
+    # logger.info(_ES_INSTANCE)
     return _ES_INSTANCE
 
 
@@ -473,5 +473,7 @@ def trends(agg_exclude=None, **kwargs):
     res_trends = process_trends_response(res_trends)
     res_trends['aggregations']['dateRangeBuckets'] = \
         res_date_buckets['aggregations']['dateRangeBuckets']
-
+    
+    res_trends['aggregations']['dateRangeBuckets']['body'] = date_bucket_body
+    
     return res_trends
