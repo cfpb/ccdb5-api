@@ -201,7 +201,7 @@ class BaseBuilder(object):
 
     def _build_dsl_filter(self, include_clauses, exclude_clauses,
                           include_dates=True, single_not_clause=True):
-        andClauses = []
+        and_clauses = []
 
         # date_received
         date_received = self._build_date_range_filter(
@@ -210,42 +210,42 @@ class BaseBuilder(object):
             "date_received")
 
         if date_received and include_dates:
-            andClauses.append(date_received)
+            and_clauses.append(date_received)
 
         company_filter = self._build_date_range_filter(
             self.params.get("company_received_min"),
             self.params.get("company_received_max"), "date_sent_to_company")
 
         if company_filter:
-            andClauses.append(company_filter)
+            and_clauses.append(company_filter)
 
         # Create filter clauses for all other filters
         for item, clauses in include_clauses.items():
             if not self._has_child(item):
                 # Create the field level AND query that must match
-                andClauses.append(clauses)
+                and_clauses.append(clauses)
             else:
                 # These get added as compound OR clauses
-                orClause = {"bool": {"should": clauses}}
-                andClauses.append(orClause)
+                or_clause = {"bool": {"should": clauses}}
+                and_clauses.append(or_clause)
 
-        notClauses = []
+        not_clauses = []
         for item, clauses in exclude_clauses.items():
             if not self._has_child(item):
                 # Create the field level AND query that must match
-                notClauses.append(clauses)
+                not_clauses.append(clauses)
             else:
                 # These get added as compound OR clauses
-                orClause = {"bool": {"should": clauses}}
-                notClauses.append(orClause)
+                or_clause = {"bool": {"should": clauses}}
+                not_clauses.append(or_clause)
 
         # if there are multiple not clauses, they need to be grouped
         # ~A AND ~B AND ~C is not the same as ~(A AND B AND C)
-        if len(notClauses) > 1 and single_not_clause:
-            grouping = {"bool": {"must": notClauses}}
-            notClauses = [grouping]
+        if len(not_clauses) > 1 and single_not_clause:
+            grouping = {"bool": {"must": not_clauses}}
+            not_clauses = [grouping]
 
-        return {"bool": {"must": andClauses, "must_not": notClauses}}
+        return {"bool": {"must": and_clauses, "must_not": not_clauses}}
 
 
 class SearchBuilder(BaseBuilder):
@@ -270,10 +270,9 @@ class SearchBuilder(BaseBuilder):
             "relevance": "_score",
             "created_date": "date_received"
         }
-
         sort_field, sort_order = self.params.get("sort").rsplit("_", 1)
         sort_field = sort_field_mapping.get(sort_field, "_score")
-        return [{sort_field: {"order": sort_order}}]
+        return [{sort_field: {"order": sort_order}}, {"_id": "desc"}]
 
     def _build_source(self):
         source = list(SOURCE_FIELDS)
@@ -288,11 +287,9 @@ class SearchBuilder(BaseBuilder):
 
     def build(self):
         search = {
-            "from": self.params.get("frm"),
             "size": self.params.get("size"),
             "_source": self._build_source()
         }
-
         # Highlight
         if not self.params.get("no_highlight") and \
                 not self.params.get("size") == 0:
@@ -749,7 +746,8 @@ class DateRangeBucketsBuilder(BaseBuilder):
                     'dateRangeBuckets': {
                         "date_histogram": {
                             "field": "date_received",
-                            "calendar_interval": self.params.get('trend_interval', 5)
+                            "calendar_interval": self.params.get(
+                                'trend_interval', 5)
                         }
                     }
                 }

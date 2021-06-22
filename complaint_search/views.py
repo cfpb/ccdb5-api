@@ -38,7 +38,7 @@ from rest_framework.response import Response
 # Query Parameters
 #
 # When you add a query parameter, make sure you add it to one of the
-# constant tuples below so it will be parse correctly
+# constant tuples below so it will be parsed correctly
 
 QPARAMS_VARS = (
     'company_received_max',
@@ -51,6 +51,7 @@ QPARAMS_VARS = (
     'lens',
     'no_aggs',
     'no_highlight',
+    'page',
     'search_term',
     'size',
     'sort',
@@ -93,7 +94,6 @@ def _parse_query_params(query_params, validVars=None):
         elif param in QPARAMS_NOT_LISTS:
             data[param] = query_params.getlist(param)
         # TODO: else: Error if extra parameters? Or ignore?
-
     return data
 
 
@@ -154,6 +154,10 @@ def search(request):
     headers = _buildHeaders()
 
     if format not in EXPORT_FORMATS:
+        # TODO: remove these two lines after testing
+        if results.get("_meta"):
+            results["_meta"]["is_data_stale"] = False
+        # import pdb; pdb.set_trace()
         return Response(results, headers=headers)
 
     # If format is in export formats, update its attachment response
@@ -166,8 +170,8 @@ def search(request):
     filename = 'complaints-{}.{}'.format(
         datetime.now().strftime('%Y-%m-%d_%H_%M'), format
     )
-    headerTemplate = 'attachment; filename="{}"'
-    response['Content-Disposition'] = headerTemplate.format(filename)
+    header_template = 'attachment; filename="{}"'
+    response['Content-Disposition'] = header_template.format(filename)
     for header in headers:
         response[header] = headers[header]
 

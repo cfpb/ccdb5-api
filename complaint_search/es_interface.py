@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 from complaint_search.defaults import (
     CSV_ORDERED_HEADERS,
+    DEFAULT_PAGINATION_DEPTH,
     EXPORT_FORMATS,
     PARAMS,
     SOURCE_FIELDS,
@@ -68,6 +69,22 @@ def build_trend_meta(response):
         meta['date_max'] = date_max
 
     return meta
+
+
+def get_break_points(hits, size):
+    """Return a dict of 'search-after' values for max 1,000-item pagination."""
+    break_points = {}
+    if size > len(hits):
+        return break_points
+    # we never want a break point for page 1; start with page 2
+    page = 2
+    break_points[page] = hits[size - 1].get("sort")
+    next_batch = hits[size:]
+    while len(next_batch) > size:
+        page += 1
+        break_points[page] = next_batch[size - 1].get("sort")
+        next_batch = next_batch[size:]
+    return break_points
 
 
 # Find sub_agg name if it exists in order to filter percent change
@@ -258,48 +275,60 @@ def search(agg_exclude=None, **kwargs):
     post_filter_builder = PostFilterBuilder()
     post_filter_builder.add(**params)
     body["post_filter"] = post_filter_builder.build()
-
-    log = logging.getLogger(__name__)
-    log.info(
-        'Calling %s/%s/_search with %s',
-        _ES_URL, _COMPLAINT_ES_INDEX, body
-    )
-
     # format
     res = {}
-    format = params.get("format")
-    if format == "default":
+    _format = params.get("format")
+    if _format == "default":
         if body["size"] > 1000:
             body["size"] = 1000
-
         if not params.get("no_aggs"):
             aggregation_builder = AggregationBuilder()
             aggregation_builder.add(**params)
             if agg_exclude:
                 aggregation_builder.add_exclude(agg_exclude)
             body["aggs"] = aggregation_builder.build()
-
-        res = _get_es().search(index=_COMPLAINT_ES_INDEX,
-                               body=body,
-                               scroll="10m" if body['size'] else None)
-
-        if res['hits']['hits']:
-            num_of_scroll = params.get("frm") / body["size"]
-            scroll_id = res['_scroll_id']
-            if num_of_scroll > 0:
-                while num_of_scroll > 0:
-                    res['hits']['hits'] = _get_es().scroll(
-                        scroll_id=scroll_id,
-                        scroll="10m"
-                    )['hits']['hits']
-                    num_of_scroll -= 1
+        log = logging.getLogger(__name__)
+        log.info(
+            'Base call for %s/%s/_search with %s',
+            _ES_URL, _COMPLAINT_ES_INDEX, body
+        )
+        res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
         res["_meta"] = _get_meta()
+        if res['hits']['hits']:
+            total = _extract_total(res)
+            if body.get("frm") and body.get("size"):
+                page = body["frm"] / body["size"] + 1
+            else:
+                page = 1
+            if total > body["size"]:
+                temp_body = copy.deepcopy(body)
+                temp_body["size"] = DEFAULT_PAGINATION_DEPTH
+                log.info(
+                    'Pagination call for %s/%s/_search with %s',
+                    _ES_URL, _COMPLAINT_ES_INDEX, temp_body
+                )
+                pagination_res = _get_es().search(
+                    index=_COMPLAINT_ES_INDEX,
+                    body=temp_body
+                )
+                break_points = get_break_points(
+                    pagination_res['hits']['hits'], body["size"])
+                if page > 1:
+                    body["search_after"] = break_points.get(page)
+                else:
+                    log.info(body.pop("search_after", "No search_after"))
+                log.info(
+                    'Paginated call for %s/%s/_search with %s',
+                    _ES_URL, _COMPLAINT_ES_INDEX, body
+                )
+                res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
+                res['hits']['total']['value'] = total
+                res["_meta"] = _get_meta()
+                res["_meta"]["page"] = page
+                res["_meta"]["break_points"] = break_points
 
-        # Replicate the v2.3 total
-        res['hits']['total'] = _extract_total(res)
-
-    elif format in EXPORT_FORMATS:
-        scanResponse = helpers.scan(
+    elif _format in EXPORT_FORMATS:
+        scan_response = helpers.scan(
             client=_get_es(),
             query=body,
             scroll="10m",
@@ -312,7 +341,7 @@ def search(agg_exclude=None, **kwargs):
 
         if params.get("format") == 'csv':
             res = exporter.export_csv(
-                scanResponse,
+                scan_response,
                 CSV_ORDERED_HEADERS
             )
         elif params.get("format") == 'json':
@@ -323,7 +352,7 @@ def search(agg_exclude=None, **kwargs):
             res = _get_es().search(index=_COMPLAINT_ES_INDEX,
                                    body=body,
                                    scroll="10m")
-            res = exporter.export_json(scanResponse, res['hits']['total'])
+            res = exporter.export_json(scan_response, res['hits']['total'])
 
     return res
 
@@ -454,9 +483,8 @@ def trends(agg_exclude=None, **kwargs):
 
     date_bucket_body = copy.deepcopy(body)
     date_bucket_body['query'] = {
-        "match_all": {} 
+        "match_all": {}
     }
-    
 
     date_range_buckets_builder = DateRangeBucketsBuilder()
     date_range_buckets_builder.add(**params)
@@ -468,7 +496,7 @@ def trends(agg_exclude=None, **kwargs):
     res_trends = process_trends_response(res_trends)
     res_trends['aggregations']['dateRangeBuckets'] = \
         res_date_buckets['aggregations']['dateRangeBuckets']
-    
+
     res_trends['aggregations']['dateRangeBuckets']['body'] = date_bucket_body
-    
+
     return res_trends

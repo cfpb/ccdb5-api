@@ -52,12 +52,15 @@ class SearchInputSerializer(serializers.Serializer):
         min_value=0, max_value=10000000, default=PARAMS['size']
     )
     frm = serializers.IntegerField(
-        min_value=0, max_value=10000000, default=PARAMS['frm']
+        min_value=0, max_value=10000, default=PARAMS['frm']
     )
     sort = serializers.ChoiceField(SORT_CHOICES, default=PARAMS['sort'])
     search_term = serializers.CharField(max_length=200, required=False)
     date_received_min = serializers.DateField(required=False)
     date_received_max = serializers.DateField(required=False)
+    page = serializers.IntegerField(
+        min_value=1, max_value=10000, default=PARAMS['page']
+    )
     company_received_min = serializers.DateField(required=False)
     company_received_max = serializers.DateField(required=False)
     company = serializers.ListField(
@@ -72,6 +75,7 @@ class SearchInputSerializer(serializers.Serializer):
         child=serializers.CharField(
             min_length=5, max_length=5), required=False
     )
+    # search_after = serializers.ListField()
     timely = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False)
     consumer_disputed = serializers.ListField(
