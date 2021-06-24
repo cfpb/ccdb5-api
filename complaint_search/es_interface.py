@@ -279,8 +279,8 @@ def search(agg_exclude=None, **kwargs):
     res = {}
     _format = params.get("format")
     if _format == "default":
-        if body["size"] > 1000:
-            body["size"] = 1000
+        if body["size"] > DEFAULT_PAGINATION_DEPTH:
+            body["size"] = DEFAULT_PAGINATION_DEPTH
         if not params.get("no_aggs"):
             aggregation_builder = AggregationBuilder()
             aggregation_builder.add(**params)
