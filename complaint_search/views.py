@@ -157,7 +157,6 @@ def search(request):
         # TODO: remove these two lines after testing
         if results.get("_meta"):
             results["_meta"]["is_data_stale"] = False
-        # import pdb; pdb.set_trace()
         return Response(results, headers=headers)
 
     # If format is in export formats, update its attachment response

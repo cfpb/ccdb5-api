@@ -300,7 +300,7 @@ def search(agg_exclude=None, **kwargs):
                 page = body["frm"] / body["size"] + 1
             else:
                 page = 1
-            if total > body["size"]:
+            if total and total > body["size"]:
                 temp_body = copy.deepcopy(body)
                 temp_body["size"] = DEFAULT_PAGINATION_DEPTH
                 log.info(
