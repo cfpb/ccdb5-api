@@ -75,7 +75,7 @@ class SearchInputSerializer(serializers.Serializer):
         child=serializers.CharField(
             min_length=5, max_length=5), required=False
     )
-    # search_after = serializers.ListField()
+    search_after = serializers.CharField(max_length=200, required=False)
     timely = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False)
     consumer_disputed = serializers.ListField(

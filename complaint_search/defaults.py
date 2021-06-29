@@ -7,7 +7,7 @@ PARAMS = {
     "format": "default",
     "field": "complaint_what_happened",
     "frm": 0,
-    "search_after": [],
+    "search_after": "",
     "page": 1,
     "no_aggs": False,
     "no_highlight": False,

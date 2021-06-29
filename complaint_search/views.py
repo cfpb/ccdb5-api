@@ -52,6 +52,7 @@ QPARAMS_VARS = (
     'no_aggs',
     'no_highlight',
     'page',
+    'search_after',
     'search_term',
     'size',
     'sort',
@@ -161,7 +162,6 @@ def search(request):
 
     # If format is in export formats, update its attachment response
     # with a filename
-
     response = StreamingHttpResponse(
         streaming_content=results,
         content_type=FORMAT_CONTENT_TYPE_MAP[format]

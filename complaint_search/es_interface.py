@@ -238,6 +238,7 @@ def _get_meta():
         "total_record_count": count_res["count"],
         "is_data_stale": _is_data_stale(
             max_date_res["aggregations"]["max_date"]["value_as_string"]),
+        # TODO: remove is_narrative_stale -- no longer used
         "is_narrative_stale": _is_data_stale(from_timestamp(
             max_date_res["aggregations"]["max_narratives"]["max_date"]["value"]
         )),
@@ -266,6 +267,20 @@ def _extract_total(response):
     return None
 
 
+def parse_search_after(body):
+    """Validate search_after field and return it as an Elasticsearch param."""
+    value = body.get("search_after")
+    if not value:
+        return
+    if ',' not in value or len(value.split(",")) != 2:
+        return
+    _sort, _id = value.split(",")
+    for entry in [_sort, _id]:
+        if not str(entry).isdigit():
+            return
+    return [int(_sort), str(_id)]
+
+
 def search(agg_exclude=None, **kwargs):
     params = copy.deepcopy(PARAMS)
     params.update(**kwargs)
@@ -279,6 +294,7 @@ def search(agg_exclude=None, **kwargs):
     res = {}
     _format = params.get("format")
     if _format == "default":
+        search_after = parse_search_after(body)
         if body["size"] > DEFAULT_PAGINATION_DEPTH:
             body["size"] = DEFAULT_PAGINATION_DEPTH
         if not params.get("no_aggs"):
@@ -289,43 +305,34 @@ def search(agg_exclude=None, **kwargs):
             body["aggs"] = aggregation_builder.build()
         log = logging.getLogger(__name__)
         log.info(
-            'Base call for %s/%s/_search with %s',
+            'Requesting %s/%s/_search with %s',
             _ES_URL, _COMPLAINT_ES_INDEX, body
         )
         res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
-        res["_meta"] = _get_meta()
+        break_points = {}
+        # page = 1
         if res['hits']['hits']:
             total = _extract_total(res)
-            if body.get("frm") and body.get("size"):
-                page = body["frm"] / body["size"] + 1
-            else:
-                page = 1
-            if total and total > body["size"]:
-                temp_body = copy.deepcopy(body)
-                temp_body["size"] = DEFAULT_PAGINATION_DEPTH
+            # if body.get("frm") and body.get("size"):
+            #     page = body["frm"] / body["size"] + 1
+            if total and total > body["size"] and not search_after:
+                # We have more than one page of results and need pagination
+                pag_body = copy.deepcopy(body)
+                pag_body["size"] = DEFAULT_PAGINATION_DEPTH
                 log.info(
-                    'Pagination call for %s/%s/_search with %s',
-                    _ES_URL, _COMPLAINT_ES_INDEX, temp_body
+                    'Harvesting pagination dict using %s/%s/_search with %s',
+                    _ES_URL, _COMPLAINT_ES_INDEX, pag_body
                 )
                 pagination_res = _get_es().search(
                     index=_COMPLAINT_ES_INDEX,
-                    body=temp_body
+                    body=pag_body
                 )
                 break_points = get_break_points(
                     pagination_res['hits']['hits'], body["size"])
-                if page > 1:
-                    body["search_after"] = break_points.get(page)
-                else:
-                    log.info(body.pop("search_after", "No search_after"))
-                log.info(
-                    'Paginated call for %s/%s/_search with %s',
-                    _ES_URL, _COMPLAINT_ES_INDEX, body
-                )
-                res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
                 res['hits']['total']['value'] = total
-                res["_meta"] = _get_meta()
-                res["_meta"]["page"] = page
-                res["_meta"]["break_points"] = break_points
+        res["_meta"] = _get_meta()
+        res["_meta"]["break_points"] = break_points
+        # res["_meta"]["page"] = page
 
     elif _format in EXPORT_FORMATS:
         scan_response = helpers.scan(
