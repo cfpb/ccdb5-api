@@ -155,9 +155,6 @@ def search(request):
     headers = _buildHeaders()
 
     if format not in EXPORT_FORMATS:
-        # TODO: remove these two lines after testing
-        if results.get("_meta"):
-            results["_meta"]["is_data_stale"] = False
         return Response(results, headers=headers)
 
     # If format is in export formats, update its attachment response

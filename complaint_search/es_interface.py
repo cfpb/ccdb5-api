@@ -267,14 +267,14 @@ def _extract_total(response):
     return None
 
 
-def parse_search_after(body):
-    """Validate search_after field and return it as an Elasticsearch param."""
-    value = body.get("search_after")
+def parse_search_after(params):
+    """Validate search_after field and return it as a list of [int, str]."""
+    value = params.get("search_after")
     if not value:
         return
-    if ',' not in value or len(value.split(",")) != 2:
+    if '_' not in value or len(value.split("_")) != 2:
         return
-    _sort, _id = value.split(",")
+    _sort, _id = value.split("_")
     for entry in [_sort, _id]:
         if not str(entry).isdigit():
             return
@@ -284,6 +284,9 @@ def parse_search_after(body):
 def search(agg_exclude=None, **kwargs):
     params = copy.deepcopy(PARAMS)
     params.update(**kwargs)
+    search_after = parse_search_after(params)
+    if search_after:
+        params["search_after"] = search_after
     search_builder = SearchBuilder()
     search_builder.add(**params)
     body = search_builder.build()
@@ -294,7 +297,6 @@ def search(agg_exclude=None, **kwargs):
     res = {}
     _format = params.get("format")
     if _format == "default":
-        search_after = parse_search_after(body)
         if body["size"] > DEFAULT_PAGINATION_DEPTH:
             body["size"] = DEFAULT_PAGINATION_DEPTH
         if not params.get("no_aggs"):

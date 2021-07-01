@@ -305,6 +305,11 @@ class SearchBuilder(BaseBuilder):
             search["query"] = build_search_terms(
                 search_term, self.params.get("field"))
 
+        # pagination
+        search_after = self.params.get("search_after")
+        if search_after:
+            search["search_after"] = search_after
+
         return search
 
 
