@@ -1,7 +1,9 @@
 from collections import OrderedDict
 
 
-DEFAULT_PAGINATION_DEPTH = 1000
+DEFAULT_PAGINATION_DEPTH = 10000
+RESULT_SIZE_DEFAULT = 25
+RESULT_SIZE_OPTIONS = [10, 50, 100]
 
 PARAMS = {
     "format": "default",

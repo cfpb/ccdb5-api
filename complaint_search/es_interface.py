@@ -72,7 +72,7 @@ def build_trend_meta(response):
 
 
 def get_break_points(hits, size):
-    """Return a dict of 'search-after' values for max 1,000-item pagination."""
+    """Return a dict of 'search-after' values for pagination."""
     break_points = {}
     if size > len(hits):
         return break_points
@@ -297,8 +297,6 @@ def search(agg_exclude=None, **kwargs):
     res = {}
     _format = params.get("format")
     if _format == "default":
-        if body["size"] > DEFAULT_PAGINATION_DEPTH:
-            body["size"] = DEFAULT_PAGINATION_DEPTH
         if not params.get("no_aggs"):
             aggregation_builder = AggregationBuilder()
             aggregation_builder.add(**params)
@@ -317,7 +315,7 @@ def search(agg_exclude=None, **kwargs):
             total = _extract_total(res)
             # if body.get("frm") and body.get("size"):
             #     page = body["frm"] / body["size"] + 1
-            if total and total > body["size"] and not search_after:
+            if total and total > body["size"]:
                 # We have more than one page of results and need pagination
                 pag_body = copy.deepcopy(body)
                 pag_body["size"] = DEFAULT_PAGINATION_DEPTH
