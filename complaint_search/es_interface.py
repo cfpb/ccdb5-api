@@ -73,14 +73,16 @@ def build_trend_meta(response):
 
 def get_break_points(hits, size):
     """Return a dict of 'search-after' values for pagination."""
+    end_page = int(DEFAULT_PAGINATION_DEPTH / size) - 1
     break_points = {}
     if size > len(hits):
         return break_points
-    # we never want a break point for page 1; start with page 2
+    # we don't need a break point for page 1; start with page 2
     page = 2
     break_points[page] = hits[size - 1].get("sort")
     next_batch = hits[size:]
-    while len(next_batch) > size:
+    # pagination depth is divisible by all size options, there is no last page
+    while page < end_page:
         page += 1
         break_points[page] = next_batch[size - 1].get("sort")
         next_batch = next_batch[size:]
@@ -253,11 +255,13 @@ def _extract_total(response):
     if not total_obj:
         return None
 
-    # ES7: Less than 10K hits with return an exact value
-    if total_obj['relation'] == 'eq':
+    # ES7: Less than 10K hits will return an exact value
+    # If total_obj['relation'] == 'eq':
+    #     return total_obj['value']
+    if total_obj['value'] < 10000:
         return total_obj['value']
 
-    # ES7: more than 10K hits is no accurately reported, go find it
+    # ES7: more than 10K hits is not accurately reported; go find it
     aggs = response.get('aggregations', {})
     for field in SOURCE_FIELDS:
         doc_count = aggs.get(field, {}).get('doc_count', -1)
@@ -317,15 +321,17 @@ def search(agg_exclude=None, **kwargs):
             #     page = body["frm"] / body["size"] + 1
             if total and total > body["size"]:
                 # We have more than one page of results and need pagination
-                pag_body = copy.deepcopy(body)
-                pag_body["size"] = DEFAULT_PAGINATION_DEPTH
+                pagination_body = copy.deepcopy(body)
+                pagination_body["size"] = DEFAULT_PAGINATION_DEPTH
+                if "search_after" in pagination_body:
+                    del pagination_body["search_after"]
                 log.info(
                     'Harvesting pagination dict using %s/%s/_search with %s',
-                    _ES_URL, _COMPLAINT_ES_INDEX, pag_body
+                    _ES_URL, _COMPLAINT_ES_INDEX, pagination_body
                 )
                 pagination_res = _get_es().search(
                     index=_COMPLAINT_ES_INDEX,
-                    body=pag_body
+                    body=pagination_body
                 )
                 break_points = get_break_points(
                     pagination_res['hits']['hits'], body["size"])

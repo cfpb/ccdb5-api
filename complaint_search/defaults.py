@@ -13,7 +13,7 @@ PARAMS = {
     "page": 1,
     "no_aggs": False,
     "no_highlight": False,
-    "size": 10,
+    "size": RESULT_SIZE_DEFAULT,
     "sort": "relevance_desc",
 }
 
