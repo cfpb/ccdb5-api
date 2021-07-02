@@ -82,7 +82,7 @@ def get_break_points(hits, size):
     break_points[page] = hits[size - 1].get("sort")
     next_batch = hits[size:]
     # pagination depth is divisible by all size options, there is no last page
-    while page < end_page:
+    while page < end_page and len(next_batch) > size:
         page += 1
         break_points[page] = next_batch[size - 1].get("sort")
         next_batch = next_batch[size:]
