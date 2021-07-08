@@ -1,6 +1,5 @@
 {
-    "from": 0,
-    "size": 10,
+    "size": 25,
     "_source": [
       "company",
       "company_public_response",
@@ -30,13 +29,10 @@
         "complaint_what_happened": {}
       }
     },
-    "sort": [
-      {
-        "_score": {
-          "order": "desc"
-        }
-      }
-    ],
+  "sort": [
+    {"_score": {"order": "desc"}},
+    {"_id": "desc"}
+  ],
     "post_filter": {
       "bool": {
         "must": [

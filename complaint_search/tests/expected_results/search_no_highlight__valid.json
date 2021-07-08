@@ -1,6 +1,5 @@
 {
-  "from": 0,
-  "size": 10,
+  "size": 25,
   "_source": [
     "company",
     "company_public_response",
@@ -23,11 +22,8 @@
     "zip_code"
   ],
   "sort": [
-    {
-      "_score": {
-        "order": "desc"
-      }
-    }
+    {"_score": {"order": "desc"}},
+    {"_id": "desc"}
   ],
   "post_filter": {
     "bool": {

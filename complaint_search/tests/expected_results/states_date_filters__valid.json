@@ -1,7 +1,6 @@
 {
-    "from": 0,
     "size": 500,
-    "_source": [
+        "_source": [
         "company",
         "company_public_response",
         "company_response",
@@ -31,11 +30,8 @@
         }
     },
     "sort": [
-        {
-            "_score": {
-                "order": "desc"
-            }
-        }
+      {"_score": {"order": "desc"}},
+      {"_id": "desc"}
     ],
     "aggs": {
         "issue": {

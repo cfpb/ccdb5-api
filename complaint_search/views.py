@@ -10,6 +10,8 @@ from complaint_search.defaults import (
     EXCLUDE_PREFIX,
     EXPORT_FORMATS,
     FORMAT_CONTENT_TYPE_MAP,
+    RESULT_SIZE_DEFAULT,
+    RESULT_SIZE_OPTIONS,
 )
 from complaint_search.renderers import CSVRenderer, DefaultRenderer
 from complaint_search.serializer import (
@@ -223,6 +225,8 @@ def suggest_company(request):
     validVars.append('text')
 
     data = _parse_query_params(request.query_params, validVars)
+    if 'search_after' in data:
+        data.removekey(daata, "search_from")
 
     # Company filters should not be applied to their own aggregation filter
     if 'company' in data:

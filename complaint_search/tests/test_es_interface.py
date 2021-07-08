@@ -2,7 +2,7 @@ import copy
 from datetime import datetime
 
 from django.http import StreamingHttpResponse
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
 
 import mock
 from complaint_search.es_builders import AggregationBuilder, SearchBuilder
@@ -33,7 +33,7 @@ class EsInterfaceTest_Search(TestCase):
     MOCK_SEARCH_SIDE_EFFECT = [
         {
             "search": "OK",
-            "_scroll_id": "This_is_a_scroll_id",
+            # "_scroll_id": "This_is_a_scroll_id",
             "hits": {
                 "hits": [0, 1, 2, 3],
                 "total": {
@@ -64,12 +64,16 @@ class EsInterfaceTest_Search(TestCase):
 
     MOCK_SEARCH_RESULT = {
         'search': 'OK',
-        "_scroll_id": "This_is_a_scroll_id",
+        # "_scroll_id": "This_is_a_scroll_id",
         "hits": {
             "hits": [0, 1, 2, 3],
-            "total": 4
+            "total": {
+                "value": 4,
+                "relation": "eq"
+            }
         },
         '_meta': {
+            'break_points': {},
             'total_record_count': 100,
             'last_indexed': '2017-01-02',
             'last_updated': '2017-01-01',
@@ -126,7 +130,7 @@ class EsInterfaceTest_Search(TestCase):
         self.assertEqual(1, len(mock_search.call_args_list))
         self.assertEqual(2, len(mock_search.call_args_list[0]))
         self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(3, len(mock_search.call_args_list[0][1]))
+        self.assertEqual(2, len(mock_search.call_args_list[0][1]))
 
         assertBodyEqual(body, mock_search.call_args_list[0][1]['body'])
         self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
@@ -166,6 +170,7 @@ class EsInterfaceTest_Search(TestCase):
         mock_now.return_value = datetime(2017, 1, 3)
 
         res = _get_meta()
+        res["break_points"] = {}
         self.assertDictEqual(self.MOCK_SEARCH_RESULT["_meta"], res)
 
     @mock.patch("complaint_search.es_interface._get_now")
@@ -175,8 +180,8 @@ class EsInterfaceTest_Search(TestCase):
         mock_search.return_value = self.MOCK_SEARCH_SIDE_EFFECT[1]
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_now.return_value = datetime(2017, 11, 1)
-
         res = _get_meta()
+        res["break_points"] = {}
         exp_res = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
         exp_res['is_data_stale'] = True
         exp_res['is_narrative_stale'] = True
@@ -194,6 +199,7 @@ class EsInterfaceTest_Search(TestCase):
         mock_flag_enabled.return_value = True
 
         res = _get_meta()
+        res["break_points"] = {}
         exp_res = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
         exp_res['has_data_issue'] = True
         self.assertDictEqual(exp_res, res)
@@ -264,33 +270,6 @@ class EsInterfaceTest_Search(TestCase):
     @mock.patch.object(Elasticsearch, 'search')
     @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'scroll')
-    def test_search_with_frm__valid(
-        self, mock_scroll, mock_count, mock_search, mock_get_meta
-    ):
-        mock_search.side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
-        mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
-        mock_get_meta.return_value = copy.deepcopy(
-            self.MOCK_SEARCH_RESULT["_meta"])
-        mock_scroll.side_effect = copy.deepcopy(self.MOCK_SCROLL_SIDE_EFFECT)
-        body = load("search_with_frm__valid")
-        res = search(self.DEFAULT_EXCLUDE, frm=20)
-        self.assertEqual(1, len(mock_search.call_args_list))
-        self.assertEqual(2, len(mock_search.call_args_list[0]))
-        self.assertEqual(0, len(mock_search.call_args_list[0][0]))
-        self.assertEqual(3, len(mock_search.call_args_list[0][1]))
-        self.assertDictEqual(mock_search.call_args_list[0][1]['body'], body)
-        self.assertEqual(mock_search.call_args_list[0][1]['index'], 'INDEX')
-        self.assertEqual(mock_scroll.call_count, 2)
-        search_result = copy.deepcopy(self.MOCK_SEARCH_RESULT)
-        search_result['hits'][
-            'hits'] = self.MOCK_SCROLL_SIDE_EFFECT[1]['hits']['hits']
-        self.assertDictEqual(search_result, res)
-
-    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch("complaint_search.es_interface._get_meta")
-    @mock.patch.object(Elasticsearch, 'search')
-    @mock.patch.object(Elasticsearch, 'count')
-    @mock.patch.object(Elasticsearch, 'scroll')
     def test_search_with_sort__valid(
         self, mock_scroll, mock_count, mock_search, mock_get_meta
     ):
@@ -324,11 +303,10 @@ class EsInterfaceTest_Search(TestCase):
 
         for s in sort_fields:
             res = search(self.DEFAULT_EXCLUDE, sort=s[0])
-            body["sort"] = [{s[1]: {"order": s[2]}}]
+            body["sort"] = [{s[1]: {"order": s[2]}}, {"_id": "desc"}]
             mock_search.assert_any_call(
                 body=body,
                 index="INDEX",
-                scroll="10m"
             )
             self.assertEqual(self.MOCK_SEARCH_RESULT, res)
 

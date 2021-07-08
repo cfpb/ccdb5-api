@@ -1,5 +1,4 @@
 {
-  "from": 0,
   "size": 40,
   "_source": [
     "company",
@@ -31,11 +30,8 @@
     }
   },
   "sort": [
-    {
-      "_score": {
-        "order": "desc"
-      }
-    }
+    {"_score": {"order": "desc"}},
+    {"_id": "desc"}
   ],
   "post_filter": {
     "bool": {

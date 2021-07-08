@@ -1,6 +1,5 @@
 {
-  "from": 0,
-  "size": 1000,
+  "size": 5000,
   "_source": [
     "company",
     "company_public_response",
@@ -31,11 +30,8 @@
     }
   },
   "sort": [
-    {
-      "_score": {
-        "order": "desc"
-      }
-    }
+    {"_score": {"order": "desc"}},
+    {"_id": "desc"}
   ],
   "post_filter": {
     "bool": {

@@ -1,5 +1,4 @@
 {
-  "from": 0,
   "size": 500,
   "_source": [
     "company",
@@ -31,11 +30,8 @@
     }
   },
   "sort": [
-    {
-      "_score": {
-        "order": "desc"
-      }
-    }
+    {"_score": {"order": "desc"}},
+    {"_id": "desc"}
   ],
   "aggs": {
     "issue": {

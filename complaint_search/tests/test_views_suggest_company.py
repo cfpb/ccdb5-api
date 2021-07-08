@@ -48,9 +48,10 @@ class SuggestCompanyTests(APITestCase):
             frm=0,
             no_aggs=False,
             no_highlight=False,
-            size=10,
+            page=1,
+            size=25,
             sort='relevance_desc',
-            text=u'BAN'
+            text='BAN'
         )
         self.assertEqual('OK', response.data)
 
