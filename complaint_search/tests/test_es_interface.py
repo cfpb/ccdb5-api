@@ -2,7 +2,7 @@ import copy
 from datetime import datetime
 
 from django.http import StreamingHttpResponse
-from django.test import SimpleTestCase, TestCase
+from django.test import TestCase
 
 import mock
 from complaint_search.es_builders import AggregationBuilder, SearchBuilder
