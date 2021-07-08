@@ -313,10 +313,11 @@ def search(agg_exclude=None, **kwargs):
             _ES_URL, _COMPLAINT_ES_INDEX, body
         )
         res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
+        total = _extract_total(res)
+        res['hits']['total']['value'] = total
         break_points = {}
         # page = 1
         if res['hits']['hits']:
-            total = _extract_total(res)
             # if body.get("frm") and body.get("size"):
             #     page = body["frm"] / body["size"] + 1
             if total and total > body["size"]:
@@ -335,10 +336,8 @@ def search(agg_exclude=None, **kwargs):
                 )
                 break_points = get_break_points(
                     pagination_res['hits']['hits'], body["size"])
-                res['hits']['total']['value'] = total
         res["_meta"] = _get_meta()
         res["_meta"]["break_points"] = break_points
-        # res["_meta"]["page"] = page
 
     elif _format in EXPORT_FORMATS:
         scan_response = helpers.scan(
