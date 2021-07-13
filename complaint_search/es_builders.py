@@ -272,7 +272,7 @@ class SearchBuilder(BaseBuilder):
         }
         sort_field, sort_order = self.params.get("sort").rsplit("_", 1)
         sort_field = sort_field_mapping.get(sort_field, "_score")
-        return [{sort_field: {"order": sort_order}}, {"_id": "desc"}]
+        return [{sort_field: {"order": sort_order}}, {"_id": sort_order}]
 
     def _build_source(self):
         source = list(SOURCE_FIELDS)

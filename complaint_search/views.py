@@ -84,13 +84,13 @@ QPARAMS_LISTS = (
 QPARAMS_NOT_LISTS = [EXCLUDE_PREFIX + x for x in QPARAMS_LISTS]
 
 
-def _parse_query_params(query_params, validVars=None):
-    if not validVars:
-        validVars = list(QPARAMS_VARS)
+def _parse_query_params(query_params, valid_vars=None):
+    if not valid_vars:
+        valid_vars = list(QPARAMS_VARS)
 
     data = {}
     for param in query_params:
-        if param in validVars:
+        if param in valid_vars:
             data[param] = query_params.get(param)
         elif param in QPARAMS_LISTS:
             data[param] = query_params.getlist(param)
@@ -103,7 +103,7 @@ def _parse_query_params(query_params, validVars=None):
 # -----------------------------------------------------------------------------
 # Header methods
 
-def _buildHeaders():
+def _build_headers():
     # API Documentation hosted on Github pages needs GET access
     headers = {
         'Access-Control-Allow-Origin': 'https://cfpb.github.io',
@@ -154,7 +154,7 @@ def search(request):
 
     results = es_interface.search(
         agg_exclude=AGG_EXCLUDE_FIELDS, **serializer.validated_data)
-    headers = _buildHeaders()
+    headers = _build_headers()
 
     if format not in EXPORT_FORMATS:
         return Response(results, headers=headers)
@@ -184,7 +184,7 @@ def suggest(request):
     serializer = SuggestInputSerializer(data=data)
     if serializer.is_valid():
         results = es_interface.suggest(**serializer.validated_data)
-        return Response(results, headers=_buildHeaders())
+        return Response(results, headers=_build_headers())
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -195,7 +195,7 @@ def _suggest_field(data, field, display_field=None):
         results = es_interface.filter_suggest(
             field, display_field, **serializer.validated_data
         )
-        return Response(results, headers=_buildHeaders())
+        return Response(results, headers=_build_headers())
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -203,10 +203,10 @@ def _suggest_field(data, field, display_field=None):
 @api_view(['GET'])
 @catch_es_error
 def suggest_zip(request):
-    validVars = list(QPARAMS_VARS)
-    validVars.append('text')
+    valid_vars = list(QPARAMS_VARS)
+    valid_vars.append('text')
 
-    data = _parse_query_params(request.query_params, validVars)
+    data = _parse_query_params(request.query_params, valid_vars)
     if data.get('text'):
         data['text'] = data['text'].upper()
     return _suggest_field(data, 'zip_code')
@@ -221,10 +221,10 @@ def suggest_company(request):
         del r[key]
         return r
 
-    validVars = list(QPARAMS_VARS)
-    validVars.append('text')
+    valid_vars = list(QPARAMS_VARS)
+    valid_vars.append('text')
 
-    data = _parse_query_params(request.query_params, validVars)
+    data = _parse_query_params(request.query_params, valid_vars)
     if 'search_after' in data:
         data.removekey(data, "search_after")
 
@@ -243,7 +243,7 @@ def suggest_company(request):
 @catch_es_error
 def document(request, id):
     results = es_interface.document(id)
-    return Response(results, headers=_buildHeaders())
+    return Response(results, headers=_build_headers())
 
 
 # -----------------------------------------------------------------------------
@@ -262,7 +262,7 @@ def states(request):
 
     results = es_interface.states_agg(
         agg_exclude=AGG_EXCLUDE_FIELDS, **serializer.validated_data)
-    headers = _buildHeaders()
+    headers = _build_headers()
 
     return Response(results, headers=headers)
 
@@ -283,6 +283,6 @@ def trends(request):
 
     results = es_interface.trends(
         agg_exclude=AGG_EXCLUDE_FIELDS, **serializer.validated_data)
-    headers = _buildHeaders()
+    headers = _build_headers()
 
     return Response(results, headers=headers)

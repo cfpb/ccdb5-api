@@ -1,6 +1,6 @@
 import unittest
 
-from complaint_search.es_interface import get_break_points
+from complaint_search.es_interface import get_break_points, test_float
 from complaint_search.tests.es_interface_test_helpers import load
 
 
@@ -27,3 +27,9 @@ class TestBreakPoints(unittest.TestCase):
             self.test_data.get("hits"), size=2)
         self.assertEqual(len(break_points), 5)
         self.assertEqual(break_points[3], target_break_point)
+
+    def test_float(self):
+        self.assertIs(test_float("xx"), None)
+        self.assertIs(test_float("99xx"), None)
+        self.assertEqual(test_float("4.99"), 4.99)
+        self.assertEqual(test_float("99"), 99.0)

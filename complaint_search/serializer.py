@@ -121,10 +121,14 @@ class SearchInputSerializer(serializers.Serializer):
 
     def to_internal_value(self, data):
         ret = super(SearchInputSerializer, self).to_internal_value(data)
-        if ret.get('field'):
-            ret['field'] = SearchInputSerializer.FIELD_MAP.get(
-                ret['field'], ret['field'])
+        if ret.get("field"):
+            ret["field"] = SearchInputSerializer.FIELD_MAP.get(
+                ret["field"], ret["field"])
         return ret
+
+    def validate_search_after(self, value):
+        if value:
+            return str(value)
 
     def validate_product(self, value):
         """
@@ -134,16 +138,16 @@ class SearchInputSerializer(serializers.Serializer):
         if value:
             for p in value:
                 # -*- coding: utf-8 -*-
-                if p.count(u'\u2022') > 1:
+                if p.count('\u2022') > 1:
                     raise serializers.ValidationError(
-                        u"Product is malformed, it needs to be \"product\" or "
+                        "Product is malformed, it needs to be \"product\" or "
                         "\"product\u2022subproduct\""
                     )
 
         return value
 
     def validate_issue(self, value):
-        """
+        r"""
         Valid Issue format where if subissue is presented, it should
         be prefixed with the parent product and a bullet point \u2022
         """
@@ -152,7 +156,7 @@ class SearchInputSerializer(serializers.Serializer):
                 # -*- coding: utf-8 -*-
                 if p.count(u'\u2022') > 1:
                     raise serializers.ValidationError(
-                        u"Issue is malformed, it needs to be \"issue\" or "
+                        "Issue is malformed, it needs to be \"issue\" or "
                         "\"issue\u2022subissue\""
                     )
 

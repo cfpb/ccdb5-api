@@ -24,6 +24,8 @@ from flags.state import flag_enabled
 from requests_aws4auth import AWS4Auth
 
 
+log = logging.getLogger(__name__)
+
 _ES_URL = "{}://{}:{}".format("http", os.environ.get('ES_HOST', 'localhost'),
                               os.environ.get('ES_PORT', '9200'))
 _ES_USER = os.environ.get('ES_USER', '')
@@ -81,7 +83,6 @@ def get_break_points(hits, size):
     page = 2
     break_points[page] = hits[size - 1].get("sort")
     next_batch = hits[size:]
-    # pagination depth is divisible by all size options, there is no last page
     while page < end_page and len(next_batch) > size:
         page += 1
         break_points[page] = next_batch[size - 1].get("sort")
@@ -161,7 +162,6 @@ def _get_es():
                 http_auth=(_ES_USER, _ES_PASSWORD),
                 timeout=100
             )
-    # logger.info(_ES_INSTANCE)
     return _ES_INSTANCE
 
 
@@ -271,18 +271,38 @@ def _extract_total(response):
     return None
 
 
+def test_float(value):
+    try:
+        _float = float(value)
+    except Exception:
+        return
+    return _float
+
+
 def parse_search_after(params):
-    """Validate search_after field and return it as a list of [int, str]."""
-    value = params.get("search_after")
-    if not value:
+    """Validate search_after and return it as a list of [score, ID]."""
+    search_pair = params.get("search_after")
+    sort = params.get("sort")
+    if not search_pair or not sort:
         return
-    if '_' not in value or len(value.split("_")) != 2:
+    if '_' not in search_pair or len(search_pair.split("_")) != 2:
         return
-    _sort, _id = value.split("_")
-    for entry in [_sort, _id]:
-        if not str(entry).isdigit():
+    _score, _id = search_pair.split("_")
+    _sort = sort.split("_")[0]
+    if _sort not in ["relevance", "created"]:
+        log.error("{} is not a supported sort value.".format(_sort))
+        return
+    if _sort == "relevance":
+        score = test_float(_score)
+        if score is None:
+            log.error("Search_after relevance score is not a float.")
             return
-    return [int(_sort), str(_id)]
+    elif _sort == "created":
+        if not str(_score).isdigit():
+            log.error("Search_after date score is not an integer.")
+            return
+        score = int(_score)
+    return [score, _id]
 
 
 def search(agg_exclude=None, **kwargs):
@@ -307,7 +327,6 @@ def search(agg_exclude=None, **kwargs):
             if agg_exclude:
                 aggregation_builder.add_exclude(agg_exclude)
             body["aggs"] = aggregation_builder.build()
-        log = logging.getLogger(__name__)
         log.info(
             'Requesting %s/%s/_search with %s',
             _ES_URL, _COMPLAINT_ES_INDEX, body
@@ -451,8 +470,6 @@ def states_agg(agg_exclude=None, **kwargs):
     search_builder = SearchBuilder()
     search_builder.add(**params)
     body = search_builder.build()
-
-    log = logging.getLogger(__name__)
     log.info(
         'Calling %s/%s/%s/states with %s',
         _ES_URL, _COMPLAINT_ES_INDEX, _COMPLAINT_DOC_TYPE, body,
