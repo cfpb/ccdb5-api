@@ -303,7 +303,7 @@ class EsInterfaceTest_Search(TestCase):
 
         for s in sort_fields:
             res = search(self.DEFAULT_EXCLUDE, sort=s[0])
-            body["sort"] = [{s[1]: {"order": s[2]}}, {"_id":  s[2]}]
+            body["sort"] = [{s[1]: {"order": s[2]}}, {"_id": s[2]}]
             mock_search.assert_any_call(
                 body=body,
                 index="INDEX",
