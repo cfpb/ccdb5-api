@@ -7,7 +7,7 @@ from django.test import TestCase
 import mock
 from complaint_search.es_builders import AggregationBuilder, SearchBuilder
 from complaint_search.es_interface import (
-    _extract_total,
+    _extract_count,
     _get_meta,
     document,
     filter_suggest,
@@ -60,7 +60,7 @@ class EsInterfaceTest_Search(TestCase):
         }
     ]
 
-    MOCK_COUNT_RETURN_VALUE = {"count": 100}
+    MOCK_COUNT_RETURN_VALUE = {"count": 4}
 
     MOCK_SEARCH_RESULT = {
         'search': 'OK',
@@ -79,10 +79,11 @@ class EsInterfaceTest_Search(TestCase):
             'last_updated': '2017-01-01',
             'license': 'CC0',
             'is_data_stale': False,
-            'is_narrative_stale': False,
             'has_data_issue': False,
         }
     }
+
+    MOCK_COUNT_PARAMS = {"company": "EQUIPOISE"}
 
     MOCK_SCROLL_SIDE_EFFECT = [
         {
@@ -141,25 +142,23 @@ class EsInterfaceTest_Search(TestCase):
     # Tests
     # -------------------------------------------------------------------------
 
-    def test__extract_total_missing(self):
-        fixture = {'hits': {}}
-        actual = _extract_total(fixture)
-        self.assertEqual(None, actual)
+    @mock.patch("complaint_search.es_interface._get_es")
+    @mock.patch.object(Elasticsearch, 'count')
+    def test__extract_count(self, mock_count, mock_es):
+        mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
+        mock_es().count = mock_count
+        params = self.MOCK_COUNT_PARAMS
+        response = _extract_count(params)
+        self.assertEqual(response, 4)
 
-    def test__extract_from_aggs_good(self):
-        fixture = {
-            'hits': {'total': {'value': 10000, 'relation': 'gte'}},
-            'aggregations': {'has_narrative': {'doc_count': 99999}}
-        }
-        actual = _extract_total(fixture)
-        self.assertEqual(99999, actual)
-
-    def test__extract_from_aggs_failed(self):
-        fixture = {
-            'hits': {'total': {'value': 10000, 'relation': 'gte'}}
-        }
-        actual = _extract_total(fixture)
-        self.assertEqual(None, actual)
+    @mock.patch("complaint_search.es_interface._get_es")
+    @mock.patch.object(Elasticsearch, 'count')
+    def test__extract_from_aggs_good(self, mock_count, mock_es):
+        mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
+        mock_es().count = mock_count
+        params = self.MOCK_COUNT_PARAMS
+        actual = _extract_count(params)
+        self.assertEqual(4, actual)
 
     @mock.patch("complaint_search.es_interface._get_now")
     @mock.patch.object(Elasticsearch, 'search')
@@ -171,6 +170,7 @@ class EsInterfaceTest_Search(TestCase):
 
         res = _get_meta()
         res["break_points"] = {}
+        res["total_record_count"] = 100
         self.assertDictEqual(self.MOCK_SEARCH_RESULT["_meta"], res)
 
     @mock.patch("complaint_search.es_interface._get_now")
@@ -181,10 +181,9 @@ class EsInterfaceTest_Search(TestCase):
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_now.return_value = datetime(2017, 11, 1)
         res = _get_meta()
-        res["break_points"] = {}
+        res.update({"break_points": {}, "total_record_count": 100})
         exp_res = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
         exp_res['is_data_stale'] = True
-        exp_res['is_narrative_stale'] = True
         self.assertDictEqual(exp_res, res)
 
     @mock.patch("complaint_search.es_interface._get_now")
@@ -197,11 +196,11 @@ class EsInterfaceTest_Search(TestCase):
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
         mock_now.return_value = datetime(2017, 1, 1)
         mock_flag_enabled.return_value = True
-
         res = _get_meta()
         res["break_points"] = {}
         exp_res = copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
         exp_res['has_data_issue'] = True
+        exp_res["total_record_count"] = 4
         self.assertDictEqual(exp_res, res)
 
     @mock.patch('requests.get', ok=True, content="RGET_OK")

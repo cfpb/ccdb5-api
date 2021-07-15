@@ -8,10 +8,10 @@ from complaint_search.defaults import (
     DEFAULT_PAGINATION_DEPTH,
     EXPORT_FORMATS,
     PARAMS,
-    SOURCE_FIELDS,
 )
 from complaint_search.es_builders import (
     AggregationBuilder,
+    CountBuilder,
     DateRangeBucketsBuilder,
     PostFilterBuilder,
     SearchBuilder,
@@ -241,36 +241,22 @@ def _get_meta():
         "is_data_stale": _is_data_stale(
             max_date_res["aggregations"]["max_date"]["value_as_string"]),
         # TODO: remove is_narrative_stale -- no longer used
-        "is_narrative_stale": _is_data_stale(from_timestamp(
-            max_date_res["aggregations"]["max_narratives"]["max_date"]["value"]
-        )),
+        # "is_narrative_stale": _is_data_stale(from_timestamp(
+        #     max_date_res["aggregations"]["max_narratives"]["max_date"]["value"]
+        # )),
         "has_data_issue": bool(flag_enabled('CCDB_TECHNICAL_ISSUES'))
     }
 
     return result
 
 
-def _extract_total(response, map_view=False):
-    total_obj = response['hits'].get('total')
-    if not total_obj:
-        return None
-
-    # ES7: Less than 10K hits will return an exact value
-    if total_obj['value'] < 10000:
-        return total_obj['value']
-
-    # ES7: 10K or more hits is not accurately reported; go find it
-    aggs = response.get('aggregations')
-    if not aggs:
-        return
-    if map_view:
-        if not aggs.get("state"):
-            return
-        return aggs.get("state").get("doc_count")
-    for field in SOURCE_FIELDS:
-        doc_count = aggs.get(field, {}).get('doc_count', -1)
-        if doc_count != -1:
-            return doc_count
+def _extract_count(params):
+    """Consult the count API for an accurate hit count regardless of size."""
+    count_builder = CountBuilder()
+    count_builder.add(**params)
+    body = count_builder.build()
+    res = _get_es().count(index=_COMPLAINT_ES_INDEX, body=body)
+    return res.get("count")
 
 
 def test_float(value):
@@ -334,14 +320,14 @@ def search(agg_exclude=None, **kwargs):
             _ES_URL, _COMPLAINT_ES_INDEX, body
         )
         res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
-        total = _extract_total(res)
-        res['hits']['total']['value'] = total
+        hit_total = _extract_count(params)
+        res['hits']['total']['value'] = hit_total
         break_points = {}
         # page = 1
         if res['hits']['hits']:
             # if body.get("frm") and body.get("size"):
             #     page = body["frm"] / body["size"] + 1
-            if total and total > body["size"]:
+            if hit_total and hit_total > body["size"]:
                 # We have more than one page of results and need pagination
                 pagination_body = copy.deepcopy(body)
                 pagination_body["size"] = DEFAULT_PAGINATION_DEPTH
@@ -489,8 +475,8 @@ def states_agg(agg_exclude=None, **kwargs):
         index=_COMPLAINT_ES_INDEX,
         body=body
     )
-    total = _extract_total(res, map_view=True)
-    res['hits']['total']['value'] = total
+    hit_total = _extract_count(params)
+    res['hits']['total']['value'] = hit_total
 
     return res
 

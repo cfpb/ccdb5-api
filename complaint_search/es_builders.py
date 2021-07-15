@@ -248,6 +248,17 @@ class BaseBuilder(object):
         return {"bool": {"must": and_clauses, "must_not": not_clauses}}
 
 
+class CountBuilder(BaseBuilder):
+    def __init__(self):
+        self.params = copy.deepcopy(PARAMS)
+
+    def build(self):
+        include_clauses, exclude_clauses = self._build_clauses_dictionary()
+        query_body = self._build_dsl_filter(include_clauses, exclude_clauses)
+        query = {"query": query_body}
+        return query
+
+
 class SearchBuilder(BaseBuilder):
     def __init__(self):
         self.params = copy.deepcopy(PARAMS)
