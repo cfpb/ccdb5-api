@@ -250,25 +250,27 @@ def _get_meta():
     return result
 
 
-def _extract_total(response):
+def _extract_total(response, map_view=False):
     total_obj = response['hits'].get('total')
     if not total_obj:
         return None
 
     # ES7: Less than 10K hits will return an exact value
-    # If total_obj['relation'] == 'eq':
-    #     return total_obj['value']
     if total_obj['value'] < 10000:
         return total_obj['value']
 
-    # ES7: more than 10K hits is not accurately reported; go find it
-    aggs = response.get('aggregations', {})
+    # ES7: 10K or more hits is not accurately reported; go find it
+    aggs = response.get('aggregations')
+    if not aggs:
+        return
+    if map_view:
+        if not aggs.get("state"):
+            return
+        return aggs.get("state").get("doc_count")
     for field in SOURCE_FIELDS:
         doc_count = aggs.get(field, {}).get('doc_count', -1)
         if doc_count != -1:
             return doc_count
-
-    return None
 
 
 def test_float(value):
@@ -483,8 +485,12 @@ def states_agg(agg_exclude=None, **kwargs):
         aggregation_builder.add_exclude(agg_exclude)
     body["aggs"] = aggregation_builder.build()
 
-    res = _get_es().search(index=_COMPLAINT_ES_INDEX,
-                           body=body)
+    res = _get_es().search(
+        index=_COMPLAINT_ES_INDEX,
+        body=body
+    )
+    total = _extract_total(res, map_view=True)
+    res['hits']['total']['value'] = total
 
     return res
 
