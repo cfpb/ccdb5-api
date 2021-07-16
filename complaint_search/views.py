@@ -10,8 +10,6 @@ from complaint_search.defaults import (
     EXCLUDE_PREFIX,
     EXPORT_FORMATS,
     FORMAT_CONTENT_TYPE_MAP,
-    # RESULT_SIZE_DEFAULT,
-    # RESULT_SIZE_OPTIONS,
 )
 from complaint_search.renderers import CSVRenderer, DefaultRenderer
 from complaint_search.serializer import (

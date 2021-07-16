@@ -33,7 +33,6 @@ class EsInterfaceTest_Search(TestCase):
     MOCK_SEARCH_SIDE_EFFECT = [
         {
             "search": "OK",
-            # "_scroll_id": "This_is_a_scroll_id",
             "hits": {
                 "hits": [0, 1, 2, 3],
                 "total": {
@@ -64,7 +63,6 @@ class EsInterfaceTest_Search(TestCase):
 
     MOCK_SEARCH_RESULT = {
         'search': 'OK',
-        # "_scroll_id": "This_is_a_scroll_id",
         "hits": {
             "hits": [0, 1, 2, 3],
             "total": {
