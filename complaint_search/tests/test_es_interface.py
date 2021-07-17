@@ -2,7 +2,7 @@ import copy
 from datetime import datetime
 
 from django.http import StreamingHttpResponse
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
 
 import mock
 from complaint_search.es_builders import AggregationBuilder, SearchBuilder
@@ -11,6 +11,7 @@ from complaint_search.es_interface import (
     _get_meta,
     document,
     filter_suggest,
+    parse_search_after,
     search,
     suggest,
 )
@@ -21,6 +22,90 @@ from complaint_search.tests.es_interface_test_helpers import (
 )
 from elasticsearch7 import Elasticsearch
 from nose_parameterized import parameterized
+
+
+class TestParseSearchAfter(SimpleTestCase):
+
+    def setUp(self):
+        self.VALID_SCORE_PAIR = "7.720881_1800788"
+        self.VALID_DATE_PAIR = "1626368400000_4546190"
+        self.INVALID_SCORE_PAIR = "7.720x81_1800788"
+        self.INVALID_DATE_PAIR = "162636x400000_4546190"
+        self.INVALID_ID_PAIR = "7.720881_180x788"
+        self.TOO_MANY_PAIR_ELEMENTS = "7.720881_1800788_50"
+        self.NO_PAIR = "7.720881180788"
+
+    def test_parse_search_after_valid_score(self):
+        params = {
+            "search_after": self.VALID_SCORE_PAIR,
+            "sort": "relevance"}
+        self.assertEqual(
+            parse_search_after(params),
+            [7.720881, "1800788"]
+        )
+
+    def test_parse_search_after_invalid_score(self):
+        params = {
+            "search_after": self.INVALID_SCORE_PAIR,
+            "sort": "relevance"}
+        self.assertIs(
+            parse_search_after(params),
+            None
+        )
+
+    def test_parse_search_after_invalid_sort(self):
+        params = {
+            "search_after": self.INVALID_SCORE_PAIR,
+            "sort": "xyz"}
+        self.assertIs(
+            parse_search_after(params),
+            None
+        )
+
+    def test_parse_search_after_valid_date(self):
+        params = {
+            "search_after": self.VALID_DATE_PAIR,
+            "sort": "created"}
+        self.assertEqual(
+            parse_search_after(params),
+            [1626368400000, "4546190"]
+        )
+
+    def test_parse_search_after_invalid_date(self):
+        params = {
+            "search_after": self.INVALID_DATE_PAIR,
+            "sort": "created"}
+        self.assertIs(
+            parse_search_after(params),
+            None
+        )
+
+    def test_parse_search_after_invalid_id(self):
+        params = {
+            "search_after": self.INVALID_ID_PAIR,
+            "sort": "created"}
+        self.assertIs(
+            parse_search_after(params),
+            None
+        )
+
+    def test_parse_search_after_invalid_element_count(self):
+        params = {
+            "search_after": self.TOO_MANY_PAIR_ELEMENTS,
+            "sort": "created"}
+        self.assertIs(
+            parse_search_after(params),
+            None
+        )
+
+    def test_parse_search_after_missing_pair_delimiter(self):
+        params = {
+            "search_after": self.NO_PAIR,
+            "sort": "created"}
+        self.assertIs(
+            parse_search_after(params),
+            None
+        )
 
 
 class EsInterfaceTest_Search(TestCase):
@@ -60,6 +145,7 @@ class EsInterfaceTest_Search(TestCase):
     ]
 
     MOCK_COUNT_RETURN_VALUE = {"count": 4}
+    MOCK_HIGH_COUNT_RETURN_VALUE = {"count": 10001}
 
     MOCK_SEARCH_RESULT = {
         'search': 'OK',
@@ -97,6 +183,24 @@ class EsInterfaceTest_Search(TestCase):
     ]
 
     DEFAULT_EXCLUDE = ['company', 'zip_code']
+
+    MOCK_HIT_RESPONSE = {
+        "hits": {
+            "total": {
+                "value": 4,
+                "relation": "eq"
+            }
+        }
+    }
+
+    MOCK_HIGH_HIT_RESPONSE = {
+        "hits": {
+            "total": {
+                "value": 10000,
+                "relation": "eq"
+            }
+        }
+    }
 
     # -------------------------------------------------------------------------
     # Helper Methods
@@ -140,23 +244,22 @@ class EsInterfaceTest_Search(TestCase):
     # Tests
     # -------------------------------------------------------------------------
 
-    @mock.patch("complaint_search.es_interface._get_es")
-    @mock.patch.object(Elasticsearch, 'count')
-    def test__extract_count(self, mock_count, mock_es):
-        mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
-        mock_es().count = mock_count
+    def test__extract_count_from_hits(self):
+        """When hits are > 10K, hits["total"]["value"] is accurate."""
         params = self.MOCK_COUNT_PARAMS
-        response = _extract_count(params)
-        self.assertEqual(response, 4)
+        response = self.MOCK_HIT_RESPONSE
+        hit_count = _extract_count(response, params)
+        self.assertEqual(hit_count, 4)
 
     @mock.patch("complaint_search.es_interface._get_es")
     @mock.patch.object(Elasticsearch, 'count')
-    def test__extract_from_aggs_good(self, mock_count, mock_es):
-        mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
+    def test__extract_high_count_from_count_api(self, mock_count, mock_es):
+        mock_count.return_value = self.MOCK_HIGH_COUNT_RETURN_VALUE
         mock_es().count = mock_count
+        response = self.MOCK_HIGH_HIT_RESPONSE
         params = self.MOCK_COUNT_PARAMS
-        actual = _extract_count(params)
-        self.assertEqual(4, actual)
+        actual = _extract_count(response, params)
+        self.assertEqual(10001, actual)
 
     @mock.patch("complaint_search.es_interface._get_now")
     @mock.patch.object(Elasticsearch, 'search')

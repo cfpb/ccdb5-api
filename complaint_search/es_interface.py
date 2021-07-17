@@ -250,8 +250,11 @@ def _get_meta():
     return result
 
 
-def _extract_count(params):
-    """Consult the count API for an accurate hit count regardless of size."""
+def _extract_count(response, params):
+    """Get the hits total if < 10K, otherwise use the count API."""
+    total_obj = response['hits'].get('total')
+    if total_obj and total_obj["value"] < 10000:
+        return total_obj["value"]
     count_builder = CountBuilder()
     count_builder.add(**params)
     body = count_builder.build()
@@ -320,7 +323,7 @@ def search(agg_exclude=None, **kwargs):
             _ES_URL, _COMPLAINT_ES_INDEX, body
         )
         res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
-        hit_total = _extract_count(params)
+        hit_total = _extract_count(res, params)
         res['hits']['total']['value'] = hit_total
         break_points = {}
         # page = 1
@@ -475,7 +478,7 @@ def states_agg(agg_exclude=None, **kwargs):
         index=_COMPLAINT_ES_INDEX,
         body=body
     )
-    hit_total = _extract_count(params)
+    hit_total = _extract_count(res, params)
     res['hits']['total']['value'] = hit_total
 
     return res

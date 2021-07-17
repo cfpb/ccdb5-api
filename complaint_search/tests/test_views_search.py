@@ -210,18 +210,18 @@ class SearchTests(APITestCase):
             {"size": ["Ensure this value is less than or equal to 10000000."]},
             response.data)
 
-    # @mock.patch('complaint_search.es_interface.search')
-    # def test_search_with_frm__valid(self, mock_essearch):
-    #     url = reverse('complaint_search:search')
-    #     params = {"frm": 10}
-    #     mock_essearch.return_value = 'OK'
-    #     response = self.client.get(url, params)
-    #     # self.assertEqual(status.HTTP_200_OK, response.status_code)
-    #     mock_essearch.assert_called_once_with(
-    #         agg_exclude=AGG_EXCLUDE_FIELDS,
-    #         **self.buildDefaultParams(params)
-    #     )
-    #     self.assertEqual('OK', response.data)
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_search_after__valid(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        params = {"search_after": "7.720881_1800788"}
+        mock_essearch.return_value = 'OK'
+        response = self.client.get(url, params)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        mock_essearch.assert_called_once_with(
+            agg_exclude=AGG_EXCLUDE_FIELDS,
+            **self.buildDefaultParams(params)
+        )
+        self.assertEqual('OK', response.data)
 
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_frm__invalid_type(self, mock_essearch):

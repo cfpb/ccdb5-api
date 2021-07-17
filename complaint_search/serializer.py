@@ -126,10 +126,6 @@ class SearchInputSerializer(serializers.Serializer):
                 ret["field"], ret["field"])
         return ret
 
-    def validate_search_after(self, value):
-        if value:
-            return str(value)
-
     def validate_product(self, value):
         """
         Valid Product format where if subproduct is presented, it should

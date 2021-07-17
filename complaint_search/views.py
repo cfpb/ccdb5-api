@@ -223,8 +223,6 @@ def suggest_company(request):
     valid_vars.append('text')
 
     data = _parse_query_params(request.query_params, valid_vars)
-    if 'search_after' in data:
-        data.removekey(data, "search_after")
 
     # Company filters should not be applied to their own aggregation filter
     if 'company' in data:
