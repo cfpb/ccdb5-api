@@ -141,7 +141,7 @@ def process_trends_response(response):
 def _get_es():
     global _ES_INSTANCE
     if _ES_INSTANCE is None:
-        if USE_AWS_ES:
+        if USE_AWS_ES:  # pragma: no cover
             awsauth = AWS4Auth(
                 AWS_ES_ACCESS_KEY,
                 AWS_ES_SECRET_KEY,
@@ -186,13 +186,6 @@ def _is_data_stale(last_updated_time):
         return True
 
     return False
-
-
-def from_timestamp(seconds):
-    # Socrata fields (:field_name) are indexed in seconds, not the usual
-    # milliseconds
-    fromtimestamp = datetime.fromtimestamp(seconds)
-    return fromtimestamp.strftime('%Y-%m-%d')
 
 
 def _get_meta():
@@ -240,10 +233,6 @@ def _get_meta():
         "total_record_count": count_res["count"],
         "is_data_stale": _is_data_stale(
             max_date_res["aggregations"]["max_date"]["value_as_string"]),
-        # TODO: remove is_narrative_stale -- no longer used
-        # "is_narrative_stale": _is_data_stale(from_timestamp(
-        #     max_date_res["aggregations"]["max_narratives"]["max_date"]["value"]
-        # )),
         "has_data_issue": bool(flag_enabled('CCDB_TECHNICAL_ISSUES'))
     }
 

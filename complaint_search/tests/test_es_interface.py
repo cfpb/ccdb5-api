@@ -261,6 +261,31 @@ class EsInterfaceTest_Search(TestCase):
         actual = _extract_count(response, params)
         self.assertEqual(10001, actual)
 
+    @mock.patch("complaint_search.es_interface._get_es")
+    @mock.patch("complaint_search.es_interface._extract_count")
+    @mock.patch("complaint_search.es_interface._get_meta")
+    @mock.patch.object(Elasticsearch, 'count')
+    def test__pagination_generated(self, mock_count, mock_meta,
+                                   mock_extract, mock_es):
+        fake_hits = [
+            {"sort": [1620752400005, "4367498"]},
+            {"sort": [1620752400004, "4367497"]},
+            {"sort": [1620752400003, "4367496"]},
+            {"sort": [1620752400002, "4367495"]},
+            {"sort": [1620752400001, "4367494"]},
+            {"sort": [1620752400000, "4367493"]},
+        ]
+        mock_count.return_value = self.MOCK_HIGH_COUNT_RETURN_VALUE
+        mock_extract.return_value = self.MOCK_HIGH_COUNT_RETURN_VALUE["count"]
+        mock_meta.return_value = {"total_record_count": 2000000}
+        mock_es().count = mock_count
+        mock_es().search.return_value = {
+            "hits": {
+                "total": {"value": 10000},
+                "hits": fake_hits}}
+        response = search(size=2, search_after="1620752400004_4367497")
+        self.assertEqual(len(response.get("_meta").get("break_points")), 2)
+
     @mock.patch("complaint_search.es_interface._get_now")
     @mock.patch.object(Elasticsearch, 'search')
     @mock.patch.object(Elasticsearch, 'count')
