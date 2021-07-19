@@ -122,50 +122,42 @@ class BaseBuilder(object):
                     es_field_name: value_list
                 }}
 
-        else:
-            item_dict = defaultdict(list)
-            for v in value_list:
-                v_pair = v.split(DELIMITER)
-                # No child specified
-                if len(v_pair) == 1:
-                    # This will initialize empty list for item if not in
-                    # item_dict yet
-                    item_dict[v_pair[0]]
-                elif len(v_pair) == 2:
-                    # put subproduct into list
-                    item_dict[v_pair[0]].append(v_pair[1])
+        item_dict = defaultdict(list)
+        for v in value_list:
+            v_pair = v.split(DELIMITER)
+            # No child specified
+            if len(v_pair) == 1:
+                # This will initialize empty list for item if not in
+                # item_dict yet
+                item_dict[v_pair[0]]
+            elif len(v_pair) == 2:
+                # put subproduct into list
+                item_dict[v_pair[0]].append(v_pair[1])
 
-            # Go through item_dict to create filters
-            f_list = []
-            for item, child in item_dict.items():
-                # Always append the item to list
-                parent_term = {"term": {es_field_name: item}}
-                if not child:
-                    f_list.append(parent_term)
-                else:
-                    child_field = self._get_es_name(self._get_child(field))
-                    child_term = {
-                        "terms": {
-                            child_field: child
-                        }
+        # Go through item_dict to create filters
+        f_list = []
+        for item, child in item_dict.items():
+            # Always append the item to list
+            parent_term = {"term": {es_field_name: item}}
+            if not child:
+                f_list.append(parent_term)
+            else:
+                child_field = self._get_es_name(self._get_child(field))
+                child_term = {"terms": {child_field: child}}
+                parent_child_bool_structure = {
+                    "bool": {
+                        "must": [
+                            parent_term,
+                            child_term
+                        ],
                     }
-                    parent_child_bool_structure = {
-                        "bool": {
-                            "must": [
-                                parent_term,
-                                child_term
-                            ],
-                        }
-                    }
-
-                    f_list.append(parent_child_bool_structure)
-
-            return f_list
+                }
+                f_list.append(parent_child_bool_structure)
+        return f_list
 
     # This creates two dictionaries where the keys are the field name
     # dictionary 1: the conditions for including a record in the query
     # dictionary 2: the conditions for excluding a record in the query
-
     def _build_clauses_dictionary(self):
         include_clauses = OrderedDict()
         exclude_clauses = OrderedDict()
