@@ -226,7 +226,8 @@
         "aggs": {
           "state": {
             "terms": {
-              "field": "state"
+              "field": "state",
+              "size": 100
             }
           }
         },
