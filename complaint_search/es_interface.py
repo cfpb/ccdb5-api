@@ -344,7 +344,7 @@ def search(agg_exclude=None, **kwargs):
             query=body,
             scroll="10m",
             index=_COMPLAINT_ES_INDEX,
-            size=7000,
+            size=7000,  # batch size for scroll request
             request_timeout=3000
         )
 
@@ -358,12 +358,13 @@ def search(agg_exclude=None, **kwargs):
         elif params.get("format") == 'json':
             if 'highlight' in body:
                 del body['highlight']
-            body['size'] = 0
+            body["size"] = 0
 
-            res = _get_es().search(index=_COMPLAINT_ES_INDEX,
-                                   body=body,
-                                   scroll="10m")
-            res = exporter.export_json(scan_response, res['hits']['total'])
+            count_res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
+            hit_total = _extract_count(count_res, params)
+            res = exporter.export_json(
+                scan_response, hit_total
+            )
 
     return res
 

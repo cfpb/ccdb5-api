@@ -357,7 +357,7 @@ class EsInterfaceTest_Search(TestCase):
         mock_exporter_csv
     ):
         mock_search_side_effect = copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT)
-        mock_search_side_effect[0]['hits']['total'] = 4
+        mock_search_side_effect[0]['hits']['total']['value'] = 4
         mock_search.side_effect = mock_search_side_effect
 
         mock_exporter_csv.return_value = StreamingHttpResponse()
