@@ -301,12 +301,11 @@ def search(agg_exclude=None, **kwargs):
     res = {}
     _format = params.get("format")
     if _format == "default":
-        if not params.get("no_aggs"):
-            aggregation_builder = AggregationBuilder()
-            aggregation_builder.add(**params)
-            if agg_exclude:
-                aggregation_builder.add_exclude(agg_exclude)
-            body["aggs"] = aggregation_builder.build()
+        aggregation_builder = AggregationBuilder()
+        aggregation_builder.add(**params)
+        if agg_exclude:
+            aggregation_builder.add_exclude(agg_exclude)
+        body["aggs"] = aggregation_builder.build()
         log.info(
             'Requesting %s/%s/_search with %s',
             _ES_URL, _COMPLAINT_ES_INDEX, body
@@ -451,19 +450,17 @@ def states_agg(agg_exclude=None, **kwargs):
     search_builder = SearchBuilder()
     search_builder.add(**params)
     body = search_builder.build()
-    log.info(
-        'Calling %s/%s/%s/states with %s',
-        _ES_URL, _COMPLAINT_ES_INDEX, _COMPLAINT_DOC_TYPE, body,
-    )
-    log.info(
-        'Params are %s', params)
-
     aggregation_builder = StateAggregationBuilder()
     aggregation_builder.add(**params)
     if agg_exclude:
         aggregation_builder.add_exclude(agg_exclude)
     body["aggs"] = aggregation_builder.build()
-
+    log.info(
+        'Calling %s/%s/_search with %s',
+        _ES_URL, _COMPLAINT_ES_INDEX, body,
+    )
+    log.info(
+        'API params were %s', params)
     res = _get_es().search(
         index=_COMPLAINT_ES_INDEX,
         body=body
@@ -490,8 +487,10 @@ def trends(agg_exclude=None, **kwargs):
         aggregation_builder.add_exclude(agg_exclude)
     body["aggs"] = aggregation_builder.build()
 
-    res_trends = _get_es().search(index=_COMPLAINT_ES_INDEX,
-                                  body=body)
+    res_trends = _get_es().search(
+        index=_COMPLAINT_ES_INDEX, body=body)
+    hit_total = _extract_count(res_trends, params)
+    res_trends['hits']['total']['value'] = hit_total
 
     res_date_buckets = None
 

@@ -405,8 +405,8 @@ class AggregationBuilder(BaseBuilder):
         }
 
         # Add the aggregation filters
-        field_aggs['filter'] = self._build_dsl_filter(incl_subset,
-                                                      self.exclude_clauses)
+        field_aggs['filter'] = self._build_dsl_filter(
+            incl_subset, self.exclude_clauses)
         return field_aggs
 
     def build(self):
@@ -420,7 +420,10 @@ class AggregationBuilder(BaseBuilder):
             ]
         for field_name in agg_fields:
             aggs[field_name] = self.build_one(field_name)
-
+        if "state" in aggs:
+            aggs["state"]["aggs"]["state"].update(
+                {"terms": {"field": "state", 'size': 100}}
+            )
         return aggs
 
 
