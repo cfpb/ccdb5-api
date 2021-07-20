@@ -7,7 +7,6 @@ from django.test import SimpleTestCase, TestCase
 import mock
 from complaint_search.es_builders import AggregationBuilder, SearchBuilder
 from complaint_search.es_interface import (
-    _extract_count,
     _get_meta,
     document,
     filter_suggest,
@@ -244,29 +243,10 @@ class EsInterfaceTest_Search(TestCase):
     # Tests
     # -------------------------------------------------------------------------
 
-    def test__extract_count_from_hits(self):
-        """When hits are > 10K, hits["total"]["value"] is accurate."""
-        params = self.MOCK_COUNT_PARAMS
-        response = self.MOCK_HIT_RESPONSE
-        hit_count = _extract_count(response, params)
-        self.assertEqual(hit_count, 4)
-
     @mock.patch("complaint_search.es_interface._get_es")
-    @mock.patch.object(Elasticsearch, 'count')
-    def test__extract_high_count_from_count_api(self, mock_count, mock_es):
-        mock_count.return_value = self.MOCK_HIGH_COUNT_RETURN_VALUE
-        mock_es().count = mock_count
-        response = self.MOCK_HIGH_HIT_RESPONSE
-        params = self.MOCK_COUNT_PARAMS
-        actual = _extract_count(response, params)
-        self.assertEqual(10001, actual)
-
-    @mock.patch("complaint_search.es_interface._get_es")
-    @mock.patch("complaint_search.es_interface._extract_count")
     @mock.patch("complaint_search.es_interface._get_meta")
     @mock.patch.object(Elasticsearch, 'count')
-    def test__pagination_generated(self, mock_count, mock_meta,
-                                   mock_extract, mock_es):
+    def test__pagination_generated(self, mock_count, mock_meta, mock_es):
         fake_hits = [
             {"sort": [1620752400005, "4367498"]},
             {"sort": [1620752400004, "4367497"]},
@@ -276,7 +256,6 @@ class EsInterfaceTest_Search(TestCase):
             {"sort": [1620752400000, "4367493"]},
         ]
         mock_count.return_value = self.MOCK_HIGH_COUNT_RETURN_VALUE
-        mock_extract.return_value = self.MOCK_HIGH_COUNT_RETURN_VALUE["count"]
         mock_meta.return_value = {"total_record_count": 2000000}
         mock_es().count = mock_count
         mock_es().search.return_value = {
@@ -441,10 +420,6 @@ class EsInterfaceTest_Search(TestCase):
     def test_search_with_search_term_field_all(self):
         self.request_test("search_with_search_term_field_all",
                           search_term="test term", field="all")
-
-    def test_search_with_search_term_field__all(self):
-        self.request_test("search_with_search_term_field_all",
-                          search_term="test term", field="_all")
 
     def test_search_with_search_term_match__valid(self):
         self.request_test("search_with_search_term_match__valid",
@@ -743,7 +718,8 @@ class EsInterfaceTest_FilterSuggest(TestCase):
                             }
                         }
                     }
-                }
+                },
+                'track_total_hits': True
             },
             index='INDEX')
         mock_builder2.assert_called_once_with('company.suggest')
@@ -805,11 +781,12 @@ class EsInterfaceTest_FilterSuggest(TestCase):
                                 "terms": {
                                     "field": "zip_code",
                                     "size": 0
-                                }
+                                },
                             }
                         }
                     }
-                }
+                },
+                'track_total_hits': True
             },
             index='INDEX')
         mock_builder2.assert_called_once_with('zip_code')

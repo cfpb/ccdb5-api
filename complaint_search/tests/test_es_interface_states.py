@@ -9,15 +9,13 @@ from complaint_search.tests.es_interface_test_helpers import (
 from elasticsearch7 import Elasticsearch
 
 
-class EsInterfaceTest_States(TestCase):
+class EsInterfaceTestStates(TestCase):
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch("complaint_search.es_interface._extract_count")
     @mock.patch.object(Elasticsearch, 'search')
     @mock.patch.object(Elasticsearch, 'count')
-    def test_states__valid(self, mock_count, mock_search, mock_extract):
+    def test_states__valid(self, mock_count, mock_search):
         mock_count.return_value = {"count": 100}
-        mock_extract.return_value = 100
         body = load('states_agg__valid')
         mock_search.return_value = {"hits": {
             "total": {"value": 100, "relation": "eq"}}
@@ -47,9 +45,8 @@ class EsInterfaceTest_States(TestCase):
         self.assertEqual(res["hits"]["total"]["relation"], "eq")
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch("complaint_search.es_interface._extract_count")
     @mock.patch.object(Elasticsearch, 'search')
-    def test_states_date_filters__valid(self, mock_search, mock_extract):
+    def test_states_date_filters__valid(self, mock_search):
         params = {
             'date_received_min': '2020-01-01',
             'date_received_max': '2020-05-05',
@@ -58,8 +55,6 @@ class EsInterfaceTest_States(TestCase):
             'state': ['VA'],
             'size': 0
         }
-        mock_extract.return_value = 100
-
         body = load('states_date_filters__valid')
 
         mock_search.return_value = {"hits": {

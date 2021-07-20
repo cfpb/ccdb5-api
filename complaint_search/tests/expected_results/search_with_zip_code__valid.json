@@ -1,5 +1,6 @@
 {
   "size": 25,
+  "track_total_hits": true,
   "_source": [
     "company",
     "company_public_response",
