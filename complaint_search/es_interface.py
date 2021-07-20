@@ -11,7 +11,6 @@ from complaint_search.defaults import (
 )
 from complaint_search.es_builders import (
     AggregationBuilder,
-    CountBuilder,
     DateRangeBucketsBuilder,
     PostFilterBuilder,
     SearchBuilder,
@@ -36,9 +35,6 @@ _ES_INSTANCE = None
 USE_AWS_ES = os.environ.get('USE_AWS_ES', False)
 AWS_ES_ACCESS_KEY = os.environ.get('AWS_ES_ACCESS_KEY')
 AWS_ES_SECRET_KEY = os.environ.get('AWS_ES_SECRET_KEY')
-# The below was configured because of a naming convention chosen by
-# CF.gov for ES7 Host. May require changing if var name changed
-# https://github.com/cfpb/consumerfinance.gov/blob/main/.env_SAMPLE#L92
 AWS_ES_HOST = os.environ.get('ES7_HOST')
 
 
@@ -50,11 +46,9 @@ _COMPLAINT_DOC_TYPE = os.environ.get('COMPLAINT_DOC_TYPE', 'complaint-doctype')
 # Trends Operations
 # -----------------------------------------------------------------------------
 
-# Safely extracts a string from an object
-# if it isn't present, the default value is returned
+
 def extract_date(agg_term, default_value):
-    return agg_term['value_as_string'] \
-        if 'value_as_string' in agg_term else default_value
+    return agg_term.get('value_as_string', default_value)
 
 
 def build_trend_meta(response):
@@ -63,10 +57,6 @@ def build_trend_meta(response):
     if 'max_date' in response['aggregations']:
         date_max = extract_date(response['aggregations']['max_date'], None)
         date_min = extract_date(response['aggregations']['min_date'], None)
-
-        # del response["aggregations"]["max_date"]
-        # del response["aggregations"]["min_date"]
-
         meta['date_min'] = date_min
         meta['date_max'] = date_max
 
@@ -99,8 +89,8 @@ def get_sug_agg_key_if_exists(agg):
     return None
 
 
-# Filter out all but the most recent buckets in sub agg for the Percent
-# Change on chart
+# Filter out all but the most recent buckets in sub agg
+#  for the Percent Change on chart
 def process_trend_aggregations(aggregations):
     trend_charts = (
         'product',
@@ -239,18 +229,6 @@ def _get_meta():
     return result
 
 
-def _extract_count(response, params):
-    """Get the hits total if < 10K, otherwise use the count API."""
-    total_obj = response['hits'].get('total')
-    if total_obj and total_obj["value"] < 10000:
-        return total_obj["value"]
-    count_builder = CountBuilder()
-    count_builder.add(**params)
-    body = count_builder.build()
-    res = _get_es().count(index=_COMPLAINT_ES_INDEX, body=body)
-    return res.get("count")
-
-
 def test_float(value):
     try:
         _float = float(value)
@@ -297,6 +275,7 @@ def search(agg_exclude=None, **kwargs):
     post_filter_builder = PostFilterBuilder()
     post_filter_builder.add(**params)
     body["post_filter"] = post_filter_builder.build()
+    body["track_total_hits"] = True
     # format
     res = {}
     _format = params.get("format")
@@ -311,13 +290,10 @@ def search(agg_exclude=None, **kwargs):
             _ES_URL, _COMPLAINT_ES_INDEX, body
         )
         res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
-        hit_total = _extract_count(res, params)
-        res['hits']['total']['value'] = hit_total
+        hit_total = res['hits']['total']['value']
         break_points = {}
         # page = 1
         if res['hits']['hits']:
-            # if body.get("frm") and body.get("size"):
-            #     page = body["frm"] / body["size"] + 1
             if hit_total and hit_total > body["size"]:
                 # We have more than one page of results and need pagination
                 pagination_body = copy.deepcopy(body)
@@ -357,10 +333,9 @@ def search(agg_exclude=None, **kwargs):
         elif params.get("format") == 'json':
             if 'highlight' in body:
                 del body['highlight']
-            body["size"] = 0
-
+            body.update({"size": 0, "track_total_hits": True})
             count_res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
-            hit_total = _extract_count(count_res, params)
+            hit_total = count_res["hits"]["total"]["value"]
             res = exporter.export_json(
                 scan_response, hit_total
             )
@@ -422,6 +397,7 @@ def filter_suggest(filterField, display_field=None, **kwargs):
         'field'] = filterField if display_field is None else display_field
     # add to the body
     body['aggs'] = aggs
+    body['track_total_hits'] = True
 
     # format
     res = _get_es().search(
@@ -455,6 +431,7 @@ def states_agg(agg_exclude=None, **kwargs):
     if agg_exclude:
         aggregation_builder.add_exclude(agg_exclude)
     body["aggs"] = aggregation_builder.build()
+    body["track_total_hits"] = True
     log.info(
         'Calling %s/%s/_search with %s',
         _ES_URL, _COMPLAINT_ES_INDEX, body,
@@ -465,9 +442,6 @@ def states_agg(agg_exclude=None, **kwargs):
         index=_COMPLAINT_ES_INDEX,
         body=body
     )
-    hit_total = _extract_count(res, params)
-    res['hits']['total']['value'] = hit_total
-
     return res
 
 
@@ -486,11 +460,10 @@ def trends(agg_exclude=None, **kwargs):
     if agg_exclude:
         aggregation_builder.add_exclude(agg_exclude)
     body["aggs"] = aggregation_builder.build()
+    body["track_total_hits"] = True
 
     res_trends = _get_es().search(
         index=_COMPLAINT_ES_INDEX, body=body)
-    hit_total = _extract_count(res_trends, params)
-    res_trends['hits']['total']['value'] = hit_total
 
     res_date_buckets = None
 

@@ -174,6 +174,7 @@ class BaseBuilder(object):
         return include_clauses, exclude_clauses
 
     def _build_date_range_filter(self, date_min, date_max, es_field_name):
+        # POST-ES7 TODO: remove PY2 shim
         # 2019-10-17 JMF - Tests fails when using "from builtins import str"
         # The result gets flagged as "bad type" since type = future.types. ...
         try:
@@ -238,17 +239,6 @@ class BaseBuilder(object):
             not_clauses = [grouping]
 
         return {"bool": {"must": and_clauses, "must_not": not_clauses}}
-
-
-class CountBuilder(BaseBuilder):
-    def __init__(self):
-        self.params = copy.deepcopy(PARAMS)
-
-    def build(self):
-        include_clauses, exclude_clauses = self._build_clauses_dictionary()
-        query_body = self._build_dsl_filter(include_clauses, exclude_clauses)
-        query = {"query": query_body}
-        return query
 
 
 class SearchBuilder(BaseBuilder):
@@ -491,8 +481,8 @@ class StateAggregationBuilder(BaseBuilder):
             }
         }
 
-        # Get top product & issue for each state. Don't apply state filter
-        # to itself
+        # Get top product & issue for each state.
+        # Don't apply state filter to itself
         if field_name == 'state':
             field_aggs["aggs"]["state"]["aggs"] = {
                 "product": {
