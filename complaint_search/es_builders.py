@@ -5,6 +5,7 @@ from collections import OrderedDict, defaultdict
 
 from complaint_search.defaults import (
     DATA_SUB_LENS_MAP,
+    DEFAULT_TREND_DEPTH,
     DELIMITER,
     EXCLUDE_PREFIX,
     EXPORT_FORMATS,
@@ -693,7 +694,7 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
 
         if self.params['lens'] == 'overview':
             # Reset default for overview row charts
-            self.params['trend_depth'] = 5
+            self.params['trend_depth'] = DEFAULT_TREND_DEPTH
 
             for field_name in self._AGG_FIELDS:
                 if field_name not in self.exclude:
@@ -752,7 +753,7 @@ class DateRangeBucketsBuilder(BaseBuilder):
                         "date_histogram": {
                             "field": "date_received",
                             "calendar_interval": self.params.get(
-                                'trend_interval', 5)
+                                'trend_interval', DEFAULT_TREND_DEPTH)
                         }
                     }
                 }
