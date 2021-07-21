@@ -736,6 +736,10 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
 
         aggs['min_date'] = self.date_extreme('min')
         aggs['max_date'] = self.date_extreme('max')
+        if "product" in aggs:
+            aggs["product"]["aggs"]["product"].update({
+                'terms': {'field': 'product.raw', 'size': 5},
+            })
         return aggs
 
 
