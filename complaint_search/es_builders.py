@@ -4,8 +4,11 @@ import re
 from collections import OrderedDict, defaultdict
 
 from complaint_search.defaults import (
+    AGG_COMPANY_DEFAULT,
+    AGG_ZIPCODE_DEFAULT,
+    AGG_STATE_DEFAULT,
     DATA_SUB_LENS_MAP,
-    DEFAULT_TREND_DEPTH,
+    TREND_DEPTH_DEFAULT,
     DELIMITER,
     EXCLUDE_PREFIX,
     EXPORT_FORMATS,
@@ -331,6 +334,12 @@ class AggregationBuilder(BaseBuilder):
         'zip_code'
     )
 
+    _AGG_SIZE_MAP = {
+        "company": AGG_COMPANY_DEFAULT,  # 6500
+        "state": AGG_STATE_DEFAULT,  # 100
+        "zip_code": AGG_ZIPCODE_DEFAULT,  # 26000
+    }
+
     def __init__(self):
         BaseBuilder.__init__(self)
         self.include_clauses = None
@@ -387,6 +396,9 @@ class AggregationBuilder(BaseBuilder):
                     }
                 }
             }
+        if field_name in self._AGG_SIZE_MAP:
+            field_aggs["aggs"][field_name]["terms"].update(
+                {"size": self._AGG_SIZE_MAP[field_name]})
 
         # Create a subset of the filters
         incl_subset = {
@@ -694,7 +706,7 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
 
         if self.params['lens'] == 'overview':
             # Reset default for overview row charts
-            self.params['trend_depth'] = DEFAULT_TREND_DEPTH
+            self.params['trend_depth'] = TREND_DEPTH_DEFAULT
 
             for field_name in self._AGG_FIELDS:
                 if field_name not in self.exclude:
@@ -739,7 +751,7 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
         aggs['max_date'] = self.date_extreme('max')
         if "product" in aggs:
             aggs["product"]["aggs"]["product"].update({
-                'terms': {'field': 'product.raw', 'size': 5},
+                'terms': {'field': 'product.raw', 'size': TREND_DEPTH_DEFAULT},
             })
         return aggs
 
@@ -753,7 +765,7 @@ class DateRangeBucketsBuilder(BaseBuilder):
                         "date_histogram": {
                             "field": "date_received",
                             "calendar_interval": self.params.get(
-                                'trend_interval', DEFAULT_TREND_DEPTH)
+                                'trend_interval', TREND_DEPTH_DEFAULT)
                         }
                     }
                 }

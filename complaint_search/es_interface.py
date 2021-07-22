@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 from complaint_search.defaults import (
     CSV_ORDERED_HEADERS,
-    DEFAULT_PAGINATION_DEPTH,
+    PAGINATION_DEPTH_DEFAULT,
     EXPORT_FORMATS,
     PARAMS,
 )
@@ -65,7 +65,7 @@ def build_trend_meta(response):
 
 def get_break_points(hits, size):
     """Return a dict of 'search-after' values for pagination."""
-    end_page = int(DEFAULT_PAGINATION_DEPTH / size) - 1
+    end_page = int(PAGINATION_DEPTH_DEFAULT / size) - 1
     break_points = {}
     if size > len(hits):
         return break_points
@@ -297,7 +297,7 @@ def search(agg_exclude=None, **kwargs):
             if hit_total and hit_total > body["size"]:
                 # We have more than one page of results and need pagination
                 pagination_body = copy.deepcopy(body)
-                pagination_body["size"] = DEFAULT_PAGINATION_DEPTH
+                pagination_body["size"] = PAGINATION_DEPTH_DEFAULT
                 if "search_after" in pagination_body:
                     del pagination_body["search_after"]
                 log.info(
