@@ -55,6 +55,7 @@
       "aggs": {
         "company": {
           "terms": {
+            "size": 6500,
             "field": "company.raw"
           }
         }
@@ -370,6 +371,7 @@
       "aggs": {
         "zip_code": {
           "terms": {
+            "size": 26000,
             "field": "zip_code"
           }
         }

@@ -345,6 +345,7 @@
       "aggs": {
         "zip_code": {
           "terms": {
+            "size": 26000,
             "field": "zip_code"
           }
         }
