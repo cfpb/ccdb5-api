@@ -17,6 +17,9 @@ from complaint_search.defaults import (
 )
 
 
+AGG_ISSUE_DEFAULT = 170
+
+
 def is_all_field(field):
     return field in ['all', '_all']
 
@@ -338,6 +341,7 @@ class AggregationBuilder(BaseBuilder):
         "company": AGG_COMPANY_DEFAULT,  # 6500
         "state": AGG_STATE_DEFAULT,  # 100
         "zip_code": AGG_ZIPCODE_DEFAULT,  # 26000
+        "issue.raw": AGG_ISSUE_DEFAULT  # 170
     }
 
     def __init__(self):
@@ -352,7 +356,8 @@ class AggregationBuilder(BaseBuilder):
     def build_parent_child_field_agg(
         self, agg_heading_name, es_parent_name, es_child_name
     ):
-        return {
+
+        field_agg = {
             agg_heading_name: {
                 "terms": {
                     "field": es_parent_name
@@ -366,6 +371,13 @@ class AggregationBuilder(BaseBuilder):
                 }
             }
         }
+        if es_parent_name == "issue.raw":
+            field_agg[agg_heading_name]["terms"].update(
+                {
+                    "field": es_parent_name,
+                    "size": AGG_ISSUE_DEFAULT
+                })
+        return field_agg
 
     def build_one(self, field_name):
         # Lazy initialization
