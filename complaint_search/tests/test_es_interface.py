@@ -366,57 +366,6 @@ class EsInterfaceTest_Search(TestCase):
     def test_search_with_size__valid(self):
         self.request_test("search_with_size__valid", size=40)
 
-    def test_search_with_size_corrected__valid(self):
-        self.request_test("search_with_size_corrected__valid", size=5000)
-
-    @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch("complaint_search.es_interface._get_meta")
-    @mock.patch.object(Elasticsearch, 'search')
-    @mock.patch.object(Elasticsearch, 'count')
-    @mock.patch.object(Elasticsearch, 'scroll')
-    def test_search_with_sort__valid(
-        self, mock_scroll, mock_count, mock_search, mock_get_meta
-    ):
-
-        sort_fields = [
-            ("relevance_desc", "_score", "desc"),
-            ("relevance_asc", "_score", "asc"),
-            ("created_date_desc", "date_received", "desc"),
-            ("created_date_asc", "date_received", "asc")
-        ]
-
-        # 4 is the length of sort_field
-        # mock_search.side_effect = []
-        # mock_count.side_effect = []
-        # for i in range(4):
-
-        mock_search.side_effect = [
-            copy.deepcopy(self.MOCK_SEARCH_SIDE_EFFECT[0])
-            for i in range(4)
-        ]
-
-        mock_count.side_effect = [
-            copy.deepcopy(self.MOCK_COUNT_RETURN_VALUE)
-            for i in range(4)
-        ]
-        mock_get_meta.side_effect = [
-            copy.deepcopy(self.MOCK_SEARCH_RESULT["_meta"])
-            for i in range(4)
-        ]
-        body = load("search_with_sort__valid")
-
-        for s in sort_fields:
-            res = search(self.DEFAULT_EXCLUDE, sort=s[0])
-            body["sort"] = [{s[1]: {"order": s[2]}}, {"_id": s[2]}]
-            mock_search.assert_any_call(
-                body=body,
-                index="INDEX",
-            )
-            self.assertEqual(self.MOCK_SEARCH_RESULT, res)
-
-        mock_scroll.assert_not_called()
-        self.assertEqual(4, mock_search.call_count)
-
     def test_search_with_search_term_field_all(self):
         self.request_test("search_with_search_term_field_all",
                           search_term="test term", field="all")

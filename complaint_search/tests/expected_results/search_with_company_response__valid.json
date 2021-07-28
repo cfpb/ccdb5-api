@@ -165,6 +165,7 @@
         "aggs": {
           "issue": {
             "terms": {
+            "size": 170,
               "field": "issue.raw"
             },
             "aggs": {
