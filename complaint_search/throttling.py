@@ -1,5 +1,7 @@
 import os
 
+from django.conf import settings
+
 from rest_framework.throttling import AnonRateThrottle
 
 from complaint_search.defaults import EXPORT_FORMATS
@@ -27,6 +29,8 @@ class CCDBAnonRateThrottle(CCDBRateThrottle):
     scope = 'ccdb_anon'
 
     def allow_request(self, request, view):
+        if settings.DEBUG is True:
+            return True
         if not self.is_referred_from_ui(request, view):
             return super(CCDBAnonRateThrottle, self).allow_request(
                 request, view
