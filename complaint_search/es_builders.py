@@ -5,6 +5,10 @@ from collections import OrderedDict, defaultdict
 
 from complaint_search.defaults import (
     AGG_COMPANY_DEFAULT,
+    AGG_ISSUE_DEFAULT,
+    AGG_SUBISSUE_DEFAULT,
+    AGG_PRODUCT_DEFAULT,
+    AGG_SUBPRODUCT_DEFAULT,
     AGG_ZIPCODE_DEFAULT,
     AGG_STATE_DEFAULT,
     DATA_SUB_LENS_MAP,
@@ -15,9 +19,6 @@ from complaint_search.defaults import (
     PARAMS,
     SOURCE_FIELDS,
 )
-
-
-AGG_ISSUE_DEFAULT = 170
 
 
 def is_all_field(field):
@@ -341,7 +342,10 @@ class AggregationBuilder(BaseBuilder):
         "company": AGG_COMPANY_DEFAULT,  # 6500
         "state": AGG_STATE_DEFAULT,  # 100
         "zip_code": AGG_ZIPCODE_DEFAULT,  # 26000
-        "issue.raw": AGG_ISSUE_DEFAULT  # 170
+        "issue.raw": AGG_ISSUE_DEFAULT,  # 200
+        "sub_issue.raw": AGG_SUBISSUE_DEFAULT,  # 250
+        "product.raw": AGG_PRODUCT_DEFAULT,  # 30
+        "sub_product.raw": AGG_SUBPRODUCT_DEFAULT,  # 90
     }
 
     def __init__(self):
@@ -360,23 +364,19 @@ class AggregationBuilder(BaseBuilder):
         field_agg = {
             agg_heading_name: {
                 "terms": {
+                    "size": self._AGG_SIZE_MAP.get(es_parent_name, 10),
                     "field": es_parent_name
                 },
                 "aggs": {
                     es_child_name: {
                         "terms": {
+                            "size": self._AGG_SIZE_MAP.get(es_child_name, 10),
                             "field": es_child_name
                         }
                     }
                 }
             }
         }
-        if es_parent_name == "issue.raw":
-            field_agg[agg_heading_name]["terms"].update(
-                {
-                    "field": es_parent_name,
-                    "size": AGG_ISSUE_DEFAULT
-                })
         return field_agg
 
     def build_one(self, field_name):
@@ -404,13 +404,11 @@ class AggregationBuilder(BaseBuilder):
             field_aggs["aggs"] = {
                 field_name: {
                     "terms": {
+                        "size": self._AGG_SIZE_MAP.get(es_field_name, 10),
                         "field": es_field_name
                     }
                 }
             }
-        if field_name in self._AGG_SIZE_MAP:
-            field_aggs["aggs"][field_name]["terms"].update(
-                {"size": self._AGG_SIZE_MAP[field_name]})
 
         # Create a subset of the filters
         incl_subset = {
@@ -437,7 +435,10 @@ class AggregationBuilder(BaseBuilder):
             aggs[field_name] = self.build_one(field_name)
         if "state" in aggs:
             aggs["state"]["aggs"]["state"].update(
-                {"terms": {"field": "state", 'size': 100}}
+                {"terms": {
+                    "field": "state",
+                    'size': self._AGG_SIZE_MAP["state"]
+                }}
             )
         return aggs
 
