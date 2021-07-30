@@ -339,7 +339,7 @@ class AggregationBuilder(BaseBuilder):
     )
 
     _AGG_SIZE_MAP = {
-        "company": AGG_COMPANY_DEFAULT,  # 6500
+        "company.raw": AGG_COMPANY_DEFAULT,  # 6500
         "state": AGG_STATE_DEFAULT,  # 100
         "zip_code": AGG_ZIPCODE_DEFAULT,  # 26000
         "issue.raw": AGG_ISSUE_DEFAULT,  # 200
@@ -624,6 +624,7 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
     def percent_change_agg(self, es_field_name, interval, trend_depth):
         return {
             "terms": {
+                "size": trend_depth,
                 "field": es_field_name
             },
             "aggs": {
@@ -671,7 +672,9 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
                 self._OPTIONAL_FILTERS_CHILD_MAP.get(field_name))
             child_agg_name = self._ES_CHILD_AGG_MAP.get(es_child_name)
             field_aggs["aggs"][agg_heading_name]["aggs"][child_agg_name] = \
-                self.percent_change_agg(es_child_name, interval, 0)
+                self.percent_change_agg(
+                    es_child_name, interval,
+                    self.params['trend_depth'])
 
         return field_aggs
 
@@ -689,13 +692,14 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
 
     def focus_filter(self):
         return {
-            'term': {
+            "term": {
                 self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
                     self.params['lens']): self.params['focus']
             }
         }
 
     def build_one_focus(self, field_name, agg_heading_name, interval):
+
         field_aggs = self.agg_setup(field_name, agg_heading_name, interval)
 
         field_aggs['filter']['bool']['must'].append(self.focus_filter())
@@ -705,6 +709,7 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
     def build(self):
         # AZ - Only include a company aggregation if at least one company
         # filter is selected
+        self.params['trend_depth'] = TREND_DEPTH_DEFAULT
         if 'company' in self.params and 'company' in self.exclude:
             self.exclude.remove('company')
             self._AGG_FIELDS + ('company',)
@@ -719,7 +724,6 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
 
         if self.params['lens'] == 'overview':
             # Reset default for overview row charts
-            self.params['trend_depth'] = TREND_DEPTH_DEFAULT
 
             for field_name in self._AGG_FIELDS:
                 if field_name not in self.exclude:
@@ -731,6 +735,7 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
                         self.params['trend_interval']
                     )
         elif 'focus' in self.params:
+            self.params['trend_depth'] = 10
             for field_name in DATA_SUB_LENS_MAP.get(self.params['lens']) \
                     + (self.params['lens'], ):
                 if field_name == 'company' and 'company' not in self.params:
@@ -762,10 +767,6 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
 
         aggs['min_date'] = self.date_extreme('min')
         aggs['max_date'] = self.date_extreme('max')
-        if "product" in aggs:
-            aggs["product"]["aggs"]["product"].update({
-                'terms': {'field': 'product.raw', 'size': TREND_DEPTH_DEFAULT},
-            })
         return aggs
 
 
