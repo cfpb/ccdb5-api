@@ -31,8 +31,14 @@
     }
   },
   "sort": [
-    {"_score": {"order": "desc"}},
-    {"_id": "desc"}
+    {
+      "_score": {
+        "order": "desc"
+      }
+    },
+    {
+      "_id": "desc"
+    }
   ],
   "post_filter": {
     "bool": {
@@ -45,7 +51,8 @@
       "aggs": {
         "company_public_response": {
           "terms": {
-            "field": "company_public_response.raw"
+            "field": "company_public_response.raw",
+            "size": 10
           }
         }
       },
@@ -60,7 +67,8 @@
       "aggs": {
         "company_response": {
           "terms": {
-            "field": "company_response"
+            "field": "company_response",
+            "size": 10
           }
         }
       },
@@ -75,7 +83,8 @@
       "aggs": {
         "consumer_consent_provided": {
           "terms": {
-            "field": "consumer_consent_provided.raw"
+            "field": "consumer_consent_provided.raw",
+            "size": 10
           }
         }
       },
@@ -90,7 +99,8 @@
       "aggs": {
         "consumer_disputed": {
           "terms": {
-            "field": "consumer_disputed.raw"
+            "field": "consumer_disputed.raw",
+            "size": 10
           }
         }
       },
@@ -105,7 +115,8 @@
       "aggs": {
         "has_narrative": {
           "terms": {
-            "field": "has_narrative"
+            "field": "has_narrative",
+            "size": 10
           }
         }
       },
@@ -120,13 +131,14 @@
       "aggs": {
         "issue": {
           "terms": {
-            "size": 170,
+            "size": 200,
             "field": "issue.raw"
           },
           "aggs": {
             "sub_issue.raw": {
               "terms": {
-                "field": "sub_issue.raw"
+                "field": "sub_issue.raw",
+                "size": 250
               }
             }
           }
@@ -143,12 +155,14 @@
       "aggs": {
         "product": {
           "terms": {
-            "field": "product.raw"
+            "field": "product.raw",
+            "size": 30
           },
           "aggs": {
             "sub_product.raw": {
               "terms": {
-                "field": "sub_product.raw"
+                "field": "sub_product.raw",
+                "size": 90
               }
             }
           }
@@ -181,7 +195,8 @@
       "aggs": {
         "submitted_via": {
           "terms": {
-            "field": "submitted_via"
+            "field": "submitted_via",
+            "size": 10
           }
         }
       },
@@ -196,7 +211,8 @@
       "aggs": {
         "tags": {
           "terms": {
-            "field": "tags"
+            "field": "tags",
+            "size": 10
           }
         }
       },
@@ -211,7 +227,8 @@
       "aggs": {
         "timely": {
           "terms": {
-            "field": "timely"
+            "field": "timely",
+            "size": 10
           }
         }
       },

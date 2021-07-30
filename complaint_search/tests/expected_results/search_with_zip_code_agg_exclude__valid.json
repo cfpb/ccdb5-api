@@ -31,8 +31,14 @@
     }
   },
   "sort": [
-    {"_score": {"order": "desc"}},
-    {"_id": "desc"}
+    {
+      "_score": {
+        "order": "desc"
+      }
+    },
+    {
+      "_id": "desc"
+    }
   ],
   "post_filter": {
     "bool": {
@@ -81,6 +87,7 @@
       "aggs": {
         "company_public_response": {
           "terms": {
+            "size": 10,
             "field": "company_public_response.raw"
           }
         }
@@ -106,6 +113,7 @@
       "aggs": {
         "company_response": {
           "terms": {
+            "size": 10,
             "field": "company_response"
           }
         }
@@ -131,6 +139,7 @@
       "aggs": {
         "consumer_consent_provided": {
           "terms": {
+            "size": 10,
             "field": "consumer_consent_provided.raw"
           }
         }
@@ -156,6 +165,7 @@
       "aggs": {
         "consumer_disputed": {
           "terms": {
+            "size": 10,
             "field": "consumer_disputed.raw"
           }
         }
@@ -181,6 +191,7 @@
       "aggs": {
         "has_narrative": {
           "terms": {
+            "size": 10,
             "field": "has_narrative"
           }
         }
@@ -206,12 +217,13 @@
       "aggs": {
         "issue": {
           "terms": {
-            "size": 170,
+            "size": 200,
             "field": "issue.raw"
           },
           "aggs": {
             "sub_issue.raw": {
               "terms": {
+                "size": 250,
                 "field": "sub_issue.raw"
               }
             }
@@ -239,11 +251,13 @@
       "aggs": {
         "product": {
           "terms": {
+            "size": 30,
             "field": "product.raw"
           },
           "aggs": {
             "sub_product.raw": {
               "terms": {
+                "size": 90,
                 "field": "sub_product.raw"
               }
             }
@@ -297,6 +311,7 @@
       "aggs": {
         "submitted_via": {
           "terms": {
+            "size": 10,
             "field": "submitted_via"
           }
         }
@@ -322,6 +337,7 @@
       "aggs": {
         "tags": {
           "terms": {
+            "size": 10,
             "field": "tags"
           }
         }
@@ -347,6 +363,7 @@
       "aggs": {
         "timely": {
           "terms": {
+            "size": 10,
             "field": "timely"
           }
         }
