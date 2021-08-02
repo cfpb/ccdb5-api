@@ -1,6 +1,7 @@
-from complaint_search.defaults import DATA_SUB_LENS_MAP, PARAMS
 from localflavor.us.us_states import STATE_CHOICES
 from rest_framework import serializers
+
+from complaint_search.defaults import DATA_SUB_LENS_MAP, PARAMS
 
 
 class SearchInputSerializer(serializers.Serializer):

@@ -6,6 +6,11 @@ from django.core.cache import cache
 from django.http import StreamingHttpResponse
 
 import mock
+from elasticsearch7 import TransportError
+from rest_framework import status
+from rest_framework.exceptions import ErrorDetail
+from rest_framework.test import APITestCase
+
 from complaint_search.defaults import (
     AGG_EXCLUDE_FIELDS,
     FORMAT_CONTENT_TYPE_MAP,
@@ -18,10 +23,6 @@ from complaint_search.throttling import (
     ExportUIRateThrottle,
     SearchAnonRateThrottle,
 )
-from elasticsearch7 import TransportError
-from rest_framework import status
-from rest_framework.exceptions import ErrorDetail
-from rest_framework.test import APITestCase
 
 
 try:

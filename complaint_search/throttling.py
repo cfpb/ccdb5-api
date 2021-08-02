@@ -1,7 +1,8 @@
 import os
 
-from complaint_search.defaults import EXPORT_FORMATS
 from rest_framework.throttling import AnonRateThrottle
+
+from complaint_search.defaults import EXPORT_FORMATS
 
 
 _CCDB_UI_URL = os.environ.get(

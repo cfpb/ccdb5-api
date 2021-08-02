@@ -3,6 +3,15 @@ from datetime import datetime
 from django.conf import settings
 from django.http import StreamingHttpResponse
 
+from rest_framework import status
+from rest_framework.decorators import (
+    api_view,
+    renderer_classes,
+    throttle_classes,
+)
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
+
 from complaint_search import es_interface
 from complaint_search.decorators import catch_es_error
 from complaint_search.defaults import (
@@ -24,14 +33,6 @@ from complaint_search.throttling import (
     ExportUIRateThrottle,
     SearchAnonRateThrottle,
 )
-from rest_framework import status
-from rest_framework.decorators import (
-    api_view,
-    renderer_classes,
-    throttle_classes,
-)
-from rest_framework.renderers import JSONRenderer
-from rest_framework.response import Response
 
 
 # -----------------------------------------------------------------------------

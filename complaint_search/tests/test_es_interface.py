@@ -5,6 +5,9 @@ from django.http import StreamingHttpResponse
 from django.test import SimpleTestCase, TestCase
 
 import mock
+from elasticsearch7 import Elasticsearch
+from parameterized import parameterized
+
 from complaint_search.es_builders import AggregationBuilder, SearchBuilder
 from complaint_search.es_interface import (
     _get_meta,
@@ -19,8 +22,6 @@ from complaint_search.tests.es_interface_test_helpers import (
     assertBodyEqual,
     load,
 )
-from elasticsearch7 import Elasticsearch
-from parameterized import parameterized
 
 
 class TestParseSearchAfter(SimpleTestCase):

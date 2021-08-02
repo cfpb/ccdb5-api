@@ -1,11 +1,12 @@
 import copy
 
 import mock
-from complaint_search.defaults import AGG_EXCLUDE_FIELDS, PARAMS
-from complaint_search.serializer import SearchInputSerializer
 from parameterized import parameterized
 from rest_framework import status
 from rest_framework.test import APITestCase
+
+from complaint_search.defaults import AGG_EXCLUDE_FIELDS, PARAMS
+from complaint_search.serializer import SearchInputSerializer
 
 
 try:

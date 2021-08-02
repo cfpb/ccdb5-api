@@ -3,10 +3,14 @@ import logging
 import os
 from datetime import datetime, timedelta
 
+from elasticsearch7 import Elasticsearch, RequestsHttpConnection, helpers
+from flags.state import flag_enabled
+from requests_aws4auth import AWS4Auth
+
 from complaint_search.defaults import (
     CSV_ORDERED_HEADERS,
-    PAGINATION_DEPTH_DEFAULT,
     EXPORT_FORMATS,
+    PAGINATION_DEPTH_DEFAULT,
     PARAMS,
 )
 from complaint_search.es_builders import (
@@ -18,9 +22,6 @@ from complaint_search.es_builders import (
     TrendsAggregationBuilder,
 )
 from complaint_search.export import ElasticSearchExporter
-from elasticsearch7 import Elasticsearch, RequestsHttpConnection, helpers
-from flags.state import flag_enabled
-from requests_aws4auth import AWS4Auth
 
 
 log = logging.getLogger(__name__)
