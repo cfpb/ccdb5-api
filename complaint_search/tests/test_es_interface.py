@@ -20,7 +20,7 @@ from complaint_search.tests.es_interface_test_helpers import (
     load,
 )
 from elasticsearch7 import Elasticsearch
-from nose_parameterized import parameterized
+from parameterized import parameterized
 
 
 class TestParseSearchAfter(SimpleTestCase):
