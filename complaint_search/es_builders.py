@@ -709,7 +709,8 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
     def build(self):
         # AZ - Only include a company aggregation if at least one company
         # filter is selected
-        self.params['trend_depth'] = TREND_DEPTH_DEFAULT
+        if not self.params.get("trend_depth"):
+            self.params['trend_depth'] = TREND_DEPTH_DEFAULT
         if 'company' in self.params and 'company' in self.exclude:
             self.exclude.remove('company')
             self._AGG_FIELDS + ('company',)
