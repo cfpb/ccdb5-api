@@ -1,36 +1,38 @@
 from django.test import TestCase
 
 import mock
+from elasticsearch7 import Elasticsearch
+
 from complaint_search.es_interface import trends
 from complaint_search.tests.es_interface_test_helpers import load
-from elasticsearch import Elasticsearch
 
 
-class EsInterfaceTest_Trends(TestCase):
+class EsInterfaceTestTrends(TestCase):
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE",
-                "DOC_TYPE")
+    @mock.patch(
+        "complaint_search.es_interface._COMPLAINT_DOC_TYPE", "DOC_TYPE")
+    @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'search')
-    def test_trends_default_params__valid(self, mock_search):
+    def test_trends_default_params__valid(self, mock_search, mock_count):
         trends_params = {
             'lens': 'overview',
             'trend_interval': 'year'
         }
         body = load("trends_default_params__valid")
+        mock_count.return_value = {"count": body["hits"]["total"]["value"]}
         mock_search.return_value = body
-
         res = trends(**trends_params)
         self.assertEqual(len(mock_search.call_args), 2)
-        self.assertEqual(mock_search.call_args[1]['doc_type'], 'DOC_TYPE')
         self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual(body, res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE",
                 "DOC_TYPE")
+    @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'search')
-    def test_trends_sub_lens_product__valid(self, mock_search):
+    def test_trends_sub_lens_product__valid(self, mock_search, mock_count):
         trends_params = {
             'lens': 'product',
             'trend_interval': 'year',
@@ -39,19 +41,22 @@ class EsInterfaceTest_Trends(TestCase):
             'sub_lens_depth': 5
         }
         body = load("trends_sub_lens_product__valid")
+        mock_count.return_value = {"count": body["hits"]["total"]["value"]}
         mock_search.return_value = body
 
         res = trends(**trends_params)
         self.assertEqual(len(mock_search.call_args), 2)
-        self.assertEqual(mock_search.call_args[1]['doc_type'], 'DOC_TYPE')
         self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual(body, res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE",
                 "DOC_TYPE")
+    @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'search')
-    def test_trends_exclude_and_date_filters__valid(self, mock_search):
+    def test_trends_exclude_and_date_filters__valid(self,
+                                                    mock_search,
+                                                    mock_count):
         trends_params = {
             'lens': 'overview',
             'trend_interval': 'year',
@@ -61,19 +66,20 @@ class EsInterfaceTest_Trends(TestCase):
             'company_received_max': '2020-01-01',
         }
         body = load("trends_exclude_and_date_filters__valid")
+        mock_count.return_value = {"count": body["hits"]["total"]["value"]}
         mock_search.return_value = body
 
         res = trends(agg_exclude=['zip_code'], **trends_params)
         self.assertEqual(len(mock_search.call_args), 2)
-        self.assertEqual(mock_search.call_args[1]['doc_type'], 'DOC_TYPE')
         self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual(body, res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE",
                 "DOC_TYPE")
+    @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'search')
-    def test_trends_filter__valid(self, mock_search):
+    def test_trends_filter__valid(self, mock_search, mock_count):
         trends_params = {
             'lens': 'product',
             'trend_interval': 'year',
@@ -83,19 +89,20 @@ class EsInterfaceTest_Trends(TestCase):
             'issue': 'Incorrect information on your report'
         }
         body = load("trends_filter__valid")
+        mock_count.return_value = {"count": body["hits"]["total"]["value"]}
         mock_search.return_value = body
 
         res = trends(**trends_params)
         self.assertEqual(len(mock_search.call_args), 2)
-        self.assertEqual(mock_search.call_args[1]['doc_type'], 'DOC_TYPE')
         self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual(body, res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE",
                 "DOC_TYPE")
+    @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'search')
-    def test_trends_top_self_filter__valid(self, mock_search):
+    def test_trends_top_self_filter__valid(self, mock_search, mock_count):
         trends_params = {
             'lens': 'overview',
             'trend_interval': 'year',
@@ -103,11 +110,11 @@ class EsInterfaceTest_Trends(TestCase):
             'issue': 'Incorrect information on your report'
         }
         body = load("trends_filter__valid")
+        mock_count.return_value = {"count": body["hits"]["total"]["value"]}
         mock_search.return_value = body
 
         res = trends(**trends_params)
         self.assertEqual(len(mock_search.call_args), 2)
-        self.assertEqual(mock_search.call_args[1]['doc_type'], 'DOC_TYPE')
         self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertEqual(body, res)
         self.assertTrue('company' not in res['aggregations'])
@@ -115,8 +122,9 @@ class EsInterfaceTest_Trends(TestCase):
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE",
                 "DOC_TYPE")
+    @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'search')
-    def test_trends_company_filter__valid(self, mock_search):
+    def test_trends_company_filter__valid(self, mock_search, mock_count):
         default_exclude = ['company', 'zip_code']
         trends_params = {
             'lens': 'overview',
@@ -125,19 +133,20 @@ class EsInterfaceTest_Trends(TestCase):
         }
 
         body = load("trends_company_filter__valid")
+        mock_count.return_value = {"count": body["hits"]["total"]["value"]}
         mock_search.return_value = body
 
         res = trends(default_exclude, **trends_params)
         self.assertEqual(len(mock_search.call_args), 2)
-        self.assertEqual(mock_search.call_args[1]['doc_type'], 'DOC_TYPE')
         self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertTrue('company' in res['aggregations'])
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE",
                 "DOC_TYPE")
+    @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'search')
-    def test_trends_issue_focus__valid(self, mock_search):
+    def test_trends_issue_focus__valid(self, mock_search, mock_count):
         default_exclude = ['company', 'zip_code']
         trends_params = {
             'lens': 'issue',
@@ -147,11 +156,11 @@ class EsInterfaceTest_Trends(TestCase):
         }
 
         body = load("trends_issue_focus__valid")
+        mock_count.return_value = {"count": body["hits"]["total"]["value"]}
         mock_search.return_value = body
 
         res = trends(default_exclude, **trends_params)
         self.assertEqual(len(mock_search.call_args), 2)
-        self.assertEqual(mock_search.call_args[1]['doc_type'], 'DOC_TYPE')
         self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertFalse('company' in res['aggregations'])
         self.assertEqual(len(res['aggregations']['issue']['issue']['buckets']),
@@ -160,8 +169,11 @@ class EsInterfaceTest_Trends(TestCase):
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE",
                 "DOC_TYPE")
+    @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'search')
-    def test_trends_issue_focus_company_filter__valid(self, mock_search):
+    def test_trends_issue_focus_company_filter__valid(self,
+                                                      mock_search,
+                                                      mock_count):
         default_exclude = ['company', 'zip_code']
         trends_params = {
             'lens': 'issue',
@@ -172,11 +184,11 @@ class EsInterfaceTest_Trends(TestCase):
         }
 
         body = load("trends_issue_focus_company_filter__valid")
+        mock_count.return_value = {"count": body["hits"]["total"]["value"]}
         mock_search.return_value = body
 
         res = trends(default_exclude, **trends_params)
         self.assertEqual(len(mock_search.call_args), 2)
-        self.assertEqual(mock_search.call_args[1]['doc_type'], 'DOC_TYPE')
         self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertTrue('company' in res['aggregations'])
         self.assertEqual(len(res['aggregations']['issue']['issue']['buckets']),

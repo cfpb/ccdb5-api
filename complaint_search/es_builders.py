@@ -4,40 +4,62 @@ import re
 from collections import OrderedDict, defaultdict
 
 from complaint_search.defaults import (
+    AGG_COMPANY_DEFAULT,
+    AGG_ISSUE_DEFAULT,
+    AGG_PRODUCT_DEFAULT,
+    AGG_STATE_DEFAULT,
+    AGG_STATE_ISSUE_DEFAULT,
+    AGG_STATE_PRODUCT_DEFAULT,
+    AGG_SUBISSUE_DEFAULT,
+    AGG_SUBPRODUCT_DEFAULT,
+    AGG_ZIPCODE_DEFAULT,
     DATA_SUB_LENS_MAP,
     DELIMITER,
     EXCLUDE_PREFIX,
     EXPORT_FORMATS,
     PARAMS,
     SOURCE_FIELDS,
+    TREND_DEPTH_DEFAULT,
 )
 
 
-def build_search_terms(search_term, field):
-    if (re.match(r"^[A-Za-z\d\s]+$", search_term) and not
-        any(keyword in search_term
-            for keyword in ("AND", "OR", "NOT", "TO"))):
+def is_all_field(field):
+    return field in ['all', '_all']
 
-        # Match Query
-        return {
-            "match": {
-                field: {
-                    "query": search_term,
-                    "operator": "and"
-                }
-            }
-        }
-    else:
-        # QueryString Query
+
+def build_search_terms(search_term, field):
+    has_symbols = re.match(r"^[A-Za-z\d\s]+$", search_term) is None
+    has_keywords = any(
+        keyword in search_term for keyword in ("AND", "OR", "NOT", "TO")
+    )
+    all_fields = is_all_field(field)
+
+    if has_symbols or has_keywords:
         return {
             "query_string": {
                 "query": search_term,
-                "fields": [
-                    field
-                ],
+                "default_field": '*' if all_fields else field
+            }
+        }
+
+    elif all_fields:
+        return {
+            "query_string": {
+                "query": search_term,
+                "default_field": '*',
                 "default_operator": "AND"
             }
         }
+
+    # Specific field with no keywords
+    return {
+        "match": {
+            field: {
+                "query": search_term,
+                "operator": "and"
+            }
+        }
+    }
 
 
 class BaseBuilder(object):
@@ -110,50 +132,42 @@ class BaseBuilder(object):
                     es_field_name: value_list
                 }}
 
-        else:
-            item_dict = defaultdict(list)
-            for v in value_list:
-                v_pair = v.split(DELIMITER)
-                # No child specified
-                if len(v_pair) == 1:
-                    # This will initialize empty list for item if not in
-                    # item_dict yet
-                    item_dict[v_pair[0]]
-                elif len(v_pair) == 2:
-                    # put subproduct into list
-                    item_dict[v_pair[0]].append(v_pair[1])
+        item_dict = defaultdict(list)
+        for v in value_list:
+            v_pair = v.split(DELIMITER)
+            # No child specified
+            if len(v_pair) == 1:
+                # This will initialize empty list for item if not in
+                # item_dict yet
+                item_dict[v_pair[0]]
+            elif len(v_pair) == 2:
+                # put subproduct into list
+                item_dict[v_pair[0]].append(v_pair[1])
 
-            # Go through item_dict to create filters
-            f_list = []
-            for item, child in item_dict.items():
-                # Always append the item to list
-                parent_term = {"term": {es_field_name: item}}
-                if not child:
-                    f_list.append(parent_term)
-                else:
-                    child_field = self._get_es_name(self._get_child(field))
-                    child_term = {
-                        "terms": {
-                            child_field: child
-                        }
+        # Go through item_dict to create filters
+        f_list = []
+        for item, child in item_dict.items():
+            # Always append the item to list
+            parent_term = {"term": {es_field_name: item}}
+            if not child:
+                f_list.append(parent_term)
+            else:
+                child_field = self._get_es_name(self._get_child(field))
+                child_term = {"terms": {child_field: child}}
+                parent_child_bool_structure = {
+                    "bool": {
+                        "must": [
+                            parent_term,
+                            child_term
+                        ],
                     }
-                    parent_child_bool_structure = {
-                        "bool": {
-                            "must": [
-                                parent_term,
-                                child_term
-                            ],
-                        }
-                    }
-
-                    f_list.append(parent_child_bool_structure)
-
-            return f_list
+                }
+                f_list.append(parent_child_bool_structure)
+        return f_list
 
     # This creates two dictionaries where the keys are the field name
     # dictionary 1: the conditions for including a record in the query
     # dictionary 2: the conditions for excluding a record in the query
-
     def _build_clauses_dictionary(self):
         include_clauses = OrderedDict()
         exclude_clauses = OrderedDict()
@@ -170,26 +184,19 @@ class BaseBuilder(object):
         return include_clauses, exclude_clauses
 
     def _build_date_range_filter(self, date_min, date_max, es_field_name):
-        # 2019-10-17 JMF - Tests fails when using "from builtins import str"
-        # The result gets flagged as "bad type" since type = future.types. ...
-        try:
-            _fn = unicode  # PY2
-        except NameError:
-            _fn = str  # PY3
-
         date_clause = {}
         if date_min or date_max:
             date_clause = {"range": {es_field_name: {}}}
             if date_min:
-                date_clause["range"][es_field_name]["from"] = _fn(date_min)
+                date_clause["range"][es_field_name]["from"] = str(date_min)
             if date_max:
-                date_clause["range"][es_field_name]["to"] = _fn(date_max)
+                date_clause["range"][es_field_name]["to"] = str(date_max)
 
         return date_clause
 
     def _build_dsl_filter(self, include_clauses, exclude_clauses,
                           include_dates=True, single_not_clause=True):
-        andClauses = []
+        and_clauses = []
 
         # date_received
         date_received = self._build_date_range_filter(
@@ -198,45 +205,54 @@ class BaseBuilder(object):
             "date_received")
 
         if date_received and include_dates:
-            andClauses.append(date_received)
+            and_clauses.append(date_received)
 
         company_filter = self._build_date_range_filter(
             self.params.get("company_received_min"),
             self.params.get("company_received_max"), "date_sent_to_company")
 
         if company_filter:
-            andClauses.append(company_filter)
+            and_clauses.append(company_filter)
 
         # Create filter clauses for all other filters
         for item, clauses in include_clauses.items():
             if not self._has_child(item):
                 # Create the field level AND query that must match
-                andClauses.append(clauses)
+                and_clauses.append(clauses)
             else:
                 # These get added as compound OR clauses
-                orClause = {"bool": {"should": clauses}}
-                andClauses.append(orClause)
+                or_clause = {"bool": {"should": clauses}}
+                and_clauses.append(or_clause)
 
-        notClauses = []
+        not_clauses = []
         for item, clauses in exclude_clauses.items():
             if not self._has_child(item):
                 # Create the field level AND query that must match
-                notClauses.append(clauses)
+                not_clauses.append(clauses)
             else:
                 # These get added as compound OR clauses
-                orClause = {"bool": {"should": clauses}}
-                notClauses.append(orClause)
+                or_clause = {"bool": {"should": clauses}}
+                not_clauses.append(or_clause)
 
         # if there are multiple not clauses, they need to be grouped
         # ~A AND ~B AND ~C is not the same as ~(A AND B AND C)
-        if len(notClauses) > 1 and single_not_clause:
-            grouping = {"bool": {"must": notClauses}}
-            notClauses = [grouping]
+        if len(not_clauses) > 1 and single_not_clause:
+            grouping = {"bool": {"must": not_clauses}}
+            not_clauses = [grouping]
 
-        return {"bool": {"must": andClauses, "must_not": notClauses}}
+        return {"bool": {"must": and_clauses, "must_not": not_clauses}}
 
 
 class SearchBuilder(BaseBuilder):
+    """
+    Assemble a JSON request to be sent to Elasticsearch.
+
+    The builder begins with default PARAMS, adds params from a given
+    search request, then adds options for highlighting and sorting.
+
+    A `search_after` parameter was added in 2021 to handle deep pagination.
+    """
+
     def __init__(self):
         self.params = copy.deepcopy(PARAMS)
 
@@ -246,8 +262,8 @@ class SearchBuilder(BaseBuilder):
             "number_of_fragments": 1,
             "fragment_size": 500
         }
-        if self.params.get("field") == "_all":
-            highlight["fields"] = {source: {} for source in SOURCE_FIELDS}
+        if is_all_field(self.params.get("field")):
+            highlight["fields"] = {"*": {}}
         else:
             highlight["fields"] = {self.params.get("field"): {}}
 
@@ -258,10 +274,9 @@ class SearchBuilder(BaseBuilder):
             "relevance": "_score",
             "created_date": "date_received"
         }
-
         sort_field, sort_order = self.params.get("sort").rsplit("_", 1)
         sort_field = sort_field_mapping.get(sort_field, "_score")
-        return [{sort_field: {"order": sort_order}}]
+        return [{sort_field: {"order": sort_order}}, {"_id": sort_order}]
 
     def _build_source(self):
         source = list(SOURCE_FIELDS)
@@ -276,20 +291,9 @@ class SearchBuilder(BaseBuilder):
 
     def build(self):
         search = {
-            "from": self.params.get("frm"),
             "size": self.params.get("size"),
-            "_source": self._build_source(),
-            "query": {
-                "query_string": {
-                    "query": "*",
-                    "fields": [
-                        self.params.get("field")
-                    ],
-                    "default_operator": "AND"
-                }
-            }
+            "_source": self._build_source()
         }
-
         # Highlight
         if not self.params.get("no_highlight") and \
                 not self.params.get("size") == 0:
@@ -304,6 +308,11 @@ class SearchBuilder(BaseBuilder):
         if search_term:
             search["query"] = build_search_terms(
                 search_term, self.params.get("field"))
+
+        # pagination
+        search_after = self.params.get("search_after")
+        if search_after:
+            search["search_after"] = search_after
 
         return search
 
@@ -332,6 +341,16 @@ class AggregationBuilder(BaseBuilder):
         'zip_code'
     )
 
+    _AGG_SIZE_MAP = {
+        "company.raw": AGG_COMPANY_DEFAULT,  # 6500
+        "state": AGG_STATE_DEFAULT,  # 100
+        "zip_code": AGG_ZIPCODE_DEFAULT,  # 26000
+        "issue.raw": AGG_ISSUE_DEFAULT,  # 200
+        "sub_issue.raw": AGG_SUBISSUE_DEFAULT,  # 250
+        "product.raw": AGG_PRODUCT_DEFAULT,  # 30
+        "sub_product.raw": AGG_SUBPRODUCT_DEFAULT,  # 90
+    }
+
     def __init__(self):
         BaseBuilder.__init__(self)
         self.include_clauses = None
@@ -344,22 +363,24 @@ class AggregationBuilder(BaseBuilder):
     def build_parent_child_field_agg(
         self, agg_heading_name, es_parent_name, es_child_name
     ):
-        return {
+
+        field_agg = {
             agg_heading_name: {
                 "terms": {
-                    "field": es_parent_name,
-                    "size": 0
+                    "size": self._AGG_SIZE_MAP.get(es_parent_name, 10),
+                    "field": es_parent_name
                 },
                 "aggs": {
                     es_child_name: {
                         "terms": {
-                            "field": es_child_name,
-                            "size": 0
+                            "size": self._AGG_SIZE_MAP.get(es_child_name, 10),
+                            "field": es_child_name
                         }
                     }
                 }
             }
         }
+        return field_agg
 
     def build_one(self, field_name):
         # Lazy initialization
@@ -386,8 +407,8 @@ class AggregationBuilder(BaseBuilder):
             field_aggs["aggs"] = {
                 field_name: {
                     "terms": {
-                        "field": es_field_name,
-                        "size": 0
+                        "size": self._AGG_SIZE_MAP.get(es_field_name, 10),
+                        "field": es_field_name
                     }
                 }
             }
@@ -400,8 +421,8 @@ class AggregationBuilder(BaseBuilder):
         }
 
         # Add the aggregation filters
-        field_aggs['filter'] = self._build_dsl_filter(incl_subset,
-                                                      self.exclude_clauses)
+        field_aggs['filter'] = self._build_dsl_filter(
+            incl_subset, self.exclude_clauses)
         return field_aggs
 
     def build(self):
@@ -415,7 +436,13 @@ class AggregationBuilder(BaseBuilder):
             ]
         for field_name in agg_fields:
             aggs[field_name] = self.build_one(field_name)
-
+        if "state" in aggs:
+            aggs["state"]["aggs"]["state"].update(
+                {"terms": {
+                    "field": "state",
+                    'size': self._AGG_SIZE_MAP["state"]
+                }}
+            )
         return aggs
 
 
@@ -427,9 +454,9 @@ class StateAggregationBuilder(BaseBuilder):
     )
 
     _AGG_SIZES = {
-        'state': 0,
-        'product': 5,
-        'issue': 5
+        'state': AGG_STATE_DEFAULT,  # 100
+        'product.raw': AGG_STATE_PRODUCT_DEFAULT,  # 5
+        'issue.raw': AGG_STATE_ISSUE_DEFAULT  # 5
     }
 
     _ES_CHILD_AGG_MAP = {
@@ -471,33 +498,30 @@ class StateAggregationBuilder(BaseBuilder):
             field_name: {
                 "terms": {
                     "field": es_field_name,
-                    "size": self._AGG_SIZES[field_name]
+                    "size": self._AGG_SIZES.get(es_field_name)
                 },
                 "aggs": {
                     self._ES_CHILD_AGG_MAP.get(es_child_name): {
                         "terms": {
-                            "field": es_child_name,
-                            "size": 10
+                            "field": es_child_name
                         }
                     }
                 }
             }
         }
 
-        # Get top product & issue for each state. Don't apply state filter
-        # to itself
+        # Get top product & issue for each state.
+        # Don't apply state filter to itself
         if field_name == 'state':
             field_aggs["aggs"]["state"]["aggs"] = {
                 "product": {
                     "terms": {
-                        "field": "product.raw",
-                        "size": 1
+                        "field": "product.raw"
                     }
                 },
                 "issue": {
                     "terms": {
-                        "field": "issue.raw",
-                        "size": 1
+                        "field": "issue.raw"
                     }
                 }
             }
@@ -597,14 +621,11 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
         'tags': 'tags',
     }
 
-    def __init__(self):
-        super(TrendsAggregationBuilder, self).__init__()
-
     def percent_change_agg(self, es_field_name, interval, trend_depth):
         return {
             "terms": {
-                "field": es_field_name,
-                "size": trend_depth
+                "size": trend_depth,
+                "field": es_field_name
             },
             "aggs": {
                 "trend_period": {
@@ -651,7 +672,9 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
                 self._OPTIONAL_FILTERS_CHILD_MAP.get(field_name))
             child_agg_name = self._ES_CHILD_AGG_MAP.get(es_child_name)
             field_aggs["aggs"][agg_heading_name]["aggs"][child_agg_name] = \
-                self.percent_change_agg(es_child_name, interval, 0)
+                self.percent_change_agg(
+                    es_child_name, interval,
+                    self.params['trend_depth'])
 
         return field_aggs
 
@@ -669,13 +692,14 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
 
     def focus_filter(self):
         return {
-            'term': {
+            "term": {
                 self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
                     self.params['lens']): self.params['focus']
             }
         }
 
     def build_one_focus(self, field_name, agg_heading_name, interval):
+
         field_aggs = self.agg_setup(field_name, agg_heading_name, interval)
 
         field_aggs['filter']['bool']['must'].append(self.focus_filter())
@@ -685,6 +709,8 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
     def build(self):
         # AZ - Only include a company aggregation if at least one company
         # filter is selected
+        if not self.params.get("trend_depth"):
+            self.params['trend_depth'] = TREND_DEPTH_DEFAULT
         if 'company' in self.params and 'company' in self.exclude:
             self.exclude.remove('company')
             self._AGG_FIELDS + ('company',)
@@ -699,7 +725,6 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
 
         if self.params['lens'] == 'overview':
             # Reset default for overview row charts
-            self.params['trend_depth'] = 5
 
             for field_name in self._AGG_FIELDS:
                 if field_name not in self.exclude:
@@ -711,6 +736,7 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
                         self.params['trend_interval']
                     )
         elif 'focus' in self.params:
+            self.params['trend_depth'] = 10
             for field_name in DATA_SUB_LENS_MAP.get(self.params['lens']) \
                     + (self.params['lens'], ):
                 if field_name == 'company' and 'company' not in self.params:
@@ -753,7 +779,8 @@ class DateRangeBucketsBuilder(BaseBuilder):
                     'dateRangeBuckets': {
                         "date_histogram": {
                             "field": "date_received",
-                            "interval": self.params.get('trend_interval', 5)
+                            "calendar_interval": self.params.get(
+                                'trend_interval', TREND_DEPTH_DEFAULT)
                         }
                     }
                 }

@@ -6,6 +6,11 @@ from django.core.cache import cache
 from django.http import StreamingHttpResponse
 
 import mock
+from elasticsearch7 import TransportError
+from rest_framework import status
+from rest_framework.exceptions import ErrorDetail
+from rest_framework.test import APITestCase
+
 from complaint_search.defaults import (
     AGG_EXCLUDE_FIELDS,
     FORMAT_CONTENT_TYPE_MAP,
@@ -18,10 +23,6 @@ from complaint_search.throttling import (
     ExportUIRateThrottle,
     SearchAnonRateThrottle,
 )
-from elasticsearch import TransportError
-from rest_framework import status
-from rest_framework.exceptions import ErrorDetail
-from rest_framework.test import APITestCase
 
 
 try:
@@ -49,6 +50,8 @@ class SearchTests(APITestCase):
 
     def buildDefaultParams(self, overrides):
         params = copy.deepcopy(PARAMS)
+        if "search_after" not in overrides:
+            del params["search_after"]
         params.update(overrides)
         return params
 
@@ -209,9 +212,9 @@ class SearchTests(APITestCase):
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')
-    def test_search_with_frm__valid(self, mock_essearch):
+    def test_search_with_search_after__valid(self, mock_essearch):
         url = reverse('complaint_search:search')
-        params = {"frm": 10}
+        params = {"search_after": "7.720881_1800788"}
         mock_essearch.return_value = 'OK'
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
@@ -257,7 +260,11 @@ class SearchTests(APITestCase):
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
         self.assertDictEqual(
-            {"frm": ["Ensure this value is less than or equal to 10000000."]},
+            {"frm": [
+                ErrorDetail(
+                    string='Ensure this value is less than or equal to 10000.',
+                    code='max_value')
+            ]},
             response.data)
 
     @mock.patch('complaint_search.es_interface.search')

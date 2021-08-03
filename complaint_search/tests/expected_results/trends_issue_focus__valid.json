@@ -7,7 +7,7 @@
         "failed": 0
     },
     "hits": {
-        "total": 1609587,
+        "total": {"value": 1609587, "relation" : "gte"},
         "max_score": 0.0,
         "hits": []
     },

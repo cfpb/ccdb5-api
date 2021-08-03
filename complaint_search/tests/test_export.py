@@ -6,8 +6,9 @@ from collections import OrderedDict
 from django.http import StreamingHttpResponse
 from django.test import TestCase
 
+from parameterized import parameterized
+
 from complaint_search.export import ElasticSearchExporter
-from nose_parameterized import parameterized
 
 
 TEST_HEADERS = OrderedDict([

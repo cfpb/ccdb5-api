@@ -1,6 +1,6 @@
 {
-  "from": 0,
-  "size": 10,
+  "size": 25,
+  "track_total_hits": true,
   "_source": [
     "company",
     "company_public_response",
@@ -22,15 +22,6 @@
     "timely",
     "zip_code"
   ],
-  "query": {
-    "query_string": {
-      "query": "*",
-      "fields": [
-        "complaint_what_happened"
-      ],
-      "default_operator": "AND"
-    }
-  },
   "highlight": {
     "require_field_match": false,
     "number_of_fragments": 1,
@@ -44,6 +35,9 @@
       "_score": {
         "order": "desc"
       }
+    },
+    {
+      "_id": "desc"
     }
   ],
   "post_filter": {
@@ -68,7 +62,7 @@
         "company_public_response": {
           "terms": {
             "field": "company_public_response.raw",
-            "size": 0
+            "size": 10
           }
         }
       },
@@ -94,7 +88,7 @@
         "company_response": {
           "terms": {
             "field": "company_response",
-            "size": 0
+            "size": 10
           }
         }
       },
@@ -120,7 +114,7 @@
         "consumer_consent_provided": {
           "terms": {
             "field": "consumer_consent_provided.raw",
-            "size": 0
+            "size": 10
           }
         }
       },
@@ -146,7 +140,7 @@
         "consumer_disputed": {
           "terms": {
             "field": "consumer_disputed.raw",
-            "size": 0
+            "size": 10
           }
         }
       },
@@ -172,7 +166,7 @@
         "has_narrative": {
           "terms": {
             "field": "has_narrative",
-            "size": 0
+            "size": 10
           }
         }
       },
@@ -197,14 +191,14 @@
       "aggs": {
         "issue": {
           "terms": {
-            "field": "issue.raw",
-            "size": 0
+            "size": 200,
+            "field": "issue.raw"
           },
           "aggs": {
             "sub_issue.raw": {
               "terms": {
                 "field": "sub_issue.raw",
-                "size": 0
+                "size": 250
               }
             }
           }
@@ -232,13 +226,13 @@
         "product": {
           "terms": {
             "field": "product.raw",
-            "size": 0
+            "size": 30
           },
           "aggs": {
             "sub_product.raw": {
               "terms": {
                 "field": "sub_product.raw",
-                "size": 0
+                "size": 90
               }
             }
           }
@@ -266,7 +260,7 @@
         "state": {
           "terms": {
             "field": "state",
-            "size": 0
+            "size": 100
           }
         }
       },
@@ -292,7 +286,7 @@
         "submitted_via": {
           "terms": {
             "field": "submitted_via",
-            "size": 0
+            "size": 10
           }
         }
       },
@@ -318,7 +312,7 @@
         "tags": {
           "terms": {
             "field": "tags",
-            "size": 0
+            "size": 10
           }
         }
       },
@@ -344,7 +338,7 @@
         "timely": {
           "terms": {
             "field": "timely",
-            "size": 0
+            "size": 10
           }
         }
       },
@@ -369,8 +363,8 @@
       "aggs": {
         "zip_code": {
           "terms": {
-            "field": "zip_code",
-            "size": 0
+            "size": 26000,
+            "field": "zip_code"
           }
         }
       },
