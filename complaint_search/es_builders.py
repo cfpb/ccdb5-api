@@ -184,21 +184,13 @@ class BaseBuilder(object):
         return include_clauses, exclude_clauses
 
     def _build_date_range_filter(self, date_min, date_max, es_field_name):
-        # POST-ES7 TODO: remove PY2 shim
-        # 2019-10-17 JMF - Tests fails when using "from builtins import str"
-        # The result gets flagged as "bad type" since type = future.types. ...
-        try:
-            _fn = unicode  # PY2
-        except NameError:
-            _fn = str  # PY3
-
         date_clause = {}
         if date_min or date_max:
             date_clause = {"range": {es_field_name: {}}}
             if date_min:
-                date_clause["range"][es_field_name]["from"] = _fn(date_min)
+                date_clause["range"][es_field_name]["from"] = str(date_min)
             if date_max:
-                date_clause["range"][es_field_name]["to"] = _fn(date_max)
+                date_clause["range"][es_field_name]["to"] = str(date_max)
 
         return date_clause
 
