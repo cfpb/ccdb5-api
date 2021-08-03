@@ -1,10 +1,11 @@
 from collections import OrderedDict
 
 
-# Most of our defaults cover size limits for aggregation buckets
-# pagination depth is the max hits that users can explore page by page
-# The default result size matches the default for users of our search
-# The trend_depth default limits display to 5 items in some Trends contexts
+# AGG defaults:
+# Most of our defaults cover size limits for aggregation buckets.
+# Defaults were adjusted in 2021 to be higher than object counts at the time.
+# Counts for ZIP Codes and states are unlikely to change much, but others may.
+# Companies, products, and issues could grow over time and need adjustment.
 AGG_COMPANY_DEFAULT = 6500
 AGG_ZIPCODE_DEFAULT = 26000
 AGG_STATE_DEFAULT = 100
@@ -14,6 +15,10 @@ AGG_ISSUE_DEFAULT = 200
 AGG_SUBISSUE_DEFAULT = 250
 AGG_PRODUCT_DEFAULT = 30
 AGG_SUBPRODUCT_DEFAULT = 90
+# Other defaults:
+# Pagination depth is the max hits that users can explore page by page.
+# The default result size matches the default for users of our search.
+# The trend_depth default limits display to 5 items in some Trends contexts.
 PAGINATION_DEPTH_DEFAULT = 10000
 RESULT_SIZE_DEFAULT = 25
 RESULT_SIZE_OPTIONS = [10, 50, 100]
