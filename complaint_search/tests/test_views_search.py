@@ -4,6 +4,7 @@ from datetime import date, datetime
 from django.conf import settings
 from django.core.cache import cache
 from django.http import StreamingHttpResponse
+from django.test import override_settings
 
 import mock
 from elasticsearch7 import TransportError
@@ -759,6 +760,7 @@ class SearchTests(APITestCase):
             ]},
             response.data)
 
+    @override_settings(DEBUG=False)
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_search_anon_rate_throttle(self, mock_essearch):
         url = reverse('complaint_search:search')
@@ -781,6 +783,25 @@ class SearchTests(APITestCase):
         self.assertEqual(limit, mock_essearch.call_count)
         self.assertEqual(20, limit)
 
+    @override_settings(DEBUG=True)
+    @mock.patch('complaint_search.es_interface.search')
+    def test_search_with_anon_rate_throttle_debug(self, mock_essearch):
+        url = reverse('complaint_search:search')
+        mock_essearch.return_value = 'OK'
+        SearchAnonRateThrottle.rate = self.orig_search_anon_rate
+        ExportUIRateThrottle.rate = self.orig_export_ui_rate
+        ExportAnonRateThrottle.rate = self.orig_export_anon_rate
+        limit = int(self.orig_search_anon_rate.split('/')[0])
+        for _ in range(limit):
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual('OK', response.data)
+
+        response = self.client.get(url)
+        self.assertEqual(
+            response.status_code, status.HTTP_200_OK
+        )
+
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_search_ui_rate_throttle(self, mock_essearch):
         url = reverse('complaint_search:search')
@@ -801,6 +822,7 @@ class SearchTests(APITestCase):
         self.assertEqual(limit + 1, mock_essearch.call_count)
         self.assertEqual(20, limit)
 
+    @override_settings(DEBUG=False)
     @mock.patch('complaint_search.es_interface.search')
     def test_search_with_export_anon_rate_throttle(self, mock_essearch):
         url = reverse('complaint_search:search')
