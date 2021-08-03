@@ -270,7 +270,7 @@ def search(agg_exclude=None, **kwargs):
 
     Starting from a copy of default PARAMS, these are the steps:
     - Update params with request details.
-    - Build 'search_after' breakpoints for use in pagination.
+    - Add a formatted 'search_after' param if pagination is requested.
     - Build a search body based on params
     - Add filter and aggregation sections to the search body, based on params.
     - Add a track_total_hits directive to get accurate hit counts (new in 2021)
