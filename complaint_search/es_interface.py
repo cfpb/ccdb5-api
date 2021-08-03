@@ -265,6 +265,23 @@ def parse_search_after(params):
 
 
 def search(agg_exclude=None, **kwargs):
+    """
+    Prepare a search, get results from Elasticsearch, and return the hits.
+
+    Starting from a copy of default PARAMS, these are the steps:
+    - Update params with request details.
+    - Build 'search_after' breakpoints for use in pagination.
+    - Build a search body based on params
+    - Add filter and aggregation sections to the search body, based on params.
+    - Add a track_total_hits directive to get accurate hit counts (new in 2021)
+
+    Then responses are finalized based on whether the results are to be viewed
+    in a browser or exported as CSV or JSON.
+
+    Viewable results are paginated in most cases.
+    Exportable results are produced with "scroll" Elasticsearch searches,
+    and are never paginated.
+    """
     params = copy.deepcopy(PARAMS)
     params.update(**kwargs)
     search_after = parse_search_after(params)
@@ -363,7 +380,7 @@ def suggest(text=None, size=6):
     return candidates
 
 
-def filter_suggest(filterField, display_field=None, **kwargs):
+def filter_suggest(filter_field, display_field=None, **kwargs):
     params = dict(**kwargs)
     params.update({
         'size': 0,
@@ -377,25 +394,25 @@ def filter_suggest(filterField, display_field=None, **kwargs):
     aggregation_builder = AggregationBuilder()
     aggregation_builder.add(**params)
     aggs = {
-        filterField: aggregation_builder.build_one(filterField)
+        filter_field: aggregation_builder.build_one(filter_field)
     }
     # add the input value as a must match
-    if filterField != 'zip_code':
-        aggs[filterField]['filter']['bool']['must'].append(
+    if filter_field != 'zip_code':
+        aggs[filter_field]['filter']['bool']['must'].append(
             {
-                'wildcard': {filterField: '*{}*'.format(params['text'])}
+                'wildcard': {filter_field: '*{}*'.format(params['text'])}
             }
         )
     else:
-        aggs[filterField]['filter']['bool']['must'].append(
+        aggs[filter_field]['filter']['bool']['must'].append(
             {
-                'prefix': {filterField: params['text']}
+                'prefix': {filter_field: params['text']}
             }
         )
 
     # choose which field to actually display
-    aggs[filterField]['aggs'][filterField]['terms'][
-        'field'] = filterField if display_field is None else display_field
+    aggs[filter_field]['aggs'][filter_field]['terms'][
+        'field'] = filter_field if display_field is None else display_field
     # add to the body
     body['aggs'] = aggs
     body['track_total_hits'] = True
@@ -407,8 +424,8 @@ def filter_suggest(filterField, display_field=None, **kwargs):
     )
     # reformat the return
     candidates = [
-        x['key']
-        for x in res['aggregations'][filterField][filterField]['buckets'][:10]
+        x['key'] for x
+        in res['aggregations'][filter_field][filter_field]['buckets'][:10]
     ]
 
     return candidates

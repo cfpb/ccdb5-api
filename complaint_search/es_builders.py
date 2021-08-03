@@ -8,6 +8,8 @@ from complaint_search.defaults import (
     AGG_ISSUE_DEFAULT,
     AGG_PRODUCT_DEFAULT,
     AGG_STATE_DEFAULT,
+    AGG_STATE_ISSUE_DEFAULT,
+    AGG_STATE_PRODUCT_DEFAULT,
     AGG_SUBISSUE_DEFAULT,
     AGG_SUBPRODUCT_DEFAULT,
     AGG_ZIPCODE_DEFAULT,
@@ -250,6 +252,15 @@ class BaseBuilder(object):
 
 
 class SearchBuilder(BaseBuilder):
+    """
+    Assemble a JSON request to be sent to Elasticsearch.
+
+    The builder begins with default PARAMS, adds params from a given
+    search request, then adds options for highlighting and sorting.
+
+    A `search_after` parameter was added in 2021 to handle deep pagination.
+    """
+
     def __init__(self):
         self.params = copy.deepcopy(PARAMS)
 
@@ -451,9 +462,9 @@ class StateAggregationBuilder(BaseBuilder):
     )
 
     _AGG_SIZES = {
-        'state': 100,
-        'product.raw': 5,
-        'issue.raw': 5
+        'state': AGG_STATE_DEFAULT,  # 100
+        'product.raw': AGG_STATE_PRODUCT_DEFAULT,  # 5
+        'issue.raw': AGG_STATE_ISSUE_DEFAULT  # 5
     }
 
     _ES_CHILD_AGG_MAP = {
@@ -617,9 +628,6 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
         'sub_issue': 'sub-issue',
         'tags': 'tags',
     }
-
-    def __init__(self):
-        super(TrendsAggregationBuilder, self).__init__()
 
     def percent_change_agg(self, es_field_name, interval, trend_depth):
         return {
