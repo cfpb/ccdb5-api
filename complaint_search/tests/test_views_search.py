@@ -20,6 +20,7 @@ from complaint_search.defaults import (
 from complaint_search.serializer import SearchInputSerializer
 from complaint_search.throttling import (
     _CCDB_UI_URL,
+    CCDBAnonRateThrottle,
     ExportAnonRateThrottle,
     ExportUIRateThrottle,
     SearchAnonRateThrottle,
@@ -782,6 +783,18 @@ class SearchTests(APITestCase):
         self.assertIn("Request was throttled", response.data.get('detail'))
         self.assertEqual(limit, mock_essearch.call_count)
         self.assertEqual(20, limit)
+
+    @override_settings(DEBUG=False)
+    @mock.patch('complaint_search.es_interface.search')
+    @mock.patch.object(CCDBAnonRateThrottle, 'is_referred_from_ui')
+    def test_search_is_referred(self, mock_ccdb_is_referred, mock_essearch):
+        url = reverse('complaint_search:search')
+        mock_essearch.return_value = 'OK'
+        SearchAnonRateThrottle.rate = self.orig_search_anon_rate
+        mock_ccdb_is_referred.return_value = True
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual('OK', response.data)
 
     @override_settings(DEBUG=True)
     @mock.patch('complaint_search.es_interface.search')

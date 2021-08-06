@@ -1,5 +1,5 @@
 {
-  "size": 500,
+  "size": 0,
   "track_total_hits": true,
   "_source": [
     "company",
@@ -21,18 +21,6 @@
     "tags",
     "timely",
     "zip_code"
-  ],
-  "highlight": {
-    "require_field_match": false,
-    "number_of_fragments": 1,
-    "fragment_size": 500,
-    "fields": {
-      "complaint_what_happened": {}
-    }
-  },
-  "sort": [
-    {"_score": {"order": "desc"}},
-    {"_id": "desc"}
   ],
   "aggs": {
     "issue": {
