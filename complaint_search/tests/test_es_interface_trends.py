@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 import mock
-from elasticsearch7 import Elasticsearch
+from elasticsearch import Elasticsearch
 
 from complaint_search.es_interface import trends
 from complaint_search.tests.es_interface_test_helpers import load

@@ -3,7 +3,7 @@ import logging
 import os
 from datetime import datetime, timedelta
 
-from elasticsearch7 import Elasticsearch, RequestsHttpConnection, helpers
+from elasticsearch import Elasticsearch, RequestsHttpConnection, helpers
 from flags.state import flag_enabled
 from requests_aws4auth import AWS4Auth
 

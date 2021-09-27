@@ -1,7 +1,7 @@
 from django.conf import settings
 
 import mock
-from elasticsearch7 import TransportError
+from elasticsearch import TransportError
 from rest_framework import status
 from rest_framework.test import APITestCase
 
