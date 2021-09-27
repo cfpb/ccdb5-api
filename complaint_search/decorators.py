@@ -1,6 +1,6 @@
 import logging
 
-from elasticsearch7 import TransportError
+from elasticsearch import TransportError
 from rest_framework import status
 from rest_framework.response import Response
 

@@ -5,7 +5,7 @@ from django.http import StreamingHttpResponse
 from django.test import SimpleTestCase, TestCase
 
 import mock
-from elasticsearch7 import Elasticsearch
+from elasticsearch import Elasticsearch
 from parameterized import parameterized
 
 from complaint_search.es_builders import AggregationBuilder, SearchBuilder
@@ -327,7 +327,7 @@ class EsInterfaceTest_Search(TestCase):
     @mock.patch.object(ElasticSearchExporter, 'export_csv')
     @mock.patch.object(ElasticSearchExporter, 'export_json')
     @mock.patch.object(Elasticsearch, 'search')
-    @mock.patch('elasticsearch7.helpers.scan')
+    @mock.patch('elasticsearch.helpers.scan')
     def test_search_with_format__valid(
         self,
         export_type,
