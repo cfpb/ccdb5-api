@@ -23,6 +23,7 @@ from complaint_search.es_builders import (
 )
 from complaint_search.export import ElasticSearchExporter
 
+
 log = logging.getLogger(__name__)
 
 _ES_URL = "{}://{}:{}".format("http", os.environ.get('ES_HOST', 'localhost'),
