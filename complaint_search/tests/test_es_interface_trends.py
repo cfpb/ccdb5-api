@@ -10,8 +10,6 @@ from complaint_search.tests.es_interface_test_helpers import load
 class EsInterfaceTestTrends(TestCase):
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch(
-        "complaint_search.es_interface._COMPLAINT_DOC_TYPE", "DOC_TYPE")
     @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'search')
     def test_trends_default_params__valid(self, mock_search, mock_count):
@@ -28,8 +26,6 @@ class EsInterfaceTestTrends(TestCase):
         self.assertEqual(body, res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE",
-                "DOC_TYPE")
     @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'search')
     def test_trends_sub_lens_product__valid(self, mock_search, mock_count):
@@ -50,8 +46,6 @@ class EsInterfaceTestTrends(TestCase):
         self.assertEqual(body, res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE",
-                "DOC_TYPE")
     @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'search')
     def test_trends_exclude_and_date_filters__valid(self,
@@ -75,8 +69,6 @@ class EsInterfaceTestTrends(TestCase):
         self.assertEqual(body, res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE",
-                "DOC_TYPE")
     @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'search')
     def test_trends_filter__valid(self, mock_search, mock_count):
@@ -98,8 +90,6 @@ class EsInterfaceTestTrends(TestCase):
         self.assertEqual(body, res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE",
-                "DOC_TYPE")
     @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'search')
     def test_trends_top_self_filter__valid(self, mock_search, mock_count):
@@ -120,8 +110,6 @@ class EsInterfaceTestTrends(TestCase):
         self.assertTrue('company' not in res['aggregations'])
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE",
-                "DOC_TYPE")
     @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'search')
     def test_trends_company_filter__valid(self, mock_search, mock_count):
@@ -142,8 +130,6 @@ class EsInterfaceTestTrends(TestCase):
         self.assertTrue('company' in res['aggregations'])
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE",
-                "DOC_TYPE")
     @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'search')
     def test_trends_issue_focus__valid(self, mock_search, mock_count):
@@ -167,8 +153,6 @@ class EsInterfaceTestTrends(TestCase):
                          1)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch("complaint_search.es_interface._COMPLAINT_DOC_TYPE",
-                "DOC_TYPE")
     @mock.patch.object(Elasticsearch, 'count')
     @mock.patch.object(Elasticsearch, 'search')
     def test_trends_issue_focus_company_filter__valid(self,
@@ -191,5 +175,6 @@ class EsInterfaceTestTrends(TestCase):
         self.assertEqual(len(mock_search.call_args), 2)
         self.assertEqual(mock_search.call_args[1]['index'], 'INDEX')
         self.assertTrue('company' in res['aggregations'])
-        self.assertEqual(len(res['aggregations']['issue']['issue']['buckets']),
-                         1)
+        self.assertEqual(
+            len(res['aggregations']['issue']['issue']['buckets']), 1
+        )
