@@ -106,14 +106,16 @@ def _build_headers():
     # API Documentation hosted on Github pages needs GET access
     headers = {
         'Access-Control-Allow-Origin': 'https://cfpb.github.io',
-        'Access-Control-Allow-Methods': 'GET'
+        'Access-Control-Allow-Methods': 'GET',
+        'Edge-Cache-Tag': 'complaints',
     }
     # Local development requires CORS support
     if settings.DEBUG:
         headers = {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Headers': 'Content-Type,Authorization',
-            'Access-Control-Allow-Methods': 'GET'
+            'Access-Control-Allow-Methods': 'GET',
+            'Edge-Cache-Tag': 'complaints',
         }
     return headers
 
