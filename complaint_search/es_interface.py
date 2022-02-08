@@ -63,9 +63,9 @@ def build_trend_meta(response):
 
 def get_break_points(hits, size):
     """Return a dict of 'search-after' values for pagination."""
-    end_page = int(PAGINATION_DEPTH_DEFAULT / size) - 1
+    end_page = int(PAGINATION_DEPTH_DEFAULT / size)
     break_points = {}
-    if size > len(hits):
+    if size >= len(hits):
         return break_points
     # we don't need a break point for page 1; start with page 2
     page = 2
