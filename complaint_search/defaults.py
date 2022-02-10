@@ -19,7 +19,7 @@ AGG_SUBPRODUCT_DEFAULT = 90
 # Pagination depth is the max hits that users can explore page by page.
 # The default result size matches the default for users of our search.
 # The trend_depth default limits display to 5 items in some Trends contexts.
-PAGINATION_DEPTH_DEFAULT = 10000
+PAGINATION_DEPTH_DEFAULT = 1000
 RESULT_SIZE_DEFAULT = 25
 RESULT_SIZE_OPTIONS = [10, 50, 100]
 TREND_DEPTH_DEFAULT = 5
