@@ -16,10 +16,12 @@ AGG_SUBISSUE_DEFAULT = 250
 AGG_PRODUCT_DEFAULT = 30
 AGG_SUBPRODUCT_DEFAULT = 90
 # Other defaults:
-# Pagination depth is the max hits that users can explore page by page.
-# The default result size matches the default for users of our search.
+# Pagination batch is the number of results we paginate at a time.
+# Max pagination depth is the farthest we'll paginate – 100 batches.
+# The default result size matches the front-end default for users.
 # The trend_depth default limits display to 5 items in some Trends contexts.
-PAGINATION_DEPTH_DEFAULT = 1000
+PAGINATION_BATCH = 100
+MAX_PAGINATION_DEPTH = 10000
 RESULT_SIZE_DEFAULT = 25
 RESULT_SIZE_OPTIONS = [10, 50, 100]
 TREND_DEPTH_DEFAULT = 5
