@@ -263,7 +263,7 @@ class EsInterfaceTest_Search(TestCase):
             "hits": {
                 "total": {"value": 10000},
                 "hits": fake_hits}}
-        response = search(size=2, search_after="1620752400004_4367497")
+        response = search(size=2, search_after="1620752400004_4367497", page=2)
         self.assertEqual(len(response.get("_meta").get("break_points")), 2)
 
     @mock.patch("complaint_search.es_interface._get_now")

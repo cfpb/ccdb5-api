@@ -2,6 +2,7 @@ import copy
 import logging
 import os
 from datetime import datetime, timedelta
+from math import ceil
 
 from elasticsearch import Elasticsearch, RequestsHttpConnection, helpers
 from flags.state import flag_enabled
@@ -10,7 +11,8 @@ from requests_aws4auth import AWS4Auth
 from complaint_search.defaults import (
     CSV_ORDERED_HEADERS,
     EXPORT_FORMATS,
-    PAGINATION_DEPTH_DEFAULT,
+    MAX_PAGINATION_DEPTH,
+    PAGINATION_BATCH,
     PARAMS,
 )
 from complaint_search.es_builders import (
@@ -61,13 +63,27 @@ def build_trend_meta(response):
     return meta
 
 
+# PAGINATION_BATCH = 100
+# MAX_PAGINATION_DEPTH = 10000
+def get_pagination_query_size(page, user_batch_size):
+    batch_ahead = PAGINATION_BATCH * 2
+    batch_point = page * user_batch_size
+    if batch_point < PAGINATION_BATCH:
+        return batch_ahead
+    multiplier = ceil(batch_point / PAGINATION_BATCH)
+    query_size = batch_ahead + (PAGINATION_BATCH * multiplier)
+    if query_size <= MAX_PAGINATION_DEPTH:
+        return query_size
+    else:
+        return MAX_PAGINATION_DEPTH
+
+
 def get_break_points(hits, size):
-    """Return a dict of 'search-after' values for pagination."""
-    end_page = int(PAGINATION_DEPTH_DEFAULT / size)
+    """Return a dict of upcoming 'search-after' values for pagination."""
+    end_page = int(MAX_PAGINATION_DEPTH / size)
     break_points = {}
     if size >= len(hits):
         return break_points
-    # we don't need a break point for page 1; start with page 2
     page = 2
     break_points[page] = hits[size - 1].get("sort")
     next_batch = hits[size:]
@@ -193,16 +209,6 @@ def _get_meta():
                     "field": "date_indexed",
                     "format": "yyyy-MM-dd'T'12:00:00-05:00"
                 }
-            },
-            "max_narratives": {
-                "filter": {"term": {"has_narrative": "true"}},
-                "aggs": {
-                    "max_date": {
-                        "max": {
-                            "field": ":updated_at",
-                        }
-                    }
-                }
             }
         }
     }
@@ -269,13 +275,12 @@ def search(agg_exclude=None, **kwargs):
     - Update params with request details.
     - Add a formatted 'search_after' param if pagination is requested.
     - Build a search body based on params
-    - Add filter and aggregation sections to the search body, based on params.
+    - Add param-based post_filter and aggregation sections to the search body.
     - Add a track_total_hits directive to get accurate hit counts (new in 2021)
+    - Assemble pagination break points if needed.
 
-    Then responses are finalized based on whether the results are to be viewed
+    The response is finalized based on whether the results are to be viewed
     in a browser or exported as CSV or JSON.
-
-    Viewable results are paginated in most cases.
     Exportable results are produced with "scroll" Elasticsearch searches,
     and are never paginated.
     """
@@ -307,16 +312,20 @@ def search(agg_exclude=None, **kwargs):
         res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
         hit_total = res['hits']['total']['value']
         break_points = {}
-        # page = 1
         if res['hits']['hits']:
-            if hit_total and hit_total > body["size"]:
+            user_batch_size = body["size"]
+            if hit_total and hit_total > user_batch_size:
                 # We have more than one page of results and need pagination
                 pagination_body = copy.deepcopy(body)
-                pagination_body["size"] = PAGINATION_DEPTH_DEFAULT
+                # cleaner to get page from frontend, but 'frm' works for now
+                page = params.get("frm", user_batch_size) / user_batch_size
+                pagination_body["size"] = get_pagination_query_size(
+                    page, user_batch_size
+                )
                 if "search_after" in pagination_body:
                     del pagination_body["search_after"]
                 log.info(
-                    'Harvesting pagination dict using %s/%s/_search with %s',
+                    'Harvesting break points using %s/%s/_search with %s',
                     _ES_URL, _COMPLAINT_ES_INDEX, pagination_body
                 )
                 pagination_res = _get_es().search(
@@ -324,7 +333,9 @@ def search(agg_exclude=None, **kwargs):
                     body=pagination_body
                 )
                 break_points = get_break_points(
-                    pagination_res['hits']['hits'], body["size"])
+                    pagination_res['hits']['hits'],
+                    user_batch_size
+                )
         res["_meta"] = _get_meta()
         res["_meta"]["break_points"] = break_points
 
