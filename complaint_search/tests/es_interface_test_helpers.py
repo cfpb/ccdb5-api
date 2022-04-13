@@ -8,6 +8,7 @@ from deepdiff import DeepDiff
 # Helper Methods
 # -------------------------------------------------------------------------
 
+
 def to_absolute(fileName):
     # where is this module?
     thisDir = os.path.dirname(__file__)
@@ -15,14 +16,15 @@ def to_absolute(fileName):
 
 
 def load(shortName):
-    fileName = to_absolute(shortName + '.json')
-    with open(fileName, 'r') as f:
+    fileName = to_absolute(shortName + ".json")
+    with open(fileName, "r") as f:
         return json.load(f)
 
 
 # -------------------------------------------------------------------------
 # Test Helper Methods
 # -------------------------------------------------------------------------
+
 
 def assertBodyEqual(expected, actual):
     diff = DeepDiff(actual, expected)
@@ -31,4 +33,4 @@ def assertBodyEqual(expected, actual):
     # print("***Diff****", diff, "/n**********\n")
     if diff:  # pragma: no cover
         print(json.dumps(json.loads(diff.to_json()), indent=2, sort_keys=True))
-        raise AssertionError('Request bodies do not match')
+        raise AssertionError("Request bodies do not match")

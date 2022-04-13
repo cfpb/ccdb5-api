@@ -24,3 +24,10 @@ db.sqlite3
 # Documentation files *
 
 site/
+
+# IDEs
+.idea/
+
+# In-Directory Venvs
+venv/
+.venv/

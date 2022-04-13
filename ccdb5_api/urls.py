@@ -23,6 +23,6 @@ except ImportError:
 
 
 urlpatterns = [
-    re_path(r'^admin/', admin.site.urls),
-    re_path(r'^', include('complaint_search.urls')),
+    re_path(r"^admin/", admin.site.urls),
+    re_path(r"^", include("complaint_search.urls")),
 ]

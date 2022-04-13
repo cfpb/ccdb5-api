@@ -27,8 +27,12 @@ class ElasticSearchExporter(object):
 
         def stream():
             buffer_ = StringIO()
-            writer = DictWriter(buffer_, header_dict.keys(),
-                                delimiter=",", quoting=csv.QUOTE_MINIMAL)
+            writer = DictWriter(
+                buffer_,
+                header_dict.keys(),
+                delimiter=",",
+                quoting=csv.QUOTE_MINIMAL,
+            )
 
             # Write Header Row
             data = read_and_flush(writer, buffer_, header_dict)
@@ -40,17 +44,15 @@ class ElasticSearchExporter(object):
                 count += 1
                 rows_data = {
                     key: str(value)
-                    for key, value in row['_source'].items()
+                    for key, value in row["_source"].items()
                     if key in header_dict.keys()
                 }
 
                 data = read_and_flush(writer, buffer_, rows_data)
                 yield data
 
-        response = StreamingHttpResponse(
-            stream(), content_type='text/csv'
-        )
-        response['Content-Disposition'] = "attachment; filename=file.csv"
+        response = StreamingHttpResponse(stream(), content_type="text/csv")
+        response["Content-Disposition"] = "attachment; filename=file.csv"
         return response
 
     # export_json - Stream an Elsticsearch response as a JSON file
@@ -64,18 +66,16 @@ class ElasticSearchExporter(object):
         def stream():
             count = 0
             # Write JSON
-            yield '['
+            yield "["
             for row in scanResponse:
                 count += 1
                 if count < total_count:
-                    yield '{},'.format(json.dumps(row))
+                    yield "{},".format(json.dumps(row))
                 else:
                     yield json.dumps(row)
 
-            yield ']'
+            yield "]"
 
-        response = StreamingHttpResponse(
-            stream(), content_type='text/json'
-        )
-        response['Content-Disposition'] = "attachment; filename=file.json"
+        response = StreamingHttpResponse(stream(), content_type="text/json")
+        response["Content-Disposition"] = "attachment; filename=file.json"
         return response

@@ -42,42 +42,42 @@ from complaint_search.throttling import (
 # constant tuples below so it will be parsed correctly
 
 QPARAMS_VARS = (
-    'company_received_max',
-    'company_received_min',
-    'date_received_max',
-    'date_received_min',
-    'field',
-    'focus',
-    'frm',
-    'lens',
-    'no_aggs',
-    'no_highlight',
-    'page',
-    'search_after',
-    'search_term',
-    'size',
-    'sort',
-    'sub_lens',
-    'sub_lens_depth',
-    'trend_depth',
-    'trend_interval'
+    "company_received_max",
+    "company_received_min",
+    "date_received_max",
+    "date_received_min",
+    "field",
+    "focus",
+    "frm",
+    "lens",
+    "no_aggs",
+    "no_highlight",
+    "page",
+    "search_after",
+    "search_term",
+    "size",
+    "sort",
+    "sub_lens",
+    "sub_lens_depth",
+    "trend_depth",
+    "trend_interval",
 )
 
 
 QPARAMS_LISTS = (
-    'company',
-    'company_public_response',
-    'company_response',
-    'consumer_consent_provided',
-    'consumer_disputed',
-    'has_narrative',
-    'issue',
-    'product',
-    'state',
-    'submitted_via',
-    'tags',
-    'timely',
-    'zip_code'
+    "company",
+    "company_public_response",
+    "company_response",
+    "consumer_consent_provided",
+    "consumer_disputed",
+    "has_narrative",
+    "issue",
+    "product",
+    "state",
+    "submitted_via",
+    "tags",
+    "timely",
+    "zip_code",
 )
 
 QPARAMS_NOT_LISTS = [EXCLUDE_PREFIX + x for x in QPARAMS_LISTS]
@@ -102,20 +102,21 @@ def _parse_query_params(query_params, valid_vars=None):
 # -----------------------------------------------------------------------------
 # Header methods
 
+
 def _build_headers():
     # API Documentation hosted on Github pages needs GET access
     headers = {
-        'Access-Control-Allow-Origin': 'https://cfpb.github.io',
-        'Access-Control-Allow-Methods': 'GET',
-        'Edge-Cache-Tag': 'complaints',
+        "Access-Control-Allow-Origin": "https://cfpb.github.io",
+        "Access-Control-Allow-Methods": "GET",
+        "Edge-Cache-Tag": "complaints",
     }
     # Local development requires CORS support
     if settings.DEBUG:
         headers = {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Headers': 'Content-Type,Authorization',
-            'Access-Control-Allow-Methods': 'GET',
-            'Edge-Cache-Tag': 'complaints',
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "Content-Type,Authorization",
+            "Access-Control-Allow-Methods": "GET",
+            "Edge-Cache-Tag": "complaints",
         }
     return headers
 
@@ -123,17 +124,22 @@ def _build_headers():
 # -----------------------------------------------------------------------------
 # Request Handlers: Complaints
 
-@api_view(['GET'])
-@renderer_classes((
-    DefaultRenderer,
-    JSONRenderer,
-    CSVRenderer,
-))
-@throttle_classes([
-    SearchAnonRateThrottle,
-    ExportUIRateThrottle,
-    ExportAnonRateThrottle,
-])
+
+@api_view(["GET"])
+@renderer_classes(
+    (
+        DefaultRenderer,
+        JSONRenderer,
+        CSVRenderer,
+    )
+)
+@throttle_classes(
+    [
+        SearchAnonRateThrottle,
+        ExportUIRateThrottle,
+        ExportAnonRateThrottle,
+    ]
+)
 @catch_es_error
 def search(request):
 
@@ -142,19 +148,18 @@ def search(request):
     # Add format to data
     format = request.accepted_renderer.format
     if format and format in EXPORT_FORMATS:
-        data['format'] = format
+        data["format"] = format
     else:
-        data['format'] = 'default'
+        data["format"] = "default"
 
     serializer = SearchInputSerializer(data=data)
 
     if not serializer.is_valid():
-        return Response(
-            serializer.errors, status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     results = es_interface.search(
-        agg_exclude=AGG_EXCLUDE_FIELDS, **serializer.validated_data)
+        agg_exclude=AGG_EXCLUDE_FIELDS, **serializer.validated_data
+    )
     headers = _build_headers()
 
     if format not in EXPORT_FORMATS:
@@ -163,24 +168,23 @@ def search(request):
     # If format is in export formats, update its attachment response
     # with a filename
     response = StreamingHttpResponse(
-        streaming_content=results,
-        content_type=FORMAT_CONTENT_TYPE_MAP[format]
+        streaming_content=results, content_type=FORMAT_CONTENT_TYPE_MAP[format]
     )
-    filename = 'complaints-{}.{}'.format(
-        datetime.now().strftime('%Y-%m-%d_%H_%M'), format
+    filename = "complaints-{}.{}".format(
+        datetime.now().strftime("%Y-%m-%d_%H_%M"), format
     )
     header_template = 'attachment; filename="{}"'
-    response['Content-Disposition'] = header_template.format(filename)
+    response["Content-Disposition"] = header_template.format(filename)
     for header in headers:
         response[header] = headers[header]
 
     return response
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 @catch_es_error
 def suggest(request):
-    data = _parse_query_params(request.query_params, ['text', 'size'])
+    data = _parse_query_params(request.query_params, ["text", "size"])
 
     serializer = SuggestInputSerializer(data=data)
     if serializer.is_valid():
@@ -201,19 +205,19 @@ def _suggest_field(data, field, display_field=None):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 @catch_es_error
 def suggest_zip(request):
     valid_vars = list(QPARAMS_VARS)
-    valid_vars.append('text')
+    valid_vars.append("text")
 
     data = _parse_query_params(request.query_params, valid_vars)
-    if data.get('text'):
-        data['text'] = data['text'].upper()
-    return _suggest_field(data, 'zip_code')
+    if data.get("text"):
+        data["text"] = data["text"].upper()
+    return _suggest_field(data, "zip_code")
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 @catch_es_error
 def suggest_company(request):
     # Key removal that takes mutation into account in case of other reference
@@ -223,22 +227,26 @@ def suggest_company(request):
         return r
 
     valid_vars = list(QPARAMS_VARS)
-    valid_vars.append('text')
+    valid_vars.append("text")
 
     data = _parse_query_params(request.query_params, valid_vars)
 
     # Company filters should not be applied to their own aggregation filter
-    if 'company' in data:
-        data = removekey(data, 'company')
+    if "company" in data:
+        data = removekey(data, "company")
 
-    if data.get('text'):
-        data['text'] = data['text'].upper()
+    if data.get("text"):
+        data["text"] = data["text"].upper()
 
-    return _suggest_field(data, 'company.suggest', 'company.raw')
+    return _suggest_field(data, "company.suggest", "company.raw")
 
 
-@api_view(['GET'])
-@throttle_classes([DocumentAnonRateThrottle, ])
+@api_view(["GET"])
+@throttle_classes(
+    [
+        DocumentAnonRateThrottle,
+    ]
+)
 @catch_es_error
 def document(request, id):
     results = es_interface.document(id)
@@ -248,19 +256,19 @@ def document(request, id):
 # -----------------------------------------------------------------------------
 # Request Handlers: Geo
 
-@api_view(['GET'])
+
+@api_view(["GET"])
 @catch_es_error
 def states(request):
     data = _parse_query_params(request.query_params)
     serializer = SearchInputSerializer(data=data)
 
     if not serializer.is_valid():
-        return Response(
-            serializer.errors, status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     results = es_interface.states_agg(
-        agg_exclude=AGG_EXCLUDE_FIELDS, **serializer.validated_data)
+        agg_exclude=AGG_EXCLUDE_FIELDS, **serializer.validated_data
+    )
     headers = _build_headers()
 
     return Response(results, headers=headers)
@@ -269,19 +277,19 @@ def states(request):
 # -----------------------------------------------------------------------------
 # Request Handlers: Trends
 
-@api_view(['GET'])
+
+@api_view(["GET"])
 @catch_es_error
 def trends(request):
     data = _parse_query_params(request.query_params)
     serializer = TrendsInputSerializer(data=data)
 
     if not serializer.is_valid():
-        return Response(
-            serializer.errors, status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     results = es_interface.trends(
-        agg_exclude=AGG_EXCLUDE_FIELDS, **serializer.validated_data)
+        agg_exclude=AGG_EXCLUDE_FIELDS, **serializer.validated_data
+    )
     headers = _build_headers()
 
     return Response(results, headers=headers)
