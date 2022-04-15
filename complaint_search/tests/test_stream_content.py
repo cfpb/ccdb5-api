@@ -1,13 +1,9 @@
 from django.test import TestCase
 
-from complaint_search.stream_content import (
-    StreamCSVContent,
-    StreamJSONContent,
-)
+from complaint_search.stream_content import StreamCSVContent, StreamJSONContent
 
 
 class StreamCSVContentTests(TestCase):
-
     def setUp(self):
         pass
 
@@ -27,7 +23,6 @@ class StreamCSVContentTests(TestCase):
 
 
 class StreamJSONContentTests(TestCase):
-
     def setUp(self):
         self.content = (
             '{"index": {"_index": "test", "_id": 12345}}\n'
@@ -40,8 +35,10 @@ class StreamJSONContentTests(TestCase):
         )
 
         # pretend this is broken up randomly every 20 chars
-        self.content_list = [self.content[(i * 20):(i * 20 + 20)]
-                             for i in range(int(len(self.content) / 20 + 1))]
+        self.content_list = [
+            self.content[(i * 20) : (i * 20 + 20)]
+            for i in range(int(len(self.content) / 20 + 1))
+        ]
 
     def test_iter(self):
         sc = StreamJSONContent(iter(self.content_list))
@@ -49,8 +46,10 @@ class StreamJSONContentTests(TestCase):
 
     def test_next_complete(self):
         for size in range(1, 1024):
-            content_list = [self.content[(i * size):(i * size + size)]
-                            for i in range(int(len(self.content) / size + 1))]
+            content_list = [
+                self.content[(i * size) : (i * size + size)]
+                for i in range(int(len(self.content) / size + 1))
+            ]
             sc = StreamJSONContent(iter(content_list))
             result = ""
             for json_in_progress in sc:

@@ -39,7 +39,7 @@ PARAMS = {
 }
 
 # -*- coding: utf-8 -*-
-DELIMITER = '\u2022'
+DELIMITER = "\u2022"
 
 SOURCE_FIELDS = (
     "company",
@@ -63,35 +63,37 @@ SOURCE_FIELDS = (
     "zip_code",
 )
 
-EXCLUDE_PREFIX = 'not_'
+EXCLUDE_PREFIX = "not_"
 
 EXPORT_FORMATS = (
-    'csv',
-    'json',
+    "csv",
+    "json",
 )
 
-CSV_ORDERED_HEADERS = OrderedDict([
-    ("date_received_formatted", "Date received"),
-    ("product", "Product"),
-    ("sub_product", "Sub-product"),
-    ("issue", "Issue"),
-    ("sub_issue", "Sub-issue"),
-    ("complaint_what_happened", "Consumer complaint narrative"),
-    ("company_public_response", "Company public response"),
-    ("company", "Company"),
-    ("state", "State"),
-    ("zip_code", "ZIP code"),
-    ("tags", "Tags"),
-    ("consumer_consent_provided", "Consumer consent provided?"),
-    ("submitted_via", "Submitted via"),
-    ("date_sent_to_company_formatted", "Date sent to company"),
-    ("company_response", "Company response to consumer"),
-    ("timely", "Timely response?"),
-    ("consumer_disputed", "Consumer disputed?"),
-    ("complaint_id", "Complaint ID")
-])
+CSV_ORDERED_HEADERS = OrderedDict(
+    [
+        ("date_received_formatted", "Date received"),
+        ("product", "Product"),
+        ("sub_product", "Sub-product"),
+        ("issue", "Issue"),
+        ("sub_issue", "Sub-issue"),
+        ("complaint_what_happened", "Consumer complaint narrative"),
+        ("company_public_response", "Company public response"),
+        ("company", "Company"),
+        ("state", "State"),
+        ("zip_code", "ZIP code"),
+        ("tags", "Tags"),
+        ("consumer_consent_provided", "Consumer consent provided?"),
+        ("submitted_via", "Submitted via"),
+        ("date_sent_to_company_formatted", "Date sent to company"),
+        ("company_response", "Company response to consumer"),
+        ("timely", "Timely response?"),
+        ("consumer_disputed", "Consumer disputed?"),
+        ("complaint_id", "Complaint ID"),
+    ]
+)
 
-AGG_EXCLUDE_FIELDS = ['company', 'zip_code']
+AGG_EXCLUDE_FIELDS = ["company", "zip_code"]
 
 CHUNK_SIZE = 512
 
@@ -101,8 +103,8 @@ FORMAT_CONTENT_TYPE_MAP = {
 }
 
 DATA_SUB_LENS_MAP = {
-    'product': ('sub_product', 'issue', 'company', 'tags'),
-    'issue': ('product', 'sub_issue', 'company', 'tags'),
-    'company': ('product', 'issue', 'tags'),
-    'tags': ('product', 'issue', 'company'),
+    "product": ("sub_product", "issue", "company", "tags"),
+    "issue": ("product", "sub_issue", "company", "tags"),
+    "company": ("product", "issue", "tags"),
+    "tags": ("product", "issue", "company"),
 }
