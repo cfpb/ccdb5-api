@@ -5,7 +5,7 @@ from django.http import StreamingHttpResponse
 from django.test import SimpleTestCase, TestCase
 
 import mock
-from elasticsearch import Elasticsearch
+from opensearchpy import OpenSearch
 from parameterized import parameterized
 
 from complaint_search.es_builders import AggregationBuilder, SearchBuilder
@@ -17,7 +17,7 @@ from complaint_search.es_interface import (
     search,
     suggest,
 )
-from complaint_search.export import ElasticSearchExporter
+from complaint_search.export import OpenSearchExporter
 from complaint_search.tests.es_interface_test_helpers import (
     assertBodyEqual,
     load,
@@ -150,11 +150,11 @@ class EsInterfaceTest_Search(TestCase):
         ), mock.patch(
             "complaint_search.es_interface._get_meta"
         ) as mock_get_meta, mock.patch.object(
-            Elasticsearch, "search"
+            OpenSearch, "search"
         ) as mock_search, mock.patch.object(
-            Elasticsearch, "count"
+            OpenSearch, "count"
         ) as mock_count, mock.patch.object(
-            Elasticsearch, "scroll"
+            OpenSearch, "scroll"
         ) as mock_scroll:
             mock_search.side_effect = copy.deepcopy(
                 self.MOCK_SEARCH_SIDE_EFFECT
@@ -183,7 +183,7 @@ class EsInterfaceTest_Search(TestCase):
 
     @mock.patch("complaint_search.es_interface._get_es")
     @mock.patch("complaint_search.es_interface._get_meta")
-    @mock.patch.object(Elasticsearch, "count")
+    @mock.patch.object(OpenSearch, "count")
     def test__pagination_generated(self, mock_count, mock_meta, mock_es):
         fake_hits = [
             {"sort": [1620752400005, "4367498"]},
@@ -203,8 +203,8 @@ class EsInterfaceTest_Search(TestCase):
         self.assertEqual(len(response.get("_meta").get("break_points")), 2)
 
     @mock.patch("complaint_search.es_interface._get_now")
-    @mock.patch.object(Elasticsearch, "search")
-    @mock.patch.object(Elasticsearch, "count")
+    @mock.patch.object(OpenSearch, "search")
+    @mock.patch.object(OpenSearch, "count")
     def test_get_meta(self, mock_count, mock_search, mock_now):
         mock_search.return_value = self.MOCK_SEARCH_SIDE_EFFECT[1]
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
@@ -216,8 +216,8 @@ class EsInterfaceTest_Search(TestCase):
         self.assertDictEqual(self.MOCK_SEARCH_RESULT["_meta"], res)
 
     @mock.patch("complaint_search.es_interface._get_now")
-    @mock.patch.object(Elasticsearch, "search")
-    @mock.patch.object(Elasticsearch, "count")
+    @mock.patch.object(OpenSearch, "search")
+    @mock.patch.object(OpenSearch, "count")
     def test_get_meta_data_stale(self, mock_count, mock_search, mock_now):
         mock_search.return_value = self.MOCK_SEARCH_SIDE_EFFECT[1]
         mock_count.return_value = self.MOCK_COUNT_RETURN_VALUE
@@ -230,8 +230,8 @@ class EsInterfaceTest_Search(TestCase):
 
     @mock.patch("complaint_search.es_interface._get_now")
     @mock.patch("complaint_search.es_interface.flag_enabled")
-    @mock.patch.object(Elasticsearch, "search")
-    @mock.patch.object(Elasticsearch, "count")
+    @mock.patch.object(OpenSearch, "search")
+    @mock.patch.object(OpenSearch, "count")
     def test_get_meta_data_issue(
         self, mock_count, mock_search, mock_flag_enabled, mock_now
     ):
@@ -259,10 +259,10 @@ class EsInterfaceTest_Search(TestCase):
         mock_rget.assert_not_called()
 
     @parameterized.expand([["csv"], ["json"]])
-    @mock.patch.object(ElasticSearchExporter, "export_csv")
-    @mock.patch.object(ElasticSearchExporter, "export_json")
-    @mock.patch.object(Elasticsearch, "search")
-    @mock.patch("elasticsearch.helpers.scan")
+    @mock.patch.object(OpenSearchExporter, "export_csv")
+    @mock.patch.object(OpenSearchExporter, "export_json")
+    @mock.patch.object(OpenSearch, "search")
+    @mock.patch("opensearchpy.helpers.scan")
     def test_search_with_format__valid(
         self,
         export_type,
@@ -290,7 +290,7 @@ class EsInterfaceTest_Search(TestCase):
             self.assertEqual(1, mock_exporter_json.call_count)
             self.assertEqual(0, mock_exporter_csv.call_count)
 
-    @mock.patch.object(Elasticsearch, "search")
+    @mock.patch.object(OpenSearch, "search")
     @mock.patch("requests.get", ok=True, content="RGET_OK")
     def test_search_with_format__invalid(self, mock_rget, mock_search):
         mock_search.return_value = "OK"
@@ -510,7 +510,7 @@ class EsInterfaceTest_Suggest(TestCase):
         }
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch.object(Elasticsearch, "search")
+    @mock.patch.object(OpenSearch, "search")
     def test_suggest_with_no_param__valid(self, mock_suggest):
         mock_suggest.return_value = self.fixture_response
         res = suggest()
@@ -518,7 +518,7 @@ class EsInterfaceTest_Suggest(TestCase):
         self.assertEqual([], res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch.object(Elasticsearch, "search")
+    @mock.patch.object(OpenSearch, "search")
     def test_suggest_with_text__valid(self, mock_suggest):
         mock_suggest.return_value = self.fixture_response
         self.fixture_request["suggest"]["sgg"]["text"] = "Mortgage"
@@ -534,7 +534,7 @@ class EsInterfaceTest_Suggest(TestCase):
         self.assertEqual(["test 1", "test 2"], res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch.object(Elasticsearch, "search")
+    @mock.patch.object(OpenSearch, "search")
     def test_suggest_with_size__valid(self, mock_suggest):
         mock_suggest.return_value = self.fixture_response
         self.fixture_request["suggest"]["sgg"]["completion"]["size"] = 10
@@ -561,7 +561,7 @@ class EsInterfaceTest_FilterSuggest(TestCase):
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(AggregationBuilder, "build_one")
     @mock.patch.object(SearchBuilder, "build")
-    @mock.patch.object(Elasticsearch, "search")
+    @mock.patch.object(OpenSearch, "search")
     def test_filter_suggest_company__valid(
         self, mock_search, mock_builder1, mock_builder2
     ):
@@ -638,7 +638,7 @@ class EsInterfaceTest_FilterSuggest(TestCase):
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
     @mock.patch.object(AggregationBuilder, "build_one")
     @mock.patch.object(SearchBuilder, "build")
-    @mock.patch.object(Elasticsearch, "search")
+    @mock.patch.object(OpenSearch, "search")
     def test_filter_suggest_zip_code__valid(
         self, mock_search, mock_builder1, mock_builder2
     ):
@@ -691,7 +691,7 @@ class EsInterfaceTest_FilterSuggest(TestCase):
 
 class EsInterfaceTest_Document(TestCase):
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch.object(Elasticsearch, "search")
+    @mock.patch.object(OpenSearch, "search")
     def test_document__valid(self, mock_search):
         mock_search.return_value = "OK"
         body = {"query": {"term": {"_id": 123456}}}

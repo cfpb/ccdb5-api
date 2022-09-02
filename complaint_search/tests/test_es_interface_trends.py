@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 import mock
-from elasticsearch import Elasticsearch
+from opensearchpy import OpenSearch
 
 from complaint_search.es_interface import trends
 from complaint_search.tests.es_interface_test_helpers import load
@@ -9,8 +9,8 @@ from complaint_search.tests.es_interface_test_helpers import load
 
 class EsInterfaceTestTrends(TestCase):
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch.object(Elasticsearch, "count")
-    @mock.patch.object(Elasticsearch, "search")
+    @mock.patch.object(OpenSearch, "count")
+    @mock.patch.object(OpenSearch, "search")
     def test_trends_default_params__valid(self, mock_search, mock_count):
         trends_params = {"lens": "overview", "trend_interval": "year"}
         body = load("trends_default_params__valid")
@@ -22,8 +22,8 @@ class EsInterfaceTestTrends(TestCase):
         self.assertEqual(body, res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch.object(Elasticsearch, "count")
-    @mock.patch.object(Elasticsearch, "search")
+    @mock.patch.object(OpenSearch, "count")
+    @mock.patch.object(OpenSearch, "search")
     def test_trends_sub_lens_product__valid(self, mock_search, mock_count):
         trends_params = {
             "lens": "product",
@@ -42,8 +42,8 @@ class EsInterfaceTestTrends(TestCase):
         self.assertEqual(body, res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch.object(Elasticsearch, "count")
-    @mock.patch.object(Elasticsearch, "search")
+    @mock.patch.object(OpenSearch, "count")
+    @mock.patch.object(OpenSearch, "search")
     def test_trends_exclude_and_date_filters__valid(
         self, mock_search, mock_count
     ):
@@ -65,8 +65,8 @@ class EsInterfaceTestTrends(TestCase):
         self.assertEqual(body, res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch.object(Elasticsearch, "count")
-    @mock.patch.object(Elasticsearch, "search")
+    @mock.patch.object(OpenSearch, "count")
+    @mock.patch.object(OpenSearch, "search")
     def test_trends_filter__valid(self, mock_search, mock_count):
         trends_params = {
             "lens": "product",
@@ -86,8 +86,8 @@ class EsInterfaceTestTrends(TestCase):
         self.assertEqual(body, res)
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch.object(Elasticsearch, "count")
-    @mock.patch.object(Elasticsearch, "search")
+    @mock.patch.object(OpenSearch, "count")
+    @mock.patch.object(OpenSearch, "search")
     def test_trends_top_self_filter__valid(self, mock_search, mock_count):
         trends_params = {
             "lens": "overview",
@@ -106,8 +106,8 @@ class EsInterfaceTestTrends(TestCase):
         self.assertTrue("company" not in res["aggregations"])
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch.object(Elasticsearch, "count")
-    @mock.patch.object(Elasticsearch, "search")
+    @mock.patch.object(OpenSearch, "count")
+    @mock.patch.object(OpenSearch, "search")
     def test_trends_company_filter__valid(self, mock_search, mock_count):
         default_exclude = ["company", "zip_code"]
         trends_params = {
@@ -126,8 +126,8 @@ class EsInterfaceTestTrends(TestCase):
         self.assertTrue("company" in res["aggregations"])
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch.object(Elasticsearch, "count")
-    @mock.patch.object(Elasticsearch, "search")
+    @mock.patch.object(OpenSearch, "count")
+    @mock.patch.object(OpenSearch, "search")
     def test_trends_issue_focus__valid(self, mock_search, mock_count):
         default_exclude = ["company", "zip_code"]
         trends_params = {
@@ -150,8 +150,8 @@ class EsInterfaceTestTrends(TestCase):
         )
 
     @mock.patch("complaint_search.es_interface._COMPLAINT_ES_INDEX", "INDEX")
-    @mock.patch.object(Elasticsearch, "count")
-    @mock.patch.object(Elasticsearch, "search")
+    @mock.patch.object(OpenSearch, "count")
+    @mock.patch.object(OpenSearch, "search")
     def test_trends_issue_focus_company_filter__valid(
         self, mock_search, mock_count
     ):
