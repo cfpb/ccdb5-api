@@ -1,9 +1,7 @@
+from django.urls import re_path
 from django.views.generic.base import RedirectView
 
 import complaint_search.views
-
-
-from django.urls import re_path
 
 
 app_name = "complaint_search"
