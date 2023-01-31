@@ -18,7 +18,7 @@ def format_version(version, fmt=fmt):
 
     # This is an unknown fork/branch being run in the CI
     if len(parts) == 1:
-        return fmt.format(tag="ci", commitcount=0, gitsha=version)
+        return fmt.format(tag="0", commitcount=0, gitsha=version)
 
     # Sometimes the closest tag has '-dev' and messes everything up
     if len(parts) == 5 and parts[1] == "dev":
