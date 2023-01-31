@@ -1,6 +1,6 @@
-name: Publish 
+name: Publish
 
-on: 
+on:
   release:
     types: [published]
 
@@ -13,7 +13,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
-          python-version: 3.6
+          python-version: 3.8
 
       - name: Install Python dependencies
         run: python -m pip install --upgrade pip wheel
@@ -21,10 +21,10 @@ jobs:
       - name: Build the packages
         id: build
         run: |
-            python setup.py bdist_wheel
-            # Get the name of the .whl file and set them as 
-            # "outputs" of this step so we can upload them
-            echo "::set-output name=bdist_wheel::$(cd dist && ls *.whl)"
+          python setup.py bdist_wheel
+          # Get the name of the .whl file and set them as
+          # "outputs" of this step so we can upload them
+          echo "::set-output name=bdist_wheel::$(cd dist && ls *.whl)"
 
       - name: Upload the wheel
         uses: actions/upload-release-asset@v1
