@@ -104,6 +104,15 @@ h4 {
     margin-top: .727272727em; /* 16/22 */
 }
 
+a.headerlink {
+    color: transparent ! important;
+    text-decoration: none ! important;
+    border-bottom: none ! important;
+}
+a.headerlink:hover {
+    color: #5a5d61 ! important;
+}
+
 /*
 Lists
 --------------------------------
