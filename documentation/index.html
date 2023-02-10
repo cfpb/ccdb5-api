@@ -1,4 +1,4 @@
-<!-- HTML for static distribution bundle build -->
+ <!-- HTML for static distribution bundle build -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -78,7 +78,8 @@ window.onload = function() {
   
   // Build a system
   const ui = SwaggerUIBundle({
-    url: "https://raw.githubusercontent.com/cfpb/ccdb5-api/main/swagger-config.yaml",
+    // url: "https://raw.githubusercontent.com/cfpb/ccdb5-api/main/swagger-config.yaml",
+    queryConfigEnabled: false,
     dom_id: '#swagger-ui',
     deepLinking: true,
     presets: [
