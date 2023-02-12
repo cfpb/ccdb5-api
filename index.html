@@ -36,7 +36,8 @@
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
       <script src="./js/respond.min.js"></script>
     <![endif]-->
-    <script src="search/main.js"></script> 
+    <script src="./search/require.js"></script>
+    <script src="./search/search.js"></script> 
 </head>
 
 <body>
@@ -58,28 +59,7 @@
                         
                         <li>
                             
-                            <a href="" class="sidebar-nav-active">What's available in the API?</a>
-
-                            
-                        </li>
-                        
-                        <li>
-                            
-                            <a href="release_notes.md" class="">Release notes</a>
-
-                            
-                        </li>
-                        
-                        <li>
-                            
-                            <a href="api/" class="">API documentation</a>
-
-                            
-                        </li>
-                        
-                        <li>
-                            
-                            <a href="fields.html" class="">Field referencd</a>
+                            <a href="." class="sidebar-nav-active">What's available in the API?</a>
 
                             
                         </li>
@@ -89,12 +69,12 @@
             </aside>
 
             <section id="main" class="main-content" role="main">
-                <h1 id="consumer-complaint-database-search-api">Consumer Complaint Database search API</h1>
-<p>This API provides programmatic search access to the CFPB's <a href="https://www.consumerfinance.gov/data-research/consumer-complaints/">database of consumer complaints</a>.<br />
+                <h1 id="whats-available-in-the-api">What's available in the API?</h1>
+<p>This API provides programmatic search access to the public information in the CFPB's <a href="https://www.consumerfinance.gov/data-research/consumer-complaints/">database of consumer complaints</a>.
 Search results can be returned in json, csv, xls, or xlsx formats.</p>
-<p>Details on its use can be found <a href="documentation/">here</a>.</p>
+<p>Details on its use can be found <a href="./documentation/index.html">here</a>.</p>
 <h4 id="notes">Notes</h4>
-<p>The database generally updates daily, and contains certain information for each complaint, including the source of the complaint, the date of submission, and the company the complaint was sent to for response. The database also includes information about the actions taken by the company in response to the complaint, such as, whether the company’s response was timely and how the company responded. If the consumer opts to share it and after we take steps to remove personal information, we publish the consumer’s description of what happened. Companies also have the option to select a public response. Company level information should be considered in context of company size and/or market share. Complaints referred to other regulators, such as complaints about depository institutions with less than $10 billion in assets, are not published in the Consumer Complaint Database.</p>
+<p>The database generally updates daily, and contains details such as the source of the complaint, the date of submission, the company the complaint was sent to, actions taken by the company in response, and whether the company’s response was timely. If a consumer opts to share their description of what happened, we publish it after removing any personal information. Companies also have the option to select a public response. Company-level information should be considered in the context of company size and/or market share. Complaints referred to other regulators, such as complaints about depository institutions with less than $10 billion in assets, are not published in the Consumer Complaint Database.</p>
             </section>
         </div>
 
@@ -110,6 +90,6 @@ Search results can be returned in json, csv, xls, or xlsx formats.</p>
 </html>
 
 <!--
-MkDocs version : 1.3.0
-Build Date UTC : 2023-02-12 07:15:23.856225+00:00
+MkDocs version : 0.17.5
+Build Date UTC : 2023-02-12 08:07:15
 -->
