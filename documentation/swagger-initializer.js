@@ -4,7 +4,7 @@ window.onload = function() {
   // the following lines will be replaced by docker/configurator, when it runs in a docker-container
   window.ui = SwaggerUIBundle({
     // url: "https://raw.githubusercontent.com/cfpb/ccdb5-api/main/swagger-config.yaml",
-    url: "https://raw.githubusercontent.com/cfpb/ccdb5-api/fixdocs/swagger-config.yaml"
+    url: "https://raw.githubusercontent.com/cfpb/ccdb5-api/fixdocs/swagger-config.yaml",
     dom_id: '#swagger-ui',
     deepLinking: true,
     presets: [
