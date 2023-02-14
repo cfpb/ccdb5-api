@@ -69,11 +69,6 @@ testing_extras = [
     "requests-aws4auth",
 ]
 
-docs_extras = [
-    "mkdocs==0.17.5",
-    "mkDOCter==1.0.5",
-]
-
 
 setup(
     name="ccdb5-api",
@@ -98,7 +93,6 @@ setup(
     setup_requires=[],
     install_requires=install_requires,
     extras_require={
-        "docs": docs_extras,
         "testing": testing_extras,
     },
 )

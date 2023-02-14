@@ -395,11 +395,8 @@ components:
       in: query
       required: true
       description: The data lens through which to view complaint trends over time.
-      explode: true
       schema:
         type: string
-        items:
-          type: string
         enum:
           - overview
           - issue
@@ -470,11 +467,8 @@ components:
       name: sub_lens
       in: query
       description: The sub-lens through which to view complaint trends over time.
-      explode: true
       schema:
         type: string
-        items:
-          type: string
         enum:
           - issue
           - product
