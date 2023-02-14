@@ -70,7 +70,7 @@ python manage.py runserver
 
 ## API Docs
 
-[Documentation](https://cfpb.github.io/ccdb5-api/) for this repository is rendered via GitHub pages and [Swagger](https://swagger.io/docs/). They can be edited in the `docs/` directory, but to view or deploy them, you'll need to install docs requirements:
+[Documentation](https://cfpb.github.io/ccdb5-api/) for this repository is rendered via GitHub pages and [Swagger](https://swagger.io/docs/). They can be edited in the `docs/` directory, but to build or deploy them, you'll need to install docs requirements:
 
 ```
 pip install -r docs_requirements.txt

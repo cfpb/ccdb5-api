@@ -3,7 +3,7 @@
 This API provides programmatic search access to the public information in the CFPB's [database of consumer complaints](https://www.consumerfinance.gov/data-research/consumer-complaints/).
 Search results can be returned in json, csv, xls, or xlsx formats.
 
-Details on its use can be found [here](documentation/index.html).
+Details on its use can be found [here](documentation/).
 
 #### Notes
 
