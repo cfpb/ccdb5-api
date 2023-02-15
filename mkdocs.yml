@@ -1,9 +1,10 @@
 site_name: Consumer Complaint Database search API
 
-pages:
+nav:
 - What's available in the API?: index.md
 
-theme: mkDOCter
+theme:
+    name: mkDOCter
 extra:
     brand_color: "#2CB34A"
     logo_url: https://cfpb.github.io/img/logo_210.png
