@@ -8,6 +8,6 @@ Jinja2==2.11.3
 Markdown==3.3.6
 MarkupSafe==2.0.1
 mkdocs==0.17.5
-mkDOCter==1.0.5
+git+https://github.com/cfpb/mkDOCter.git@upgrade-for-mkdocs-1.2.3
 PyYAML==6.0
 tornado==4.5.3
