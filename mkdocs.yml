@@ -2,6 +2,7 @@ site_name: Consumer Complaint Database search API
 
 nav:
 - What's available in the API?: index.md
+- API in detail: documentation/index.html
 
 theme:
     name: mkDOCter
