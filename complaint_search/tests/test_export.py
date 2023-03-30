@@ -8,7 +8,7 @@ from django.test import TestCase
 
 from parameterized import parameterized
 
-from complaint_search.export import ElasticSearchExporter
+from complaint_search.export import OpenSearchExporter
 
 
 TEST_HEADERS = OrderedDict(
@@ -39,7 +39,7 @@ class ExportTest(TestCase):
     @parameterized.expand([[10], [5010], [100000]])
     def test_export_csv_request_response(self, length):
         # arrange
-        es_exporter = ElasticSearchExporter()
+        es_exporter = OpenSearchExporter()
         gen = es_generator(length)
 
         # act
@@ -59,7 +59,7 @@ class ExportTest(TestCase):
     @parameterized.expand([[10], [5010], [100000]])
     def test_export_json_request_response(self, length):
         # arrange
-        es_exporter = ElasticSearchExporter()
+        es_exporter = OpenSearchExporter()
         gen = es_generator(length)
 
         # act
@@ -92,7 +92,7 @@ class TestCSVExportWithUnicodeCharacters(TestCase):
                 },
             }
 
-        exporter = ElasticSearchExporter()
+        exporter = OpenSearchExporter()
         response = exporter.export_csv(unicode_results(), headers)
         content = io.BytesIO(b"".join(response.streaming_content)).read()
         self.assertEqual(content, b"Key\r\n\xe2\x80\x99\r\n")

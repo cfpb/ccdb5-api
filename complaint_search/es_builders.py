@@ -75,7 +75,7 @@ class BaseBuilder(object):
         "zip_code",
     )
 
-    # Filters that use different names in Elasticsearch
+    # Filters that use different names in OpenSearch
     _OPTIONAL_FILTERS_PARAM_TO_ES_MAP = {
         "company_public_response": "company_public_response.raw",
         "company": "company.raw",
@@ -240,7 +240,7 @@ class BaseBuilder(object):
 
 class SearchBuilder(BaseBuilder):
     """
-    Assemble a JSON request to be sent to Elasticsearch.
+    Assemble a JSON request to be sent to OpenSearch.
 
     The builder begins with default PARAMS, adds params from a given
     search request, then adds options for highlighting and sorting.
