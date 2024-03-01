@@ -1,10 +1,10 @@
 import copy
 from datetime import datetime
+from unittest import mock
 
 from django.http import StreamingHttpResponse
 from django.test import SimpleTestCase, TestCase
 
-import mock
 from elasticsearch import Elasticsearch
 from parameterized import parameterized
 

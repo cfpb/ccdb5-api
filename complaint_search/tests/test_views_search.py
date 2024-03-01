@@ -1,12 +1,12 @@
 import copy
 from datetime import date, datetime
+from unittest import mock
 
 from django.conf import settings
 from django.core.cache import cache
 from django.http import StreamingHttpResponse
 from django.test import override_settings
 
-import mock
 from elasticsearch import TransportError
 from rest_framework import status
 from rest_framework.exceptions import ErrorDetail
@@ -103,8 +103,19 @@ class SearchTests(APITestCase):
                 ),
             )
             self.assertTrue(isinstance(response, StreamingHttpResponse))
-        mock_essearch.has_calls(
-            [mock.call(format=k) for k in FORMAT_CONTENT_TYPE_MAP],
+
+        mock_essearch.assert_has_calls(
+            [mock.call(
+                format=k,
+                agg_exclude=mock.ANY,
+                field=mock.ANY,
+                size=mock.ANY,
+                frm=mock.ANY,
+                sort=mock.ANY,
+                page=mock.ANY,
+                no_aggs=mock.ANY,
+                no_highlight=mock.ANY,
+            ) for k in FORMAT_CONTENT_TYPE_MAP],
             any_order=True,
         )
         self.assertEqual(

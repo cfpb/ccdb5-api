@@ -1,7 +1,8 @@
+from unittest import mock
+
 from django.conf import settings
 from django.urls import reverse
 
-import mock
 from elasticsearch import TransportError
 from rest_framework import status
 from rest_framework.test import APITestCase
