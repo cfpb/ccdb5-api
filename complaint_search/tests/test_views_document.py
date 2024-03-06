@@ -1,7 +1,8 @@
+from unittest import mock
+
 from django.core.cache import cache
 from django.test import override_settings
 
-import mock
 from elasticsearch import TransportError
 from rest_framework import status
 from rest_framework.test import APITestCase

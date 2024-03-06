@@ -1,6 +1,7 @@
+from unittest import mock
+
 from django.test import TestCase
 
-import mock
 from elasticsearch import Elasticsearch
 
 from complaint_search.es_interface import states_agg

@@ -1,6 +1,6 @@
 import copy
+from unittest import mock
 
-import mock
 from rest_framework import status
 from rest_framework.test import APITestCase
 
