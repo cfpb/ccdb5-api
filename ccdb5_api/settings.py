@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", get_random_string(50))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", [])
 
 
 # Application definition
@@ -98,12 +98,24 @@ SWAGGER_SETTINGS = {
 # Database
 # https://docs.djangoproject.com/en/stable/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+if os.getenv("PGUSER"):
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("PGDATABASE", "ccdb"),
+            "USER": os.getenv("PGUSER", "cfpb"),
+            "PASSWORD": os.getenv("PGPASSWORD", "cfpb"),
+            "HOST": os.getenv("PGHOST", "localhost"),
+            "PORT": os.getenv("PGPORT", "5432"),
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        }
+    }
 
 
 # Internationalization

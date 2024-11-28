@@ -1,0 +1,14 @@
+# Ignore all
+**
+
+# ...except these directories
+!ccdb5_api
+!complaint_search
+
+# ...and these files
+!docker-entrypoint.sh
+!manage.py
+!initial-data.sh
+!refresh-data.sh
+!setup.py
+!gunicorn.conf.py
