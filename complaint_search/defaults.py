@@ -7,6 +7,7 @@ from collections import OrderedDict
 # Counts for ZIP Codes and states are unlikely to change much, but others may.
 # Companies, products, and issues could grow over time and need adjustment.
 AGG_COMPANY_DEFAULT = 6500
+AGG_MATCHED_COMPANY_DEFAULT = 50
 AGG_ZIPCODE_DEFAULT = 26000
 AGG_STATE_DEFAULT = 100
 AGG_STATE_PRODUCT_DEFAULT = 5
