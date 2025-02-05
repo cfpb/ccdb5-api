@@ -340,14 +340,14 @@ class AggregationBuilder(BaseBuilder):
     )
 
     _AGG_SIZE_MAP = {
-        "company": AGG_COMPANY_DEFAULT,  # 6500
+        "company.raw": AGG_COMPANY_DEFAULT,  # 6500
         "matched_company": AGG_MATCHED_COMPANY_DEFAULT,  # 50
         "state": AGG_STATE_DEFAULT,  # 100
         "zip_code": AGG_ZIPCODE_DEFAULT,  # 26000
-        "issue": AGG_ISSUE_DEFAULT,  # 200
-        "sub_issue": AGG_SUBISSUE_DEFAULT,  # 250
-        "product": AGG_PRODUCT_DEFAULT,  # 30
-        "sub_product": AGG_SUBPRODUCT_DEFAULT,  # 90
+        "issue.raw": AGG_ISSUE_DEFAULT,  # 200
+        "sub_issue.raw": AGG_SUBISSUE_DEFAULT,  # 250
+        "product.raw": AGG_PRODUCT_DEFAULT,  # 30
+        "sub_product.raw": AGG_SUBPRODUCT_DEFAULT,  # 90
     }
 
     def __init__(self):
@@ -407,7 +407,7 @@ class AggregationBuilder(BaseBuilder):
             field_aggs["aggs"] = {
                 field_name: {
                     "terms": {
-                        "size": self._AGG_SIZE_MAP.get(field_name, 10),
+                        "size": self._AGG_SIZE_MAP.get(es_field_name, 10),
                         "field": es_field_name,
                     }
                 }
