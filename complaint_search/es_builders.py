@@ -340,14 +340,14 @@ class AggregationBuilder(BaseBuilder):
     )
 
     _AGG_SIZE_MAP = {
-        "company.raw": AGG_COMPANY_DEFAULT,  # 6500
+        "company": AGG_COMPANY_DEFAULT,  # 6500
         "matched_company": AGG_MATCHED_COMPANY_DEFAULT,  # 50
         "state": AGG_STATE_DEFAULT,  # 100
         "zip_code": AGG_ZIPCODE_DEFAULT,  # 26000
-        "issue.raw": AGG_ISSUE_DEFAULT,  # 200
-        "sub_issue.raw": AGG_SUBISSUE_DEFAULT,  # 250
-        "product.raw": AGG_PRODUCT_DEFAULT,  # 30
-        "sub_product.raw": AGG_SUBPRODUCT_DEFAULT,  # 90
+        "issue": AGG_ISSUE_DEFAULT,  # 200
+        "sub_issue": AGG_SUBISSUE_DEFAULT,  # 250
+        "product": AGG_PRODUCT_DEFAULT,  # 30
+        "sub_product": AGG_SUBPRODUCT_DEFAULT,  # 90
     }
 
     def __init__(self):
@@ -360,19 +360,19 @@ class AggregationBuilder(BaseBuilder):
         self.exclude += field_name_list
 
     def build_parent_child_field_agg(
-        self, agg_heading_name, es_parent_name, es_child_name
+        self, agg_heading_name, es_parent_name, es_child_name, parent_size, child_size
     ):
 
         field_agg = {
             agg_heading_name: {
                 "terms": {
-                    "size": self._AGG_SIZE_MAP.get(es_parent_name, 10),
+                    "size": parent_size,
                     "field": es_parent_name,
                 },
                 "aggs": {
                     es_child_name: {
                         "terms": {
-                            "size": self._AGG_SIZE_MAP.get(es_child_name, 10),
+                            "size": child_size,
                             "field": es_child_name,
                         }
                     }
@@ -400,18 +400,23 @@ class AggregationBuilder(BaseBuilder):
             es_child_name = self._OPTIONAL_FILTERS_PARAM_TO_ES_MAP.get(
                 self._OPTIONAL_FILTERS_CHILD_MAP.get(field_name)
             )
+            parent_field_size = self._AGG_SIZE_MAP.get(field_name, 10)
+            child_field_size = self._AGG_SIZE_MAP.get(self._OPTIONAL_FILTERS_CHILD_MAP.get(field_name), 10)
+
             field_aggs["aggs"] = self.build_parent_child_field_agg(
-                field_name, es_field_name, es_child_name
+                field_name, es_field_name, es_child_name, parent_field_size, child_field_size
             )
         else:
             field_aggs["aggs"] = {
                 field_name: {
                     "terms": {
-                        "size": self._AGG_SIZE_MAP.get(es_field_name, 10),
+                        "size": self._AGG_SIZE_MAP.get(field_name, 10),
                         "field": es_field_name,
                     }
                 }
             }
+
+        print(f"field_aggs: {field_aggs['aggs']}")
 
         # Create a subset of the filters
         incl_subset = {
