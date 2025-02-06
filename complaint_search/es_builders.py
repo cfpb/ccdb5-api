@@ -79,6 +79,7 @@ class BaseBuilder(object):
     _OPTIONAL_FILTERS_PARAM_TO_ES_MAP = {
         "company_public_response": "company_public_response.raw",
         "company": "company.raw",
+        "matched_company": "company.raw",
         "consumer_consent_provided": "consumer_consent_provided.raw",
         "consumer_disputed": "consumer_disputed.raw",
         "issue": "issue.raw",
