@@ -19,7 +19,7 @@ from complaint_search.defaults import (
     EXPORT_FORMATS,
     PARAMS,
     SOURCE_FIELDS,
-    TREND_DEPTH_DEFAULT, AGG_MATCHED_COMPANY_DEFAULT,
+    TREND_DEPTH_DEFAULT,
 )
 
 
@@ -326,7 +326,6 @@ class AggregationBuilder(BaseBuilder):
         "company",
         "company_public_response",
         "company_response",
-        "matched_company",
         "consumer_consent_provided",
         "consumer_disputed",
         "has_narrative",
@@ -341,7 +340,6 @@ class AggregationBuilder(BaseBuilder):
 
     _AGG_SIZE_MAP = {
         "company": AGG_COMPANY_DEFAULT,  # 6500
-        "matched_company": AGG_MATCHED_COMPANY_DEFAULT,  # 50
         "state": AGG_STATE_DEFAULT,  # 100
         "zip_code": AGG_ZIPCODE_DEFAULT,  # 26000
         "issue": AGG_ISSUE_DEFAULT,  # 200
