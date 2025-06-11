@@ -48,11 +48,11 @@ with open(os.path.join(here, "README.md"), encoding="utf-8") as f:
 
 
 install_requires = [
-    "Django>=3.2,<4.3",
-    "djangorestframework>=3.14,<4.0",
+    "Django>=4.2,<=5.2",
+    "djangorestframework>=3.15.2,<4.0",
     "django-rest-swagger>=2.2.0",
-    "requests>=2.31,<3",
-    "elasticsearch>=7.0.0,<7.11",
+    "requests>=2.32.4,<3",
+    "elasticsearch>=7.10.1,<7.11",
     "django-localflavor>=4.0,<5.0",
     "django-flags>=4.0.1,<5.1",
     "requests-aws4auth",
@@ -62,9 +62,8 @@ testing_extras = [
     "coverage>=7.4,<8",
     "deep==0.10",
     "deepdiff>=6.7,<7",
-    "django-nose==1.4.7",
     "parameterized==0.9.0",
-    "elasticsearch7>=7.0.0,<8.0.0",
+    "elasticsearch7>=7.1.0,<7.11",
     "requests-aws4auth",
 ]
 
