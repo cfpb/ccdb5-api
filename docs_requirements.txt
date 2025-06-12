@@ -10,4 +10,4 @@ MarkupSafe==2.0.1
 mkdocs==1.2.3
 mkDOCter==1.0.5
 PyYAML==6.0
-tornado==4.5.3
+tornado==6.5.1
