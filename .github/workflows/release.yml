@@ -9,11 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
           python-version: 3.8
+          check-latest: false
+          update-environment: true
+          freethreaded: false
+        env:
+          LD_LIBRARY_PATH: /usr/local/lib
 
       - name: Install Python dependencies
         run: python -m pip install --upgrade pip wheel
