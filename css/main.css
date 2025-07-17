@@ -39,7 +39,7 @@ Typography
 */
 
 body {
-    font-family: "Avenir Next", Arial, sans-serif;
+    font-family: "Source Sans 3 Variable", Arial, sans-serif;
     font-style: normal;
     font-weight: 400;
     font-size: 100%;
@@ -51,13 +51,13 @@ h3,
 h4,
 h5,
 strong {
-    font-family: "Avenir Next Demi", "Avenir Next", Arial, sans-serif;
+    font-family: "Source Sans 3 Variable", Arial, sans-serif;
     font-weight: 600;
 }
 
 .site-title {
     font-size: 1.625em;
-    font-family: "Avenir Next", Arial, sans-serif;
+    font-family: "Source Sans 3 Variable", Arial, sans-serif;
     font-weight: normal;
     color: #919395;
     margin: 0;
@@ -92,7 +92,7 @@ h3 {
 }
 
 h4 {
-    font-family: AvenirNextLTW01-Medium,Arial,sans-serif;
+    font-family: "Source Sans 3 Variable",Arial,sans-serif;
     font-style: normal;
     font-weight: 500;
     margin-bottom: .833em;
@@ -384,7 +384,7 @@ li h4 {
 }
 
 .license {
-    font-family: "Avenir Next Demi", Arial, sans-serif;
+    font-family: "Source Sans 3 Variable", Arial, sans-serif;
     font-weight: normal;
     font-style: normal;
 }
