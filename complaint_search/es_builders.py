@@ -60,6 +60,7 @@ class BaseBuilder(object):
 
     # Filters for those with string type
     _OPTIONAL_FILTERS = (
+        "congressional_district",
         "company",
         "company_public_response",
         "company_response",
@@ -68,6 +69,7 @@ class BaseBuilder(object):
         "has_narrative",
         "issue",
         "product",
+        "msa",
         "state",
         "submitted_via",
         "tags",
@@ -323,6 +325,7 @@ class PostFilterBuilder(BaseBuilder):
 
 class AggregationBuilder(BaseBuilder):
     _AGG_FIELDS = (
+        "congressional_district",
         "company",
         "company_public_response",
         "company_response",
@@ -330,6 +333,7 @@ class AggregationBuilder(BaseBuilder):
         "consumer_disputed",
         "has_narrative",
         "issue",
+        "msa",
         "product",
         "state",
         "submitted_via",

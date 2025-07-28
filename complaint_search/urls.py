@@ -8,9 +8,19 @@ app_name = "complaint_search"
 
 urlpatterns = [
     re_path(
+        r"^_suggest_congressional_district",
+        complaint_search.views.suggest_congressional_district,
+        name="suggest_congressional_district",
+    ),
+    re_path(
         r"^_suggest_company",
         complaint_search.views.suggest_company,
         name="suggest_company",
+    ),
+    re_path(
+        r"^_suggest_msa",
+        complaint_search.views.suggest_msa,
+        name="suggest_msa",
     ),
     re_path(
         r"^_suggest_zip",
