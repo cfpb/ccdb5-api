@@ -219,6 +219,30 @@ def suggest_zip(request):
 
 @api_view(["GET"])
 @catch_es_error
+def suggest_congressional_district(request):
+    # Key removal that takes mutation into account in case of other reference
+    def removekey(d, key):
+        r = dict(d)
+        del r[key]
+        return r
+
+    valid_vars = list(QPARAMS_VARS)
+    valid_vars.append("text")
+
+    data = _parse_query_params(request.query_params, valid_vars)
+
+    # Congressional district filters should not be applied to their own aggregation filter
+    if "congressional_district" in data:
+        data = removekey(data, "congressional_district")
+
+    if data.get("text"):
+        data["text"] = data["text"].upper()
+
+    return _suggest_field(data, "congressional_district", "congressional_district")
+
+
+@api_view(["GET"])
+@catch_es_error
 def suggest_company(request):
     # Key removal that takes mutation into account in case of other reference
     def removekey(d, key):
@@ -239,6 +263,30 @@ def suggest_company(request):
         data["text"] = data["text"].upper()
 
     return _suggest_field(data, "company.suggest", "company.raw")
+
+
+@api_view(["GET"])
+@catch_es_error
+def suggest_msa(request):
+    # Key removal that takes mutation into account in case of other reference
+    def removekey(d, key):
+        r = dict(d)
+        del r[key]
+        return r
+
+    valid_vars = list(QPARAMS_VARS)
+    valid_vars.append("text")
+
+    data = _parse_query_params(request.query_params, valid_vars)
+
+    # MSA filters should not be applied to their own aggregation filter
+    if "msa" in data:
+        data = removekey(data, "msa")
+
+    if data.get("text"):
+        data["text"] = data["text"].upper()
+
+    return _suggest_field(data, "msa", "msa")
 
 
 @api_view(["GET"])

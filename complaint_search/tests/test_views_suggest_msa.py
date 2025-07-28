@@ -13,7 +13,7 @@ except ImportError:
     from django.core.urlresolvers import reverse
 
 
-class SuggestCompanyTests(APITestCase):
+class SuggestMSATests(APITestCase):
     def setUp(self):
         pass
 
@@ -22,7 +22,7 @@ class SuggestCompanyTests(APITestCase):
         """
         Suggesting with no parameters
         """
-        url = reverse("complaint_search:suggest_company")
+        url = reverse("complaint_search:suggest_msa")
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         mock_essuggest.assert_not_called()
@@ -35,14 +35,14 @@ class SuggestCompanyTests(APITestCase):
         """
         Suggesting with text
         """
-        url = reverse("complaint_search:suggest_company")
-        param = {"text": "ban", "company": "company 1"}
+        url = reverse("complaint_search:suggest_msa")
+        param = {"text": "maryland", "msa": "maryland/dc/va"}
         mock_essuggest.return_value = "OK"
         response = self.client.get(url, param)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         mock_essuggest.assert_called_once_with(
-            "company.suggest",
-            "company.raw",
+            "msa",
+            "msa",
             field="complaint_what_happened",
             format="default",
             frm=0,
@@ -51,7 +51,7 @@ class SuggestCompanyTests(APITestCase):
             page=1,
             size=25,
             sort="relevance_desc",
-            text="BAN",
+            text="MARYLAND",
         )
         self.assertEqual("OK", response.data)
 
@@ -61,8 +61,8 @@ class SuggestCompanyTests(APITestCase):
         Make sure the response has CORS headers in debug mode
         """
         settings.DEBUG = True
-        url = reverse("complaint_search:suggest_company")
-        param = {"text": "com"}
+        url = reverse("complaint_search:suggest_msa")
+        param = {"text": "20"}
         mock_essuggest.return_value = "OK"
         response = self.client.get(url, param)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -71,7 +71,7 @@ class SuggestCompanyTests(APITestCase):
     @mock.patch("complaint_search.es_interface.filter_suggest")
     def test_suggest__transport_error(self, mock_essuggest):
         mock_essuggest.side_effect = TransportError("N/A", "Error")
-        url = reverse("complaint_search:suggest_company")
+        url = reverse("complaint_search:suggest_msa")
         param = {"text": "test"}
         response = self.client.get(url, param)
         self.assertEqual(response.status_code, 424)
