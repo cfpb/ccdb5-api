@@ -238,7 +238,7 @@ def suggest_congressional_district(request):
     if data.get("text"):
         data["text"] = data["text"].upper()
 
-    return _suggest_field(data, "congressional_district")
+    return _suggest_field(data, "congressional_district", "congressional_district")
 
 
 @api_view(["GET"])
@@ -264,6 +264,7 @@ def suggest_company(request):
 
     return _suggest_field(data, "company.suggest", "company.raw")
 
+
 @api_view(["GET"])
 @catch_es_error
 def suggest_msa(request):
@@ -285,7 +286,8 @@ def suggest_msa(request):
     if data.get("text"):
         data["text"] = data["text"].upper()
 
-    return _suggest_field(data, "msa")
+    return _suggest_field(data, "msa", "msa")
+
 
 @api_view(["GET"])
 @throttle_classes(

@@ -42,7 +42,7 @@ class SuggestCongressionalDistrictTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         mock_essuggest.assert_called_once_with(
             "congressional_district",
-            None,
+            "congressional_district",
             field="complaint_what_happened",
             format="default",
             frm=0,

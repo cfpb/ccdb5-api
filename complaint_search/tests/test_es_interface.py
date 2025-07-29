@@ -381,7 +381,7 @@ class EsInterfaceTest_Search(TestCase):
     def test_search_with_product__valid(self):
         self.request_test(
             "search_with_product__valid",
-            agg_exclude=["congressional_district", "company","msa", "zip_code"],
+            agg_exclude=["congressional_district", "company", "msa", "zip_code"],
             product=["Payday loan", "Mortgage\u2022FHA mortgage"],
         )
 
@@ -398,7 +398,7 @@ class EsInterfaceTest_Search(TestCase):
     def test_search_with_issue__valid(self):
         self.request_test(
             "search_with_issue__valid",
-            agg_exclude=["congressional_district", "company","msa", "zip_code"],
+            agg_exclude=["congressional_district", "company", "msa", "zip_code"],
             issue=[
                 "Communication tactics\u2022Frequent or repeated calls",
                 "Loan servicing, payments, escrow account",
