@@ -6,7 +6,7 @@ info:
   termsOfService: 'https://cfpb.github.io/source-code-policy/'
   contact:
     name: Report API Issues
-    url: https://github.com/cfpb/ccdb5-api/issues  
+    url: https://github.com/cfpb/ccdb5-api/issues
   license:
     name: Creative Commons License CC0
     url: 'https://github.com/cfpb/ccdb5-api/blob/main/LICENSE'
@@ -38,6 +38,7 @@ paths:
         - $ref: '#/components/parameters/has_narrative'
         - $ref: '#/components/parameters/issue'
         - $ref: '#/components/parameters/product'
+        - $ref: '#/components/parameters/search_after'
         - $ref: '#/components/parameters/state'
         - $ref: '#/components/parameters/submitted_via'
         - $ref: '#/components/parameters/tags'
@@ -426,6 +427,12 @@ components:
         type: array
         items:
           type: string
+    search_after:
+      name: search_after
+      in: query
+      description: Used in conjunction with frm parameter to paginate results. This value is calculated by combining the values from the break_points object in the _meta key from the api response. For instance to paginate to the nth page, use the value from the break_points n:[k, id] to pass to the API the value page=n&frm=25&search_after=k_id Please see https://github.com/cfpb/cfpb.github.io/issues/292 for more detailed examples
+      schema:
+        type: string
     search_term:
       name: search_term
       in: query
@@ -685,6 +692,9 @@ components:
     Meta:
       type: object
       properties:
+        break_points:
+          type: object
+          description: Contains key value pairs of page and arrays. Used to paginate elasticsearch results in list view
         has_data_issue:
           type: boolean
           description: Indicates there has been an issue with the most recent data load
@@ -693,7 +703,7 @@ components:
           description: Indicates the most recent data is over 5 business days old
         is_narrative_stale:
           type: boolean
-          description: Indicates the most recent narratives are over 5 busines days old
+          description: Indicates the most recent narratives are over 5 business days old
         last_indexed:
           type: string
           description: The timestamp of the most recently indexed complaint
