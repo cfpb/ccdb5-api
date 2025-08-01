@@ -77,6 +77,52 @@
     }
   },
   "aggs": {
+    "company": {
+      "aggs": {
+        "company": {
+          "terms": {
+            "size": 6500,
+            "field": "company.raw"
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [],
+          "must_not": [
+            {
+              "bool": {
+                "should": [
+                  {
+                    "term": {
+                      "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                    }
+                  },
+                  {
+                    "bool": {
+                      "must": [
+                        {
+                          "term": {
+                            "product.raw": "Mortgage"
+                          }
+                        },
+                        {
+                          "terms": {
+                            "sub_product.raw": [
+                              "FHA mortgage"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
     "company_public_response": {
       "aggs": {
         "company_public_response": {

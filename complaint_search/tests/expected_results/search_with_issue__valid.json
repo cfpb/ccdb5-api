@@ -77,6 +77,52 @@
     }
   },
   "aggs": {
+    "company": {
+      "aggs": {
+        "company": {
+          "terms": {
+            "size": 6500,
+            "field": "company.raw"
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "bool": {
+                "should": [
+                  {
+                    "bool": {
+                      "must": [
+                        {
+                          "term": {
+                            "issue.raw": "Communication tactics"
+                          }
+                        },
+                        {
+                          "terms": {
+                            "sub_issue.raw": [
+                              "Frequent or repeated calls"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "term": {
+                      "issue.raw": "Loan servicing, payments, escrow account"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "must_not": []
+        }
+      }
+    },
     "company_public_response": {
       "aggs": {
         "company_public_response": {

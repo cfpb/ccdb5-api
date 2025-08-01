@@ -76,6 +76,51 @@
     }
   },
   "aggs": {
+    "company": {
+      "aggs": {
+        "company": {
+          "terms": {
+            "size": 6500,
+            "field": "company.raw"
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [],
+          "must_not": [
+            {
+              "bool": {
+                "must": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "term": {
+                            "issue.raw": "Incorrect information on your report"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "term": {
+                            "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
     "company_public_response": {
       "aggs": {
         "company_public_response": {

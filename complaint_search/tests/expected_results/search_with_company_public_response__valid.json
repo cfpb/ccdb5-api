@@ -56,6 +56,31 @@
     }
   },
   "aggs": {
+    "company": {
+      "aggs": {
+        "company": {
+          "terms": {
+            "size": 6500,
+            "field": "company.raw"
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "terms": {
+                "company_public_response.raw": [
+                  "Company chooses not to provide a public response",
+                  "Company believes it acted appropriately as authorized by contract or law"
+                ]
+              }
+            }
+          ],
+          "must_not": []
+        }
+      }
+    },
     "company_public_response": {
       "aggs": {
         "company_public_response": {
