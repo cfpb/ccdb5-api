@@ -700,14 +700,8 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
         return field_aggs
 
     def build(self):
-        # AZ - Only include a company aggregation if at least one company
-        # filter is selected
         if not self.params.get("trend_depth"):
             self.params["trend_depth"] = TREND_DEPTH_DEFAULT
-        if "company" in self.params and "company" in self.exclude:
-            self.exclude.remove("company")
-            self._AGG_FIELDS + ("company",)
-            self._AGG_HEADING_MAP["company"] = "company"
 
         aggs = {}
 
@@ -735,10 +729,6 @@ class TrendsAggregationBuilder(LensAggregationBuilder):
             for field_name in DATA_SUB_LENS_MAP.get(self.params["lens"]) + (
                 self.params["lens"],
             ):
-                if field_name == "company" and "company" not in self.params:
-                    # Do not include company agg unless there is a company
-                    # filter
-                    continue
                 agg_heading_name = self.get_agg_heading(field_name)
 
                 aggs[agg_heading_name] = self.build_one_focus(

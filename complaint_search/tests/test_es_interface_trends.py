@@ -4,6 +4,7 @@ from django.test import TestCase
 
 from elasticsearch import Elasticsearch
 
+from complaint_search.defaults import AGG_EXCLUDE_FIELDS
 from complaint_search.es_interface import trends
 from complaint_search.tests.es_interface_test_helpers import load
 
@@ -110,7 +111,7 @@ class EsInterfaceTestTrends(TestCase):
     @mock.patch.object(Elasticsearch, "count")
     @mock.patch.object(Elasticsearch, "search")
     def test_trends_company_filter__valid(self, mock_search, mock_count):
-        default_exclude = ["company", "zip_code"]
+        default_exclude = AGG_EXCLUDE_FIELDS
         trends_params = {
             "lens": "overview",
             "trend_interval": "year",
@@ -130,7 +131,7 @@ class EsInterfaceTestTrends(TestCase):
     @mock.patch.object(Elasticsearch, "count")
     @mock.patch.object(Elasticsearch, "search")
     def test_trends_issue_focus__valid(self, mock_search, mock_count):
-        default_exclude = ["company", "zip_code"]
+        default_exclude = AGG_EXCLUDE_FIELDS
         trends_params = {
             "lens": "issue",
             "trend_interval": "year",
@@ -145,7 +146,7 @@ class EsInterfaceTestTrends(TestCase):
         res = trends(default_exclude, **trends_params)
         self.assertEqual(len(mock_search.call_args), 2)
         self.assertEqual(mock_search.call_args[1]["index"], "INDEX")
-        self.assertFalse("company" in res["aggregations"])
+        self.assertTrue("company" not in res["aggregations"])
         self.assertEqual(
             len(res["aggregations"]["issue"]["issue"]["buckets"]), 1
         )
@@ -156,7 +157,7 @@ class EsInterfaceTestTrends(TestCase):
     def test_trends_issue_focus_company_filter__valid(
         self, mock_search, mock_count
     ):
-        default_exclude = ["company", "zip_code"]
+        default_exclude = AGG_EXCLUDE_FIELDS
         trends_params = {
             "lens": "issue",
             "trend_interval": "year",

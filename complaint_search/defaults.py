@@ -93,7 +93,7 @@ CSV_ORDERED_HEADERS = OrderedDict(
     ]
 )
 
-AGG_EXCLUDE_FIELDS = ["company", "zip_code"]
+AGG_EXCLUDE_FIELDS = ["zip_code"]
 
 CHUNK_SIZE = 512
 
