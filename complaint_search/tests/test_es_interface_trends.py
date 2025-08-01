@@ -4,6 +4,7 @@ from django.test import TestCase
 
 from elasticsearch import Elasticsearch
 
+from complaint_search.defaults import AGG_EXCLUDE_FIELDS
 from complaint_search.es_interface import trends
 from complaint_search.tests.es_interface_test_helpers import load
 
@@ -110,7 +111,7 @@ class EsInterfaceTestTrends(TestCase):
     @mock.patch.object(Elasticsearch, "count")
     @mock.patch.object(Elasticsearch, "search")
     def test_trends_company_filter__valid(self, mock_search, mock_count):
-        default_exclude = ["zip_code"]
+        default_exclude = AGG_EXCLUDE_FIELDS
         trends_params = {
             "lens": "overview",
             "trend_interval": "year",
@@ -130,7 +131,7 @@ class EsInterfaceTestTrends(TestCase):
     @mock.patch.object(Elasticsearch, "count")
     @mock.patch.object(Elasticsearch, "search")
     def test_trends_issue_focus__valid(self, mock_search, mock_count):
-        default_exclude = ["zip_code"]
+        default_exclude = AGG_EXCLUDE_FIELDS
         trends_params = {
             "lens": "issue",
             "trend_interval": "year",
@@ -156,7 +157,7 @@ class EsInterfaceTestTrends(TestCase):
     def test_trends_issue_focus_company_filter__valid(
         self, mock_search, mock_count
     ):
-        default_exclude = ["zip_code"]
+        default_exclude = AGG_EXCLUDE_FIELDS
         trends_params = {
             "lens": "issue",
             "trend_interval": "year",
