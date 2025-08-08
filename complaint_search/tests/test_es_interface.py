@@ -129,7 +129,7 @@ class EsInterfaceTest_Search(TestCase):
         {"hits": {"hits": [8, 9, 10, 11]}},
     ]
 
-    DEFAULT_EXCLUDE = ["company", "zip_code"]
+    DEFAULT_EXCLUDE = AGG_EXCLUDE_FIELDS
 
     MOCK_HIT_RESPONSE = {"hits": {"total": {"value": 4, "relation": "eq"}}}
 
@@ -143,7 +143,7 @@ class EsInterfaceTest_Search(TestCase):
 
     def request_test(self, expected, agg_exclude=None, **kwargs):
         if agg_exclude is None:
-            agg_exclude = AGG_EXCLUDE_FIELDS
+            agg_exclude = self.DEFAULT_EXCLUDE
         body = load(expected)
 
         with mock.patch(
@@ -255,7 +255,7 @@ class EsInterfaceTest_Search(TestCase):
     @mock.patch("requests.get", ok=True, content="RGET_OK")
     def test_search_agg_exclude__valid(self, mock_rget):
         self.request_test(
-            "search_agg_exclude__valid", agg_exclude=["congressional_district", "msa", "zip_code"]
+            "search_agg_exclude__valid", agg_exclude=["zip_code"]
         )
         mock_rget.assert_not_called()
 
@@ -374,14 +374,14 @@ class EsInterfaceTest_Search(TestCase):
     def test_search_with_company_agg_exclude__valid(self):
         self.request_test(
             "search_with_company_agg_exclude__valid",
-            agg_exclude=["congressional_district", "msa", "company"],
+            agg_exclude=["company"],
             company=["Bank 1", "Second Bank"],
         )
 
     def test_search_with_product__valid(self):
         self.request_test(
             "search_with_product__valid",
-            agg_exclude=["congressional_district", "company", "msa", "zip_code"],
+            agg_exclude=self.DEFAULT_EXCLUDE,
             product=["Payday loan", "Mortgage\u2022FHA mortgage"],
         )
 
@@ -398,7 +398,7 @@ class EsInterfaceTest_Search(TestCase):
     def test_search_with_issue__valid(self):
         self.request_test(
             "search_with_issue__valid",
-            agg_exclude=["congressional_district", "company", "msa", "zip_code"],
+            agg_exclude=self.DEFAULT_EXCLUDE,
             issue=[
                 "Communication tactics\u2022Frequent or repeated calls",
                 "Loan servicing, payments, escrow account",
@@ -432,7 +432,7 @@ class EsInterfaceTest_Search(TestCase):
     def test_search_with_zip_code_agg_exclude__valid(self):
         self.request_test(
             "search_with_zip_code_agg_exclude__valid",
-            agg_exclude=["congressional_district", "msa", "zip_code"],
+            agg_exclude=self.DEFAULT_EXCLUDE,
             zip_code=["12345", "23435", "03433"],
         )
 

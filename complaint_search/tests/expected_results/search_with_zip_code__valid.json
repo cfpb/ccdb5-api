@@ -57,6 +57,32 @@
     }
   },
   "aggs": {
+    "company": {
+      "aggs": {
+        "company": {
+          "terms": {
+            "size": 6500,
+            "field": "company.raw"
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "terms": {
+                "zip_code": [
+                  "12345",
+                  "23435",
+                  "03433"
+                ]
+              }
+            }
+          ],
+          "must_not": []
+        }
+      }
+    },
     "company_public_response": {
       "aggs": {
         "company_public_response": {

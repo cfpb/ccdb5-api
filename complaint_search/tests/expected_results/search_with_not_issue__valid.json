@@ -59,6 +59,34 @@
     }
   },
   "aggs": {
+    "company": {
+      "aggs": {
+        "company": {
+          "terms": {
+            "size": 6500,
+            "field": "company.raw"
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [],
+          "must_not": [
+            {
+              "bool": {
+                "should": [
+                  {
+                    "term": {
+                      "issue.raw": "Incorrect information on your report"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
     "company_public_response": {
       "aggs": {
         "company_public_response": {
