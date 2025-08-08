@@ -255,7 +255,7 @@ class EsInterfaceTest_Search(TestCase):
     @mock.patch("requests.get", ok=True, content="RGET_OK")
     def test_search_agg_exclude__valid(self, mock_rget):
         self.request_test(
-            "search_agg_exclude__valid", agg_exclude=["zip_code"]
+            "search_agg_exclude__valid", agg_exclude=self.DEFAULT_EXCLUDE
         )
         mock_rget.assert_not_called()
 
