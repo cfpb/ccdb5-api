@@ -4,6 +4,7 @@ from django.test import TestCase
 
 from elasticsearch import Elasticsearch
 
+from complaint_search.defaults import AGG_EXCLUDE_FIELDS
 from complaint_search.es_interface import states_agg
 from complaint_search.tests.es_interface_test_helpers import (
     assertBodyEqual,
@@ -37,7 +38,7 @@ class EsInterfaceTestStates(TestCase):
         mock_search.return_value = {
             "hits": {"total": {"value": 100, "relation": "eq"}}
         }
-        res = states_agg(["zip_code"])
+        res = states_agg(AGG_EXCLUDE_FIELDS)
         self.assertEqual(len(mock_search.call_args), 2)
         self.assertEqual(0, len(mock_search.call_args[0]))
         self.assertEqual(2, len(mock_search.call_args[1]))

@@ -343,6 +343,8 @@ class AggregationBuilder(BaseBuilder):
     )
 
     _AGG_SIZE_MAP = {
+        "congressional_district": AGG_ZIPCODE_DEFAULT,  # 26000
+        "msa": AGG_ZIPCODE_DEFAULT,  # 26000
         "company.raw": AGG_COMPANY_DEFAULT,  # 6500
         "state": AGG_STATE_DEFAULT,  # 100
         "zip_code": AGG_ZIPCODE_DEFAULT,  # 26000
