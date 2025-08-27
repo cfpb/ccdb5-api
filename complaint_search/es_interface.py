@@ -3,6 +3,7 @@ import logging
 import os
 from datetime import datetime, timedelta
 from math import ceil
+from urllib.parse import quote
 
 from elasticsearch import Elasticsearch, RequestsHttpConnection, helpers
 from flags.state import flag_enabled
@@ -28,11 +29,9 @@ from complaint_search.export import ElasticSearchExporter
 
 log = logging.getLogger(__name__)
 
-_ES_URL = "{}://{}:{}".format(
-    "http",
-    os.environ.get("ES_HOST", "localhost"),
-    os.environ.get("ES_PORT", "9200"),
-)
+_ES_HOST = os.environ.get("ES_HOST", "localhost")
+_ES_PORT = os.environ.get("ES_PORT", "9200")
+_ES_URL = f"http://{_ES_HOST}:{_ES_PORT}"
 _ES_USER = os.environ.get("ES_USER", "")
 _ES_PASSWORD = os.environ.get("ES_PASSWORD", "")
 _ES_INSTANCE = None
@@ -158,8 +157,16 @@ def _get_es():
                 timeout=100,
             )
         else:
+            host = _ES_HOST
+            if _ES_USER and _ES_PASSWORD:
+                encoded_username = quote(_ES_USER)
+                encoded_password = quote(_ES_PASSWORD)
+                host = f"{encoded_username}:{encoded_password}@{host}"
+
             _ES_INSTANCE = Elasticsearch(
-                [_ES_URL], http_auth=(_ES_USER, _ES_PASSWORD), timeout=100
+                f"http://{host}:{_ES_PORT}",
+                use_ssl=(str(_ES_PORT) == "443"),
+                timeout=100
             )
     return _ES_INSTANCE
 
