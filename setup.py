@@ -33,6 +33,8 @@ def format_version(version, fmt=fmt):
 
 
 def get_git_version():
+    if not os.path.isdir(".git"):
+        return "container"
     git_version = check_output(command.split()).decode("utf-8").strip()
     return format_version(version=git_version)
 
@@ -43,8 +45,11 @@ def get_git_version():
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-with open(os.path.join(here, "README.md"), encoding="utf-8") as f:
-    long_description = f.read()
+if os.path.isfile(os.path.join(here, "README.md")):
+    with open(os.path.join(here, "README.md"), encoding="utf-8") as f:
+        long_description = f.read()
+else:
+    long_description = "CCDB API"
 
 
 install_requires = [
@@ -56,6 +61,7 @@ install_requires = [
     "django-localflavor>=4.0,<5.0",
     "django-flags>=4.0.1,<5.1",
     "requests-aws4auth",
+    "psycopg2-binary==2.8.6",
 ]
 
 testing_extras = [
