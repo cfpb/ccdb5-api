@@ -26,6 +26,7 @@ paths:
         - $ref: '#/components/parameters/format'
         - $ref: '#/components/parameters/no_aggs'
         - $ref: '#/components/parameters/no_highlight'
+        - $ref: '#/components/parameters/congressional_district'
         - $ref: '#/components/parameters/company'
         - $ref: '#/components/parameters/company_public_response'
         - $ref: '#/components/parameters/company_received_max'
@@ -37,6 +38,7 @@ paths:
         - $ref: '#/components/parameters/date_received_min'
         - $ref: '#/components/parameters/has_narrative'
         - $ref: '#/components/parameters/issue'
+        - $ref: '#/components/parameters/msa'
         - $ref: '#/components/parameters/product'
         - $ref: '#/components/parameters/search_after'
         - $ref: '#/components/parameters/state'
@@ -74,12 +76,80 @@ paths:
                 $ref: '#/components/schemas/SuggestResult'
         '400':
           description: Invalid input
+  /_suggest_congressional_district:
+    get:
+      tags:
+        - Typeahead
+      summary: Suggest possible congressional districts
+      description: Provide a list of  congressional districts that match the input text
+      parameters:
+        - $ref: '#/components/parameters/suggest_text'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/company_public_response'
+        - $ref: '#/components/parameters/company_received_max'
+        - $ref: '#/components/parameters/company_received_min'
+        - $ref: '#/components/parameters/company_response'
+        - $ref: '#/components/parameters/consumer_consent_provided'
+        - $ref: '#/components/parameters/consumer_disputed'
+        - $ref: '#/components/parameters/date_received_max'
+        - $ref: '#/components/parameters/date_received_min'
+        - $ref: '#/components/parameters/has_narrative'
+        - $ref: '#/components/parameters/issue'
+        - $ref: '#/components/parameters/product'
+        - $ref: '#/components/parameters/state'
+        - $ref: '#/components/parameters/submitted_via'
+        - $ref: '#/components/parameters/tags'
+        - $ref: '#/components/parameters/timely'
+        - $ref: '#/components/parameters/zip_code'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuggestResult'
+        '400':
+          description: Invalid input
   /_suggest_company:
     get:
       tags:
         - Typeahead
       summary: Suggest possible companies
       description: Provide a list of companies that match the input text
+      parameters:
+        - $ref: '#/components/parameters/suggest_text'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/company_public_response'
+        - $ref: '#/components/parameters/company_received_max'
+        - $ref: '#/components/parameters/company_received_min'
+        - $ref: '#/components/parameters/company_response'
+        - $ref: '#/components/parameters/consumer_consent_provided'
+        - $ref: '#/components/parameters/consumer_disputed'
+        - $ref: '#/components/parameters/date_received_max'
+        - $ref: '#/components/parameters/date_received_min'
+        - $ref: '#/components/parameters/has_narrative'
+        - $ref: '#/components/parameters/issue'
+        - $ref: '#/components/parameters/product'
+        - $ref: '#/components/parameters/state'
+        - $ref: '#/components/parameters/submitted_via'
+        - $ref: '#/components/parameters/tags'
+        - $ref: '#/components/parameters/timely'
+        - $ref: '#/components/parameters/zip_code'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuggestResult'
+        '400':
+          description: Invalid input
+  /_suggest_msa:
+    get:
+      tags:
+        - Typeahead
+      summary: Suggest possible MSA (Metropolitan Statistical Area)
+      description: Provide a list of MSA that match the input text
       parameters:
         - $ref: '#/components/parameters/suggest_text'
         - $ref: '#/components/parameters/size'
@@ -260,6 +330,15 @@ servers:
   - url: 'https://www.consumerfinance.gov/data-research/consumer-complaints/search/api/v1/'
 components:
   parameters:
+    congressional_district:
+      name: congressional_district
+      in: query
+      description: Filter the results to only return these congressional districts
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
     company:
       name: company
       in: query
@@ -404,6 +483,15 @@ components:
           - product
           - tags
         default: overview
+    msa:
+      name: msa
+      in: query
+      description: Filter the results to only return complaints in this MSA
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
     no_aggs:
       name: no_aggs
       in: query

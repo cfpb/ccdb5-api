@@ -47,12 +47,14 @@ SOURCE_FIELDS = (
     "company_response",
     "complaint_id",
     "complaint_what_happened",
+    "congressional_district",
     "consumer_consent_provided",
     "consumer_disputed",
     "date_received",
     "date_sent_to_company",
     "has_narrative",
     "issue",
+    "msa",
     "product",
     "state",
     "submitted_via",
@@ -93,7 +95,7 @@ CSV_ORDERED_HEADERS = OrderedDict(
     ]
 )
 
-AGG_EXCLUDE_FIELDS = ["zip_code"]
+AGG_EXCLUDE_FIELDS = ["congressional_district", "msa", "zip_code"]
 
 CHUNK_SIZE = 512
 
