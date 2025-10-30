@@ -219,19 +219,18 @@ def _get_meta():
 
     result = {
         "license": "CC0",
-        "last_updated": max_date_res["aggregations"]["max_date"][
+        "last_updated": max_date_res["aggregations"]["max_date"].get(
             "value_as_string"
-        ],
-        "last_indexed": max_date_res["aggregations"]["max_indexed_date"][
+        ),
+        "last_indexed": max_date_res["aggregations"]["max_indexed_date"].get(
             "value_as_string"
-        ],
+        ),
         "total_record_count": count_res["count"],
         "is_data_stale": _is_data_stale(
-            max_date_res["aggregations"]["max_date"]["value_as_string"]
+            max_date_res["aggregations"]["max_date"].get("value_as_string")
         ),
         "has_data_issue": bool(flag_enabled("CCDB_TECHNICAL_ISSUES")),
     }
-
     return result
 
 
