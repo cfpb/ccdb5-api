@@ -52,7 +52,7 @@ install_requires = [
     "djangorestframework>=3.15.2,<4.0",
     "django-rest-swagger>=2.2.0",
     "requests>=2.32.4,<3",
-    "opensearchpy>=2.1.0,<=3.0.0",
+    "opensearch-py>=2.1.0,<=3.0.0",
     "django-localflavor>=4.0,<5.0",
     "django-flags>=4.0.1,<5.1",
     "requests-aws4auth",

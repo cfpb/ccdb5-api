@@ -5,8 +5,8 @@ from datetime import datetime, timedelta
 from math import ceil
 from urllib.parse import quote
 
-from opensearchpy import OpenSearch, RequestsHttpConnection, helpers
 from flags.state import flag_enabled
+from opensearchpy import OpenSearch, RequestsHttpConnection, helpers
 from requests_aws4auth import AWS4Auth
 
 from complaint_search.defaults import (
@@ -148,7 +148,7 @@ def _get_es():
             awsauth = AWS4Auth(
                 AWS_ES_ACCESS_KEY, AWS_ES_SECRET_KEY, "us-east-1", "es"
             )
-            _ES_INSTANCE = Elasticsearch(
+            _ES_INSTANCE = OpenSearch(
                 hosts=[{"host": AWS_ES_HOST, "port": 443}],
                 http_auth=awsauth,
                 use_ssl=True,
@@ -163,7 +163,7 @@ def _get_es():
                 encoded_password = quote(_ES_PASSWORD)
                 host = f"{encoded_username}:{encoded_password}@{host}"
 
-            _ES_INSTANCE = Elasticsearch(
+            _ES_INSTANCE = OpenSearch(
                 f"http://{host}:{_ES_PORT}",
                 use_ssl=(str(_ES_PORT) == "443"),
                 timeout=100
@@ -282,7 +282,7 @@ def search(agg_exclude=None, **kwargs):
 
     The response is finalized based on whether the results are to be viewed
     in a browser or exported as CSV or JSON.
-    Exportable results are produced with "scroll" Elasticsearch searches,
+    Exportable results are produced with "scroll" OpenSearch searches,
     and are never paginated.
     """
     params = copy.deepcopy(PARAMS)
