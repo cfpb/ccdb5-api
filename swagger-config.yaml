@@ -561,7 +561,7 @@ components:
   schemas:
     Aggregation:
       type: object
-      description: An Elasticsearch aggregation
+      description: An OpenSearch aggregation
       properties:
         doc_count:
           type: integer
@@ -664,7 +664,7 @@ components:
           description: The mailing ZIP code provided by the consumer
     Hit:
       type: object
-      description: A single Elasticsearch result
+      description: A single OpenSearch result
       properties:
         _source:
           $ref: '#/components/schemas/Complaint'
@@ -694,7 +694,7 @@ components:
       properties:
         break_points:
           type: object
-          description: Contains key value pairs of page and arrays. Used to paginate elasticsearch results in list view
+          description: Contains key value pairs of page and arrays. Used to paginate OpenSearch results in list view
         has_data_issue:
           type: boolean
           description: Indicates there has been an issue with the most recent data load

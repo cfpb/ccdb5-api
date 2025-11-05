@@ -2,7 +2,7 @@ from unittest import mock
 
 from django.test import TestCase
 
-from elasticsearch import Elasticsearch
+from opensearchpy import Elasticsearch
 
 from complaint_search.defaults import AGG_EXCLUDE_FIELDS
 from complaint_search.es_interface import trends

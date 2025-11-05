@@ -1,16 +1,11 @@
 from unittest import mock
 
 from django.conf import settings
+from django.urls import reverse
 
-from elasticsearch import TransportError
+from opensearchpy import TransportError
 from rest_framework import status
 from rest_framework.test import APITestCase
-
-
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
 
 
 class SuggestZipTests(APITestCase):

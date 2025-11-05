@@ -2,7 +2,7 @@ from unittest import mock
 
 from django.conf import settings
 
-from elasticsearch import TransportError
+from opensearchpy import TransportError
 from rest_framework import status
 from rest_framework.test import APITestCase
 

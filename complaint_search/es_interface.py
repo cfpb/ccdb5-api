@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from math import ceil
 from urllib.parse import quote
 
-from elasticsearch import Elasticsearch, RequestsHttpConnection, helpers
+from opensearchpy import OpenSearch, RequestsHttpConnection, helpers
 from flags.state import flag_enabled
 from requests_aws4auth import AWS4Auth
 
@@ -24,7 +24,7 @@ from complaint_search.es_builders import (
     StateAggregationBuilder,
     TrendsAggregationBuilder,
 )
-from complaint_search.export import ElasticSearchExporter
+from complaint_search.export import OpenSearchExporter
 
 
 log = logging.getLogger(__name__)
@@ -352,7 +352,7 @@ def search(agg_exclude=None, **kwargs):
             request_timeout=3000,
         )
 
-        exporter = ElasticSearchExporter()
+        exporter = OpenSearchExporter()
 
         if params.get("format") == "csv":
             res = exporter.export_csv(scan_response, CSV_ORDERED_HEADERS)
