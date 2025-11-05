@@ -1,4 +1,4 @@
-©import copy
+import copy
 import logging
 import os
 from datetime import datetime, timedelta
