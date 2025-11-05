@@ -16,7 +16,7 @@ def catch_es_error(function):
             log.error(te)
 
             status_code = 424  # HTTP_424_FAILED_DEPENDENCY
-            res = {"error": "There was an error calling Elasticsearch"}
+            res = {"error": "There was an error calling OpenSearch"}
             return Response(res, status=status_code)
         except Exception as e:
             log.error(e)

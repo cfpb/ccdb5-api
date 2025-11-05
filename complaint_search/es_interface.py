@@ -1,4 +1,4 @@
-import copy
+©import copy
 import logging
 import os
 from datetime import datetime, timedelta
@@ -270,7 +270,7 @@ def parse_search_after(params):
 
 def search(agg_exclude=None, **kwargs):
     """
-    Prepare a search, get results from Elasticsearch, and return the hits.
+    Prepare a search, get results from OpenSearch, and return the hits.
 
     Starting from a copy of default PARAMS, these are the steps:
     - Update params with request details.

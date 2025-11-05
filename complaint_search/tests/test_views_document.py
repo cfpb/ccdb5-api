@@ -84,6 +84,6 @@ class DocumentTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 424)
         self.assertDictEqual(
-            {"error": "There was an error calling Elasticsearch"},
+            {"error": "There was an error calling OpenSearch"},
             response.data,
         )
