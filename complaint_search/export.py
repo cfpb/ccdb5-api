@@ -6,15 +6,15 @@ from io import StringIO
 from django.http import StreamingHttpResponse
 
 
-class ElasticSearchExporter(object):
+class OpenSearchExporter(object):
 
-    # export_csv - Stream an Elsticsearch response as a CSV file
+    # export_csv - Stream an OpenSearch response as a CSV file
     #
     # Parameters:
     # - scanResponse (generator)
-    #   The response from an Elasticsaerch scan query
+    #   The response from an OpenSearch scan query
     # - header_dict (OrderedDict)
-    #   The ordered dictionary where the key is the Elasticsearch field name
+    #   The ordered dictionary where the key is the OpenSearch field name
     #   and the value is the CSV column header for that field
     def export_csv(self, scanResponse, header_dict):
         def read_and_flush(writer, buffer_, row):
@@ -55,11 +55,11 @@ class ElasticSearchExporter(object):
         response["Content-Disposition"] = "attachment; filename=file.csv"
         return response
 
-    # export_json - Stream an Elsticsearch response as a JSON file
+    # export_json - Stream an OpenSearch response as a JSON file
     #
     # Parameters:
     # - scanResponse (generator)
-    #   The response from an Elasticsearch scan query
+    #   The response from an OpenSearch scan query
     # - total_count (int)
     #   The total number of records to be output
     def export_json(self, scanResponse, total_count):

@@ -18,15 +18,15 @@ Requirements are batch-installed via pip (see below).
 * django - Web framework
 * django-localflavor - Country-specific Django helpers
 * djangorestframework - Rest API framework
-* elasticsearch - low level client for Elasticsearch
+* opensearchpy - low-and-high-level client for OpenSearch
 * requests - http requests to get different data format
 
 
 ## Setup & Running
-This repository assumes that you have an instance of elasticsearch running with complaint data set up and running.
+This repository assumes that you have an instance of OpenSearch (or Elasticsearch) running with complaint data set up and running.
 
 If not, please refer to the [CCDB Data Pipeline](https://github.com/cfpb/ccdb-data-pipeline/blob/main/INSTALL.md) to
-load data into Elasticsearch.
+load data into OpenSearch.
 
 ### Environment Variables
 This project uses environment variables and uses autoenv to automatically define environment variables and launch the virtualenv upon cding to the project folder.

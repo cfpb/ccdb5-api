@@ -5,8 +5,8 @@ from datetime import datetime, timedelta
 from math import ceil
 from urllib.parse import quote
 
-from elasticsearch import Elasticsearch, RequestsHttpConnection, helpers
 from flags.state import flag_enabled
+from opensearchpy import OpenSearch, RequestsHttpConnection, helpers
 from requests_aws4auth import AWS4Auth
 
 from complaint_search.defaults import (
@@ -24,7 +24,7 @@ from complaint_search.es_builders import (
     StateAggregationBuilder,
     TrendsAggregationBuilder,
 )
-from complaint_search.export import ElasticSearchExporter
+from complaint_search.export import OpenSearchExporter
 
 
 log = logging.getLogger(__name__)
@@ -148,7 +148,7 @@ def _get_es():
             awsauth = AWS4Auth(
                 AWS_ES_ACCESS_KEY, AWS_ES_SECRET_KEY, "us-east-1", "es"
             )
-            _ES_INSTANCE = Elasticsearch(
+            _ES_INSTANCE = OpenSearch(
                 hosts=[{"host": AWS_ES_HOST, "port": 443}],
                 http_auth=awsauth,
                 use_ssl=True,
@@ -163,7 +163,7 @@ def _get_es():
                 encoded_password = quote(_ES_PASSWORD)
                 host = f"{encoded_username}:{encoded_password}@{host}"
 
-            _ES_INSTANCE = Elasticsearch(
+            _ES_INSTANCE = OpenSearch(
                 f"http://{host}:{_ES_PORT}",
                 use_ssl=(str(_ES_PORT) == "443"),
                 timeout=100
@@ -270,7 +270,7 @@ def parse_search_after(params):
 
 def search(agg_exclude=None, **kwargs):
     """
-    Prepare a search, get results from Elasticsearch, and return the hits.
+    Prepare a search, get results from OpenSearch, and return the hits.
 
     Starting from a copy of default PARAMS, these are the steps:
     - Update params with request details.
@@ -282,7 +282,7 @@ def search(agg_exclude=None, **kwargs):
 
     The response is finalized based on whether the results are to be viewed
     in a browser or exported as CSV or JSON.
-    Exportable results are produced with "scroll" Elasticsearch searches,
+    Exportable results are produced with "scroll" OpenSearch searches,
     and are never paginated.
     """
     params = copy.deepcopy(PARAMS)
@@ -352,7 +352,7 @@ def search(agg_exclude=None, **kwargs):
             request_timeout=3000,
         )
 
-        exporter = ElasticSearchExporter()
+        exporter = OpenSearchExporter()
 
         if params.get("format") == "csv":
             res = exporter.export_csv(scan_response, CSV_ORDERED_HEADERS)

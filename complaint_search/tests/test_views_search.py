@@ -7,7 +7,7 @@ from django.core.cache import cache
 from django.http import StreamingHttpResponse
 from django.test import override_settings
 
-from elasticsearch import TransportError
+from opensearchpy import TransportError
 from rest_framework import status
 from rest_framework.exceptions import ErrorDetail
 from rest_framework.test import APITestCase
@@ -927,7 +927,7 @@ class SearchTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 424)
         self.assertDictEqual(
-            {"error": "There was an error calling Elasticsearch"},
+            {"error": "There was an error calling OpenSearch"},
             response.data,
         )
 

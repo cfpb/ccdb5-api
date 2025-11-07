@@ -3,7 +3,7 @@ from unittest import mock
 from django.conf import settings
 from django.urls import reverse
 
-from elasticsearch import TransportError
+from opensearchpy import TransportError
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -71,6 +71,6 @@ class SuggestCompanyTests(APITestCase):
         response = self.client.get(url, param)
         self.assertEqual(response.status_code, 424)
         self.assertDictEqual(
-            {"error": "There was an error calling Elasticsearch"},
+            {"error": "There was an error calling OpenSearch"},
             response.data,
         )
