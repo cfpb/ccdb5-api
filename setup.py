@@ -54,7 +54,7 @@ install_requires = [
     "requests>=2.32.4,<3",
     "opensearch-py>=2.1.0,<=3.0.0",
     "django-localflavor>=4.0,<5.0",
-    "django-flags>=4.0.1,<5.1",
+    "django-flags>=5",
     "requests-aws4auth",
 ]
 
