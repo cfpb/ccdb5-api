@@ -22,7 +22,6 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     "rest_framework",
     "complaint_search",
-    "rest_framework_swagger",
     "flags",
 )
 
@@ -59,20 +58,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "ccdb5_api.wsgi.application"
-
-SWAGGER_SETTINGS = {
-    "api_path": "/",
-    "api_version": "0.1",
-    "info": {
-        "title": "Complaint Search Public API",
-        "description": "This is the API for looking at Complaint Search Data",
-        "version": "1.0.0",
-        "termsOfService": "http://swagger.io/terms/",
-        "contact": "apiteam@swagger.io",
-        "license": "Apache 2.0",
-        "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0.html",
-    },
-}
 
 DATABASES = {
     "default": {
