@@ -7,12 +7,14 @@
     "company_response",
     "complaint_id",
     "complaint_what_happened",
+    "congressional_district",
     "consumer_consent_provided",
     "consumer_disputed",
     "date_received",
     "date_sent_to_company",
     "has_narrative",
     "issue",
+    "msa",
     "product",
     "state",
     "submitted_via",
@@ -103,6 +105,31 @@
           "terms": {
             "field": "company_response",
             "size": 10
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "terms": {
+                "company.raw": [
+                  "Bank 1",
+                  "Second Bank"
+                ]
+              }
+            }
+          ],
+          "must_not": []
+        }
+      }
+    },
+    "congressional_district": {
+      "aggs": {
+        "congressional_district": {
+          "terms": {
+            "size": 26000,
+            "field": "congressional_district"
           }
         }
       },
@@ -244,6 +271,31 @@
                 "size": 90
               }
             }
+          }
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "terms": {
+                "company.raw": [
+                  "Bank 1",
+                  "Second Bank"
+                ]
+              }
+            }
+          ],
+          "must_not": []
+        }
+      }
+    },
+    "msa": {
+      "aggs": {
+        "msa": {
+          "terms": {
+            "size": 26000,
+            "field": "msa"
           }
         }
       },
