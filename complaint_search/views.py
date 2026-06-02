@@ -68,8 +68,6 @@ QPARAMS_LISTS = (
     "company",
     "company_public_response",
     "company_response",
-    "consumer_consent_provided",
-    "consumer_disputed",
     "has_narrative",
     "issue",
     "product",

@@ -63,8 +63,6 @@ class BaseBuilder(object):
         "company",
         "company_public_response",
         "company_response",
-        "consumer_consent_provided",
-        "consumer_disputed",
         "has_narrative",
         "issue",
         "product",
@@ -79,8 +77,6 @@ class BaseBuilder(object):
     _OPTIONAL_FILTERS_PARAM_TO_ES_MAP = {
         "company_public_response": "company_public_response.raw",
         "company": "company.raw",
-        "consumer_consent_provided": "consumer_consent_provided.raw",
-        "consumer_disputed": "consumer_disputed.raw",
         "issue": "issue.raw",
         "product": "product.raw",
         "sub_issue": "sub_issue.raw",
@@ -277,11 +273,6 @@ class SearchBuilder(BaseBuilder):
         source = list(SOURCE_FIELDS)
         if self.params.get("format") in EXPORT_FORMATS:
             source.remove("has_narrative")
-        if self.params.get("format") == "csv":
-            source.remove("date_received")
-            source.remove("date_sent_to_company")
-            source.append("date_received_formatted")
-            source.append("date_sent_to_company_formatted")
         return source
 
     def build(self):
@@ -326,8 +317,6 @@ class AggregationBuilder(BaseBuilder):
         "company",
         "company_public_response",
         "company_response",
-        "consumer_consent_provided",
-        "consumer_disputed",
         "has_narrative",
         "issue",
         "product",

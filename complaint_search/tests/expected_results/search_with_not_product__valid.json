@@ -7,8 +7,6 @@
     "company_response",
     "complaint_id",
     "complaint_what_happened",
-    "consumer_consent_provided",
-    "consumer_disputed",
     "date_received",
     "date_sent_to_company",
     "has_narrative",
@@ -174,98 +172,6 @@
         "company_response": {
           "terms": {
             "field": "company_response",
-            "size": 10
-          }
-        }
-      },
-      "filter": {
-        "bool": {
-          "must": [],
-          "must_not": [
-            {
-              "bool": {
-                "should": [
-                  {
-                    "term": {
-                      "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
-                    }
-                  },
-                  {
-                    "bool": {
-                      "must": [
-                        {
-                          "term": {
-                            "product.raw": "Mortgage"
-                          }
-                        },
-                        {
-                          "terms": {
-                            "sub_product.raw": [
-                              "FHA mortgage"
-                            ]
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      }
-    },
-    "consumer_consent_provided": {
-      "aggs": {
-        "consumer_consent_provided": {
-          "terms": {
-            "field": "consumer_consent_provided.raw",
-            "size": 10
-          }
-        }
-      },
-      "filter": {
-        "bool": {
-          "must": [],
-          "must_not": [
-            {
-              "bool": {
-                "should": [
-                  {
-                    "term": {
-                      "product.raw": "Credit reporting, credit repair services, or other personal consumer reports"
-                    }
-                  },
-                  {
-                    "bool": {
-                      "must": [
-                        {
-                          "term": {
-                            "product.raw": "Mortgage"
-                          }
-                        },
-                        {
-                          "terms": {
-                            "sub_product.raw": [
-                              "FHA mortgage"
-                            ]
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      }
-    },
-    "consumer_disputed": {
-      "aggs": {
-        "consumer_disputed": {
-          "terms": {
-            "field": "consumer_disputed.raw",
             "size": 10
           }
         }

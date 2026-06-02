@@ -31,8 +31,6 @@ paths:
         - $ref: '#/components/parameters/company_received_max'
         - $ref: '#/components/parameters/company_received_min'
         - $ref: '#/components/parameters/company_response'
-        - $ref: '#/components/parameters/consumer_consent_provided'
-        - $ref: '#/components/parameters/consumer_disputed'
         - $ref: '#/components/parameters/date_received_max'
         - $ref: '#/components/parameters/date_received_min'
         - $ref: '#/components/parameters/has_narrative'
@@ -87,8 +85,6 @@ paths:
         - $ref: '#/components/parameters/company_received_max'
         - $ref: '#/components/parameters/company_received_min'
         - $ref: '#/components/parameters/company_response'
-        - $ref: '#/components/parameters/consumer_consent_provided'
-        - $ref: '#/components/parameters/consumer_disputed'
         - $ref: '#/components/parameters/date_received_max'
         - $ref: '#/components/parameters/date_received_min'
         - $ref: '#/components/parameters/has_narrative'
@@ -121,8 +117,6 @@ paths:
         - $ref: '#/components/parameters/company_received_max'
         - $ref: '#/components/parameters/company_received_min'
         - $ref: '#/components/parameters/company_response'
-        - $ref: '#/components/parameters/consumer_consent_provided'
-        - $ref: '#/components/parameters/consumer_disputed'
         - $ref: '#/components/parameters/date_received_max'
         - $ref: '#/components/parameters/date_received_min'
         - $ref: '#/components/parameters/has_narrative'
@@ -183,8 +177,6 @@ paths:
         - $ref: '#/components/parameters/company_received_max'
         - $ref: '#/components/parameters/company_received_min'
         - $ref: '#/components/parameters/company_response'
-        - $ref: '#/components/parameters/consumer_consent_provided'
-        - $ref: '#/components/parameters/consumer_disputed'
         - $ref: '#/components/parameters/date_received_max'
         - $ref: '#/components/parameters/date_received_min'
         - $ref: '#/components/parameters/has_narrative'
@@ -216,8 +208,6 @@ paths:
         - $ref: '#/components/parameters/company_received_max'
         - $ref: '#/components/parameters/company_received_min'
         - $ref: '#/components/parameters/company_response'
-        - $ref: '#/components/parameters/consumer_consent_provided'
-        - $ref: '#/components/parameters/consumer_disputed'
         - $ref: '#/components/parameters/date_received_max'
         - $ref: '#/components/parameters/date_received_min'
         - $ref: '#/components/parameters/focus'
@@ -296,24 +286,6 @@ components:
       name: company_response
       in: query
       description: Filter the results to only return these types of response by the company
-      explode: true
-      schema:
-        type: array
-        items:
-          type: string
-    consumer_consent_provided:
-      name: consumer_consent_provided
-      in: query
-      description: Filter the results to only return these types of consent consumer provided
-      explode: true
-      schema:
-        type: array
-        items:
-          type: string
-    consumer_disputed:
-      name: consumer_disputed
-      in: query
-      description: Filter the results to only return the specified state of consumer disputed, i.e. yes, no
       explode: true
       schema:
         type: array
@@ -619,12 +591,6 @@ components:
         complaint_what_happened:
           type: string
           description: A description of the complaint provided by the consumer
-        consumer_consent_provided:
-          type: string
-          description: Identifies whether the consumer opted in to publish their complaint narrative
-        consumer_disputed:
-          type: string
-          description: Whether the consumer disputed the company's response
         date_received:
           type: string
           format: date
@@ -764,10 +730,6 @@ components:
             company_public_response:
               $ref: '#/components/schemas/Aggregation'
             company_response:
-              $ref: '#/components/schemas/Aggregation'
-            consumer_consent_provided:
-              $ref: '#/components/schemas/Aggregation'
-            consumer_disputed:
               $ref: '#/components/schemas/Aggregation'
             has_narrative:
               $ref: '#/components/schemas/Aggregation'
