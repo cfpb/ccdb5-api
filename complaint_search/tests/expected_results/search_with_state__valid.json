@@ -7,8 +7,6 @@
     "company_response",
     "complaint_id",
     "complaint_what_happened",
-    "consumer_consent_provided",
-    "consumer_disputed",
     "date_received",
     "date_sent_to_company",
     "has_narrative",
@@ -114,58 +112,6 @@
         "company_response": {
           "terms": {
             "field": "company_response",
-            "size": 10
-          }
-        }
-      },
-      "filter": {
-        "bool": {
-          "must": [
-            {
-              "terms": {
-                "state": [
-                  "CA",
-                  "VA",
-                  "OR"
-                ]
-              }
-            }
-          ],
-          "must_not": []
-        }
-      }
-    },
-    "consumer_consent_provided": {
-      "aggs": {
-        "consumer_consent_provided": {
-          "terms": {
-            "field": "consumer_consent_provided.raw",
-            "size": 10
-          }
-        }
-      },
-      "filter": {
-        "bool": {
-          "must": [
-            {
-              "terms": {
-                "state": [
-                  "CA",
-                  "VA",
-                  "OR"
-                ]
-              }
-            }
-          ],
-          "must_not": []
-        }
-      }
-    },
-    "consumer_disputed": {
-      "aggs": {
-        "consumer_disputed": {
-          "terms": {
-            "field": "consumer_disputed.raw",
             "size": 10
           }
         }

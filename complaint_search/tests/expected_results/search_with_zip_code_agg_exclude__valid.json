@@ -7,8 +7,6 @@
     "company_response",
     "complaint_id",
     "complaint_what_happened",
-    "consumer_consent_provided",
-    "consumer_disputed",
     "date_received",
     "date_sent_to_company",
     "has_narrative",
@@ -115,58 +113,6 @@
           "terms": {
             "size": 10,
             "field": "company_response"
-          }
-        }
-      },
-      "filter": {
-        "bool": {
-          "must": [
-            {
-              "terms": {
-                "zip_code": [
-                  "12345",
-                  "23435",
-                  "03433"
-                ]
-              }
-            }
-          ],
-          "must_not": []
-        }
-      }
-    },
-    "consumer_consent_provided": {
-      "aggs": {
-        "consumer_consent_provided": {
-          "terms": {
-            "size": 10,
-            "field": "consumer_consent_provided.raw"
-          }
-        }
-      },
-      "filter": {
-        "bool": {
-          "must": [
-            {
-              "terms": {
-                "zip_code": [
-                  "12345",
-                  "23435",
-                  "03433"
-                ]
-              }
-            }
-          ],
-          "must_not": []
-        }
-      }
-    },
-    "consumer_disputed": {
-      "aggs": {
-        "consumer_disputed": {
-          "terms": {
-            "size": 10,
-            "field": "consumer_disputed.raw"
           }
         }
       },

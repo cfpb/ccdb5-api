@@ -455,12 +455,6 @@ class EsInterfaceTest_Search(TestCase):
             ],
         )
 
-    def test_search_with_consumer_consent_provided__valid(self):
-        self.request_test(
-            "search_with_consumer_consent_provided__valid",
-            consumer_consent_provided=["Consent provided"],
-        )
-
     def test_search_with_submitted_via__valid(self):
         self.request_test(
             "search_with_submitted_via__valid", submitted_via=["Web"]

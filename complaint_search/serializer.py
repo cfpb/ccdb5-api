@@ -81,16 +81,10 @@ class SearchInputSerializer(serializers.Serializer):
     timely = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False
     )
-    consumer_disputed = serializers.ListField(
-        child=serializers.CharField(max_length=200), required=False
-    )
     company_response = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False
     )
     company_public_response = serializers.ListField(
-        child=serializers.CharField(max_length=200), required=False
-    )
-    consumer_consent_provided = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False
     )
     has_narrative = serializers.ListField(
@@ -114,12 +108,6 @@ class SearchInputSerializer(serializers.Serializer):
         child=serializers.CharField(max_length=200), required=False
     )
     not_company_response = serializers.ListField(
-        child=serializers.CharField(max_length=200), required=False
-    )
-    not_consumer_consent_provided = serializers.ListField(
-        child=serializers.CharField(max_length=200), required=False
-    )
-    not_consumer_disputed = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False
     )
     not_issue = serializers.ListField(

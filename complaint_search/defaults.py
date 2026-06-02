@@ -47,8 +47,6 @@ SOURCE_FIELDS = (
     "company_response",
     "complaint_id",
     "complaint_what_happened",
-    "consumer_consent_provided",
-    "consumer_disputed",
     "date_received",
     "date_sent_to_company",
     "has_narrative",
@@ -72,7 +70,7 @@ EXPORT_FORMATS = (
 
 CSV_ORDERED_HEADERS = OrderedDict(
     [
-        ("date_received_formatted", "Date received"),
+        ("date_received", "Date received"),
         ("product", "Product"),
         ("sub_product", "Sub-product"),
         ("issue", "Issue"),
@@ -83,12 +81,10 @@ CSV_ORDERED_HEADERS = OrderedDict(
         ("state", "State"),
         ("zip_code", "ZIP code"),
         ("tags", "Tags"),
-        ("consumer_consent_provided", "Consumer consent provided?"),
         ("submitted_via", "Submitted via"),
-        ("date_sent_to_company_formatted", "Date sent to company"),
+        ("date_sent_to_company", "Date sent to company"),
         ("company_response", "Company response to consumer"),
         ("timely", "Timely response?"),
-        ("consumer_disputed", "Consumer disputed?"),
         ("complaint_id", "Complaint ID"),
     ]
 )

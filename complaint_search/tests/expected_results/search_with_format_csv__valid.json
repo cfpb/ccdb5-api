@@ -6,8 +6,6 @@
     "company_response",
     "complaint_id",
     "complaint_what_happened",
-    "consumer_consent_provided",
-    "consumer_disputed",
     "issue",
     "product",
     "state",
@@ -17,8 +15,8 @@
     "tags",
     "timely",
     "zip_code",
-    "date_received_formatted",
-    "date_sent_to_company_formatted"
+    "date_received",
+    "date_sent_to_company"
   ],
     "query": {
         "query_string": {
