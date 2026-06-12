@@ -214,13 +214,13 @@ class SearchTests(APITestCase):
     @mock.patch("complaint_search.es_interface.search")
     def test_search_with_size__invalid_exceed_max_number(self, mock_essearch):
         url = reverse("complaint_search:search")
-        params = {"size": 10000001}
+        params = {"size": 20000001}
         mock_essearch.return_value = "OK"
         response = self.client.get(url, params)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         mock_essearch.assert_not_called()
         self.assertDictEqual(
-            {"size": ["Ensure this value is less than or equal to 10000000."]},
+            {"size": ["Ensure this value is less than or equal to 20000000."]},
             response.data,
         )
 
