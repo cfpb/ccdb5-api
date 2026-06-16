@@ -54,7 +54,6 @@ install_requires = [
     "opensearch-py>=2.1.0,<=3.0.0",
     "django-localflavor>=4.0,<5.0",
     "django-flags>=5",
-    "requests-aws4auth",
 ]
 
 testing_extras = [
@@ -62,7 +61,6 @@ testing_extras = [
     "deep==0.10",
     "deepdiff>=6.7,<7",
     "parameterized==0.9.0",
-    "requests-aws4auth",
 ]
 
 
