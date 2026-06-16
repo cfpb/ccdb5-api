@@ -35,10 +35,6 @@ _ES_USER = os.environ.get("ES_USER", "")
 _ES_PASSWORD = os.environ.get("ES_PASSWORD", "")
 _ES_INSTANCE = None
 
-AWS_ES_ACCESS_KEY = os.environ.get("AWS_ES_ACCESS_KEY")
-AWS_ES_SECRET_KEY = os.environ.get("AWS_ES_SECRET_KEY")
-AWS_ES_HOST = os.environ.get("ES_HOST")
-
 _COMPLAINT_ES_INDEX = os.environ.get("COMPLAINT_ES_INDEX", "complaint-index")
 
 
