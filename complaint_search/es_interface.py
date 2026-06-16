@@ -6,8 +6,7 @@ from math import ceil
 from urllib.parse import quote
 
 from flags.state import flag_enabled
-from opensearchpy import OpenSearch, RequestsHttpConnection, helpers
-from requests_aws4auth import AWS4Auth
+from opensearchpy import OpenSearch, helpers
 
 from complaint_search.defaults import (
     CSV_ORDERED_HEADERS,
@@ -35,11 +34,6 @@ _ES_URL = f"http://{_ES_HOST}:{_ES_PORT}"
 _ES_USER = os.environ.get("ES_USER", "")
 _ES_PASSWORD = os.environ.get("ES_PASSWORD", "")
 _ES_INSTANCE = None
-
-USE_AWS_ES = os.environ.get("USE_AWS_ES", False)
-AWS_ES_ACCESS_KEY = os.environ.get("AWS_ES_ACCESS_KEY")
-AWS_ES_SECRET_KEY = os.environ.get("AWS_ES_SECRET_KEY")
-AWS_ES_HOST = os.environ.get("ES_HOST")
 
 _COMPLAINT_ES_INDEX = os.environ.get("COMPLAINT_ES_INDEX", "complaint-index")
 
@@ -144,30 +138,18 @@ def process_trends_response(response):
 def _get_es():
     global _ES_INSTANCE
     if _ES_INSTANCE is None:
-        if USE_AWS_ES:  # pragma: no cover
-            awsauth = AWS4Auth(
-                AWS_ES_ACCESS_KEY, AWS_ES_SECRET_KEY, "us-east-1", "es"
-            )
-            _ES_INSTANCE = OpenSearch(
-                hosts=[{"host": AWS_ES_HOST, "port": 443}],
-                http_auth=awsauth,
-                use_ssl=True,
-                verify_certs=True,
-                connection_class=RequestsHttpConnection,
-                timeout=100,
-            )
-        else:
-            host = _ES_HOST
-            if _ES_USER and _ES_PASSWORD:
-                encoded_username = quote(_ES_USER)
-                encoded_password = quote(_ES_PASSWORD)
-                host = f"{encoded_username}:{encoded_password}@{host}"
+        host = _ES_HOST
+        if _ES_USER and _ES_PASSWORD:
+            encoded_username = quote(_ES_USER)
+            encoded_password = quote(_ES_PASSWORD)
+            host = f"{encoded_username}:{encoded_password}@{host}"
 
-            _ES_INSTANCE = OpenSearch(
-                f"http://{host}:{_ES_PORT}",
-                use_ssl=(str(_ES_PORT) == "443"),
-                timeout=100
-            )
+        _ES_INSTANCE = OpenSearch(
+            f"http://{host}:{_ES_PORT}",
+            use_ssl=(str(_ES_PORT) == "443"),
+            timeout=100,
+            pool_maxsize=10
+        )
     return _ES_INSTANCE
 
 
