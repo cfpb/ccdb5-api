@@ -48,7 +48,7 @@ class SearchInputSerializer(serializers.Serializer):
     format = serializers.ChoiceField(FORMAT_CHOICES, default=PARAMS["format"])
     field = serializers.ChoiceField(FIELD_CHOICES, default=PARAMS["field"])
     size = serializers.IntegerField(
-        min_value=0, max_value=20000000, default=PARAMS["size"]
+        min_value=0, max_value=100000, default=PARAMS["size"]
     )
     frm = serializers.IntegerField(
         min_value=0, max_value=10000, default=PARAMS["frm"]
