@@ -33,6 +33,7 @@ _ES_PORT = os.environ.get("ES_PORT", "9200")
 _ES_URL = f"http://{_ES_HOST}:{_ES_PORT}"
 _ES_USER = os.environ.get("ES_USER", "")
 _ES_PASSWORD = os.environ.get("ES_PASSWORD", "")
+_ES_POOL = int(os.getenv("ES_POOL_MAXSIZE", 1))
 _ES_INSTANCE = None
 
 _COMPLAINT_ES_INDEX = os.environ.get("COMPLAINT_ES_INDEX", "complaint-index")
@@ -148,7 +149,7 @@ def _get_es():
             f"http://{host}:{_ES_PORT}",
             use_ssl=(str(_ES_PORT) == "443"),
             timeout=100,
-            pool_maxsize=10
+            pool_maxsize=_ES_POOL
         )
     return _ES_INSTANCE
 
