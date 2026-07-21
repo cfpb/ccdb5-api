@@ -259,7 +259,8 @@ def search(agg_exclude=None, **kwargs):
     - Update params with request details.
     - Add a formatted 'search_after' param if pagination is requested.
     - Build a search body based on params
-    - Add param-based post_filter and aggregation sections to the search body.
+    - Add param-based post_filter to the search body.
+    - Add aggregations to the search body, unless no_aggs is specified.
     - Add a track_total_hits directive to get accurate hit counts (new in 2021)
     - Assemble pagination break points if needed.
 
@@ -284,11 +285,12 @@ def search(agg_exclude=None, **kwargs):
     res = {}
     _format = params.get("format")
     if _format == "default":
-        aggregation_builder = AggregationBuilder()
-        aggregation_builder.add(**params)
-        if agg_exclude:
-            aggregation_builder.add_exclude(agg_exclude)
-        body["aggs"] = aggregation_builder.build()
+        if not params.get("no_aggs"):
+            aggregation_builder = AggregationBuilder()
+            aggregation_builder.add(**params)
+            if agg_exclude:
+                aggregation_builder.add_exclude(agg_exclude)
+            body["aggs"] = aggregation_builder.build()
         log.info(
             "Requesting %s/%s/_search with %s",
             _ES_URL,
@@ -303,6 +305,14 @@ def search(agg_exclude=None, **kwargs):
             if hit_total and hit_total > user_batch_size:
                 # We have more than one page of results and need pagination
                 pagination_body = copy.deepcopy(body)
+
+                # When determining break points, we don't need to recompute
+                # aggregations, re-highlight, or return result source.
+                pagination_body.pop("aggs", None)
+                pagination_body.pop("highlight", None)
+                pagination_body["_source"] = False
+                pagination_body["track_total_hits"] = False
+
                 # cleaner to get page from frontend, but 'frm' works for now
                 page = params.get("frm", user_batch_size) / user_batch_size
                 pagination_body["size"] = get_pagination_query_size(
