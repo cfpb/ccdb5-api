@@ -259,7 +259,8 @@ def search(agg_exclude=None, **kwargs):
     - Update params with request details.
     - Add a formatted 'search_after' param if pagination is requested.
     - Build a search body based on params
-    - Add param-based post_filter and aggregation sections to the search body.
+    - Add param-based post_filter to the search body.
+    - Add aggregations to the search body, unless no_aggs is specified.
     - Add a track_total_hits directive to get accurate hit counts (new in 2021)
     - Assemble pagination break points if needed.
 
@@ -284,11 +285,12 @@ def search(agg_exclude=None, **kwargs):
     res = {}
     _format = params.get("format")
     if _format == "default":
-        aggregation_builder = AggregationBuilder()
-        aggregation_builder.add(**params)
-        if agg_exclude:
-            aggregation_builder.add_exclude(agg_exclude)
-        body["aggs"] = aggregation_builder.build()
+        if not params.get("no_aggs"):
+            aggregation_builder = AggregationBuilder()
+            aggregation_builder.add(**params)
+            if agg_exclude:
+                aggregation_builder.add_exclude(agg_exclude)
+            body["aggs"] = aggregation_builder.build()
         log.info(
             "Requesting %s/%s/_search with %s",
             _ES_URL,
