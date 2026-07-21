@@ -21,6 +21,7 @@ AGG_SUBPRODUCT_DEFAULT = 90
 # The default result size matches the front-end default for users.
 # The trend_depth default limits display to 5 items in some Trends contexts.
 PAGINATION_BATCH = 100
+MAX_DOWNLOAD_SIZE = 100000
 MAX_PAGINATION_DEPTH = 10000
 RESULT_SIZE_DEFAULT = 25
 RESULT_SIZE_OPTIONS = [10, 50, 100]
