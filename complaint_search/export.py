@@ -8,6 +8,7 @@ from django.http.response import Http404
 
 from complaint_search.defaults import MAX_DOWNLOAD_SIZE
 
+
 class OpenSearchExporter(object):
 
     # export_csv - Stream an OpenSearch response as a CSV file
@@ -66,7 +67,8 @@ class OpenSearchExporter(object):
     #   The total number of records to be output
     def export_json(self, scanResponse, total_count):
         if not total_count or total_count > MAX_DOWNLOAD_SIZE:
-            raise Http404
+            return Http404
+
         def stream():
             count = 0
             # Write JSON
