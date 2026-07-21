@@ -4,10 +4,12 @@ import io
 from collections import OrderedDict
 
 from django.http import StreamingHttpResponse
+from django.http.response import Http404
 from django.test import TestCase
 
 from parameterized import parameterized
 
+from complaint_search.defaults import MAX_DOWNLOAD_SIZE
 from complaint_search.export import OpenSearchExporter
 
 
@@ -75,6 +77,13 @@ class ExportTest(TestCase):
         self.assertTrue("map" in str(type(res.streaming_content)))
         downloaded_file = io.BytesIO(b"".join(res.streaming_content))
         self.assertFalse(downloaded_file is None)
+
+    def test_json_export_limit(self):
+        length = MAX_DOWNLOAD_SIZE + 1
+        es_exporter = OpenSearchExporter()
+        gen = es_generator(length)
+        es_exporter.export_json(gen, length)
+        self.assertRaises(Http404)
 
 
 class TestCSVExportWithUnicodeCharacters(TestCase):

@@ -4,6 +4,9 @@ from csv import DictWriter
 from io import StringIO
 
 from django.http import StreamingHttpResponse
+from django.http.response import Http404
+
+from complaint_search.defaults import MAX_DOWNLOAD_SIZE
 
 
 class OpenSearchExporter(object):
@@ -63,6 +66,9 @@ class OpenSearchExporter(object):
     # - total_count (int)
     #   The total number of records to be output
     def export_json(self, scanResponse, total_count):
+        if not total_count or total_count > MAX_DOWNLOAD_SIZE:
+            return Http404
+
         def stream():
             count = 0
             # Write JSON
