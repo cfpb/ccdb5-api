@@ -4,10 +4,10 @@ import io
 from collections import OrderedDict
 
 from django.http import StreamingHttpResponse
-from django.http.response import Http404
 from django.test import TestCase
 
 from parameterized import parameterized
+from rest_framework.exceptions import ValidationError
 
 from complaint_search.defaults import MAX_DOWNLOAD_SIZE
 from complaint_search.export import OpenSearchExporter
@@ -82,8 +82,16 @@ class ExportTest(TestCase):
         length = MAX_DOWNLOAD_SIZE + 1
         es_exporter = OpenSearchExporter()
         gen = es_generator(length)
-        es_exporter.export_json(gen, length)
-        self.assertRaises(Http404)
+        with self.assertRaises(ValidationError) as context:
+            es_exporter.export_json(gen, length)
+        self.assertEqual(context.exception.get_codes(), {"size": ["invalid"]})
+
+    def test_json_export_empty(self):
+        es_exporter = OpenSearchExporter()
+        res = es_exporter.export_json(es_generator(0), 0)
+        self.assertIsInstance(res, StreamingHttpResponse)
+        content = io.BytesIO(b"".join(res.streaming_content)).read()
+        self.assertEqual(content, b"[]")
 
 
 class TestCSVExportWithUnicodeCharacters(TestCase):

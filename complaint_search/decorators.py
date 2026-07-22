@@ -2,6 +2,7 @@ import logging
 
 from opensearchpy import TransportError
 from rest_framework import status
+from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
 
@@ -12,6 +13,8 @@ def catch_es_error(function):
     def wrap(request, *args, **kwargs):
         try:
             return function(request, *args, **kwargs)
+        except APIException:
+            raise
         except TransportError as te:
             log.error(te)
 

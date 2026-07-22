@@ -4,13 +4,13 @@ from csv import DictWriter
 from io import StringIO
 
 from django.http import StreamingHttpResponse
-from django.http.response import Http404
+
+from rest_framework.exceptions import ValidationError
 
 from complaint_search.defaults import MAX_DOWNLOAD_SIZE
 
 
 class OpenSearchExporter(object):
-
     # export_csv - Stream an OpenSearch response as a CSV file
     #
     # Parameters:
@@ -66,8 +66,14 @@ class OpenSearchExporter(object):
     # - total_count (int)
     #   The total number of records to be output
     def export_json(self, scanResponse, total_count):
-        if not total_count or total_count > MAX_DOWNLOAD_SIZE:
-            return Http404
+        if total_count and total_count > MAX_DOWNLOAD_SIZE:
+            raise ValidationError(
+                {
+                    "size": [
+                        f"Result set of {total_count} exceeds the export limit of {MAX_DOWNLOAD_SIZE}"
+                    ]
+                }
+            )
 
         def stream():
             count = 0
