@@ -11,6 +11,20 @@ from complaint_search.defaults import MAX_DOWNLOAD_SIZE
 
 
 class OpenSearchExporter(object):
+    def _check_download_size(self, total_count):
+        """Reject downloads if size exceeds MAX_DOWNLOAD_SIZE.
+
+        Raises ValidationError to be consistent with other DRF errors.
+        """
+        if total_count and total_count > MAX_DOWNLOAD_SIZE:
+            raise ValidationError(
+                {
+                    "size": [
+                        f"Result set of {total_count} exceeds the export limit of {MAX_DOWNLOAD_SIZE}"
+                    ]
+                }
+            )
+
     # export_csv - Stream an OpenSearch response as a CSV file
     #
     # Parameters:
@@ -19,7 +33,11 @@ class OpenSearchExporter(object):
     # - header_dict (OrderedDict)
     #   The ordered dictionary where the key is the OpenSearch field name
     #   and the value is the CSV column header for that field
-    def export_csv(self, scanResponse, header_dict):
+    # - total_count (int)
+    #   The total number of records to be output
+    def export_csv(self, scanResponse, header_dict, total_count):
+        self._check_download_size(total_count)
+
         def read_and_flush(writer, buffer_, row):
             writer.writerow(row)
             buffer_.seek(0)
@@ -66,14 +84,7 @@ class OpenSearchExporter(object):
     # - total_count (int)
     #   The total number of records to be output
     def export_json(self, scanResponse, total_count):
-        if total_count and total_count > MAX_DOWNLOAD_SIZE:
-            raise ValidationError(
-                {
-                    "size": [
-                        f"Result set of {total_count} exceeds the export limit of {MAX_DOWNLOAD_SIZE}"
-                    ]
-                }
-            )
+        self._check_download_size(total_count)
 
         def stream():
             count = 0

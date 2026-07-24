@@ -347,14 +347,16 @@ def search(agg_exclude=None, **kwargs):
 
         exporter = OpenSearchExporter()
 
+        # Determine the total number of hits to enforce MAX_DOWNLOAD_SIZE.
+        if "highlight" in body:
+            del body["highlight"]
+        body.update({"size": 0, "track_total_hits": True})
+        count_res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
+        hit_total = count_res["hits"]["total"]["value"]
+
         if params.get("format") == "csv":
-            res = exporter.export_csv(scan_response, CSV_ORDERED_HEADERS)
+            res = exporter.export_csv(scan_response, CSV_ORDERED_HEADERS, hit_total)
         elif params.get("format") == "json":
-            if "highlight" in body:
-                del body["highlight"]
-            body.update({"size": 0, "track_total_hits": True})
-            count_res = _get_es().search(index=_COMPLAINT_ES_INDEX, body=body)
-            hit_total = count_res["hits"]["total"]["value"]
             res = exporter.export_json(scan_response, hit_total)
 
     return res
