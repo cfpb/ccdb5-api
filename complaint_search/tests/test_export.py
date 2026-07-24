@@ -45,7 +45,7 @@ class ExportTest(TestCase):
         gen = es_generator(length)
 
         # act
-        res = es_exporter.export_csv(gen, TEST_HEADERS)
+        res = es_exporter.export_csv(gen, TEST_HEADERS, length)
 
         # assert
         self.assertTrue(isinstance(res, StreamingHttpResponse))
@@ -57,6 +57,14 @@ class ExportTest(TestCase):
         self.assertTrue("map" in str(type(res.streaming_content)))
         downloaded_file = io.BytesIO(b"".join(res.streaming_content))
         self.assertFalse(downloaded_file is None)
+
+    def test_csv_export_limit(self):
+        length = MAX_DOWNLOAD_SIZE + 1
+        es_exporter = OpenSearchExporter()
+        gen = es_generator(length)
+        with self.assertRaises(ValidationError) as context:
+            es_exporter.export_csv(gen, TEST_HEADERS, length)
+        self.assertEqual(context.exception.get_codes(), {"size": ["invalid"]})
 
     @parameterized.expand([[10], [5010], [100000]])
     def test_export_json_request_response(self, length):
@@ -110,6 +118,6 @@ class TestCSVExportWithUnicodeCharacters(TestCase):
             }
 
         exporter = OpenSearchExporter()
-        response = exporter.export_csv(unicode_results(), headers)
+        response = exporter.export_csv(unicode_results(), headers, 1)
         content = io.BytesIO(b"".join(response.streaming_content)).read()
         self.assertEqual(content, b"Key\r\n\xe2\x80\x99\r\n")
