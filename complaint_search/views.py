@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from django.conf import settings
-from django.http import StreamingHttpResponse
 
 from rest_framework import status
 from rest_framework.decorators import (
@@ -18,6 +17,7 @@ from complaint_search.defaults import (
     AGG_EXCLUDE_FIELDS,
     EXCLUDE_PREFIX,
     EXPORT_FORMATS,
+    EXPORT_ZIP_CONTENT_TYPE,
     FORMAT_CONTENT_TYPE_MAP,
 )
 from complaint_search.renderers import CSVRenderer, DefaultRenderer
@@ -163,20 +163,17 @@ def search(request):
     if format not in EXPORT_FORMATS:
         return Response(results, headers=headers)
 
-    # If format is in export formats, update its attachment response
-    # with a filename
-    response = StreamingHttpResponse(
-        streaming_content=results, content_type=FORMAT_CONTENT_TYPE_MAP[format]
-    )
-    filename = "complaints-{}.{}".format(
-        datetime.now().strftime("%Y-%m-%d_%H_%M"), format
+    # Export responses are pre-built zip downloads from the exporter.
+    filename = "complaints-{}.zip".format(
+        datetime.now().strftime("%Y-%m-%d_%H_%M")
     )
     header_template = 'attachment; filename="{}"'
-    response["Content-Disposition"] = header_template.format(filename)
+    results["Content-Disposition"] = header_template.format(filename)
+    results["Content-Type"] = EXPORT_ZIP_CONTENT_TYPE
     for header in headers:
-        response[header] = headers[header]
+        results[header] = headers[header]
 
-    return response
+    return results
 
 
 @api_view(["GET"])

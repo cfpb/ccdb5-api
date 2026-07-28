@@ -4,7 +4,7 @@ from unittest import mock
 
 from django.conf import settings
 from django.core.cache import cache
-from django.http import StreamingHttpResponse
+from django.http import HttpResponse
 from django.test import override_settings
 
 from opensearchpy import TransportError
@@ -14,6 +14,7 @@ from rest_framework.test import APITestCase
 
 from complaint_search.defaults import (
     AGG_EXCLUDE_FIELDS,
+    EXPORT_ZIP_CONTENT_TYPE,
     FORMAT_CONTENT_TYPE_MAP,
     PARAMS,
 )
@@ -88,21 +89,19 @@ class SearchTests(APITestCase):
         """
         Searching with format
         """
-        for k, v in FORMAT_CONTENT_TYPE_MAP.items():
+        for k in FORMAT_CONTENT_TYPE_MAP:
             url = reverse("complaint_search:search")
             params = {"format": k}
-            mock_essearch.return_value = "OK"
+            mock_essearch.return_value = HttpResponse()
             mock_dt.now.return_value = datetime(2017, 1, 1, 12, 0)
             response = self.client.get(url, params)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertIn(v, response.get("Content-Type"))
+            self.assertIn(EXPORT_ZIP_CONTENT_TYPE, response.get("Content-Type"))
             self.assertEqual(
                 response.get("Content-Disposition"),
-                'attachment; filename="complaints-2017-01-01_12_00.{}"'.format(
-                    k
-                ),
+                'attachment; filename="complaints-2017-01-01_12_00.zip"',
             )
-            self.assertTrue(isinstance(response, StreamingHttpResponse))
+            self.assertIsInstance(response, HttpResponse)
 
         mock_essearch.assert_has_calls(
             [mock.call(
@@ -845,7 +844,7 @@ class SearchTests(APITestCase):
     @mock.patch("complaint_search.es_interface.search")
     def test_search_with_export_anon_rate_throttle(self, mock_essearch):
         url = reverse("complaint_search:search")
-        mock_essearch.return_value = "OK"
+        mock_essearch.return_value = HttpResponse()
         SearchAnonRateThrottle.rate = self.orig_search_anon_rate
         ExportUIRateThrottle.rate = self.orig_export_ui_rate
         ExportAnonRateThrottle.rate = self.orig_export_anon_rate
@@ -853,7 +852,7 @@ class SearchTests(APITestCase):
         for _ in range(limit):
             response = self.client.get(url, {"format": "csv"})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertTrue(isinstance(response, StreamingHttpResponse))
+            self.assertIsInstance(response, HttpResponse)
 
         response = self.client.get(url, {"format": "csv"})
         self.assertEqual(
@@ -867,7 +866,7 @@ class SearchTests(APITestCase):
     @mock.patch("complaint_search.es_interface.search")
     def test_search_with_export_ui_rate_throttle(self, mock_essearch):
         url = reverse("complaint_search:search")
-        mock_essearch.return_value = "OK"
+        mock_essearch.return_value = HttpResponse()
         SearchAnonRateThrottle.rate = self.orig_search_anon_rate
         ExportUIRateThrottle.rate = self.orig_export_ui_rate
         ExportAnonRateThrottle.rate = self.orig_export_anon_rate
@@ -877,7 +876,7 @@ class SearchTests(APITestCase):
                 url, {"format": "csv"}, HTTP_REFERER=_CCDB_UI_URL
             )
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertTrue(isinstance(response, StreamingHttpResponse))
+            self.assertIsInstance(response, HttpResponse)
 
         response = self.client.get(
             url, {"format": "csv"}, HTTP_REFERER=_CCDB_UI_URL

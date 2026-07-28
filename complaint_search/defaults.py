@@ -98,6 +98,17 @@ FORMAT_CONTENT_TYPE_MAP = {
     "csv": "text/csv",
 }
 
+EXPORT_ZIP_CONTENT_TYPE = "application/zip"
+
+# Prefix for export temp directories created under EXPORT_TEMP_BASE_DIR.
+EXPORT_TEMP_DIR_PREFIX = "ccdb5-export-"
+
+# Default max age for abandoned export temp directories (1 hour).
+# Increase this when exports are very large or downloads are slow so active
+# transfers are not removed before they finish. Decrease it to reclaim disk
+# sooner when exports are small and failures are frequent.
+EXPORT_TEMP_MAX_AGE_SECONDS = 60 * 60
+
 DATA_SUB_LENS_MAP = {
     "product": ("sub_product", "issue", "company", "tags"),
     "issue": ("product", "sub_issue", "company", "tags"),

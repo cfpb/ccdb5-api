@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import io
+import os
+import zipfile
 from collections import OrderedDict
 
-from django.http import StreamingHttpResponse
 from django.test import TestCase
 
 from parameterized import parameterized
 
-from complaint_search.export import OpenSearchExporter
+from complaint_search.export import OpenSearchExporter, TempZipFileResponse
 
 
 TEST_HEADERS = OrderedDict(
@@ -35,6 +36,13 @@ def es_generator(n):
         count += 1
 
 
+def read_zip_member(response, member_name):
+    zip_bytes = b"".join(response)
+    response.close()
+    with zipfile.ZipFile(io.BytesIO(zip_bytes)) as archive:
+        return archive.read(member_name)
+
+
 class ExportTest(TestCase):
     @parameterized.expand([[10], [5010], [100000]])
     def test_export_csv_request_response(self, length):
@@ -46,15 +54,14 @@ class ExportTest(TestCase):
         res = es_exporter.export_csv(gen, TEST_HEADERS)
 
         # assert
-        self.assertTrue(isinstance(res, StreamingHttpResponse))
-
-        # mock_search.assert_not_called()
+        self.assertTrue(isinstance(res, TempZipFileResponse))
         self.assertEqual(
-            res.get("Content-Disposition"), "attachment; filename=file.csv"
+            res.get("Content-Disposition"), 'attachment; filename="export.zip"'
         )
-        self.assertTrue("map" in str(type(res.streaming_content)))
-        downloaded_file = io.BytesIO(b"".join(res.streaming_content))
-        self.assertFalse(downloaded_file is None)
+        self.assertEqual(res.get("Content-Type"), "application/zip")
+        csv_content = read_zip_member(res, "complaints.csv")
+        self.assertFalse(csv_content is None)
+        self.assertFalse(os.path.exists(res._temp_dir))
 
     @parameterized.expand([[10], [5010], [100000]])
     def test_export_json_request_response(self, length):
@@ -66,15 +73,14 @@ class ExportTest(TestCase):
         res = es_exporter.export_json(gen, length)
 
         # assert
-        self.assertTrue(isinstance(res, StreamingHttpResponse))
-
-        # mock_search.assert_not_called()
+        self.assertTrue(isinstance(res, TempZipFileResponse))
         self.assertEqual(
-            res.get("Content-Disposition"), "attachment; filename=file.json"
+            res.get("Content-Disposition"), 'attachment; filename="export.zip"'
         )
-        self.assertTrue("map" in str(type(res.streaming_content)))
-        downloaded_file = io.BytesIO(b"".join(res.streaming_content))
-        self.assertFalse(downloaded_file is None)
+        self.assertEqual(res.get("Content-Type"), "application/zip")
+        json_content = read_zip_member(res, "complaints.json")
+        self.assertFalse(json_content is None)
+        self.assertFalse(os.path.exists(res._temp_dir))
 
 
 class TestCSVExportWithUnicodeCharacters(TestCase):
@@ -94,5 +100,5 @@ class TestCSVExportWithUnicodeCharacters(TestCase):
 
         exporter = OpenSearchExporter()
         response = exporter.export_csv(unicode_results(), headers)
-        content = io.BytesIO(b"".join(response.streaming_content)).read()
+        content = read_zip_member(response, "complaints.csv")
         self.assertEqual(content, b"Key\r\n\xe2\x80\x99\r\n")

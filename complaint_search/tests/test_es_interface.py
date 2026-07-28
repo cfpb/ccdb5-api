@@ -18,7 +18,7 @@ from complaint_search.es_interface import (
     search,
     suggest,
 )
-from complaint_search.export import OpenSearchExporter
+from complaint_search.export import OpenSearchExporter, TempZipFileResponse
 from complaint_search.tests.es_interface_test_helpers import (
     assertBodyEqual,
     load,
@@ -276,12 +276,16 @@ class EsInterfaceTest_Search(TestCase):
         mock_search_side_effect[0]["hits"]["total"]["value"] = 4
         mock_search.side_effect = mock_search_side_effect
 
-        mock_exporter_csv.return_value = StreamingHttpResponse()
-        mock_exporter_json.return_value = StreamingHttpResponse()
+        mock_exporter_csv.return_value = TempZipFileResponse.__new__(
+            TempZipFileResponse
+        )
+        mock_exporter_json.return_value = TempZipFileResponse.__new__(
+            TempZipFileResponse
+        )
 
         res = search(format=export_type)
 
-        self.assertIsInstance(res, StreamingHttpResponse)
+        self.assertIsInstance(res, TempZipFileResponse)
         self.assertEqual(1, mock_es_helper.call_count)
         if export_type == "csv":
             self.assertEqual(1, mock_exporter_csv.call_count)

@@ -1,7 +1,10 @@
 import os
+import tempfile
 
 import django
 from django.utils.crypto import get_random_string
+
+from complaint_search.defaults import EXPORT_TEMP_MAX_AGE_SECONDS
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -77,3 +80,15 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = "/static/"
+
+# Export temp file cleanup. Override via environment when needed.
+# EXPORT_TEMP_MAX_AGE_SECONDS should exceed worst-case export build time plus
+# download time for the largest expected export.
+EXPORT_TEMP_BASE_DIR = os.environ.get(
+    "EXPORT_TEMP_BASE_DIR", tempfile.gettempdir()
+)
+EXPORT_TEMP_MAX_AGE_SECONDS = int(
+    os.environ.get(
+        "EXPORT_TEMP_MAX_AGE_SECONDS", EXPORT_TEMP_MAX_AGE_SECONDS
+    )
+)
