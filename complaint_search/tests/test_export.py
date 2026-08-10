@@ -5,9 +5,11 @@ from collections import OrderedDict
 
 from django.http import StreamingHttpResponse
 from django.test import TestCase
+from rest_framework.exceptions import ValidationError
 
 from parameterized import parameterized
 
+from complaint_search.defaults import MAX_DOWNLOAD_SIZE
 from complaint_search.export import OpenSearchExporter
 
 

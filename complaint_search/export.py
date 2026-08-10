@@ -3,6 +3,9 @@ from csv import DictWriter
 from io import StringIO
 
 from django.http import StreamingHttpResponse
+from rest_framework.exceptions import ValidationError
+
+from complaint_search.defaults import MAX_DOWNLOAD_SIZE
 
 
 class OpenSearchExporter(object):
