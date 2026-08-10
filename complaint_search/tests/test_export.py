@@ -7,7 +7,9 @@ from django.http import StreamingHttpResponse
 from django.test import TestCase
 
 from parameterized import parameterized
+from rest_framework.exceptions import ValidationError
 
+from complaint_search.defaults import MAX_DOWNLOAD_SIZE
 from complaint_search.export import OpenSearchExporter
 
 
