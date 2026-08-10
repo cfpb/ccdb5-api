@@ -23,7 +23,6 @@ from complaint_search.renderers import CSVRenderer, DefaultRenderer
 from complaint_search.serializer import (
     SearchInputSerializer,
     SuggestFilterInputSerializer,
-    SuggestInputSerializer,
     TrendsInputSerializer,
 )
 from complaint_search.throttling import (
