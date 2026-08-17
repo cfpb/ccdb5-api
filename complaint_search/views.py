@@ -23,7 +23,6 @@ from complaint_search.renderers import CSVRenderer, DefaultRenderer
 from complaint_search.serializer import (
     SearchInputSerializer,
     SuggestFilterInputSerializer,
-    TrendsInputSerializer,
 )
 from complaint_search.throttling import (
     DocumentAnonRateThrottle,
@@ -45,9 +44,7 @@ QPARAMS_VARS = (
     "date_received_max",
     "date_received_min",
     "field",
-    "focus",
     "frm",
-    "lens",
     "no_aggs",
     "no_highlight",
     "page",
@@ -55,10 +52,6 @@ QPARAMS_VARS = (
     "search_term",
     "size",
     "sort",
-    "sub_lens",
-    "sub_lens_depth",
-    "trend_depth",
-    "trend_interval",
 )
 
 
@@ -233,45 +226,3 @@ def suggest_company(request):
 def document(request, id):
     results = es_interface.document(id)
     return Response(results, headers=_build_headers())
-
-
-# -----------------------------------------------------------------------------
-# Request Handlers: Geo
-
-
-@api_view(["GET"])
-@catch_es_error
-def states(request):
-    data = _parse_query_params(request.query_params)
-    serializer = SearchInputSerializer(data=data)
-
-    if not serializer.is_valid():
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    results = es_interface.states_agg(
-        agg_exclude=AGG_EXCLUDE_FIELDS, **serializer.validated_data
-    )
-    headers = _build_headers()
-
-    return Response(results, headers=headers)
-
-
-# -----------------------------------------------------------------------------
-# Request Handlers: Trends
-
-
-@api_view(["GET"])
-@catch_es_error
-def trends(request):
-    data = _parse_query_params(request.query_params)
-    serializer = TrendsInputSerializer(data=data)
-
-    if not serializer.is_valid():
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    results = es_interface.trends(
-        agg_exclude=AGG_EXCLUDE_FIELDS, **serializer.validated_data
-    )
-    headers = _build_headers()
-
-    return Response(results, headers=headers)

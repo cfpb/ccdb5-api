@@ -53,7 +53,6 @@ install_requires = [
     "requests>=2.32.4,<3",
     "opensearch-py>=2.1.0,<=3.0.0",
     "django-localflavor>=4.0,<5.0",
-    "django-flags>=5",
 ]
 
 testing_extras = [

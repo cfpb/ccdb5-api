@@ -462,11 +462,6 @@ class EsInterfaceTest_Search(TestCase):
             "search_with_tags__valid", tags=["Older American", "Servicemember"]
         )
 
-    def test_search_with_has_narrative__valid(self):
-        self.request_test(
-            "search_with_has_narrative__valid", has_narrative=["true"]
-        )
-
     @mock.patch("requests.get", ok=True, content="RGET_OK")
     def test_search_no_highlight__valid(self, mock_rget):
         self.request_test("search_no_highlight__valid", no_highlight=True)
