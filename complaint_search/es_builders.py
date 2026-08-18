@@ -13,7 +13,6 @@ from complaint_search.defaults import (
     AGG_ZIPCODE_DEFAULT,
     DELIMITER,
     EXCLUDE_PREFIX,
-    EXPORT_FORMATS,
     PARAMS,
     SOURCE_FIELDS,
 )

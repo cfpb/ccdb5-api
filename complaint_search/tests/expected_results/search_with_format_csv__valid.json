@@ -5,7 +5,6 @@
     "company_public_response",
     "company_response",
     "complaint_id",
-    "complaint_what_happened",
     "issue",
     "product",
     "state",
@@ -22,7 +21,7 @@
         "query_string": {
             "query": "*",
             "fields": [
-                "complaint_what_happened"
+                "*"
             ],
             "default_operator": "AND"
         }
@@ -30,7 +29,7 @@
     "highlight": {
         "require_field_match": false,
         "fields": {
-            "complaint_what_happened": {}
+            "*": {}
         },
         "number_of_fragments": 1,
         "fragment_size": 500

@@ -6,10 +6,8 @@
     "company_public_response",
     "company_response",
     "complaint_id",
-    "complaint_what_happened",
     "date_received",
     "date_sent_to_company",
-    "has_narrative",
     "issue",
     "product",
     "state",
@@ -74,22 +72,6 @@
         "company_response": {
           "terms": {
             "field": "company_response",
-            "size": 10
-          }
-        }
-      },
-      "filter": {
-        "bool": {
-          "must": [],
-          "must_not": []
-        }
-      }
-    },
-    "has_narrative": {
-      "aggs": {
-        "has_narrative": {
-          "terms": {
-            "field": "has_narrative",
             "size": 10
           }
         }

@@ -38,7 +38,7 @@ class SuggestZipTests(APITestCase):
         mock_essuggest.assert_called_once_with(
             "zip_code",
             None,
-            field="complaint_what_happened",
+            field="all",
             format="default",
             frm=0,
             no_aggs=False,
