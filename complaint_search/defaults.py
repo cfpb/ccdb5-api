@@ -24,8 +24,8 @@ RESULT_SIZE_DEFAULT = 25
 RESULT_SIZE_OPTIONS = [10, 50, 100]
 
 PARAMS = {
+    "field": "all",
     "format": "default",
-    "field": "complaint_what_happened",
     "frm": 0,
     "search_after": "",
     "page": 1,
@@ -43,10 +43,8 @@ SOURCE_FIELDS = (
     "company_public_response",
     "company_response",
     "complaint_id",
-    "complaint_what_happened",
     "date_received",
     "date_sent_to_company",
-    "has_narrative",
     "issue",
     "product",
     "state",
@@ -69,7 +67,6 @@ CSV_ORDERED_HEADERS = OrderedDict(
         ("sub_product", "Sub-product"),
         ("issue", "Issue"),
         ("sub_issue", "Sub-issue"),
-        ("complaint_what_happened", "Consumer complaint narrative"),
         ("company_public_response", "Company public response"),
         ("company", "Company"),
         ("state", "State"),

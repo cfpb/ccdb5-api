@@ -265,10 +265,7 @@ class SearchBuilder(BaseBuilder):
         return [{sort_field: {"order": sort_order}}, {"_id": sort_order}]
 
     def _build_source(self):
-        source = list(SOURCE_FIELDS)
-        if self.params.get("format") in EXPORT_FORMATS:
-            source.remove("has_narrative")
-        return source
+        return list(SOURCE_FIELDS)
 
     def build(self):
         search = {
@@ -312,7 +309,6 @@ class AggregationBuilder(BaseBuilder):
         "company",
         "company_public_response",
         "company_response",
-        "has_narrative",
         "issue",
         "product",
         "state",

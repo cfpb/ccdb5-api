@@ -16,13 +16,11 @@ class SearchInputSerializer(serializers.Serializer):
     )
 
     # Field Choices
-    FIELD_NARRATIVE = "complaint_what_happened"
     FIELD_COMPANY = "company"
     FIELD_ALL = "all"
     FIELD_ALL_ES = "_all"
 
     FIELD_CHOICES = (
-        (FIELD_NARRATIVE, "complaint_what_happened field"),
         (FIELD_COMPANY, "company field"),
         (FIELD_ALL, "all fields"),
         (FIELD_ALL_ES, "all fields"),
@@ -83,9 +81,6 @@ class SearchInputSerializer(serializers.Serializer):
         child=serializers.CharField(max_length=200), required=False
     )
     company_public_response = serializers.ListField(
-        child=serializers.CharField(max_length=200), required=False
-    )
-    has_narrative = serializers.ListField(
         child=serializers.CharField(max_length=200), required=False
     )
     submitted_via = serializers.ListField(

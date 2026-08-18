@@ -59,7 +59,6 @@ QPARAMS_LISTS = (
     "company",
     "company_public_response",
     "company_response",
-    "has_narrative",
     "issue",
     "product",
     "state",
