@@ -33,7 +33,6 @@ paths:
         - $ref: '#/components/parameters/company_response'
         - $ref: '#/components/parameters/date_received_max'
         - $ref: '#/components/parameters/date_received_min'
-        - $ref: '#/components/parameters/has_narrative'
         - $ref: '#/components/parameters/issue'
         - $ref: '#/components/parameters/product'
         - $ref: '#/components/parameters/search_after'
@@ -54,24 +53,6 @@ paths:
                 $ref: '#/components/schemas/SearchResult'
         '400':
           description: Invalid status value
-  /_suggest:
-    get:
-      tags:
-        - Typeahead
-      summary: Suggest possible searches
-      description: The endpoint for the main search box in the UI
-      parameters:
-        - $ref: '#/components/parameters/size'
-        - $ref: '#/components/parameters/suggest_text'
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuggestResult'
-        '400':
-          description: Invalid input
   /_suggest_company:
     get:
       tags:
@@ -87,7 +68,6 @@ paths:
         - $ref: '#/components/parameters/company_response'
         - $ref: '#/components/parameters/date_received_max'
         - $ref: '#/components/parameters/date_received_min'
-        - $ref: '#/components/parameters/has_narrative'
         - $ref: '#/components/parameters/issue'
         - $ref: '#/components/parameters/product'
         - $ref: '#/components/parameters/state'
@@ -119,7 +99,6 @@ paths:
         - $ref: '#/components/parameters/company_response'
         - $ref: '#/components/parameters/date_received_max'
         - $ref: '#/components/parameters/date_received_min'
-        - $ref: '#/components/parameters/has_narrative'
         - $ref: '#/components/parameters/issue'
         - $ref: '#/components/parameters/product'
         - $ref: '#/components/parameters/state'
@@ -163,79 +142,6 @@ paths:
           description: Invalid ID supplied
         '404':
           description: Complaint not found
-  /geo/states:
-    get:
-      tags:
-        - Complaints
-      summary: Get the state-by-state information
-      description: Get complaint information broken down by states
-      parameters:
-        - $ref: '#/components/parameters/search_term'
-        - $ref: '#/components/parameters/field'
-        - $ref: '#/components/parameters/company'
-        - $ref: '#/components/parameters/company_public_response'
-        - $ref: '#/components/parameters/company_received_max'
-        - $ref: '#/components/parameters/company_received_min'
-        - $ref: '#/components/parameters/company_response'
-        - $ref: '#/components/parameters/date_received_max'
-        - $ref: '#/components/parameters/date_received_min'
-        - $ref: '#/components/parameters/has_narrative'
-        - $ref: '#/components/parameters/issue'
-        - $ref: '#/components/parameters/product'
-        - $ref: '#/components/parameters/state'
-        - $ref: '#/components/parameters/submitted_via'
-        - $ref: '#/components/parameters/tags'
-        - $ref: '#/components/parameters/timely'
-        - $ref: '#/components/parameters/zip_code'
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/StatesResult'
-  /trends:
-    get:
-      tags:
-        - Trends
-      summary: "List trends"
-      description: "Return specific aggregations for a search"
-      parameters:
-        - $ref: '#/components/parameters/search_term'
-        - $ref: '#/components/parameters/field'
-        - $ref: '#/components/parameters/company'
-        - $ref: '#/components/parameters/company_public_response'
-        - $ref: '#/components/parameters/company_received_max'
-        - $ref: '#/components/parameters/company_received_min'
-        - $ref: '#/components/parameters/company_response'
-        - $ref: '#/components/parameters/date_received_max'
-        - $ref: '#/components/parameters/date_received_min'
-        - $ref: '#/components/parameters/focus'
-        - $ref: '#/components/parameters/has_narrative'
-        - $ref: '#/components/parameters/issue'
-        - $ref: '#/components/parameters/lens'
-        - $ref: '#/components/parameters/product'
-        - $ref: '#/components/parameters/state'
-        - $ref: '#/components/parameters/submitted_via'
-        - $ref: '#/components/parameters/sub_lens'
-        - $ref: '#/components/parameters/sub_lens_depth'
-        - $ref: '#/components/parameters/tags'
-        - $ref: '#/components/parameters/timely'
-        - $ref: '#/components/parameters/trend_depth'
-        - $ref: '#/components/parameters/trend_interval'
-        - $ref: '#/components/parameters/zip_code'
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TrendsResult'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/TrendsResult'
-        '400':
-          description: Invalid status value
 tags:
   - name: Complaints
     description: These endpoints provide access to consumer complaints
@@ -308,14 +214,13 @@ components:
     field:
       name: field
       in: query
-      description: If the parameter "search_term" has a value, use "field" to specify which field is searched. If not specified, "complaint_what_happened" will be searched.
+      description: If the parameter "search_term" has a value, use "field" to specify which field is searched. If not specified, "all" will be searched.
       schema:
         type: string
         enum:
-          - complaint_what_happened
           - company_public_response
           - all
-        default: complaint_what_happened
+        default: all
     focus:
       name: focus
       in: query
@@ -344,15 +249,6 @@ components:
         minimum: 1
         maximum: 100000
         default: 0
-    has_narrative:
-      name: has_narrative
-      in: query
-      description: Filter the results to only return the specified state of whether it has narrative in the complaint or not, i.e. yes, no
-      explode: true
-      schema:
-        type: array
-        items:
-          type: string
     issue:
       name: issue
       in: query
@@ -587,9 +483,6 @@ components:
         complaint_id:
           type: integer
           description: The unique identification number for a complaint
-        complaint_what_happened:
-          type: string
-          description: A description of the complaint provided by the consumer
         date_received:
           type: string
           format: date
@@ -597,9 +490,6 @@ components:
         date_sent_to_company:
           type: string
           description: The date the CFPB sent the complaint to the company
-        has_narrative:
-          type: boolean
-          description: Indicates this complaint has a narrative
         issue:
           type: string
           description: The issue the consumer identified in the complaint
@@ -666,9 +556,6 @@ components:
         is_data_stale:
           type: boolean
           description: Indicates the most recent data is over 5 business days old
-        is_narrative_stale:
-          type: boolean
-          description: Indicates the most recent narratives are over 5 business days old
         last_indexed:
           type: string
           description: The timestamp of the most recently indexed complaint
@@ -729,8 +616,6 @@ components:
             company_public_response:
               $ref: '#/components/schemas/Aggregation'
             company_response:
-              $ref: '#/components/schemas/Aggregation'
-            has_narrative:
               $ref: '#/components/schemas/Aggregation'
             issue:
               $ref: '#/components/schemas/MultiLevelAggregation'
