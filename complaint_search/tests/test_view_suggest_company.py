@@ -38,7 +38,7 @@ class SuggestCompanyTests(APITestCase):
         mock_essuggest.assert_called_once_with(
             "company.suggest",
             "company.raw",
-            field="complaint_what_happened",
+            field="all",
             format="default",
             frm=0,
             no_aggs=False,

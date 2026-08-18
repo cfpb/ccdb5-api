@@ -9,8 +9,6 @@ from collections import OrderedDict
 AGG_COMPANY_DEFAULT = 6500
 AGG_ZIPCODE_DEFAULT = 26000
 AGG_STATE_DEFAULT = 100
-AGG_STATE_PRODUCT_DEFAULT = 5
-AGG_STATE_ISSUE_DEFAULT = 5
 AGG_ISSUE_DEFAULT = 200
 AGG_SUBISSUE_DEFAULT = 250
 AGG_PRODUCT_DEFAULT = 30
@@ -19,17 +17,15 @@ AGG_SUBPRODUCT_DEFAULT = 90
 # Pagination batch is the number of results we paginate at a time.
 # Max pagination depth is the farthest we'll paginate – 100 batches.
 # The default result size matches the front-end default for users.
-# The trend_depth default limits display to 5 items in some Trends contexts.
 PAGINATION_BATCH = 100
 MAX_DOWNLOAD_SIZE = 100000
 MAX_PAGINATION_DEPTH = 10000
 RESULT_SIZE_DEFAULT = 25
 RESULT_SIZE_OPTIONS = [10, 50, 100]
-TREND_DEPTH_DEFAULT = 5
 
 PARAMS = {
+    "field": "all",
     "format": "default",
-    "field": "complaint_what_happened",
     "frm": 0,
     "search_after": "",
     "page": 1,
@@ -47,10 +43,8 @@ SOURCE_FIELDS = (
     "company_public_response",
     "company_response",
     "complaint_id",
-    "complaint_what_happened",
     "date_received",
     "date_sent_to_company",
-    "has_narrative",
     "issue",
     "product",
     "state",
@@ -73,7 +67,6 @@ CSV_ORDERED_HEADERS = OrderedDict(
         ("sub_product", "Sub-product"),
         ("issue", "Issue"),
         ("sub_issue", "Sub-issue"),
-        ("complaint_what_happened", "Consumer complaint narrative"),
         ("company_public_response", "Company public response"),
         ("company", "Company"),
         ("state", "State"),
@@ -93,11 +86,4 @@ CHUNK_SIZE = 512
 
 FORMAT_CONTENT_TYPE_MAP = {
     "csv": "text/csv",
-}
-
-DATA_SUB_LENS_MAP = {
-    "product": ("sub_product", "issue", "company", "tags"),
-    "issue": ("product", "sub_issue", "company", "tags"),
-    "company": ("product", "issue", "tags"),
-    "tags": ("product", "issue", "company"),
 }
