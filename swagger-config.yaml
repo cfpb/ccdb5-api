@@ -145,8 +145,6 @@ paths:
 tags:
   - name: Complaints
     description: These endpoints provide access to consumer complaints
-  - name: Trends
-    description: These endpoints provide access aggregated consumer complaint data
   - name: Typeahead
     description: These endpoints support the typeahead boxes in the UI
 externalDocs:
@@ -218,18 +216,9 @@ components:
       schema:
         type: string
         enum:
-          - company_public_response
+          - company
           - all
         default: all
-    focus:
-      name: focus
-      in: query
-      description: The name of the product or company on which to focus charts for products and issues
-      explode: true
-      schema:
-        type: array
-        items:
-          type: string
     format:
       name: format
       in: query
@@ -258,19 +247,6 @@ components:
         type: array
         items:
           type: string
-    lens:
-      name: lens
-      in: query
-      required: true
-      description: The data lens through which to view complaint trends over time.
-      schema:
-        type: string
-        enum:
-          - overview
-          - issue
-          - product
-          - tags
-        default: overview
     no_aggs:
       name: no_aggs
       in: query
@@ -337,28 +313,6 @@ components:
         type: array
         items:
           type: string
-    sub_lens:
-      name: sub_lens
-      in: query
-      description: The sub-lens through which to view complaint trends over time.
-      schema:
-        type: string
-        enum:
-          - issue
-          - product
-          - sub_product
-          - sub_issue
-          - tags
-    sub_lens_depth:
-      name: sub_lens_depth
-      in: query
-      description: The top X trend sub aggregations will be returned, where X is the supplied sub_lens_depth.
-      schema:
-        type: integer
-        maximum: 10000000
-        minimum: 5
-        format: int64
-        default: 10
     submitted_via:
       name: submitted_via
       in: query
@@ -393,29 +347,6 @@ components:
         type: array
         items:
           type: string
-    trend_depth:
-      name: trend_depth
-      in: query
-      description: The top X trend aggregations will be returned, where X is the supplied trend_depth.
-      schema:
-        type: integer
-        maximum: 10000000
-        minimum: 5
-        format: int64
-        default: 10
-    trend_interval:
-      name: trend_interval
-      in: query
-      description: The interval of time to use for trends aggregations histograms. When using day intervals, we recommend querying for date_received_min / max periods of less than one year.
-      required: true
-      schema:
-        type: string
-        enum:
-          - year
-          - quarter
-          - month
-          - week
-          - day
     zip_code:
       name: zip_code
       in: query
@@ -633,40 +564,10 @@ components:
               $ref: '#/components/schemas/Aggregation'
         hits:
           $ref: '#/components/schemas/Hits'
-    StatesResult:
-      type: object
-      properties:
-        aggregations:
-          type: object
-          properties:
-            issue:
-              $ref: '#/components/schemas/MultiLevelAggregation'
-            product:
-              $ref: '#/components/schemas/MultiLevelAggregation'
-            state:
-              $ref: '#/components/schemas/MultiLevelAggregation'
     SuggestResult:
       type: array
       items:
         type: string
-    TrendsResult:
-      type: object
-      properties:
-        aggregations:
-          type: object
-          properties:
-            company:
-              $ref: '#/components/schemas/MultiLevelAggregation'
-            issue:
-              $ref: '#/components/schemas/MultiLevelAggregation'
-            product:
-              $ref: '#/components/schemas/MultiLevelAggregation'
-            sub_issue:
-              $ref: '#/components/schemas/MultiLevelAggregation'
-            sub_product:
-              $ref: '#/components/schemas/MultiLevelAggregation'
-            tags:
-              $ref: '#/components/schemas/MultiLevelAggregation'
   links: {}
   callbacks: {}
 security: []
