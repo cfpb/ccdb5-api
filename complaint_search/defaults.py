@@ -23,6 +23,8 @@ MAX_PAGINATION_DEPTH = 10000
 RESULT_SIZE_DEFAULT = 25
 RESULT_SIZE_OPTIONS = [10, 50, 100]
 
+BUCKET = "files.consumerfinance.gov"
+
 PARAMS = {
     "field": "all",
     "format": "default",
@@ -87,3 +89,5 @@ CHUNK_SIZE = 512
 FORMAT_CONTENT_TYPE_MAP = {
     "csv": "text/csv",
 }
+
+SUFFIX = "ccdb/complaints.csv.zip"

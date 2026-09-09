@@ -1,7 +1,8 @@
 from datetime import datetime
 
 from django.conf import settings
-from django.http import StreamingHttpResponse
+from django.core.signing import BadSignature, SignatureExpired, TimestampSigner
+from django.http import HttpResponse, StreamingHttpResponse
 
 from rest_framework import status
 from rest_framework.decorators import (
@@ -15,9 +16,11 @@ from complaint_search import es_interface
 from complaint_search.decorators import catch_es_error
 from complaint_search.defaults import (
     AGG_EXCLUDE_FIELDS,
+    BUCKET,
     EXCLUDE_PREFIX,
     EXPORT_FORMATS,
     FORMAT_CONTENT_TYPE_MAP,
+    SUFFIX,
 )
 from complaint_search.renderers import CSVRenderer, DefaultRenderer
 from complaint_search.serializer import (
@@ -30,6 +33,9 @@ from complaint_search.throttling import (
     ExportUIRateThrottle,
     SearchAnonRateThrottle,
 )
+
+
+signer = TimestampSigner()
 
 
 # -----------------------------------------------------------------------------
@@ -225,3 +231,20 @@ def suggest_company(request):
 def document(request, id):
     results = es_interface.document(id)
     return Response(results, headers=_build_headers())
+
+
+@api_view(["GET"])
+def temp_download_link(request):
+    token = signer.sign("")
+    return HttpResponse(f"/download/{token}/")
+
+
+@api_view(["GET"])
+def download_with_token(request, token):
+    try:
+        signer.unsign(token, max_age=60)
+        return HttpResponse(f"https://{BUCKET}/{SUFFIX}")
+    except SignatureExpired:
+        return HttpResponse("Download link expired", status=410)
+    except BadSignature:
+        return HttpResponse("Invalid download link", status=400)

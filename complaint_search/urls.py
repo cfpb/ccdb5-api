@@ -1,4 +1,4 @@
-from django.urls import re_path
+from django.urls import path, re_path
 
 import complaint_search.views
 
@@ -20,4 +20,14 @@ urlpatterns = [
         r"^(?P<id>[0-9]+)$", complaint_search.views.document, name="complaint"
     ),
     re_path(r"^$", complaint_search.views.search, name="search"),
+    path(
+        "generate-download-link/",
+        complaint_search.views.temp_download_link,
+        name="temp_link"
+    ),
+    path(
+        "download/<token>/",
+        complaint_search.views.download_with_token,
+        name="download"
+    ),
 ]
